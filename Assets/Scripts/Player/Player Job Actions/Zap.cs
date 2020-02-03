@@ -65,7 +65,7 @@ public class Zap : PlayerSpell {
         if (!targetCharacter.IsInOwnParty()) {
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Zapped") != null) {
+        if (targetCharacter.traitContainer.HasTrait("Zapped")) {
             return false;
         }
         //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
@@ -109,7 +109,7 @@ public class Zap : PlayerSpell {
         if (!targetCharacter.IsInOwnParty()) {
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Zapped") != null) {
+        if (targetCharacter.traitContainer.HasTrait("Zapped")) {
             return false;
         }
         //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
@@ -142,7 +142,7 @@ public class ZapData : SpellData {
         PlayerManager.Instance.player.ShowNotification(log);
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
-        if (targetCharacter.isDead || !targetCharacter.IsInOwnParty() || targetCharacter.traitContainer.GetNormalTrait<Trait>("Zapped") != null) {
+        if (targetCharacter.isDead || !targetCharacter.IsInOwnParty() || targetCharacter.traitContainer.HasTrait("Zapped")) {
             return false;
         }
         return base.CanPerformAbilityTowards(targetCharacter);

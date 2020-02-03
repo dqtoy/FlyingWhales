@@ -55,7 +55,7 @@ public class RemovePoison : GoapAction {
             if (!poiTarget.IsAvailable() || poiTarget.gridTileLocation == null) {
                 return false;
             }
-            return poiTarget.traitContainer.GetNormalTrait<Trait>("Poisoned") != null;
+            return poiTarget.traitContainer.HasTrait("Poisoned");
         }
         return false;
     }
@@ -78,6 +78,6 @@ public class RemovePoisonTableData : GoapActionData {
         if (!poiTarget.IsAvailable() || poiTarget.gridTileLocation == null) {
             return false;
         }
-        return poiTarget.traitContainer.GetNormalTrait<Trait>("Poisoned") != null;
+        return poiTarget.traitContainer.HasTrait("Poisoned");
     }
 }

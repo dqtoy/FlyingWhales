@@ -65,7 +65,7 @@ public class RitualKilling : GoapAction {
         Character actor = node.actor;
         IPointOfInterest target = node.poiTarget;
         if (target is Character) {
-            if (witness.traitContainer.GetNormalTrait<Trait>("Coward") != null) {
+            if (witness.traitContainer.HasTrait("Coward")) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor);
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor);
             } else {
@@ -74,7 +74,7 @@ public class RitualKilling : GoapAction {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor);
 
                 Character targetCharacter = target as Character;
-                if (witness.opinionComponent.IsFriendsWith(actor) && !witness.isSerialKiller) {
+                if (witness.opinionComponent.IsFriendsWith(actor) && !witness.traitContainer.HasTrait("Serial Killer")) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor);
                 }
                 if (witness.opinionComponent.IsFriendsWith(targetCharacter)) {
@@ -92,7 +92,7 @@ public class RitualKilling : GoapAction {
         IPointOfInterest target = node.poiTarget;
         if (target is Character) {
             Character targetCharacter = target as Character;
-            if (!witness.isSerialKiller) {
+            if (!witness.traitContainer.HasTrait("Serial Killer")) {
                 string opinionLabel = witness.opinionComponent.GetOpinionLabel(targetCharacter);
                 if (opinionLabel == OpinionComponent.Acquaintance || opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, target);
@@ -107,13 +107,13 @@ public class RitualKilling : GoapAction {
         IPointOfInterest target = node.poiTarget;
         if (target is Character) {
             Character targetCharacter = target as Character;
-            if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Coward") != null) {
+            if (targetCharacter.traitContainer.HasTrait("Coward")) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, targetCharacter, actor);
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, targetCharacter, actor);
             } else {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, targetCharacter, actor);
 
-                if (targetCharacter.opinionComponent.IsFriendsWith(actor) && !targetCharacter.isSerialKiller) {
+                if (targetCharacter.opinionComponent.IsFriendsWith(actor) && !targetCharacter.traitContainer.HasTrait("Serial Killer")) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, targetCharacter, actor);
                 }
             }
@@ -127,7 +127,7 @@ public class RitualKilling : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
-            return actor != poiTarget && actor.isSerialKiller;
+            return actor != poiTarget && actor.traitContainer.HasTrait("Serial Killer");
         }
         return false;
     }
@@ -139,7 +139,7 @@ public class RitualKilling : GoapAction {
         return false;
     }
     private bool HasRestrained(Character actor, IPointOfInterest target, object[] otherData) {
-        return target.traitContainer.GetNormalTrait<Trait>("Restrained") != null;
+        return target.traitContainer.HasTrait("Restrained");
     }
     #endregion
 
@@ -165,7 +165,7 @@ public class RitualKillingData : GoapActionData {
     }
 
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor != poiTarget && actor.isSerialKiller;
+        return actor != poiTarget && actor.traitContainer.HasTrait("Serial Killer");
     }
 }
 

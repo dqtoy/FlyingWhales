@@ -76,6 +76,6 @@ public class DispelMagicData : GoapActionData {
         requirementAction = Requirement;
     }
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return poiTarget.traitContainer.GetNormalTrait<Trait>("Reanimated", "Cursed") != null;
+        return poiTarget.traitContainer.HasTrait("Reanimated", "Cursed");
     }
 }

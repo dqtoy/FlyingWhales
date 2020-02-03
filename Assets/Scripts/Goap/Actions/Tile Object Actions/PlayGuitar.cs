@@ -41,7 +41,7 @@ public class PlayGuitar : GoapAction {
 
         if (target.gridTileLocation != null && target.gridTileLocation.structure is Dwelling
             && target.gridTileLocation.structure != actor.homeStructure
-            && actor.traitContainer.GetNormalTrait<Trait>("Serial Killer") == null) {
+            && !actor.traitContainer.HasTrait("Serial Killer")) {
             Dwelling structureLocation = target.gridTileLocation.structure as Dwelling;
             if (structureLocation.residents.Count > 0) {
                 Character dwellingOwner = structureLocation.residents[0];
@@ -55,8 +55,8 @@ public class PlayGuitar : GoapAction {
             }
         }
         
-        Trait trait = actor.traitContainer.GetNormalTrait<Trait>("Music Lover");
-        if (trait != null) {
+
+        if (actor.traitContainer.HasTrait("Music Lover")) {
             cost += -15;
             costLog += " -15(Music Lover)";
         }
@@ -95,7 +95,7 @@ public class PlayGuitar : GoapAction {
                     && RelationshipManager.Instance.IsSexuallyCompatible(witness, actor)
                     && witness.moodComponent.moodState != MOOD_STATE.CRITICAL) {
                     int value = 50;
-                    if (actor.traitContainer.GetNormalTrait<Trait>("Ugly") != null) {
+                    if (actor.traitContainer.HasTrait("Ugly")) {
                         value = 20;
                     }
                     if(UnityEngine.Random.Range(0, 100) < value) {
@@ -137,7 +137,7 @@ public class PlayGuitar : GoapAction {
             if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
                 return false;
             }
-            if (actor.traitContainer.GetNormalTrait<Trait>("MusicHater") != null) {
+            if (actor.traitContainer.HasTrait("MusicHater")) {
                 return false; //music haters will never play guitar
             }
             if (poiTarget.gridTileLocation == null) {
@@ -216,7 +216,7 @@ public class PlayGuitarData : GoapActionData {
         if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
             return false;
         }
-        if (actor.traitContainer.GetNormalTrait<Trait>("MusicHater") != null) {
+        if (actor.traitContainer.HasTrait("MusicHater")) {
             return false; //music haters will never play guitar
         }
         if (poiTarget.gridTileLocation == null) {

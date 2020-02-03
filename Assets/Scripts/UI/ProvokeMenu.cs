@@ -74,7 +74,7 @@ public class ProvokeMenu : MonoBehaviour {
             // }
         } else {
             actorText = "You should take revenge on your enemies.";
-            if(targetCharacter.traitContainer.GetNormalTrait<Trait>("Diplomatic") != null) {
+            if(targetCharacter.traitContainer.HasTrait("Diplomatic")) {
                 targetText = "Sorry, I don't do that. I am a very peaceful person.";
             } else {
                 targetText = "Sorry, I don't have any.";

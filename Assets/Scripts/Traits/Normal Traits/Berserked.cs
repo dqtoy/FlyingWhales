@@ -68,6 +68,7 @@ namespace Traits {
                     character.combatComponent.RemoveHostileInRange(hostile);
                 }
                 character.behaviourComponent.RemoveBehaviourComponent(typeof(BerserkBehaviour));
+                character.needsComponent.CheckExtremeNeeds();
                 // character.behaviourComponent.ReplaceBehaviourComponent(_behaviourComponentsBeforeBerserked);
                 // _behaviourComponentsBeforeBerserked.Clear();
             }

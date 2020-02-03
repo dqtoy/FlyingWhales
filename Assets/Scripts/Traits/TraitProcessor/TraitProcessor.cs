@@ -15,6 +15,7 @@ namespace Traits {
             trait.AddCharacterResponsibleForTrait(characterResponsible);
             trait.AddCharacterResponsibleForTrait(characterResponsible);
             ApplyPOITraitInteractions(traitable, trait);
+            traitable.traitContainer.SwitchOnTrait(trait.name);
             if (trait.ticksDuration > 0) {
                 //traitable.traitContainer.currentDurations.Add(trait, 0);
                 GameDate removeDate = GameManager.Instance.Today();
@@ -32,6 +33,7 @@ namespace Traits {
             //TODO: if (triggerOnRemove) {
             //    trait.OnRemoveTrait(this, removedBy);
             //}
+            traitable.traitContainer.SwitchOffTrait(trait.name);
             UnapplyPOITraitInteractions(traitable, trait);
             trait.OnRemoveTrait(traitable, removedBy);
             Messenger.Broadcast(Signals.TRAITABLE_LOST_TRAIT, traitable, trait, removedBy);

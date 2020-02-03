@@ -35,7 +35,7 @@ public class Butcher : GoapAction {
                 cost += 2000;
                 costLog += " +2000(Actor/Target Same)";
             } else {
-                if (actor.traitContainer.GetNormalTrait<Trait>("Cannibal") != null) {
+                if (actor.traitContainer.HasTrait("Cannibal")) {
                     if (actor.opinionComponent.IsFriendsWith(deadCharacter)) {
                         cost += 2000;
                         costLog += " +2000(Cannibal, Friend/Close)";
@@ -97,7 +97,7 @@ public class Butcher : GoapAction {
         IPointOfInterest target = node.poiTarget;
         Character targetCharacter = GetDeadCharacter(target);
         if (targetCharacter != null) {
-            if (witness.traitContainer.GetNormalTrait<Trait>("Cannibal") == null &&
+            if (!witness.traitContainer.HasTrait("Cannibal") &&
                 (targetCharacter.race == RACE.HUMANS || targetCharacter.race == RACE.ELVES)) {
                 CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.HEINOUS);
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor);
@@ -107,14 +107,14 @@ public class Butcher : GoapAction {
                 if (opinionLabel == OpinionComponent.Acquaintance || opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor);
                 }
-                if (!witness.isSerialKiller) {
+                if (!witness.traitContainer.HasTrait("Serial Killer")) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor);
                 }
             }
             string witnessOpinionToTarget = witness.opinionComponent.GetOpinionLabel(targetCharacter);
             if (witnessOpinionToTarget == OpinionComponent.Friend || witnessOpinionToTarget == OpinionComponent.Close_Friend || witnessOpinionToTarget == OpinionComponent.Acquaintance 
                 || witness.faction == targetCharacter.faction || witness.homeSettlement == targetCharacter.homeSettlement) {
-                if (!witness.isSerialKiller) {
+                if (!witness.traitContainer.HasTrait("Serial Killer")) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor);
                 }
             }
@@ -136,7 +136,7 @@ public class Butcher : GoapAction {
                 Character deadCharacter = GetDeadCharacter(poiTarget);
                 if (deadCharacter != null && (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES)
                     && actor.faction != deadCharacter.faction && actor.homeSettlement != deadCharacter.homeSettlement) {
-                    if (actor.traitContainer.GetNormalTrait<Trait>("Cannibal") != null) {
+                    if (actor.traitContainer.HasTrait("Cannibal")) {
                         return true;
                     }
                     return false;
@@ -336,7 +336,7 @@ public class ButcherData : GoapActionData {
         if (targetCharacter != null) {
             if (targetCharacter.race == RACE.HUMANS || targetCharacter.race == RACE.ELVES) {
                 //return true;
-                if (actor.traitContainer.GetNormalTrait<Trait>("Cannibal") != null) {
+                if (actor.traitContainer.HasTrait("Cannibal")) {
                     return true;
                 }
                 return false;

@@ -28,7 +28,7 @@ namespace Interrupts {
                     opinionLabel == OpinionComponent.Close_Friend) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Despair, witness, originalForm);
                 }
-                if (witness.traitContainer.GetNormalTrait<Trait>("Coward") != null) {
+                if (witness.traitContainer.HasTrait("Coward")) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, originalForm);
                 } else {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, originalForm);

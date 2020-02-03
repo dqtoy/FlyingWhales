@@ -23,13 +23,13 @@ public class Spoil : PlayerSpell {
         }
     }
     public override bool CanTarget(IPointOfInterest poi, ref string hoverText) {
-        if (poi is Table && !(poi.traitContainer.GetNormalTrait<Trait>("Poisoned", "Robust") != null)) {
+        if (poi is Table && !(poi.traitContainer.HasTrait("Poisoned", "Robust"))) {
             return true;
         }
         return false;
     }
     protected override bool CanPerformActionTowards(IPointOfInterest targetPOI) {
-        if (targetPOI is Table && !(targetPOI.traitContainer.GetNormalTrait<Trait>("Poisoned", "Robust") != null)) {
+        if (targetPOI is Table && !(targetPOI.traitContainer.HasTrait("Poisoned", "Robust"))) {
             return true;
         }
         return false;
@@ -51,13 +51,13 @@ public class SpoilData : SpellData {
         PlayerManager.Instance.player.ShowNotification(log);
     }
     public override bool CanPerformAbilityTowards(TileObject tileObject) {
-        if (tileObject.gridTileLocation == null || tileObject.traitContainer.GetNormalTrait<Trait>("Poisoned", "Robust") != null) {
+        if (tileObject.gridTileLocation == null || tileObject.traitContainer.HasTrait("Poisoned", "Robust")) {
             return false;
         }
         return base.CanPerformAbilityTowards(tileObject);
     }
     public override bool CanPerformAbilityTowards(SpecialToken item) {
-        if (item.gridTileLocation == null || item.traitContainer.GetNormalTrait<Trait>("Poisoned", "Robust") != null) {
+        if (item.gridTileLocation == null || item.traitContainer.HasTrait("Poisoned", "Robust")) {
             return false;
         }
         return base.CanPerformAbilityTowards(item);

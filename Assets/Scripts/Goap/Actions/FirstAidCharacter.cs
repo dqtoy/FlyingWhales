@@ -48,7 +48,7 @@ public class FirstAidCharacter : GoapAction {
             Character targetCharacter = target as Character;
             string opinionLabel = witness.opinionComponent.GetOpinionLabel(targetCharacter);
             if (opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
-                if (!witness.isSerialKiller) {
+                if (!witness.traitContainer.HasTrait("Serial Killer")) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Gratefulness, witness, actor);
                 }
             } else if (opinionLabel == OpinionComponent.Rival) {
@@ -63,7 +63,7 @@ public class FirstAidCharacter : GoapAction {
         IPointOfInterest target = node.poiTarget;
         if (target is Character) {
             Character targetCharacter = target as Character;
-            if (!targetCharacter.isSerialKiller) {
+            if (!targetCharacter.traitContainer.HasTrait("Serial Killer")) {
                 if (targetCharacter.opinionComponent.IsEnemiesWith(actor)) {
                     if(UnityEngine.Random.Range(0, 100) < 30) {
                         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Gratefulness, targetCharacter, actor);
@@ -150,6 +150,6 @@ public class FirstAidCharacterData : GoapActionData {
         requirementAction = Requirement;
     }
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return poiTarget.traitContainer.GetNormalTrait<Trait>("Injured", "Unconscious") != null;
+        return poiTarget.traitContainer.HasTrait("Injured", "Unconscious");
     }
 }

@@ -63,7 +63,7 @@ public class Enrage : PlayerSpell {
         if (!targetCharacter.IsInOwnParty()) {
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Enrage") != null) {
+        if (targetCharacter.traitContainer.HasTrait("Berserked")) {
             return false;
         }
         //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
@@ -107,7 +107,7 @@ public class Enrage : PlayerSpell {
         if (!targetCharacter.IsInOwnParty()) {
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Enrage") != null) {
+        if (targetCharacter.traitContainer.HasTrait("Berserked")) {
             return false;
         }
         //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {

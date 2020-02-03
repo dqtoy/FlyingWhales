@@ -611,16 +611,16 @@ namespace Inner_Maps {
         }
         public List<ITraitable> GetTraitablesOnTileWithTrait(string requiredTrait) {
             List<ITraitable> traitables = new List<ITraitable>();
-            if (genericTileObject.traitContainer.GetNormalTrait<Trait>(requiredTrait) != null) {
+            if (genericTileObject.traitContainer.HasTrait(requiredTrait)) {
                 traitables.Add(genericTileObject);
             }
             for (int i = 0; i < walls.Count; i++) {
                 WallObject wallObject = walls[i];
-                if (wallObject.traitContainer.GetNormalTrait<Trait>(requiredTrait) != null) {
+                if (wallObject.traitContainer.HasTrait(requiredTrait)) {
                     traitables.Add(wallObject);
                 }
             }
-            if (objHere != null && objHere.traitContainer.GetNormalTrait<Trait>(requiredTrait) != null) {
+            if (objHere != null && objHere.traitContainer.HasTrait(requiredTrait)) {
                 if ((objHere is TileObject && (objHere as TileObject).mapObjectState == MAP_OBJECT_STATE.BUILT)
                     || (objHere is SpecialToken && (objHere as SpecialToken).mapObjectState == MAP_OBJECT_STATE.BUILT)) {
                     traitables.Add(objHere);
@@ -629,7 +629,7 @@ namespace Inner_Maps {
         
             for (int i = 0; i < charactersHere.Count; i++) {
                 Character character = charactersHere[i];
-                if (character.traitContainer.GetNormalTrait<Trait>(requiredTrait) != null) {
+                if (character.traitContainer.HasTrait(requiredTrait)) {
                     traitables.Add(character);
                 }
             }

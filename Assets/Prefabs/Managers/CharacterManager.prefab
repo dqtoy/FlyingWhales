@@ -1504,7 +1504,7 @@ MonoBehaviour:
       gender: 0
       characterClassAssets:
         m_keys:
-        - Barbarian
+        - Golem
         m_values:
         - defaultSprite: {fileID: 0}
           animationSprites:
@@ -1531,7 +1531,7 @@ MonoBehaviour:
       gender: 1
       characterClassAssets:
         m_keys:
-        - Barbarian
+        - Golem
         m_values:
         - defaultSprite: {fileID: 0}
           animationSprites:

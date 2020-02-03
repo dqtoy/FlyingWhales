@@ -49,7 +49,7 @@ public class DefaultFactionRelated : CharacterBehaviourComponent {
         } else if (UnityEngine.Random.Range(0, 100) < 10) {
             if (character.isFriendlyFactionless) {
                 log += "\n-" + character.name + " is factionless, 10% chance to create faction";
-                if (character.traitContainer.GetNormalTrait<Trait>("Inspiring", "Ambitious") != null) {
+                if (character.traitContainer.HasTrait("Inspiring", "Ambitious")) {
                     log += "\n-" + character.name + " is Ambitious or Inspiring, creating new faction...";
                     character.interruptComponent.TriggerInterrupt(INTERRUPT.Create_Faction, character);
                 }

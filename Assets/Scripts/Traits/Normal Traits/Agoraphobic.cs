@@ -40,7 +40,7 @@ namespace Traits {
         public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
             if (targetPOI.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
                 //Character targetCharacter = targetPOI as Character;
-                if (characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Berserked") != null) {
+                if (characterThatWillDoJob.traitContainer.HasTrait("Berserked")) {
                     return false;
                 }
                 ApplyAgoraphobicEffect(characterThatWillDoJob);

@@ -450,11 +450,11 @@ public class Settlement : IJobOwner {
                 weight += (numberOfFriends * 20);
                 log += "\n  -Num of Friend/Close Friend in the Settlement: " + numberOfFriends + ", +" + (numberOfFriends * 20);
             }
-            if (resident.traitContainer.GetNormalTrait<Trait>("Inspiring") != null) {
+            if (resident.traitContainer.HasTrait("Inspiring")) {
                 weight += 25;
                 log += "\n  -Inspiring: +25";
             }
-            if (resident.traitContainer.GetNormalTrait<Trait>("Authoritative") != null) {
+            if (resident.traitContainer.HasTrait("Authoritative")) {
                 weight += 50;
                 log += "\n  -Authoritative: +50";
             }
@@ -464,7 +464,7 @@ public class Settlement : IJobOwner {
                 weight += (numberOfEnemies * -10);
                 log += "\n  -Num of Enemies/Rivals in the Settlement: " + numberOfEnemies + ", +" + (numberOfEnemies * -10);
             }
-            if (resident.traitContainer.GetNormalTrait<Trait>("Ugly") != null) {
+            if (resident.traitContainer.HasTrait("Ugly")) {
                 weight += -20;
                 log += "\n  -Ugly: -20";
             }
@@ -472,11 +472,11 @@ public class Settlement : IJobOwner {
                 weight += -50;
                 log += "\n  -Has Unresolved Crime: -50";
             }
-            if (resident.traitContainer.GetNormalTrait<Trait>("Worker") != null) {
+            if (resident.traitContainer.HasTrait("Worker")) {
                 weight += -40;
                 log += "\n  -Civilian: -40";
             }
-            if (resident.traitContainer.GetNormalTrait<Trait>("Ambitious") != null) {
+            if (resident.traitContainer.HasTrait("Ambitious")) {
                 weight = Mathf.RoundToInt(weight * 1.5f);
                 log += "\n  -Ambitious: x1.5";
             }

@@ -56,7 +56,7 @@ public class Paralysis : PlayerSpell {
         if (targetCharacter.isDead) {
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Paralyzed") != null) {
+        if (targetCharacter.traitContainer.HasTrait("Paralyzed")) {
             return false;
         }
         //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
@@ -87,7 +87,7 @@ public class Paralysis : PlayerSpell {
         if (targetCharacter.isDead) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Paralyzed") != null) {
+        if (targetCharacter.traitContainer.HasTrait("Paralyzed")) {
             return false;
         }
         //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
@@ -114,7 +114,7 @@ public class ParalysisData : SpellData {
         PlayerManager.Instance.player.ShowNotification(log);
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
-        if (targetCharacter.isDead || targetCharacter.traitContainer.GetNormalTrait<Trait>("Paralyzed") != null) {
+        if (targetCharacter.isDead || targetCharacter.traitContainer.HasTrait("Paralyzed")) {
             return false;
         }
         return base.CanPerformAbilityTowards(targetCharacter);

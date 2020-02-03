@@ -25,7 +25,7 @@ public class Explosion : PlayerSpell {
             LocationGridTile tile = tiles[i];
             flammables.AddRange(tile.GetTraitablesOnTileWithTrait("Flammable"));
         }
-        flammables = flammables.Where(x => x.traitContainer.GetNormalTrait<Trait>("Burning", "Burnt", "Wet", "Fireproof") == null).ToList();
+        flammables = flammables.Where(x => !x.traitContainer.HasTrait("Burning", "Burnt", "Wet", "Fireproof")).ToList();
         BurningSource bs = new BurningSource(InnerMapManager.Instance.currentlyShowingLocation);
         for (int i = 0; i < flammables.Count; i++) {
             ITraitable flammable = flammables[i];
@@ -91,7 +91,7 @@ public class ExplosionData : SpellData {
             LocationGridTile tile = tiles[i];
             flammables.AddRange(tile.GetTraitablesOnTileWithTrait("Flammable"));
         }
-        flammables = flammables.Where(x => x.traitContainer.GetNormalTrait<Trait>("Burning", "Burnt", "Wet", "Fireproof") == null).ToList();
+        flammables = flammables.Where(x => !x.traitContainer.HasTrait("Burning", "Burnt", "Wet", "Fireproof")).ToList();
         BurningSource bs = new BurningSource(InnerMapManager.Instance.currentlyShowingLocation);
         for (int i = 0; i < flammables.Count; i++) {
             ITraitable flammable = flammables[i];

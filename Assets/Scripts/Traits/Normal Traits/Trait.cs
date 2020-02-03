@@ -70,7 +70,7 @@ namespace Traits {
                 Character character = removedFrom as Character;
                 character.moodComponent.RemoveMoodEffect(-moodEffect, this);    
                 if (name == "Criminal") {
-                    if (!character.isCriminal) {
+                    if (!character.traitContainer.HasTrait("Criminal")) {
                         character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.APPREHEND);
                     }
                 }
@@ -139,7 +139,7 @@ namespace Traits {
             return PlayerManager.Instance.player.mana >= manaCost
                 && character.canPerform
                 //&& !character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER) //disabled characters cannot be triggered
-                && character.traitContainer.GetNormalTrait<Trait>("Blessed") == null
+                && !character.traitContainer.HasTrait("Blessed")
                 && !character.currentParty.icon.isTravellingOutside; //characters travelling outside cannot be triggered
         }
         public virtual string GetRequirementDescription(Character character) {
@@ -150,7 +150,7 @@ namespace Traits {
             if (PlayerManager.Instance.player.mana < EditableValuesManager.Instance.triggerFlawManaCost) {
                 reasons.Add("You do not have enough mana.");
             }
-            if (character.traitContainer.GetNormalTrait<Trait>("Blessed") != null) {
+            if (character.traitContainer.HasTrait("Blessed")) {
                 reasons.Add("Blessed characters cannot be targeted by Trigger Flaw.");
             }
             if (!character.canPerform) {

@@ -36,7 +36,7 @@ public class RememberFallen : GoapAction {
             cost += timesCost;
             costLog += " +" + timesCost + "(10 x Times Reminisced)";
         }
-        if (actor.traitContainer.GetNormalTrait<Trait>("Serial Killer") != null) {
+        if (actor.traitContainer.HasTrait("Serial Killer")) {
             cost += 2000;
             costLog += " +2000(Psychopath)";
         }
@@ -74,7 +74,7 @@ public class RememberFallen : GoapAction {
             Character targetCharacter = (target as Tombstone).character;
             string witnessOpinionLabelToDead = witness.opinionComponent.GetOpinionLabel(targetCharacter);
             if ((witnessOpinionLabelToDead == OpinionComponent.Friend || witnessOpinionLabelToDead == OpinionComponent.Close_Friend)
-                && witness.traitContainer.GetNormalTrait<Trait>("Serial Killer") == null) {
+                && !witness.traitContainer.HasTrait("Serial Killer")) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor);
             } else if (witnessOpinionLabelToDead == OpinionComponent.Rival) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, actor);

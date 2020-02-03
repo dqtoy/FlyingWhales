@@ -30,8 +30,7 @@ public class Steal : GoapAction {
         string costLog = "\n" + name + " " + target.nameWithID + ":";
         int cost = Utilities.rng.Next(300, 351);
         costLog += " +" + cost + "(Initial)";
-        Trait trait = actor.traitContainer.GetNormalTrait<Trait>("Kleptomaniac");
-        if (trait != null) {
+        if (actor.traitContainer.HasTrait("Kleptomaniac")) {
             cost += -200;
             costLog += " -200(Kleptomaniac)";
         } else {
@@ -99,7 +98,7 @@ public class Steal : GoapAction {
             Character targetCharacter = (target as SpecialToken).carriedByCharacter;
             if(targetCharacter != null) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, targetCharacter, actor);
-                if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Hothead") != null || UnityEngine.Random.Range(0, 100) < 35) {
+                if (targetCharacter.traitContainer.HasTrait("Hothead") || UnityEngine.Random.Range(0, 100) < 35) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, targetCharacter, actor);
                 }
                 CrimeManager.Instance.ReactToCrime(targetCharacter, actor, node, node.associatedJobType, CRIME_TYPE.MISDEMEANOR);
@@ -134,7 +133,7 @@ public class Steal : GoapAction {
     //}
     public void AfterStealSuccess(ActualGoapNode goapNode) {
         goapNode.actor.PickUpToken(goapNode.poiTarget as SpecialToken, false);
-        if(goapNode.actor.traitContainer.GetNormalTrait<Trait>("Kleptomaniac") != null) {
+        if(goapNode.actor.traitContainer.HasTrait("Kleptomaniac")) {
             goapNode.actor.needsComponent.AdjustHappiness(10);
         }
     }

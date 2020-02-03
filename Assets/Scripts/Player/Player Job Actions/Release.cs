@@ -31,7 +31,7 @@ public class Release : PlayerSpell {
         if (targetCharacter.isDead) {
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Restrained") == null) {
+        if (!targetCharacter.traitContainer.HasTrait("Restrained")) {
             return false;
         }
         return base.CanPerformActionTowards(targetCharacter);
@@ -48,7 +48,7 @@ public class Release : PlayerSpell {
         if (targetCharacter.isDead) {
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Restrained") == null) {
+        if (!targetCharacter.traitContainer.HasTrait("Restrained")) {
             return false;
         }
         return base.CanTarget(targetCharacter, ref hoverText);

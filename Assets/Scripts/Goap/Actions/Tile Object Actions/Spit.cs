@@ -36,11 +36,11 @@ public class Spit : GoapAction {
             cost += timesCost;
             costLog += " +" + timesCost + "(10 x Times Spat)";
         }
-        if (actor.traitContainer.GetNormalTrait<Trait>("Evil") != null) {
+        if (actor.traitContainer.HasTrait("Evil")) {
             cost += -15;
             costLog += " -15(Evil)";
         }
-        if (actor.traitContainer.GetNormalTrait<Trait>("Treacherous") != null) {
+        if (actor.traitContainer.HasTrait("Treacherous")) {
             cost += -10;
             costLog += " -10(Treacherous)";
         }

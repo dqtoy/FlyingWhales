@@ -155,7 +155,7 @@ public class DouseFireState : CharacterState {
         return stateComponent.character.GetToken(SPECIAL_TOKEN.WATER_BUCKET) != null;
     }
     private bool NeedsWater() {
-        return stateComponent.character.traitContainer.GetNormalTrait<Trait>("Elemental Master") == null;
+        return !stateComponent.character.traitContainer.HasTrait("Elemental Master");
     }
     private bool StillHasFire() {
         return fires.Count > 0;
@@ -235,7 +235,7 @@ public class DouseFireState : CharacterState {
         currentTarget = null;
     }
     private bool AddFire(IPointOfInterest poi) {
-        Burning burning = poi.traitContainer.GetNormalTrait<Trait>("Burning") as Burning;
+        Burning burning = poi.traitContainer.GetNormalTrait<Burning>("Burning");
         if (burning != null) {
             if (!fires.ContainsKey(burning.sourceOfBurning)) {
                 fires.Add(burning.sourceOfBurning, new List<ITraitable>());

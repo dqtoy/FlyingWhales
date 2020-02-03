@@ -29,14 +29,14 @@ public class CombatComponent {
         if(target is Character) {
             debugLog += "\n-Target is character";
             Character targetCharacter = target as Character;
-            if (owner.traitContainer.GetNormalTrait<Trait>("Coward") != null) {
+            if (owner.traitContainer.HasTrait("Coward")) {
                 debugLog += "\n-Character is coward";
                 debugLog += "\n-FLIGHT";
                 owner.logComponent.PrintLogIfActive(debugLog);
                 Flight(target);
             } else {
                 debugLog += "\n-Character is not coward";
-                if (owner.traitContainer.GetNormalTrait<Trait>("Combatant") == null) {
+                if (!owner.traitContainer.HasTrait("Combatant")) {
                     debugLog += "\n-Character is not combatant, 20% to Fight";
                     int chance = UnityEngine.Random.Range(0, 100);
                     debugLog += "\n-Roll: " + chance;
@@ -83,7 +83,7 @@ public class CombatComponent {
             }
         } else {
             debugLog += "\n-Target is object";
-            if (owner.traitContainer.GetNormalTrait<Trait>("Coward") != null) {
+            if (owner.traitContainer.HasTrait("Coward")) {
                 debugLog += "\n-Character is coward";
                 debugLog += "\n-FLIGHT";
                 owner.logComponent.PrintLogIfActive(debugLog);
@@ -320,12 +320,27 @@ public class CombatComponent {
         SetOnProcessCombatAction(null);
     }
     private void ProcessCombatBehavior() {
-        if (owner.isInCombat) {
-            Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, owner);
+        string log = owner.name + " process combat switch is turned on, processing combat...";
+        if (owner.interruptComponent.isInterrupted) {
+            log += "\n-Character is interrupted: " + owner.interruptComponent.currentInterrupt.name +
+                   ", will not process combat";
         } else {
-            CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.COMBAT, CHARACTER_STATE.COMBAT, owner);
-            owner.jobQueue.AddJobInQueue(job);
+            if (owner.isInCombat) {
+                log += "\n-Character is already in combat, determining combat action to do";
+                Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, owner);
+            } else {
+                log += "\n-Character is not in combat, will add Combat job if there is a hostile or avoid in range";
+                if (hostilesInRange.Count > 0 || avoidInRange.Count > 0) {
+                    log += "\n-Combat job added";
+                    CharacterStateJob job = JobManager.Instance.CreateNewCharacterStateJob(JOB_TYPE.COMBAT, CHARACTER_STATE.COMBAT, owner);
+                    owner.jobQueue.AddJobInQueue(job);
+                } else {
+                    log += "\n-Combat job not added";
+                }
+            }
+            avoidReason = string.Empty;
         }
+        owner.logComponent.PrintLogIfActive(log);
         //execute any external combat actions. This assumes that this character entered combat state.
         
         //NOTE: Commented this out temporarily because we no longer immediately switch the state of the character to combat, instead we create a job and add it to its job queue
@@ -340,12 +355,9 @@ public class CombatComponent {
         onProcessCombat = action;
     }
     public void CheckCombatPerTickEnded() {
-        if (willProcessCombat && (hostilesInRange.Count > 0 || avoidInRange.Count > 0)) {
-            string log = owner.name + " process combat switch is turned on and there are hostiles or avoid in list, processing combat...";
+        if (willProcessCombat) {
             ProcessCombatBehavior();
-            avoidReason = string.Empty;
             willProcessCombat = false;
-            owner.logComponent.PrintLogIfActive(log);
         }
     }
     #endregion

@@ -40,7 +40,7 @@ namespace Traits {
 
             if (targetPOI is TileObject) {
                 TileObject tileObj = targetPOI as TileObject;
-                if (tileObj.isSummonedByPlayer && characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Suspicious") == null && !alreadyInspectedTileObjects.Contains(tileObj)) {
+                if (tileObj.isSummonedByPlayer && !characterThatWillDoJob.traitContainer.HasTrait("Suspicious") && !alreadyInspectedTileObjects.Contains(tileObj)) {
                     if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.INSPECT, tileObj)) {
                         GoapPlanJob inspectJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.INSPECT, INTERACTION_TYPE.INSPECT, tileObj, characterThatWillDoJob);
                         characterThatWillDoJob.jobQueue.AddJobInQueue(inspectJob);
@@ -49,7 +49,7 @@ namespace Traits {
                 }
             }
             if (targetPOI is SpecialToken) {
-                if (characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Beast") == null /*characterThatWillDoJob.role.roleType != CHARACTER_ROLE.BEAST*/) {
+                if (!characterThatWillDoJob.traitContainer.HasTrait("Beast") /*characterThatWillDoJob.role.roleType != CHARACTER_ROLE.BEAST*/) {
                     SpecialToken token = targetPOI as SpecialToken;
                     if (token.CanBePickedUpNormallyUponVisionBy(characterThatWillDoJob)
                     && !characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.PICK_UP)) {
@@ -67,7 +67,7 @@ namespace Traits {
                     targetCharacter = (targetPOI as Tombstone).character;
                 }
                 if (targetCharacter.isDead) {
-                    Dead deadTrait = targetCharacter.traitContainer.GetNormalTrait<Trait>("Dead") as Dead;
+                    Dead deadTrait = targetCharacter.traitContainer.GetNormalTrait<Dead>("Dead");
                     if (deadTrait != null && deadTrait.responsibleCharacter != characterThatWillDoJob 
                                           && !deadTrait.charactersThatSawThisDead.Contains(characterThatWillDoJob)) {
                         deadTrait.AddCharacterThatSawThisDead(characterThatWillDoJob);

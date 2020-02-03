@@ -37,11 +37,11 @@ public class Pray : GoapAction {
             cost += timesCost;
             costLog += " +" + timesCost + "(10 x Times Prayed)";
         }
-        if (actor.traitContainer.GetNormalTrait<Trait>("Evil", "Serial Killer") != null) {
+        if (actor.traitContainer.HasTrait("Evil", "Serial Killer")) {
             cost += 2000;
             costLog += " +2000(Evil/Psychopath)";
         }
-        if (actor.traitContainer.GetNormalTrait<Trait>("Chaste") != null) {
+        if (actor.traitContainer.HasTrait("Chaste")) {
             cost += -15;
             costLog += " -15(Chaste)";
         }
@@ -76,7 +76,7 @@ public class Pray : GoapAction {
             if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
                 return false;
             }
-            if (actor.traitContainer.GetNormalTrait<Trait>("Evil") != null) {
+            if (actor.traitContainer.HasTrait("Evil")) {
                 return false;
             }
             return actor == poiTarget;

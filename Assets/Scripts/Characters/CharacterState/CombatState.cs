@@ -124,7 +124,7 @@ public class CombatState : CharacterState {
     public override void AfterExitingState() {
         base.AfterExitingState();
         if (!stateComponent.character.isDead) {
-            if(isBeingApprehended && stateComponent.character.isCriminal && !stateComponent.character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
+            if(isBeingApprehended && stateComponent.character.traitContainer.HasTrait("Criminal") && !stateComponent.character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
                 //If this criminal character is being apprehended and survived (meaning he did not die, or is not unconscious or restrained)
                 if (!stateComponent.character.isFactionless) {
                     //Leave current faction
@@ -191,6 +191,10 @@ public class CombatState : CharacterState {
         if (stateComponent.character == character && stateComponent.currentState == this && !isPaused && !isDone) {
             DetermineIsBeingApprehended();
             string summary = character.name + " will determine a combat reaction";
+            if (stateComponent.character.marker.hasFleePath) {
+                
+            }
+            
             if (stateComponent.character.combatComponent.hostilesInRange.Count > 0) {
                 summary += "\nStill has hostiles, will attack...";
                 stateComponent.character.logComponent.PrintLogIfActive(summary);

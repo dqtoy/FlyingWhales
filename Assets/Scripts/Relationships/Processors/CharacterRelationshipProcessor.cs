@@ -28,16 +28,16 @@ public class CharacterRelationshipProcessor : IRelationshipProcessor {
                         //character1.homeRegion.area.AssignCharacterToDwellingInArea(character1, character2.homeStructure);
                     }
                 }
-                character1.opinionComponent.AdjustOpinion(character2, relString, 30);
+                // character1.opinionComponent.AdjustOpinion(character2, relString, 30);
                 //character2.opinionComponent.AdjustOpinion(character1, relString, 30);
                 break;
             case RELATIONSHIP_TYPE.EX_LOVER:
-                character1.opinionComponent.AdjustOpinion(character2, relString, -25);
+                // character1.opinionComponent.AdjustOpinion(character2, relString, -25);
                 //character2.opinionComponent.AdjustOpinion(character1, relString, -25);
                 break;
             case RELATIONSHIP_TYPE.RELATIVE:
             case RELATIONSHIP_TYPE.AFFAIR:
-                character1.opinionComponent.AdjustOpinion(character2, relString, 20);
+                // character1.opinionComponent.AdjustOpinion(character2, relString, 20);
                 //character2.opinionComponent.AdjustOpinion(character1, relString, 20);
                 break;
             default:

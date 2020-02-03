@@ -157,18 +157,18 @@ public class NonActionEventsComponent {
             }
         }
 
-        if (owner.traitContainer.GetNormalTrait<Trait>("Hothead") != null) {
+        if (owner.traitContainer.HasTrait("Hothead")) {
             chatWeights.AddWeightToElement(Argument, 15);
             strLog += "\n\nActor is Hotheaded, modified weights...";
             strLog += "\nArgument: +15";
         }
-        if (target.traitContainer.GetNormalTrait<Trait>("Hothead") != null) {
+        if (target.traitContainer.HasTrait("Hothead")) {
             chatWeights.AddWeightToElement(Argument, 15);
             strLog += "\n\nTarget is Hotheaded, modified weights...";
             strLog += "\nArgument: +15";
         }
 
-        if (owner.traitContainer.GetNormalTrait<Trait>("Diplomatic") != null) {
+        if (owner.traitContainer.HasTrait("Diplomatic")) {
             chatWeights.AddWeightToElement(Insult, -30);
             chatWeights.AddWeightToElement(Praise, 30);
             strLog += "\n\nActor is Diplomatic, modified weights...";
@@ -180,7 +180,7 @@ public class NonActionEventsComponent {
         string result = chatWeights.PickRandomElementGivenWeights();
         strLog += "\nResult: " + result;
 
-        if (owner.traitContainer.GetNormalTrait<Trait>("Plagued") != null && target.traitContainer.GetNormalTrait<Trait>("Plagued") == null) {
+        if (owner.traitContainer.HasTrait("Plagued") && !target.traitContainer.HasTrait("Plagued")) {
             strLog += "\n\nCharacter has Plague, 25% chance to infect the Target";
             int roll = UnityEngine.Random.Range(0, 100);
             strLog += "\nRoll: " + roll;
@@ -188,7 +188,7 @@ public class NonActionEventsComponent {
                 target.interruptComponent.TriggerInterrupt(INTERRUPT.Plagued, target);
                 // target.traitContainer.AddTrait(target, "Plagued", owner);
             }
-        } else if (owner.traitContainer.GetNormalTrait<Trait>("Plagued") == null && target.traitContainer.GetNormalTrait<Trait>("Plagued") != null) {
+        } else if (!owner.traitContainer.HasTrait("Plagued") && target.traitContainer.HasTrait("Plagued")) {
             strLog += "\n\nTarget has Plague, 25% chance to infect the Character";
             int roll = UnityEngine.Random.Range(0, 100);
             strLog += "\nRoll: " + roll;
@@ -261,10 +261,10 @@ public class NonActionEventsComponent {
     private void TriggerBreakUp(Character target, RELATIONSHIP_TYPE relationship, string reason) {
         RelationshipManager.Instance.RemoveRelationshipBetween(owner, target, relationship);
         //upon break up, if one of them still has a Positive opinion of the other, he will gain Heartbroken trait
-        if (!owner.isSerialKiller) { //owner.opinionComponent.GetTotalOpinion(target) >= 0
+        if (!owner.traitContainer.HasTrait("Serial Killer")) { //owner.opinionComponent.GetTotalOpinion(target) >= 0
             owner.traitContainer.AddTrait(owner, "Heartbroken", target);
         }
-        if (!target.isSerialKiller) { //target.opinionComponent.GetTotalOpinion(owner) >= 0
+        if (!target.traitContainer.HasTrait("Serial Killer")) { //target.opinionComponent.GetTotalOpinion(owner) >= 0
             target.traitContainer.AddTrait(target, "Heartbroken", owner);
         }
         RelationshipManager.Instance.CreateNewRelationshipBetween(owner, target, RELATIONSHIP_TYPE.EX_LOVER);
@@ -318,7 +318,7 @@ public class NonActionEventsComponent {
     private string TriggerFlirtCharacter(Character target) {
         int chance = UnityEngine.Random.Range(0, 100);
         if(chance < 50) {
-            if (owner.traitContainer.GetNormalTrait<Trait>("Ugly") != null) {
+            if (owner.traitContainer.HasTrait("Ugly")) {
                 owner.opinionComponent.AdjustOpinion(target, "Base", -4, "engaged in disastrous flirting");
                 target.opinionComponent.AdjustOpinion(owner, "Base", -2, "engaged in disastrous flirting");
                 return "ugly";

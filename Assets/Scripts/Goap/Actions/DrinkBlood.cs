@@ -32,7 +32,7 @@ public class DrinkBlood : GoapAction {
         costLog += " +" + cost + "(Initial)";
         if(target is Character) {
             Character targetCharacter = target as Character;
-            if (targetCharacter.isVampire) {
+            if (targetCharacter.traitContainer.HasTrait("Vampiric")) {
                 cost += 2000;
                 costLog += " +2000(Vampire)";
                 actor.logComponent.AppendCostLog(costLog);
@@ -126,7 +126,7 @@ public class DrinkBlood : GoapAction {
         string response = base.ReactionToActor(witness, node);
         Character actor = node.actor;
         IPointOfInterest target = node.poiTarget;
-        if (!witness.isVampire) {
+        if (!witness.traitContainer.HasTrait("Vampiric")) {
             CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.HEINOUS);
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor);
 
@@ -134,9 +134,9 @@ public class DrinkBlood : GoapAction {
             if (opinionLabel == OpinionComponent.Acquaintance || opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Despair, witness, actor);
             }
-            if(witness.traitContainer.GetNormalTrait<Trait>("Coward") != null) {
+            if(witness.traitContainer.HasTrait("Coward")) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor);
-            } else if (!witness.isSerialKiller) {
+            } else if (!witness.traitContainer.HasTrait("Serial Killer")) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, actor);
             }
         }
@@ -147,7 +147,7 @@ public class DrinkBlood : GoapAction {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor);
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor);
             } else if (opinionLabel == OpinionComponent.Acquaintance || witness.faction == targetCharacter.faction || witness.homeSettlement == targetCharacter.homeSettlement) {
-                if (!witness.isSerialKiller) {
+                if (!witness.traitContainer.HasTrait("Serial Killer")) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor);
                 }
             }
@@ -162,7 +162,7 @@ public class DrinkBlood : GoapAction {
             Character targetCharacter = target as Character;
             CrimeManager.Instance.ReactToCrime(targetCharacter, actor, node, node.associatedJobType, CRIME_TYPE.HEINOUS);
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, targetCharacter, actor);
-            if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Coward") != null) {
+            if (targetCharacter.traitContainer.HasTrait("Coward")) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, targetCharacter, actor);
             } else {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, targetCharacter, actor);
@@ -182,7 +182,7 @@ public class DrinkBlood : GoapAction {
             //if (actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
             //    return false;
             //}
-            return actor != poiTarget && actor.isVampire;
+            return actor != poiTarget && actor.traitContainer.HasTrait("Vampiric");
         }
         return false;
     }
@@ -191,7 +191,7 @@ public class DrinkBlood : GoapAction {
     #region Preconditions
     private bool HasUnconsciousOrRestingTarget(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         Character target = poiTarget as Character;
-        return target.traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting") != null;
+        return target.traitContainer.HasTrait("Unconscious", "Resting");
     }
     #endregion
 

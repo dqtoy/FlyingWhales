@@ -79,11 +79,11 @@ public class TheProfane : BaseLandmark {
     }
     public int GetConvertToCultistCost(Character character) {
         float manaCost = 0;
-        if (character.traitContainer.GetNormalTrait<Trait>("Evil") != null) {
+        if (character.traitContainer.HasTrait("Evil")) {
             manaCost = 200;
-        } else if (character.traitContainer.GetNormalTrait<Trait>("Disillusioned") != null) {
+        } else if (character.traitContainer.HasTrait("Disillusioned")) {
             manaCost = 300;
-        } else if (character.traitContainer.GetNormalTrait<Trait>("Treacherous") != null) {
+        } else if (character.traitContainer.HasTrait("Treacherous")) {
             manaCost = 300;
         }
 

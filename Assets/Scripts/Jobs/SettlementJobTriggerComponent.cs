@@ -121,7 +121,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	}
 	private void OnCharacterEnteredHexTile(Character character, HexTile tile) {
 		if (_owner.tiles.Contains(tile)) {
-			if (character.isCriminal) {
+			if (character.traitContainer.HasTrait("Criminal")) {
 				TryCreateApprehend(character);
 			}
 		}
@@ -320,7 +320,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 
 	#region Judge Prisoner
 	private void TryCreateJudgePrisoner(Character target) {
-		if (target.traitContainer.GetNormalTrait<Trait>("Restrained") != null 
+		if (target.traitContainer.HasTrait("Restrained")
 		    && target.currentStructure.structureType == STRUCTURE_TYPE.PRISON
 		    && target.currentStructure.settlementLocation == _owner) {
 			if (!target.HasJobTargetingThis(JOB_TYPE.JUDGE_PRISONER)) {
@@ -335,7 +335,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 
 	#region Apprehend
 	private void TryCreateApprehend(Character target) {
-		if (target.currentSettlement == _owner && target.isCriminal) {
+		if (target.currentSettlement == _owner && target.traitContainer.HasTrait("Criminal")) {
 			if (target.faction == _owner.owner || target.faction.IsHostileWith(_owner.owner)) {
 				if (_owner.HasJob(JOB_TYPE.APPREHEND, target) == false) {
 					GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP, 
@@ -432,7 +432,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		string summary = $"{GameManager.Instance.TodayLogString()}{_owner.name} is under siege, trying to create knockout jobs...";
 		if (CanCreateKnockoutJob()) {
 			int combatantResidents = 
-				_owner.residents.Count(x => x.traitContainer.GetNormalTrait<Trait>("Combatant") != null);
+				_owner.residents.Count(x => x.traitContainer.HasTrait("Combatant"));
 			int existingKnockoutJobs = _owner.GetNumberOfJobsWith(JOB_TYPE.KNOCKOUT);
 			summary += $"\nCombatant residents: {combatantResidents.ToString()}";
 			summary += $"\nExisting knockout jobs: {existingKnockoutJobs.ToString()}";
@@ -454,7 +454,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	private void TryCreateKnockoutJobs(Character target) {
 		if (CanCreateKnockoutJob() && target.faction.IsHostileWith(_owner.owner)) {
 			int combatantResidents = 
-				_owner.residents.Count(x => x.traitContainer.GetNormalTrait<Trait>("Combatant") != null);
+				_owner.residents.Count(x => x.traitContainer.HasTrait("Combatant"));
 			int existingKnockoutJobs = _owner.GetNumberOfJobsWith(JOB_TYPE.KNOCKOUT);
 			int jobsToCreate = combatantResidents - existingKnockoutJobs;
 			for (int i = 0; i < jobsToCreate; i++) {
@@ -464,7 +464,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	}
 	private bool CanCreateKnockoutJob() {
 		int combatantResidents = 
-			_owner.residents.Count(x => x.traitContainer.GetNormalTrait<Trait>("Combatant") != null);
+			_owner.residents.Count(x => x.traitContainer.HasTrait("Combatant"));
 		int existingKnockoutJobs = _owner.GetNumberOfJobsWith(JOB_TYPE.KNOCKOUT);
 		return existingKnockoutJobs < combatantResidents;
 	}
@@ -517,11 +517,11 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 				return true;
 			} else {
 				//if burning character is other character, make sure that the character that will do the job is not burning.
-				return character.traitContainer.GetNormalTrait<Trait>("Burning", "Pyrophobic") == null && !character.opinionComponent.IsEnemiesWith(targetCharacter);
+				return !character.traitContainer.HasTrait("Burning", "Pyrophobic") && !character.opinionComponent.IsEnemiesWith(targetCharacter);
 			}
 		} else {
 			//make sure that the character that will do the job is not burning.
-			return character.traitContainer.GetNormalTrait<Trait>("Burning", "Pyrophobic") == null;
+			return !character.traitContainer.HasTrait("Burning", "Pyrophobic");
 		}
 	}
 	#endregion

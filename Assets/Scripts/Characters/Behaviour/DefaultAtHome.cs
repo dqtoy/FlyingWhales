@@ -33,7 +33,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                     int chance = UnityEngine.Random.Range(0, 100);
                     log += "\n  -RNG roll: " + chance;
                     if (chance < 35) {
-                        if (character.traitContainer.GetNormalTrait<Trait>("Agoraphobic") != null) {
+                        if (character.traitContainer.HasTrait("Agoraphobic")) {
                             log += "\n  -Character is agoraphobic, not going to inn";
                         } else {
                             //StartGOAP(INTERACTION_TYPE.DRINK, null, GOAP_CATEGORY.IDLE);
@@ -58,7 +58,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                     if (chance < 25) {
                         TileObject bed = character.currentStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.BED);
                         if (bed != null) {
-                            if (character.isVampire) {
+                            if (character.traitContainer.HasTrait("Vampiric")) {
                                 log += "\n  -Character is vampiric, cannot do nap action";
                             } else {
                                 log += "\n  -Afternoon: " + character.name + " will do action Nap on " + bed.ToString();

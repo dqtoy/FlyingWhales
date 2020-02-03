@@ -57,7 +57,7 @@ public class Agoraphobia : PlayerSpell {
         if (targetCharacter.isDead) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Agoraphobic") != null) {
+        if (targetCharacter.traitContainer.HasTrait("Agoraphobic")) {
             return false;
         }
         //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
@@ -88,7 +88,7 @@ public class Agoraphobia : PlayerSpell {
         if (targetCharacter.isDead) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Agoraphobic") != null) {
+        if (targetCharacter.traitContainer.HasTrait("Agoraphobic")) {
             return false;
         }
         //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
@@ -115,7 +115,7 @@ public class AgoraphobiaData : SpellData {
         PlayerManager.Instance.player.ShowNotification(log);
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
-        if (targetCharacter.isDead || targetCharacter.traitContainer.GetNormalTrait<Trait>("Agoraphobic") != null) {
+        if (targetCharacter.isDead || targetCharacter.traitContainer.HasTrait("Agoraphobic")) {
             return false;
         }
         return base.CanPerformAbilityTowards(targetCharacter);

@@ -136,7 +136,7 @@ public class PlayerSpell {
         return CanPerformAction();
     }
     protected virtual bool CanPerformActionTowards(Character targetCharacter) {
-        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Blessed") != null) {
+        if (targetCharacter.traitContainer.HasTrait("Blessed")) {
             return false;
         }
         //Quick fix only, remove this later
@@ -164,7 +164,7 @@ public class PlayerSpell {
     /// <param name="poi">The target poi</param>
     /// <returns>true or false</returns>
     public virtual bool CanTarget(IPointOfInterest poi, ref string hoverText) {
-        if (poi.traitContainer.GetNormalTrait<Trait>("Blessed") != null) {
+        if (poi.traitContainer.HasTrait("Blessed")) {
             hoverText = "Blessed characters cannot be targetted.";
             return false;
         }
@@ -252,7 +252,7 @@ public class SpellData {
     public virtual void ActivateAbility(IPointOfInterest targetPOI) { }
     public virtual void ActivateAbility(LocationGridTile targetTile) { }
     public virtual bool CanPerformAbilityTowards(Character targetCharacter) {
-        if((targetCharacter.race != RACE.HUMANS && targetCharacter.race != RACE.ELVES) || targetCharacter.traitContainer.GetNormalTrait<Trait>("Blessed") != null) {
+        if((targetCharacter.race != RACE.HUMANS && targetCharacter.race != RACE.ELVES) || targetCharacter.traitContainer.HasTrait("Blessed")) {
             return false;
         }
         return true;

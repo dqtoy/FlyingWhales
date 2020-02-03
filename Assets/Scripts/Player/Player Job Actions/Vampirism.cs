@@ -60,7 +60,7 @@ public class Vampirism : PlayerSpell {
         if (Utilities.IsRaceBeast(targetCharacter.race) || targetCharacter.race == RACE.SKELETON) {
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Vampiric", "Cannibal") != null) {
+        if (targetCharacter.traitContainer.HasTrait("Vampiric", "Cannibal")) {
             return false;
         }
         //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
@@ -94,7 +94,7 @@ public class Vampirism : PlayerSpell {
         if (Utilities.IsRaceBeast(targetCharacter.race) || targetCharacter.race == RACE.SKELETON) {
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Vampiric", "Cannibal") != null) {
+        if (targetCharacter.traitContainer.HasTrait("Vampiric", "Cannibal")) {
 
             return false;
         }
@@ -122,7 +122,7 @@ public class VampirismData : SpellData {
         PlayerManager.Instance.player.ShowNotification(log);
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
-        if (targetCharacter.isDead || targetCharacter.race == RACE.SKELETON || targetCharacter.traitContainer.GetNormalTrait<Trait>("Cannibal", "Vampiric", "Beast") != null) {
+        if (targetCharacter.isDead || targetCharacter.race == RACE.SKELETON || targetCharacter.traitContainer.HasTrait("Cannibal", "Vampiric", "Beast")) {
             return false;
         }
         return base.CanPerformAbilityTowards(targetCharacter);

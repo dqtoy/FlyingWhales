@@ -6,15 +6,15 @@ public partial class InteractionManager {
         return character.canCombat;
     }
     public bool IsSuicideJobStillValid(Character character) {
-        return character.traitContainer.GetNormalTrait<Trait>("Sulking") != null;
+        return character.traitContainer.HasTrait("Sulking");
     }
     public bool CanMoveOut(Character character) {
         TIME_IN_WORDS time = TIME_IN_WORDS.MORNING;
-        if (character.traitContainer.GetNormalTrait<Trait>("Nocturnal") != null) {
+        if (character.traitContainer.HasTrait("Nocturnal")) {
             //if nocturnal get after midnight
             time = TIME_IN_WORDS.AFTER_MIDNIGHT;
         }
-        return character.traitContainer.GetNormalTrait<Trait>("Leader") != null /*character.role.roleType != CHARACTER_ROLE.LEADER*/ &&
+        return character.traitContainer.HasTrait("Leader") /*character.role.roleType != CHARACTER_ROLE.LEADER*/ &&
                GameManager.GetTimeInWordsOfTick(GameManager.Instance.tick) ==
                time; //Only non-leaders can take move out job, and it must also be in the morning time.
     }
@@ -23,80 +23,80 @@ public partial class InteractionManager {
         return furnitureToCreate.CanBeCraftedBy(character);
     }
     public bool CanDoDestroyProfaneJob(Character character) {
-        return character.traitContainer.GetNormalTrait<Trait>("Combatant") != null;
+        return character.traitContainer.HasTrait("Combatant");
         //return character.role.roleType == CHARACTER_ROLE.SOLDIER;
     }
     public bool CanDoCombatJob(Character character) {
-        return character.traitContainer.GetNormalTrait<Trait>("Combatant") != null;
+        return character.traitContainer.HasTrait("Combatant");
         //return character.role.roleType == CHARACTER_ROLE.SOLDIER;
     }
     public bool CanDoObtainFoodOutsideJob(Character character) {
-        return character.traitContainer.GetNormalTrait<Trait>("Worker") != null;
+        return character.traitContainer.HasTrait("Worker");
         //return character.role.roleType == CHARACTER_ROLE.CIVILIAN;
     }
     public bool CanDoObtainSupplyOutsideJob(Character character) {
-        return character.traitContainer.GetNormalTrait<Trait>("Worker") != null;
+        return character.traitContainer.HasTrait("Worker");
         //return character.role.roleType == CHARACTER_ROLE.CIVILIAN;
     }
     public bool CanDoHolyIncantationJob(Character character) {
-        return character.traitContainer.GetNormalTrait<Trait>("Combatant") != null;
+        return character.traitContainer.HasTrait("Combatant");
         //return character.role.roleType == CHARACTER_ROLE.ADVENTURER;
     }
     public bool CanDoExploreJob(Character character) {
-        return character.traitContainer.GetNormalTrait<Trait>("Combatant") != null;
+        return character.traitContainer.HasTrait("Combatant");
         //return character.role.roleType == CHARACTER_ROLE.ADVENTURER;
     }
     public bool CanDoCleanseRegionJob(Character character) {
-        return character.traitContainer.GetNormalTrait<Trait>("Purifier") != null;
+        return character.traitContainer.HasTrait("Purifier");
 //        return true;
     }
     public bool CanDoClaimRegionJob(Character character) {
-        return character.traitContainer.GetNormalTrait<Trait>("Royalty") != null;
+        return character.traitContainer.HasTrait("Royalty");
     }
     public bool CanDoInvadeRegionJob(Character character) {
-        return character.traitContainer.GetNormalTrait<Trait>("Raider") != null;
+        return character.traitContainer.HasTrait("Raider");
     }
     public bool CanDoAttackNonDemonicRegionJob(Character character) {
-        return character.characterClass.isNonCombatant == false || character.characterClass.className.Equals("Noble") || character.characterClass.className.Equals("Leader");
+        return character.characterClass.isNormalNonCombatant == false || character.characterClass.className.Equals("Noble") || character.characterClass.className.Equals("Leader");
     }
     public bool CanDoAttackDemonicRegionJob(Character character) {
-        return character.characterClass.isNonCombatant == false || character.characterClass.className.Equals("Noble") || character.characterClass.className.Equals("Leader");
+        return character.characterClass.isNormalNonCombatant == false || character.characterClass.className.Equals("Noble") || character.characterClass.className.Equals("Leader");
     }
     public bool CanDoJudgementJob(Character character) {
-        return character.isSettlementRuler || character.isFactionLeader || character.characterClass.className == "Noble" || character.traitContainer.GetNormalTrait<Trait>("Combatant") != null;
+        return character.isSettlementRuler || character.isFactionLeader || character.characterClass.className == "Noble";
         //return character.role.roleType == CHARACTER_ROLE.NOBLE || character.role.roleType == CHARACTER_ROLE.LEADER;
     }
     public bool CanDoSabotageFactionJob(Character character) {
-        return character.traitContainer.GetNormalTrait<Trait>("Cultist") != null;
+        return character.traitContainer.HasTrait("Cultist");
     }
     public bool CanCraftTool(Character character) {
         //return character.HasExtraTokenInInventory(SPECIAL_TOKEN.TOOL);
         return SPECIAL_TOKEN.TOOL.CanBeCraftedBy(character);
     }
     public bool CanDoObtainSupplyJob(Character character) {
-        return character.traitContainer.GetNormalTrait<Trait>("Combatant") != null;
+        return character.traitContainer.HasTrait("Combatant");
         //return character.role.roleType == CHARACTER_ROLE.SOLDIER;
     }
     public bool CanDoProduceWoodJob(Character character) {
-        return character.traitContainer.GetNormalTrait<Trait>("Logger") != null;
+        return character.traitContainer.HasTrait("Logger");
         //return character.role.roleType == CHARACTER_ROLE.SOLDIER;
     }
     public bool CanDoProduceMetalJob(Character character) {
-        return character.traitContainer.GetNormalTrait<Trait>("Miner") != null;
+        return character.traitContainer.HasTrait("Miner");
         //return character.role.roleType == CHARACTER_ROLE.SOLDIER;
     }
     public bool CanCharacterTakeBuildGoddessStatueJob(Character character) {
-        return character.traitContainer.GetNormalTrait<Trait>("Builder") != null;
+        return character.traitContainer.HasTrait("Builder");
     }
     public bool CanBrewPotion(Character character) {
         //return character.HasExtraTokenInInventory(SPECIAL_TOKEN.HEALING_POTION);
         return SPECIAL_TOKEN.HEALING_POTION.CanBeCraftedBy(character);
     }
     public bool CanTakeBuryJob(Character character) {
-        if (!character.isCriminal && character.isAtHomeRegion &&
+        if (!character.traitContainer.HasTrait("Criminal") && character.isAtHomeRegion &&
             character.isPartOfHomeFaction
-            && character.traitContainer.GetNormalTrait<Trait>("Beast") == null /*character.role.roleType != CHARACTER_ROLE.BEAST*/) {
-            return character.traitContainer.GetNormalTrait<Trait>("Worker", "Combatant") != null;
+            && !character.traitContainer.HasTrait("Beast") /*character.role.roleType != CHARACTER_ROLE.BEAST*/) {
+            return character.traitContainer.HasTrait("Worker", "Combatant");
             //return character.role.roleType == CHARACTER_ROLE.SOLDIER ||
             //       character.role.roleType == CHARACTER_ROLE.CIVILIAN;
         }
@@ -119,11 +119,11 @@ public partial class InteractionManager {
         return false;
     }
     public bool CanCharacterTakeApprehendJob(Character character, Character targetCharacter) {
-        if (character.isAtHomeRegion && !character.isCriminal &&
-            character.traitContainer.GetNormalTrait<Trait>("Coward") == null && character.homeSettlement != null && character.homeSettlement.prison != null) {
-            Restrained restrainedTrait = targetCharacter.traitContainer.GetNormalTrait<Trait>("Restrained") as Restrained;
+        if (character.isAtHomeRegion && !character.traitContainer.HasTrait("Criminal") &&
+            !character.traitContainer.HasTrait("Coward") && character.homeSettlement != null && character.homeSettlement.prison != null) {
+            Restrained restrainedTrait = targetCharacter.traitContainer.GetNormalTrait<Restrained>("Restrained");
             if (restrainedTrait == null || !restrainedTrait.isPrisoner) {
-                return character.traitContainer.GetNormalTrait<Trait>("Combatant") != null /*character.role.roleType == CHARACTER_ROLE.SOLDIER*/ &&
+                return character.traitContainer.HasTrait("Combatant") /*character.role.roleType == CHARACTER_ROLE.SOLDIER*/ &&
                    character.opinionComponent.GetRelationshipEffectWith(targetCharacter) !=
                    RELATIONSHIP_EFFECT.POSITIVE;
             }
@@ -140,17 +140,17 @@ public partial class InteractionManager {
             //&& (character.role.roleType == CHARACTER_ROLE.SOLDIER ||
             //character.role.roleType == CHARACTER_ROLE.CIVILIAN ||
             //character.role.roleType == CHARACTER_ROLE.ADVENTURER)
-            && character.traitContainer.GetNormalTrait<Trait>("Worker", "Combatant") != null
+            && character.traitContainer.HasTrait("Worker", "Combatant")
             && character.opinionComponent.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.POSITIVE 
-            && !character.isCriminal
-            && targetCharacter.traitContainer.GetNormalTrait<Trait>("Restrained") == null;
+            && !character.traitContainer.HasTrait("Criminal")
+            && !targetCharacter.traitContainer.HasTrait("Restrained");
     }
     public bool CanCharacterTakeRepairJob(Character character) {
         // if (job is GoapPlanJob) {
         //     GoapPlanJob goapPlanJob = job as GoapPlanJob;
         //     return goapPlanJob.targetPOI.
         // }
-        return character.traitContainer.GetNormalTrait<Trait>("Worker", "Combatant") != null;
+        return character.traitContainer.HasTrait("Worker", "Combatant");
         //return character.role.roleType == CHARACTER_ROLE.SOLDIER ||
         //       character.role.roleType == CHARACTER_ROLE.CIVILIAN ||
         //       character.role.roleType == CHARACTER_ROLE.ADVENTURER;
@@ -168,12 +168,12 @@ public partial class InteractionManager {
     public bool CanCharacterTakeRestrainedFeedJob(Character sourceCharacter, Character character) {
         if (sourceCharacter.currentRegion.IsResident(character)) {
             if (!character.isFactionless) {
-                return character.traitContainer.GetNormalTrait<Trait>("Worker", "Combatant") != null;
+                return character.traitContainer.HasTrait("Worker", "Combatant");
                 //return character.role.roleType == CHARACTER_ROLE.SOLDIER ||
                 //       character.role.roleType == CHARACTER_ROLE.CIVILIAN;
             }
             else {
-                return character.traitContainer.GetNormalTrait<Trait>("Beast") == null /*character.role.roleType != CHARACTER_ROLE.BEAST*/ &&
+                return !character.traitContainer.HasTrait("Beast") /*character.role.roleType != CHARACTER_ROLE.BEAST*/ &&
                        sourceCharacter.currentStructure.structureType.IsOpenSpace();
             }
         }
@@ -185,15 +185,15 @@ public partial class InteractionManager {
                RELATIONSHIP_EFFECT.NEGATIVE;
     }
     public bool CanCharacterTakeKnockoutJob(Character character, Character targetCharacter) {
-        return character.traitContainer.GetNormalTrait<Trait>("Combatant") != null;
+        return character.traitContainer.HasTrait("Combatant");
         //return character.role.roleType == CHARACTER_ROLE.SOLDIER ||
         //       character.role.roleType == CHARACTER_ROLE.ADVENTURER; // && !HasRelationshipOfEffectWith(targetCharacter, TRAIT_EFFECT.POSITIVE)
     }
     public bool CanCharacterTakeBuildJob(Character character) {
-        return character.traitContainer.GetNormalTrait<Trait>("Builder") != null;
+        return character.traitContainer.HasTrait("Builder");
     }
     public bool CanCharacterTakeRepairStructureJob(Character character) {
-        return character.traitContainer.GetNormalTrait<Trait>("Builder") != null;
+        return character.traitContainer.HasTrait("Builder");
     }
 
 
@@ -207,7 +207,7 @@ public partial class InteractionManager {
             //Character is no longer in jail
             return false;
         }
-        if (criminal.traitContainer.GetNormalTrait<Trait>("Restrained") == null) {
+        if (!criminal.traitContainer.HasTrait("Restrained")) {
             //Character is no longer restrained
             return false;
         }

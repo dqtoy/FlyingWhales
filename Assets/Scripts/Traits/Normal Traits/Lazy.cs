@@ -21,13 +21,12 @@ namespace Traits {
             base.OnAddTrait(addedTo);
             if (addedTo is Character) {
                 owner = addedTo as Character;
-                owner.SetIsLazy(true);
             }
         }
-        public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
-            base.OnRemoveTrait(removedFrom, removedBy);
-            owner.SetIsLazy(false);
-        }
+        // public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
+        //     base.OnRemoveTrait(removedFrom, removedBy);
+        //     owner.SetIsLazy(false);
+        // }
         public override string TriggerFlaw(Character character) {
             //Will drop current action and will perform Happiness Recovery.
             if (!character.jobQueue.HasJob(JOB_TYPE.TRIGGER_FLAW)) {
@@ -39,7 +38,7 @@ namespace Traits {
                 }
 
                 bool triggerBrokenhearted = false;
-                Heartbroken heartbroken = character.traitContainer.GetNormalTrait<Trait>("Heartbroken") as Heartbroken;
+                Heartbroken heartbroken = character.traitContainer.GetNormalTrait<Heartbroken>("Heartbroken");
                 if (heartbroken != null) {
                     triggerBrokenhearted = UnityEngine.Random.Range(0, 100) < 20;
                 }

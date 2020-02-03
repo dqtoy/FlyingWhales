@@ -61,6 +61,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			if (_owner.currentSettlement != null && _owner.currentSettlement.isUnderSeige) {
 				TriggerFleeHome();	
 			}
+			_owner.needsComponent.CheckExtremeNeeds();
 		}
 	}
 	private void OnCharacterCanNoLongerPerform(Character character) {
@@ -69,7 +70,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			if (character.interruptComponent.isInterrupted &&
 			           character.interruptComponent.currentInterrupt.interrupt == INTERRUPT.Narcoleptic_Attack) {
 				//Don't do anything
-			} else if (character.currentActionNode != null && (character.currentActionNode.action.goapType == INTERACTION_TYPE.NAP || character.currentActionNode.action.goapType == INTERACTION_TYPE.SLEEP || character.currentActionNode.action.goapType == INTERACTION_TYPE.SLEEP_OUTSIDE)) {
+			} else if (character.traitContainer.HasTrait("Resting")) {
 				character.CancelAllJobsExceptForCurrent();
 			} else {
 				character.jobQueue.CancelAllJobs();
@@ -245,10 +246,10 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		if (target.gridTileLocation.IsNextToOrPartOfSettlement(job.originalOwner as Settlement) == false) {
 			return false;
 		}
-		if (target.isCriminal) {
+		if (target.traitContainer.HasTrait("Criminal")) {
 			return false;
 		}
-		if (target.traitContainer.GetNormalTrait<Trait>(trait.name) == null) {
+		if (!target.traitContainer.HasTrait(trait.name)) {
 			return false; //target no longer has the given trait
 		}
 		return true;
@@ -274,15 +275,15 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 					       character.opinionComponent.HasOpinionLabelWithCharacter(targetCharacter,
 						       OpinionComponent.Rival, OpinionComponent.Enemy) == false 
 					       && isResponsibleForTrait == false
-                           && !character.isSerialKiller
-                           && character.traitContainer.GetNormalTrait<Trait>("Healer") != null;	
+                           && !character.traitContainer.HasTrait("Serial Killer")
+                           && character.traitContainer.HasTrait("Healer");	
 				}
 				
 				return isHostile == false &&
 				       character.opinionComponent.HasOpinionLabelWithCharacter(targetCharacter,
 					       OpinionComponent.Rival, OpinionComponent.Enemy) == false 
 				       && isResponsibleForTrait == false
-                       && !character.isSerialKiller;
+                       && !character.traitContainer.HasTrait("Serial Killer");
 			}
 		}
 		return false;
@@ -295,8 +296,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			return;
 		}
 		if ((_owner.canMove == false && 
-		     _owner.traitContainer.GetNormalTrait<Trait>("Exhausted", "Starving", "Sulking") != null)
-		    || (_owner.traitContainer.GetNormalTrait<Trait>("Restrained") != null && _owner.currentStructure.structureType != STRUCTURE_TYPE.PRISON)) {
+		     _owner.traitContainer.HasTrait("Exhausted", "Starving", "Sulking"))
+		    || (_owner.traitContainer.HasTrait("Restrained") && _owner.currentStructure.structureType != STRUCTURE_TYPE.PRISON)) {
 			hasStartedScreamCheck = true;
 			Messenger.AddListener(Signals.HOUR_STARTED, HourlyScreamCheck);
 			Debug.Log($"<color=green>{GameManager.Instance.TodayLogString()}{_owner.name} has started scream check</color>");
@@ -306,9 +307,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		if (hasStartedScreamCheck == false) {
 			return;
 		}
-		bool isNotNeedy = _owner.traitContainer.GetNormalTrait<Trait>("Exhausted", "Starving", "Sulking") == null;
-		bool isNotRestrained = _owner.traitContainer.GetNormalTrait<Trait>("Restrained") == null;
-		bool isRestrainedButInPrison = _owner.traitContainer.GetNormalTrait<Trait>("Restrained") != null &&
+		bool isNotNeedy = !_owner.traitContainer.HasTrait("Exhausted", "Starving", "Sulking");
+		bool isNotRestrained = !_owner.traitContainer.HasTrait("Restrained");
+		bool isRestrainedButInPrison = _owner.traitContainer.HasTrait("Restrained") &&
 		                               _owner.currentStructure.structureType == STRUCTURE_TYPE.PRISON;
 		
 		//scream will stop check if
@@ -330,7 +331,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		string summary = $"{_owner.name} is checking for scream.";
 		int chance = 50;
 		if (_owner.canMove == false && 
-		    _owner.traitContainer.GetNormalTrait<Trait>("Exhausted", "Starving", "Sulking") != null) {
+		    _owner.traitContainer.HasTrait("Exhausted", "Starving", "Sulking")) {
 			chance = 75;
 		}
 		summary += $"Chance is {chance.ToString()}.";
@@ -357,13 +358,13 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	#region Remove Status
 	private void TryCreateRemoveStatusJob(Trait trait) {
 		if (_owner.homeSettlement != null && _owner.gridTileLocation.IsNextToOrPartOfSettlement(_owner.homeSettlement)
-		    && _owner.isCriminal == false) {
+		    && _owner.traitContainer.HasTrait("Criminal") == false) {
 			TriggerRemoveStatus(trait);
 		}
 	}
 	private void TryCreateRemoveStatusJob() {
 		if (_owner.homeSettlement != null && _owner.gridTileLocation.IsNextToOrPartOfSettlement(_owner.homeSettlement)
-		    && _owner.isCriminal == false) {
+		    && _owner.traitContainer.HasTrait("Criminal") == false) {
 			List<Trait> statusTraits = _owner.traitContainer.GetNormalTraits<Trait>(this.removeStatusTraits);
 			for (int i = 0; i < statusTraits.Count; i++) {
 				Trait trait = statusTraits[i];

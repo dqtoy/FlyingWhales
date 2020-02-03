@@ -403,7 +403,7 @@ public class RelationshipManager : MonoBehaviour {
             Debug.LogWarning("Relationship degredation was called and provided same characters " + target.name);
             return hasDegraded;
         }
-        if (target.traitContainer.GetNormalTrait<Trait>("Diplomatic") != null) {
+        if (target.traitContainer.HasTrait("Diplomatic")) {
             Debug.LogWarning("Relationship degredation was called but " + target.name + " is Diplomatic");
             hasDegraded = true;
             return hasDegraded;

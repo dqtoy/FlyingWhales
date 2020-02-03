@@ -387,6 +387,7 @@ namespace Traits {
             //} else {
             //    form.marker.InitialPlaceMarkerAt(tileLocation, false);
             //}
+            form.needsComponent.CheckExtremeNeeds();
             CharacterManager.Instance.AddNewCharacter(form, false);
             CharacterManager.Instance.RemoveLimboCharacter(form);
         }

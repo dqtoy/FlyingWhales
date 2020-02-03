@@ -37,6 +37,7 @@ namespace Traits {
         #region Getting
         T GetNormalTrait<T>(params string[] traitNames) where T : Trait;
         List<T> GetNormalTraits<T>(params string[] traitNames) where T : Trait;
+        bool HasTrait(params string[] traitNames);
         bool HasTraitOf(TRAIT_TYPE traitType);
         bool HasTraitOf(TRAIT_TYPE type, TRAIT_EFFECT effect);
         bool HasTraitOf(TRAIT_EFFECT traitEffect);
@@ -53,6 +54,11 @@ namespace Traits {
         #region Schedule Ticket
         void AddScheduleTicket(string traitName, string ticket);
         void RemoveScheduleTicket(string traitName, bool bySchedule);
+        #endregion
+        
+        #region Switches
+        void SwitchOnTrait(string name);
+        void SwitchOffTrait(string name);
         #endregion
     }
 }

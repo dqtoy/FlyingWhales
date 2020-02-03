@@ -49,7 +49,7 @@ public class Poison : GoapAction {
         }
 
         if (targetObjectOwners != null && targetObjectOwners.Contains(witness)) {
-            if (witness.traitContainer.GetNormalTrait<Trait>("Coward") != null) {
+            if (witness.traitContainer.HasTrait("Coward")) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor);
             } else {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor);
@@ -72,7 +72,7 @@ public class Poison : GoapAction {
                 }
             }
             if (isTargetObjectOwnedByFriend) {
-                if (witness.traitContainer.GetNormalTrait<Trait>("Coward") != null) {
+                if (witness.traitContainer.HasTrait("Coward")) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor);
                 } else {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor);
@@ -120,7 +120,7 @@ public class Poison : GoapAction {
                 if (!d.IsOccupied()) {
                     return false;
                 }
-                Poisoned poisonedTrait = poiTarget.traitContainer.GetNormalTrait<Trait>("Poisoned") as Poisoned;
+                Poisoned poisonedTrait = poiTarget.traitContainer.GetNormalTrait<Poisoned>("Poisoned");
                 if (poisonedTrait != null && poisonedTrait.responsibleCharacters.Contains(actor)) {
                     return false; //to prevent poisoning a table that has been already poisoned by this character
                 }
@@ -560,7 +560,7 @@ public class PoisonTableData : GoapActionData {
             if (!d.IsOccupied()) {
                 return false;
             }
-            Poisoned poisonedTrait = poiTarget.traitContainer.GetNormalTrait<Trait>("Poisoned") as Poisoned;
+            Poisoned poisonedTrait = poiTarget.traitContainer.GetNormalTrait<Poisoned>("Poisoned");
             if (poisonedTrait != null && poisonedTrait.responsibleCharacters.Contains(actor)) {
                 return false; //to prevent poisoning a table that has been already poisoned by this character
             }

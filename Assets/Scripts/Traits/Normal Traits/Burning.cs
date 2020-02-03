@@ -72,7 +72,7 @@ namespace Traits {
             }
             
             //pyrophobic handling
-            Pyrophobic pyrophobic = characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Pyrophobic") as Pyrophobic;
+            Pyrophobic pyrophobic = characterThatWillDoJob.traitContainer.GetNormalTrait<Pyrophobic>("Pyrophobic");
             if (pyrophobic != null) {
                 //pyrophobic
                 //When he sees a fire source for the first time, reduce Happiness by 2000. Do not create Douse Fire job. It should always Flee from fire. Add log showing reason for fleeing is Pyrophobia
@@ -135,7 +135,7 @@ namespace Traits {
                 for (int i = 0; i < neighbours.Count; i++) {
                     choices.AddRange(neighbours[i].GetTraitablesOnTileWithTrait("Flammable"));
                 }
-                choices = choices.Where(x => x.traitContainer.GetNormalTrait<Trait>("Burning", "Burnt", "Wet", "Fireproof") == null).ToList();
+                choices = choices.Where(x => !x.traitContainer.HasTrait("Burning", "Burnt", "Wet", "Fireproof")).ToList();
                 if (choices.Count > 0) {
                     ITraitable chosen = choices[Random.Range(0, choices.Count)];
                     Burning burning = new Burning();

@@ -25,7 +25,7 @@ namespace Traits {
             base.OnAddTrait(addedTo);
             if (addedTo is Character) {
                 owner = addedTo as Character;
-                owner.CancelAllJobs();
+                // owner.CancelAllJobs();
                 //Messenger.AddListener(Signals.TICK_STARTED, CheckParalyzedTrait);
                 //Messenger.AddListener(Signals.HOUR_STARTED, CheckParalyzedTraitPerHour);
                 Messenger.AddListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
@@ -169,7 +169,7 @@ namespace Traits {
         }
         private void CreateActualHappinessRecoveryJob(INTERACTION_TYPE actionType) {
             bool triggerBrokenhearted = false;
-            Heartbroken heartbroken = owner.traitContainer.GetNormalTrait<Trait>("Heartbroken") as Heartbroken;
+            Heartbroken heartbroken = owner.traitContainer.GetNormalTrait<Heartbroken>("Heartbroken");
             if (heartbroken != null) {
                 triggerBrokenhearted = UnityEngine.Random.Range(0, 100) < 20;
             }
@@ -211,7 +211,7 @@ namespace Traits {
                 jobType = JOB_TYPE.ENERGY_RECOVERY_URGENT;
             }
             bool triggerSpooked = false;
-            Spooked spooked = owner.traitContainer.GetNormalTrait<Trait>("Spooked") as Spooked;
+            Spooked spooked = owner.traitContainer.GetNormalTrait<Spooked>("Spooked");
             if (spooked != null) {
                 triggerSpooked = UnityEngine.Random.Range(0, 100) < 20;
             }

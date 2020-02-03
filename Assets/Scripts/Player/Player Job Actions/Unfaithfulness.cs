@@ -61,7 +61,7 @@ public class Unfaithfulness : PlayerSpell {
         if (Utilities.IsRaceBeast(targetCharacter.race) || targetCharacter.race == RACE.SKELETON) {
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Unfaithful") != null) {
+        if (targetCharacter.traitContainer.HasTrait("Unfaithful")) {
             return false;
         }
         //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
@@ -95,7 +95,7 @@ public class Unfaithfulness : PlayerSpell {
         if (Utilities.IsRaceBeast(targetCharacter.race) || targetCharacter.race == RACE.SKELETON) {
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Unfaithful") != null) {
+        if (targetCharacter.traitContainer.HasTrait("Unfaithful")) {
             return false;
         }
         //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
@@ -122,7 +122,7 @@ public class UnfaithfulnessData : SpellData {
         PlayerManager.Instance.player.ShowNotification(log);
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
-        if (targetCharacter.isDead || targetCharacter.race == RACE.SKELETON || targetCharacter.traitContainer.GetNormalTrait<Trait>("Unfaithful", "Beast") != null) {
+        if (targetCharacter.isDead || targetCharacter.race == RACE.SKELETON || targetCharacter.traitContainer.HasTrait("Unfaithful", "Beast")) {
             return false;
         }
         return base.CanPerformAbilityTowards(targetCharacter);

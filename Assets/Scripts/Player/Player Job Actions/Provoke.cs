@@ -32,7 +32,7 @@ public class Provoke : PlayerSpell {
         if (Utilities.IsRaceBeast(targetCharacter.race) || targetCharacter.isFactionless) {
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Unconscious") != null) {
+        if (targetCharacter.traitContainer.HasTrait("Unconscious")) {
             return false;
         }
         return base.CanPerformActionTowards(targetCharacter);
@@ -48,7 +48,7 @@ public class Provoke : PlayerSpell {
         if (Utilities.IsRaceBeast(targetCharacter.race) || targetCharacter.isFactionless) {
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Unconscious") != null) {
+        if (targetCharacter.traitContainer.HasTrait("Unconscious")) {
             return false;
         }
         return base.CanTarget(targetCharacter, ref hoverText);

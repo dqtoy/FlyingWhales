@@ -59,7 +59,7 @@ public class Kleptomania : PlayerSpell {
         if (Utilities.IsRaceBeast(targetCharacter.race) || targetCharacter.race == RACE.SKELETON) { // targetCharacter.role.roleType == CHARACTER_ROLE.BEAST
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Kleptomaniac") != null) {
+        if (targetCharacter.traitContainer.HasTrait("Kleptomaniac")) {
             return false;
         }
         //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
@@ -93,7 +93,7 @@ public class Kleptomania : PlayerSpell {
         if (Utilities.IsRaceBeast(targetCharacter.race) || targetCharacter.race == RACE.SKELETON) { // targetCharacter.role.roleType == CHARACTER_ROLE.BEAST
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Kleptomaniac") != null) {
+        if (targetCharacter.traitContainer.HasTrait("Kleptomaniac")) {
             return false;
         }
         //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
@@ -120,7 +120,7 @@ public class KleptomaniaData : SpellData {
         PlayerManager.Instance.player.ShowNotification(log);
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
-        if (targetCharacter.isDead || targetCharacter.race == RACE.SKELETON || targetCharacter.traitContainer.GetNormalTrait<Trait>("Kleptomaniac", "Beast") != null) {
+        if (targetCharacter.isDead || targetCharacter.race == RACE.SKELETON || targetCharacter.traitContainer.HasTrait("Kleptomaniac", "Beast")) {
             return false;
         }
         return base.CanPerformAbilityTowards(targetCharacter);

@@ -37,6 +37,7 @@ namespace Traits {
                 // character.behaviourComponent.ReplaceBehaviourComponent(_behaviourComponentsBeforeDazed);
                 // _behaviourComponentsBeforeDazed.Clear();
                 character.behaviourComponent.RemoveBehaviourComponent(typeof(DazedBehaviour));
+                character.needsComponent.CheckExtremeNeeds();
             }
         }
         #endregion

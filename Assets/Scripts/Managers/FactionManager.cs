@@ -200,7 +200,7 @@ public class FactionManager : MonoBehaviour {
             Relatable r = relatables[i];
             if (r is Character) {
                 Character character = r as Character;
-                if (character.isDead || character.gender != gender || character.faction.IsHostileWith(previousRuler.faction) || character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) || character.isCriminal || characters.Contains(character)) {
+                if (character.isDead || character.gender != gender || character.faction.IsHostileWith(previousRuler.faction) || character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) || character.traitContainer.HasTrait("Criminal") || characters.Contains(character)) {
                     continue;
                 }
                 characters.Add(character);

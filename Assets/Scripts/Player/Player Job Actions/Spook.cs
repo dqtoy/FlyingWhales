@@ -59,7 +59,7 @@ public class Spook : PlayerSpell {
         if (!targetCharacter.IsInOwnParty()) {
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Spooked") != null) {
+        if (targetCharacter.traitContainer.HasTrait("Spooked")) {
             return false;
         }
         //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
@@ -94,7 +94,7 @@ public class Spook : PlayerSpell {
         if (!targetCharacter.IsInOwnParty()) {
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Spooked") != null) {
+        if (targetCharacter.traitContainer.HasTrait("Spooked")) {
             return false;
         }
         //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {

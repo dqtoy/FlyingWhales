@@ -47,7 +47,7 @@ public class RestrainCharacter : GoapAction {
         IPointOfInterest target = node.poiTarget;
         if(target is Character) {
             Character targetCharacter = target as Character;
-            if (targetCharacter.isCriminal) {
+            if (targetCharacter.traitContainer.HasTrait("Criminal")) {
                 if (witness.opinionComponent.IsFriendsWith(targetCharacter)) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Sadness, witness, actor);
                 } else {
@@ -56,10 +56,10 @@ public class RestrainCharacter : GoapAction {
             } else {
                 if (!witness.opinionComponent.IsEnemiesWith(targetCharacter) && !witness.IsHostileWith(targetCharacter)) {
                     CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.MISDEMEANOR);
-                    if (!witness.isSerialKiller && witness.opinionComponent.IsFriendsWith(targetCharacter)) {
+                    if (!witness.traitContainer.HasTrait("Serial Killer") && witness.opinionComponent.IsFriendsWith(targetCharacter)) {
                         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, actor);
                         if(UnityEngine.Random.Range(0, 100) < 20) {
-                            if (witness.traitContainer.GetNormalTrait<Trait>("Diplomatic") == null) {
+                            if (!witness.traitContainer.HasTrait("Diplomatic")) {
                                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor);
                             }
                         }
@@ -75,20 +75,20 @@ public class RestrainCharacter : GoapAction {
         IPointOfInterest target = node.poiTarget;
         if (target is Character) {
             Character targetCharacter = target as Character;
-            if (targetCharacter.isCriminal) {
-                if (!witness.isSerialKiller && witness.opinionComponent.IsFriendsWith(targetCharacter)) {
+            if (targetCharacter.traitContainer.HasTrait("Criminal")) {
+                if (!witness.traitContainer.HasTrait("Serial Killer") && witness.opinionComponent.IsFriendsWith(targetCharacter)) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, targetCharacter);
-                } else if (UnityEngine.Random.Range(0, 100) < 30 && witness.traitContainer.GetNormalTrait<Trait>("Diplomatic") == null) {
+                } else if (UnityEngine.Random.Range(0, 100) < 30 && !witness.traitContainer.HasTrait("Diplomatic")) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, targetCharacter);
                 }
             } else {
                 string opinionLabel = witness.opinionComponent.GetOpinionLabel(targetCharacter);
                 if(opinionLabel == OpinionComponent.Acquaintance) {
-                    if (!witness.isSerialKiller && UnityEngine.Random.Range(0, 2) == 0) {
+                    if (!witness.traitContainer.HasTrait("Serial Killer") && UnityEngine.Random.Range(0, 2) == 0) {
                         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, targetCharacter);
                     }
                 } else if (opinionLabel == OpinionComponent.Enemy || opinionLabel == OpinionComponent.Rival) {
-                    if (witness.traitContainer.GetNormalTrait<Trait>("Diplomatic") == null) {
+                    if (!witness.traitContainer.HasTrait("Diplomatic")) {
                         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, targetCharacter);
                     }
                 }
@@ -104,7 +104,7 @@ public class RestrainCharacter : GoapAction {
             Character targetCharacter = target as Character;
             if (!targetCharacter.IsHostileWith(actor)) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, targetCharacter, actor);
-                if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Hothead") != null || UnityEngine.Random.Range(0, 100) < 35) {
+                if (targetCharacter.traitContainer.HasTrait("Hothead") || UnityEngine.Random.Range(0, 100) < 35) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, targetCharacter, actor);
                 }
             }
@@ -119,7 +119,7 @@ public class RestrainCharacter : GoapAction {
         if (satisfied) {
             if (actor != poiTarget) {
                 Character target = poiTarget as Character;
-                return target.traitContainer.GetNormalTrait<Trait>("Restrained") == null;
+                return !target.traitContainer.HasTrait("Restrained");
             }
             return false;
         }
@@ -139,7 +139,7 @@ public class RestrainCharacter : GoapAction {
 
     #region Preconditions
     private bool CannotMove(Character actor, IPointOfInterest target, object[] otherData) {
-        return (target as Character).traitContainer.GetNormalTrait<Trait>("Unconscious") != null;
+        return target.traitContainer.HasTrait("Unconscious");
     }
     #endregion
 
@@ -294,7 +294,7 @@ public class RestrainCharacterData : GoapActionData {
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         if (actor != poiTarget) {
             Character target = poiTarget as Character;
-            return target.traitContainer.GetNormalTrait<Trait>("Restrained") == null;
+            return !target.traitContainer.HasTrait("Restrained");
         }
         return false;
     }

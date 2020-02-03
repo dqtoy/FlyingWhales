@@ -85,8 +85,8 @@ namespace Traits {
                 if (targetCharacter.isDead) {
                     return false;
                 }
-                if (!targetCharacter.isCriminal) {
-                    if (characterThatWillDoJob.isSerialKiller) {
+                if (!targetCharacter.traitContainer.HasTrait("Criminal")) {
+                    if (characterThatWillDoJob.traitContainer.HasTrait("Serial Killer")) {
                         //SerialKiller serialKiller = characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Serial Killer") as SerialKiller;
                         //serialKiller.SerialKillerSawButWillNotAssist(targetCharacter, this);
                         return false;
@@ -130,7 +130,7 @@ namespace Traits {
                 isPrisoner = state;
                 if (isPrisoner) {
                     // CreateJudgementJob();
-                    Criminal criminalTrait = owner.traitContainer.GetNormalTrait<Trait>("Criminal") as Criminal;
+                    Criminal criminalTrait = owner.traitContainer.GetNormalTrait<Criminal>("Criminal");
                     criminalTrait?.crimeData.SetCrimeStatus(CRIME_STATUS.Imprisoned);
                 }
             }

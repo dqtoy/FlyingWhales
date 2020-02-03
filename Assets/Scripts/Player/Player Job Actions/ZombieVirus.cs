@@ -60,7 +60,7 @@ public class ZombieVirus : PlayerSpell {
         if (targetCharacter.race == RACE.SKELETON) {
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Infected", "Robust") != null) {
+        if (targetCharacter.traitContainer.HasTrait("Infected", "Robust")) {
             return false;
         }
         return base.CanPerformActionTowards(targetCharacter);
@@ -91,7 +91,7 @@ public class ZombieVirus : PlayerSpell {
         if (targetCharacter.race == RACE.SKELETON) {
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Infected", "Robust") != null) {
+        if (targetCharacter.traitContainer.HasTrait("Infected", "Robust")) {
             return false;
         }
         return base.CanTarget(targetCharacter, ref hoverText);
@@ -115,7 +115,7 @@ public class ZombieVirusData : SpellData {
         PlayerManager.Instance.player.ShowNotification(log);
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
-        if (targetCharacter.isDead || targetCharacter.race == RACE.SKELETON || targetCharacter.traitContainer.GetNormalTrait<Trait>("Infected", "Robust") != null) {
+        if (targetCharacter.isDead || targetCharacter.race == RACE.SKELETON || targetCharacter.traitContainer.HasTrait("Infected", "Robust")) {
             return false;
         }
         return base.CanPerformAbilityTowards(targetCharacter);

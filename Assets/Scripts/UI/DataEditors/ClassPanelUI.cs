@@ -266,7 +266,7 @@ public class ClassPanelUI : MonoBehaviour {
     private void LoadClassDataToUI(CharacterClass characterClass) {
         classNameInput.text = characterClass.className;
         identifierInput.text = characterClass.identifier;
-        nonCombatantToggle.isOn = characterClass.isNonCombatant;
+        nonCombatantToggle.isOn = characterClass.isNormalNonCombatant;
         baseAttackPowerInput.text = characterClass.baseAttackPower.ToString();
         attackPowerPerLevelInput.text = characterClass.attackPowerPerLevel.ToString();
         baseSpeedInput.text = characterClass.baseSpeed.ToString();

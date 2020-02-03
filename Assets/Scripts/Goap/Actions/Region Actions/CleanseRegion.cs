@@ -34,7 +34,7 @@ public class CleanseRegion : GoapAction {
         if (satisfied) {
             //**Requirements:** Actor has Purifier trait. Region is corrupted. Region does not have a landmark.
             var region = poiTarget.gridTileLocation.parentMap.location.coreTile.region;
-            return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null && actor.traitContainer.GetNormalTrait<Trait>("Purifier") != null
+            return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null && actor.traitContainer.HasTrait("Purifier")
                    && region.coreTile.isCorrupted && region.mainLandmark.specificLandmarkType == LANDMARK_TYPE.NONE;
         }
         return false;

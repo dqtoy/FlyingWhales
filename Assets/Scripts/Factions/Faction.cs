@@ -200,7 +200,7 @@ public class Faction {
         List<Character> chars = new List<Character>();
         for (int i = 0; i < characters.Count; i++) {
             Character currCharacter = characters[i];
-            if (currCharacter.gender == gender && !currCharacter.isDead && !currCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) && !currCharacter.isCriminal) {
+            if (currCharacter.gender == gender && !currCharacter.isDead && !currCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) && !currCharacter.traitContainer.HasTrait("Criminal")) {
                 for (int j = 0; j < classNames.Length; j++) {
                     if (currCharacter.characterClass.className == classNames[j]) {
                         chars.Add(currCharacter);
@@ -456,11 +456,11 @@ public class Faction {
                 weight += (numberOfFriends * 20);
                 log += "\n  -Num of Friend/Close Friend in the Settlement: " + numberOfFriends + ", +" + (numberOfFriends * 20);
             }
-            if (member.traitContainer.GetNormalTrait<Trait>("Inspiring") != null) {
+            if (member.traitContainer.HasTrait("Inspiring")) {
                 weight += 25;
                 log += "\n  -Inspiring: +25";
             }
-            if (member.traitContainer.GetNormalTrait<Trait>("Authoritative") != null) {
+            if (member.traitContainer.HasTrait("Authoritative")) {
                 weight += 50;
                 log += "\n  -Authoritative: +50";
             }
@@ -470,7 +470,7 @@ public class Faction {
                 weight += (numberOfEnemies * -10);
                 log += "\n  -Num of Enemies/Rivals in the Settlement: " + numberOfEnemies + ", +" + (numberOfEnemies * -10);
             }
-            if (member.traitContainer.GetNormalTrait<Trait>("Ugly") != null) {
+            if (member.traitContainer.HasTrait("Ugly")) {
                 weight += -20;
                 log += "\n  -Ugly: -20";
             }
@@ -478,11 +478,11 @@ public class Faction {
                 weight += -50;
                 log += "\n  -Has Unresolved Crime: -50";
             }
-            if (member.traitContainer.GetNormalTrait<Trait>("Worker") != null) {
+            if (member.traitContainer.HasTrait("Worker")) {
                 weight += -40;
                 log += "\n  -Civilian: -40";
             }
-            if (member.traitContainer.GetNormalTrait<Trait>("Ambitious") != null) {
+            if (member.traitContainer.HasTrait("Ambitious")) {
                 weight = Mathf.RoundToInt(weight * 1.5f);
                 log += "\n  -Ambitious: x1.5";
             }

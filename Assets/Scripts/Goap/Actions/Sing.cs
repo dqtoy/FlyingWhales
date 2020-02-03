@@ -67,7 +67,7 @@ public class Sing : GoapAction {
                     && RelationshipManager.Instance.IsSexuallyCompatible(witness, actor)
                     && witness.moodComponent.moodState != MOOD_STATE.CRITICAL) {
                     int value = 50;
-                    if (actor.traitContainer.GetNormalTrait<Trait>("Ugly") != null) {
+                    if (actor.traitContainer.HasTrait("Ugly")) {
                         value = 20;
                     }
                     if (UnityEngine.Random.Range(0, 100) < value) {
@@ -101,7 +101,7 @@ public class Sing : GoapAction {
             if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
                 return false;
             }
-            return actor == poiTarget && actor.traitContainer.GetNormalTrait<Trait>("Music Hater") == null && (actor.moodComponent.moodState == MOOD_STATE.NORMAL);
+            return actor == poiTarget && !actor.traitContainer.HasTrait("Music Hater") && (actor.moodComponent.moodState == MOOD_STATE.NORMAL);
         }
         return false;
     }
@@ -110,7 +110,7 @@ public class Sing : GoapAction {
     //private List<string> SingSuccessIntelReaction(Character recipient, Intel sharedIntel, SHARE_INTEL_STATUS status) {
     //    List<string> reactions = new List<string>();
 
-    //    if (status == SHARE_INTEL_STATUS.WITNESSED && recipient.traitContainer.GetNormalTrait<Trait>("Music Hater") != null) {
+    //    if (status == SHARE_INTEL_STATUS.WITNESSED && recipient.traitContainer.HasTrait("Music Hater") != null) {
     //        recipient.traitContainer.AddTrait(recipient, "Annoyed");
     //        if (recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER) || recipient.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TRAIT.AFFAIR)) {
     //            if (recipient.CreateBreakupJob(actor) != null) {
@@ -142,6 +142,6 @@ public class SingData : GoapActionData {
     }
 
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor == poiTarget && actor.traitContainer.GetNormalTrait<Trait>("Music Hater") == null && (actor.moodComponent.moodState == MOOD_STATE.NORMAL);
+        return actor == poiTarget && !actor.traitContainer.HasTrait("Music Hater") && (actor.moodComponent.moodState == MOOD_STATE.NORMAL);
     }
 }

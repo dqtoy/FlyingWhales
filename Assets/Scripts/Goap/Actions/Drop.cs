@@ -130,7 +130,7 @@ public class Drop : GoapAction {
         goapNode.actor.currentParty.RemovePOI(goapNode.poiTarget, dropLocation: tile);
         if(goapNode.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER && goapNode.associatedJobType == JOB_TYPE.APPREHEND 
             && goapNode.poiTarget.gridTileLocation.structure == goapNode.actor.homeSettlement.prison) {
-            Restrained restrainedTrait = goapNode.poiTarget.traitContainer.GetNormalTrait<Trait>("Restrained") as Restrained;
+            Restrained restrainedTrait = goapNode.poiTarget.traitContainer.GetNormalTrait<Restrained>("Restrained");
             if (restrainedTrait != null) {
                 restrainedTrait.SetIsPrisoner(true);
             }

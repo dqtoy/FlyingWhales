@@ -111,15 +111,17 @@ public class LocationClassManager {
         } else if (residentClassName == "Noble") {
             if (characterClassGuide[residentClassName].currentNumber > 0) {
                 AdjustCurrentNumberOfClass(residentClassName, -1);
-            } else if (characterClassGuide["Combatant"].currentNumber > 0) {
-                AdjustCurrentNumberOfClass("Combatant", -1);
-            } else {
+            } 
+            // else if (characterClassGuide["Combatant"].currentNumber > 0) {
+            //     AdjustCurrentNumberOfClass("Combatant", -1);
+            // }
+            else {
                 throw new System.Exception("Wrong location class requirement data!"
                     + " Removal of resident" + residentClassName + " " + residentRemoved.name + " but current number of Combatant is "
                     + characterClassGuide["Combatant"].currentNumber + " (supposed number: " + characterClassGuide["Combatant"].supposedNumber + ")" + " and current number of " + residentClassName + " is "
                     + characterClassGuide[residentClassName].currentNumber + " (supposed number: " + characterClassGuide[residentClassName].supposedNumber + ")");
             }
-        } else if (!residentRemoved.characterClass.isNonCombatant) {
+        } else if (!residentRemoved.characterClass.isNormalNonCombatant) {
             if (characterClassGuide["Combatant"].currentNumber > 0) {
                 AdjustCurrentNumberOfClass("Combatant", -1);
             } else {
@@ -155,10 +157,11 @@ public class LocationClassManager {
         } else if (previousClassName == "Noble") {
             if (characterClassGuide[previousClassName].currentNumber > 0) {
                 AdjustCurrentNumberOfClass(previousClassName, -1);
-            } else if (characterClassGuide["Combatant"].currentNumber > 0) {
-                AdjustCurrentNumberOfClass("Combatant", -1);
             }
-        } else if (!previousClass.isNonCombatant) {
+            // else if (characterClassGuide["Combatant"].currentNumber > 0) {
+            //     AdjustCurrentNumberOfClass("Combatant", -1);
+            // }
+        } else if (!previousClass.isNormalNonCombatant) {
             if (characterClassGuide["Combatant"].currentNumber > 0) {
                 AdjustCurrentNumberOfClass("Combatant", -1);
             }
@@ -179,10 +182,11 @@ public class LocationClassManager {
         } else if (currentClassName == "Noble") {
             if (characterClassGuide[currentClassName].currentNumber < characterClassGuide[currentClassName].supposedNumber) {
                 AdjustCurrentNumberOfClass(currentClassName, 1);
-            } else { // if (characterClassGuide["Combatant"].currentNumber > 0)
-                AdjustCurrentNumberOfClass("Combatant", 1);
-            }
-        } else if (!currentClass.isNonCombatant) {
+            } 
+            // else { // if (characterClassGuide["Combatant"].currentNumber > 0)
+            //     AdjustCurrentNumberOfClass("Combatant", 1);
+            // }
+        } else if (!currentClass.isNormalNonCombatant) {
             AdjustCurrentNumberOfClass("Combatant", 1);
             //if (characterClassGuide["Combatant"].currentNumber > 0) {
             //    AdjustCurrentNumberOfClass("Combatant", 1);
@@ -225,7 +229,7 @@ public class LocationClassManager {
     private bool DoesCharacterClassFitCurrentClass(Character character) {
         string className = characterClassOrder[currentIndex];
         if(className == "Combatant") {
-            return !character.characterClass.isNonCombatant;
+            return !character.characterClass.isNormalNonCombatant;
         }else if (className == "Civilian") {
             return character.characterClass.className == "Miner" || character.characterClass.className == "Peasant" || character.characterClass.className == "Craftsman";
         } else {
@@ -259,13 +263,14 @@ public class LocationClassManager {
             LocationClassNumberGuide numberGuide = characterClassGuide[className];
             if (numberGuide.currentNumber > numberGuide.supposedNumber) {
                 return true;
-            } else {
-                numberGuide = characterClassGuide["Combatant"];
-                if (numberGuide.currentNumber > numberGuide.supposedNumber) {
-                    return true;
-                }
-            }
-        } else if (!charClass.isNonCombatant) {
+            } 
+            // else {
+            //     numberGuide = characterClassGuide["Combatant"];
+            //     if (numberGuide.currentNumber > numberGuide.supposedNumber) {
+            //         return true;
+            //     }
+            // }
+        } else if (!charClass.isNormalNonCombatant) {
             LocationClassNumberGuide numberGuide = characterClassGuide["Combatant"];
             return numberGuide.currentNumber > numberGuide.supposedNumber;
         } else {
@@ -295,13 +300,14 @@ public class LocationClassManager {
             LocationClassNumberGuide numberGuide = characterClassGuide[className];
             if (numberGuide.currentNumber < numberGuide.supposedNumber) {
                 return true;
-            } else {
-                numberGuide = characterClassGuide["Combatant"];
-                if (numberGuide.currentNumber < numberGuide.supposedNumber) {
-                    return true;
-                }
-            }
-        } else if (!charClass.isNonCombatant) {
+            } 
+            // else {
+            //     numberGuide = characterClassGuide["Combatant"];
+            //     if (numberGuide.currentNumber < numberGuide.supposedNumber) {
+            //         return true;
+            //     }
+            // }
+        } else if (!charClass.isNormalNonCombatant) {
             LocationClassNumberGuide numberGuide = characterClassGuide["Combatant"];
             return numberGuide.currentNumber < numberGuide.supposedNumber;
         } else {

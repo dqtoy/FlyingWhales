@@ -66,7 +66,7 @@ public class Lycanthropy : PlayerSpell {
         if (Utilities.IsRaceBeast(targetCharacter.race) || targetCharacter.race == RACE.SKELETON) {
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Lycanthrope") != null) {
+        if (targetCharacter.traitContainer.HasTrait("Lycanthrope")) {
             return false;
         }
         //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
@@ -110,7 +110,7 @@ public class Lycanthropy : PlayerSpell {
         if (Utilities.IsRaceBeast(targetCharacter.race) || targetCharacter.race == RACE.SKELETON) {
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Lycanthrope") != null) {
+        if (targetCharacter.traitContainer.HasTrait("Lycanthrope")) {
             return false;
         }
         //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
@@ -139,7 +139,7 @@ public class LycanthropyData : SpellData {
         PlayerManager.Instance.player.ShowNotification(log);
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
-        if (targetCharacter.isDead || targetCharacter.race == RACE.SKELETON || targetCharacter.traitContainer.GetNormalTrait<Trait>("Lycanthrope", "Beast") != null) {
+        if (targetCharacter.isDead || targetCharacter.race == RACE.SKELETON || targetCharacter.traitContainer.HasTrait("Lycanthrope", "Beast")) {
             return false;
         }
         return base.CanPerformAbilityTowards(targetCharacter);

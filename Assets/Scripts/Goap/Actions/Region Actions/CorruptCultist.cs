@@ -35,7 +35,7 @@ public class CorruptCultist : GoapAction {
         if (satisfied) {
             //**Requirements:** Region has The Profane Landmark Type and Actor has Cultist trait.
             var region = poiTarget.gridTileLocation.parentMap.location.coreTile.region;
-            return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null && actor.traitContainer.GetNormalTrait<Trait>("Cultist") != null
+            return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null && actor.traitContainer.HasTrait("Cultist")
                    && region.mainLandmark.specificLandmarkType == LANDMARK_TYPE.THE_PROFANE;
         }
         return false;

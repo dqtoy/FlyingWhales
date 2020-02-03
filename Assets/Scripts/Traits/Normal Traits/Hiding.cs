@@ -45,6 +45,7 @@ namespace Traits {
 				StopCheckingForCowering();
 				character.trapStructure.SetForcedStructure(null);
 				_owner.IncreaseCanTakeJobs();
+				character.needsComponent.CheckExtremeNeeds();
 			}
 		}
 		#endregion

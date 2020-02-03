@@ -27,7 +27,7 @@ public class Drink : GoapAction {
         string costLog = "\n" + name + " " + target.nameWithID + ":";
         int cost = Utilities.rng.Next(80, 121);
         costLog += " +" + cost + "(Initial)";
-        if (actor.traitContainer.GetNormalTrait<Trait>("Alcoholic") != null) {
+        if (actor.traitContainer.HasTrait("Alcoholic")) {
             cost += -15;
             costLog += " -15(Alcoholic)";
         } else {
@@ -130,7 +130,7 @@ public class Drink : GoapAction {
             if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
                 return false;
             }
-            return poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.structure.structureType == STRUCTURE_TYPE.INN && poiTarget.IsAvailable() && actor.traitContainer.GetNormalTrait<Trait>("Agoraphobic") == null;
+            return poiTarget.gridTileLocation != null && poiTarget.gridTileLocation.structure.structureType == STRUCTURE_TYPE.INN && poiTarget.IsAvailable() && !actor.traitContainer.HasTrait("Agoraphobic");
         }
         return false;
     }
@@ -147,6 +147,6 @@ public class DrinkData : GoapActionData {
         if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
             return false;
         }
-        return poiTarget.gridTileLocation != null &&  poiTarget.gridTileLocation.structure.structureType == STRUCTURE_TYPE.INN && poiTarget.IsAvailable() && actor.traitContainer.GetNormalTrait<Trait>("Agoraphobic") == null;
+        return poiTarget.gridTileLocation != null &&  poiTarget.gridTileLocation.structure.structureType == STRUCTURE_TYPE.INN && poiTarget.IsAvailable() && !actor.traitContainer.HasTrait("Agoraphobic");
     }
 }

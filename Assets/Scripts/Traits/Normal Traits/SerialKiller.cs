@@ -34,7 +34,6 @@ namespace Traits {
                 character.needsComponent.SetHappiness(50f);
                 character.needsComponent.AdjustDoNotGetBored(1);
                 CopyOpinionAndSetAllOpinionToZero();
-                character.SetIsSerialKiller(true);
                 //if (victim1Requirement == null) { // || victim2Requirement == null
                 //    GenerateSerialVictims();
                 //}
@@ -47,7 +46,6 @@ namespace Traits {
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
             if (character != null) {
                 character.needsComponent.AdjustDoNotGetBored(-1);
-                character.SetIsSerialKiller(false);
                 BringBackOpinion();
                 //Messenger.RemoveListener(Signals.TICK_STARTED, CheckSerialKiller);
                 //Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
@@ -591,7 +589,7 @@ namespace Traits {
                 //return character.traitContainer.GetNormalTrait<Trait>(victimDesc) != null;
             } else if (victimType == SERIAL_VICTIM_TYPE.TRAIT) {
                 for (int i = 0; i < victimDesc.Count; i++) {
-                    if(character.traitContainer.GetNormalTrait<Trait>(victimDesc[i]) != null) {
+                    if(character.traitContainer.HasTrait(victimDesc[i])) {
                         return true;
                     }
                 }

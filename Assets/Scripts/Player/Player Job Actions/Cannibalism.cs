@@ -61,7 +61,7 @@ public class Cannibalism : PlayerSpell {
         if (targetCharacter.race == RACE.SKELETON) {
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Cannibal", "Vampiric") != null) {
+        if (targetCharacter.traitContainer.HasTrait("Cannibal", "Vampiric")) {
             return false;
         }
         //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
@@ -95,7 +95,7 @@ public class Cannibalism : PlayerSpell {
         if (targetCharacter.race == RACE.SKELETON) {
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Cannibal", "Vampiric") != null) {
+        if (targetCharacter.traitContainer.HasTrait("Cannibal", "Vampiric")) {
             return false;
         }
         //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
@@ -122,7 +122,7 @@ public class CannibalismData : SpellData {
         PlayerManager.Instance.player.ShowNotification(log);
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
-        if (targetCharacter.isDead || targetCharacter.race == RACE.SKELETON || targetCharacter.traitContainer.GetNormalTrait<Trait>("Cannibal", "Vampiric") != null) {
+        if (targetCharacter.isDead || targetCharacter.race == RACE.SKELETON || targetCharacter.traitContainer.HasTrait("Cannibal", "Vampiric")) {
             return false;
         }
         return base.CanPerformAbilityTowards(targetCharacter);

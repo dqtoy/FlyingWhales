@@ -11,11 +11,11 @@ public class SeizeComponent {
     public bool hasSeizedPOI => seizedPOI != null;
     #endregion
     public void SeizePOI(IPointOfInterest poi) {
-        int manaCost = GetManaCost(poi);
-        if (PlayerManager.Instance.player.mana < manaCost) {
-            PlayerUI.Instance.ShowGeneralConfirmation("ERROR", "Not enough mana! You need " + manaCost + " mana to seize this object.");
-            return;
-        }
+        // int manaCost = GetManaCost(poi);
+        // if (PlayerManager.Instance.player.mana < manaCost) {
+        //     PlayerUI.Instance.ShowGeneralConfirmation("ERROR", "Not enough mana! You need " + manaCost + " mana to seize this object.");
+        //     return;
+        // }
         if (seizedPOI == null) {
             if(poi.isBeingCarriedBy != null) {
                 poi.isBeingCarriedBy.ownParty.RemoveCarriedPOI();
@@ -31,7 +31,7 @@ public class SeizeComponent {
                 return;
             }
             seizedPOI = poi;
-            PlayerManager.Instance.player.AdjustMana(-manaCost);
+            // PlayerManager.Instance.player.AdjustMana(-manaCost);
             PlayerUI.Instance.ShowSeizedObjectUI();
         } else {
             PlayerUI.Instance.ShowGeneralConfirmation("ERROR", "Already have a seized object. You need to drop the currently seized object first.");

@@ -28,7 +28,7 @@ public class JudgeCharacter : GoapAction {
         WeightedDictionary<string> weights = new WeightedDictionary<string>();
         Character targetCharacter = goapNode.poiTarget as Character;
         Character actor = goapNode.actor;
-        Criminal criminalTrait = targetCharacter.traitContainer.GetNormalTrait<Trait>("Criminal") as Criminal;
+        Criminal criminalTrait = targetCharacter.traitContainer.GetNormalTrait<Criminal>("Criminal");
         FactionRelationship factionRelationship = actor.faction.GetRelationshipWith(targetCharacter.faction); //Will only be null if target and actor HAVE THE SAME FACTION
         string opinionLabel = actor.opinionComponent.GetOpinionLabel(targetCharacter);
 

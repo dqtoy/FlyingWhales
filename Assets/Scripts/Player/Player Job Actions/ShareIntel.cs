@@ -54,7 +54,7 @@ public class ShareIntel : PlayerSpell {
         if (UIManager.Instance.IsShareIntelMenuOpen()) {
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting") != null) {
+        if (!targetCharacter.canWitness) {
             return false;
         }
         return base.CanPerformActionTowards(targetCharacter);
@@ -76,7 +76,7 @@ public class ShareIntel : PlayerSpell {
         if (PlayerManager.Instance.player.allIntel.Count == 0) {
             return false;
         }
-        if(targetCharacter.traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting") != null) {
+        if(!targetCharacter.canWitness) {
             return false;
         }
         return base.CanTarget(targetCharacter, ref hoverText);

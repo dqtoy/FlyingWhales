@@ -17,7 +17,7 @@ namespace Interrupts {
             if(enemyOrRivalCharacters.Count > 0) {
                 Character chosenEnemyOrRival = enemyOrRivalCharacters[UnityEngine.Random.Range(0, enemyOrRivalCharacters.Count)];
                 string logKey = "reduce_conflict";
-                if (UnityEngine.Random.Range(0, 2) == 0 && chosenEnemyOrRival.traitContainer.GetNormalTrait<Trait>("Hothead") != null) {
+                if (UnityEngine.Random.Range(0, 2) == 0 && chosenEnemyOrRival.traitContainer.HasTrait("Hothead")) {
                     logKey = "reduce_conflict_rebuffed";
                 } else {
                     targetCharacter.opinionComponent.AdjustOpinion(chosenEnemyOrRival, "Base", 15);

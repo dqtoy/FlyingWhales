@@ -52,7 +52,7 @@ public class LandmarkCharacterItem : PooledObject {
 
     private void UpdateLocationIcons() {
         if (parentMenu is RegionInfoUI) {
-            if (character.traitContainer.GetNormalTrait<Trait>("Abducted", "Restrained") != null) {
+            if (character.traitContainer.HasTrait("Abducted", "Restrained")) {
                 restrainedIcon.SetActive(true);
                 unrestrainedGO.SetActive(false);
             } else {
@@ -69,7 +69,7 @@ public class LandmarkCharacterItem : PooledObject {
                 coverGO.SetActive(false);
             }
         } else if (parentMenu is TileObjectInfoUI) {
-            if (character.traitContainer.GetNormalTrait<Trait>("Abducted", "Restrained") != null) {
+            if (character.traitContainer.HasTrait("Abducted", "Restrained")) {
                 restrainedIcon.SetActive(true);
                 unrestrainedGO.SetActive(false);
             } else {
@@ -165,7 +165,7 @@ public class LandmarkCharacterItem : PooledObject {
     private void OnTraitRemoved(Character character, Trait trait) {
         if (character.id == this.character.id) {
             if (trait.name == "Abducted" || trait.name == "Restrained") {
-                if(character.traitContainer.GetNormalTrait<Trait>("Abducted", "Restrained") == null) {
+                if(!character.traitContainer.HasTrait("Abducted", "Restrained")) {
                     restrainedIcon.SetActive(false);
                     unrestrainedGO.SetActive(true);
                 }

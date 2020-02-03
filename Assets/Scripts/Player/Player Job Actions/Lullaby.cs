@@ -34,7 +34,7 @@ public class Lullaby : PlayerSpell {
         for (int i = 0; i < charactersInHighlightedTiles.Count; i++) {
             Character character = charactersInHighlightedTiles[i];
 
-            if(character.traitContainer.GetNormalTrait<Trait>("Resting") == null) {
+            if(!character.traitContainer.HasTrait("Resting")) {
                 if (character.stateComponent.currentState != null) {
                     character.stateComponent.ExitCurrentState();
                     //This call is doubled so that it will also exit the previous major state if there's any

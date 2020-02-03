@@ -28,10 +28,10 @@ public class Psychopathy : PlayerSpell {
         if (targetCharacter.isDead) {
             return false;
         }
-        if (targetCharacter.race == RACE.SKELETON || targetCharacter.traitContainer.GetNormalTrait<Trait>("Beast") != null /*targetCharacter.role.roleType == CHARACTER_ROLE.BEAST*/) {
+        if (targetCharacter.race == RACE.SKELETON || targetCharacter.traitContainer.HasTrait("Beast") /*targetCharacter.role.roleType == CHARACTER_ROLE.BEAST*/) {
             return false;
         }
-        if (targetCharacter.isSerialKiller) {
+        if (targetCharacter.traitContainer.HasTrait("Serial Killer")) {
             return false;
         }
         //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
@@ -45,10 +45,10 @@ public class Psychopathy : PlayerSpell {
         if (targetCharacter.isDead) {
             return false;
         }
-        if (targetCharacter.race == RACE.SKELETON || targetCharacter.traitContainer.GetNormalTrait<Trait>("Beast") != null /*targetCharacter.role.roleType == CHARACTER_ROLE.BEAST*/) {
+        if (targetCharacter.race == RACE.SKELETON || targetCharacter.traitContainer.HasTrait("Beast") /*targetCharacter.role.roleType == CHARACTER_ROLE.BEAST*/) {
             return false;
         }
-        if (targetCharacter. isSerialKiller) {
+        if (targetCharacter.traitContainer.HasTrait("Serial Killer")) {
             return false;
         }
         //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
@@ -71,7 +71,7 @@ public class PsychopathyData : SpellData {
         UIManager.Instance.psychopathUI.ShowPsychopathUI(targetPOI as Character);
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
-        if (targetCharacter.isDead || targetCharacter.race == RACE.SKELETON || targetCharacter.isSerialKiller || targetCharacter.traitContainer.GetNormalTrait<Trait>("Beast") != null) {
+        if (targetCharacter.isDead || targetCharacter.race == RACE.SKELETON || targetCharacter.traitContainer.HasTrait("Serial Killer") || targetCharacter.traitContainer.HasTrait("Beast")) {
             return false;
         }
         return base.CanPerformAbilityTowards(targetCharacter);

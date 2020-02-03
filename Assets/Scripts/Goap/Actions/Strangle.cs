@@ -42,7 +42,7 @@ public class Strangle : GoapAction {
         if (target is Character) {
             Character targetCharacter = target as Character;
             if(actor != targetCharacter) {
-                if (witness.traitContainer.GetNormalTrait<Trait>("Coward") != null) {
+                if (witness.traitContainer.HasTrait("Coward")) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor);
                 } else {
                     string opinionLabel = witness.opinionComponent.GetOpinionLabel(targetCharacter);
@@ -59,7 +59,7 @@ public class Strangle : GoapAction {
                 CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.SERIOUS);
             } else {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor);
-                if (witness.isSerialKiller || witness.opinionComponent.IsEnemiesWith(actor)) {
+                if (witness.traitContainer.HasTrait("Serial Killer") || witness.opinionComponent.IsEnemiesWith(actor)) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, actor);
                 } else {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor);
@@ -93,7 +93,7 @@ public class Strangle : GoapAction {
             Character targetCharacter = target as Character;
             if (actor != targetCharacter) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, targetCharacter, actor);
-                if (targetCharacter.opinionComponent.IsFriendsWith(actor) && !targetCharacter.isSerialKiller) {
+                if (targetCharacter.opinionComponent.IsFriendsWith(actor) && !targetCharacter.traitContainer.HasTrait("Serial Killer")) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, targetCharacter, actor);
                 }
                 CrimeManager.Instance.ReactToCrime(targetCharacter, actor, node, node.associatedJobType, CRIME_TYPE.SERIOUS);

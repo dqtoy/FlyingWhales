@@ -239,7 +239,7 @@ public class ReactionComponent {
                             if (RelationshipManager.Instance.IsSexuallyCompatibleOneSided(owner, targetCharacter)) {
                                 if (owner.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR)
                                     || owner.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.LOVER) == null
-                                    || owner.traitContainer.GetNormalTrait<Trait>("Unfaithful") != null) {
+                                    || owner.traitContainer.HasTrait("Unfaithful")) {
                                     debugLog += "\n-Flirt has 1% (multiplied by Compatibility value) chance to trigger";
                                     int compatibility = RelationshipManager.Instance.GetCompatibilityBetween(owner, targetCharacter);
                                     int value = 2;
@@ -343,10 +343,10 @@ public class ReactionComponent {
         }
         debugLog += owner.name + " is reacting to " + targetTileObject.nameWithID;
         if (!owner.hasSeenFire) {
-            if (targetTileObject.traitContainer.GetNormalTrait<Trait>("Burning") != null
+            if (targetTileObject.traitContainer.HasTrait("Burning")
                 && targetTileObject.gridTileLocation != null
                 && targetTileObject.gridTileLocation.IsPartOfSettlement(owner.homeSettlement)
-                && owner.traitContainer.GetNormalTrait<Trait>("Pyrophobic") == null
+                && !owner.traitContainer.HasTrait("Pyrophobic")
                 && !owner.jobQueue.HasJob(JOB_TYPE.DOUSE_FIRE)) {
                 debugLog += "\n-Target is Burning and Character is not Pyrophobic";
                 owner.SetHasSeenFire(true);
@@ -366,8 +366,8 @@ public class ReactionComponent {
         }
 
         if(targetTileObject is TornadoTileObject) {
-            if(owner.traitContainer.GetNormalTrait<Trait>("Elemental Master") == null) {
-                if(owner.traitContainer.GetNormalTrait<Trait>("Berserked") != null) {
+            if(!owner.traitContainer.HasTrait("Elemental Master")) {
+                if(owner.traitContainer.HasTrait("Berserked")) {
                     owner.combatComponent.FightOrFlight(targetTileObject);
                 } else {
                     owner.combatComponent.Flight(targetTileObject);
@@ -382,10 +382,10 @@ public class ReactionComponent {
         }
         debugLog += owner.name + " is reacting to " + targetItem.nameWithID;
         if (!owner.hasSeenFire) {
-            if (targetItem.traitContainer.GetNormalTrait<Trait>("Burning") != null
+            if (targetItem.traitContainer.HasTrait("Burning")
                 && targetItem.gridTileLocation != null
                 && targetItem.gridTileLocation.IsPartOfSettlement(owner.homeSettlement)
-                && owner.traitContainer.GetNormalTrait<Trait>("Pyrophobic") == null) {
+                && !owner.traitContainer.HasTrait("Pyrophobic")) {
                 debugLog += "\n-Target is Burning and Character is not Pyrophobic";
                 owner.SetHasSeenFire(true);
                 owner.homeSettlement.settlementJobTriggerComponent.TriggerDouseFire();

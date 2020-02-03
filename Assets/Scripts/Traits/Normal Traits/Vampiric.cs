@@ -45,7 +45,6 @@ namespace Traits {
                 character.needsComponent.SetFullnessForcedTick();
                 character.needsComponent.AdjustDoNotGetTired(1);
                 character.needsComponent.ResetTirednessMeter();
-                character.SetIsVampire(true);
                 //character.AdjustAttackMod(_flatAttackMod);
                 //character.AdjustMaxHPMod(_flatHPMod);
                 //character.AdjustSpeedMod(_flatSpeedMod);
@@ -59,7 +58,6 @@ namespace Traits {
                 character.needsComponent.SetForcedFullnessRecoveryTimeInWords(TIME_IN_WORDS.LUNCH_TIME);
                 character.needsComponent.SetFullnessForcedTick();
                 character.needsComponent.AdjustDoNotGetTired(-1);
-                character.SetIsVampire(false);
                 //character.AdjustAttackMod(-_flatAttackMod);
                 //character.AdjustMaxHPMod(-_flatHPMod);
                 //character.AdjustSpeedMod(-_flatSpeedMod);
@@ -94,7 +92,7 @@ namespace Traits {
                     character.jobQueue.CancelAllJobs(JOB_TYPE.FULLNESS_RECOVERY_NORMAL, JOB_TYPE.FULLNESS_RECOVERY_URGENT);
                 }
                 bool triggerGrieving = false;
-                Griefstricken griefstricken = character.traitContainer.GetNormalTrait<Trait>("Griefstricken") as Griefstricken;
+                Griefstricken griefstricken = character.traitContainer.GetNormalTrait<Griefstricken>("Griefstricken");
                 if (griefstricken != null) {
                     triggerGrieving = UnityEngine.Random.Range(0, 100) < 20;
                 }

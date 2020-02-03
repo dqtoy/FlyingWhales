@@ -58,7 +58,7 @@ public class Alcoholic : PlayerSpell {
         if (targetCharacter.isDead) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Drunkard") != null) {
+        if (targetCharacter.traitContainer.HasTrait("Drunkard")) {
             return false;
         }
         return base.CanTarget(targetCharacter, ref hoverText);
@@ -67,7 +67,7 @@ public class Alcoholic : PlayerSpell {
         if (targetPOI.isDead) {
             return false;
         }
-        if (!(targetPOI is Character) || targetPOI.traitContainer.GetNormalTrait<Trait>("Drunkard") != null) {
+        if (!(targetPOI is Character) || targetPOI.traitContainer.HasTrait("Drunkard")) {
             return false;
         }
         return base.CanPerformActionTowards(targetPOI);
@@ -105,7 +105,7 @@ public class AlcoholicData : SpellData {
         PlayerManager.Instance.player.ShowNotification(log);
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
-        if (targetCharacter.isDead || targetCharacter.traitContainer.GetNormalTrait<Trait>("Drunkard") != null) {
+        if (targetCharacter.isDead || targetCharacter.traitContainer.HasTrait("Drunkard")) {
             return false;
         }
         return base.CanPerformAbilityTowards(targetCharacter);

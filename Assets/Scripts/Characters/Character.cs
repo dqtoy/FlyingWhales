@@ -82,9 +82,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool isConversing { get; protected set; }
     public bool isInLimbo { get; protected set; }
     public bool isLimboCharacter { get; protected set; }
-    public bool isSerialKiller { get; protected set; }
-    public bool isLazy { get; protected set; }
-    public bool isVampire { get; protected set; }
     public bool hasSeenFire { get; protected set; }
     public LycanthropeData lycanData { get; protected set; }
     public List<JobQueueItem> forcedCancelJobsOnTickEnded { get; private set; }
@@ -275,7 +272,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public Character isBeingCarriedBy => IsInOwnParty() ? null : currentParty.owner;
     public bool isMissing => currentMissingTicks > CharacterManager.Instance.CHARACTER_MISSING_THRESHOLD;
     public bool isBeingSeized => PlayerManager.Instance.player.seizeComponent.seizedPOI == this;
-    public bool isCriminal => traitContainer.GetNormalTrait<Trait>("Criminal") != null;
     public bool isLycanthrope => lycanData != null;
     //public JobQueueItem currentJob => jobQueue.jobsInQueue.Count > 0 ? jobQueue.jobsInQueue[0] : null; //The current job is always the top of the queue
     public JobTriggerComponent jobTriggerComponent => jobComponent;
@@ -1277,7 +1273,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (jobQueue.HasJob(JOB_TYPE.UNDERMINE, targetCharacter)) {
             return false;
         }
-        if (traitContainer.GetNormalTrait<Trait>("Diplomatic") != null) {
+        if (traitContainer.HasTrait("Diplomatic")) {
             return false;
         }
         // if (status == SHARE_INTEL_STATUS.WITNESSED) {
@@ -2234,7 +2230,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 needsComponent.AdjustHope(-5f);
             } else if (opinionLabel == OpinionComponent.Close_Friend) {
                 needsComponent.AdjustHope(-10f);
-                if (!isSerialKiller) {
+                if (!traitContainer.HasTrait("Serial Killer")) {
                     traitContainer.AddTrait(this, "Griefstricken");
                 }
             }
@@ -2279,7 +2275,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return currentRegion.innerMap.map[x, y];
     }
     public void UpdateCanCombatState() {
-        bool combatState = !_characterClass.isNonCombatant && traitContainer.GetNormalTrait<Trait>("Injured") == null;
+        bool combatState = !_characterClass.isNormalNonCombatant && !traitContainer.HasTrait("Injured");
         if (canCombat != combatState) {
             canCombat = combatState;
             //if (canCombat && marker != null) {
@@ -2382,15 +2378,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void SetIsLimboCharacter(bool state) {
         isLimboCharacter = state;
-    }
-    public void SetIsSerialKiller(bool state) {
-        isSerialKiller = state;
-    }
-    public void SetIsLazy(bool state) {
-        isLazy = state;
-    }
-    public void SetIsVampire(bool state) {
-        isVampire = state;
     }
     public void SetHasSeenFire(bool state) {
         hasSeenFire = state;
@@ -2964,7 +2951,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     + ", death weight: " + deathWeight + ", unconscious weight: " + unconsciousWeight
                     + ", isLethal: " + characterThatAttacked.combatComponent.IsLethalCombatForTarget(this);
 
-                if (minion == null && this.traitContainer.GetNormalTrait<Trait>("Unconscious") == null) {
+                if (minion == null && !this.traitContainer.HasTrait("Unconscious")) {
                     combatResultWeights.AddElement("Unconscious", unconsciousWeight);
                     rollLog += "\n- Unconscious weight will be added";
                 }
@@ -3029,7 +3016,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (IsHealthCriticallyLow()) {
             return false;
         }
-        if (needsComponent.isStarving && !isVampire) {
+        if (needsComponent.isStarving && !traitContainer.HasTrait("Vampiric")) {
             return false; //only characters that are not vampires will flee if they are starving
         }
         if (needsComponent.isExhausted) {
@@ -3555,7 +3542,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //traitContainer.AddTrait(this, "Drunkard");
         //traitContainer.AddTrait(this, "Accident Prone");
 
-        defaultCharacterTrait = traitContainer.GetNormalTrait<Trait>("Character Trait") as CharacterTrait;
+        defaultCharacterTrait = traitContainer.GetNormalTrait<CharacterTrait>("Character Trait");
     }
     public void AddTraitNeededToBeRemoved(Trait trait) {
         traitsNeededToBeRemoved.Add(trait);
@@ -3929,8 +3916,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 }
                 if (opinionComponent.HasOpinionLabelWithCharacter(character, OpinionComponent.Acquaintance, 
                     OpinionComponent.Friend, OpinionComponent.Close_Friend)) {
-                    Trait trait = character.traitContainer.GetNormalTrait<Trait>("Paralyzed", "Catatonic");
-                    if (trait != null) {
+                    if (character.traitContainer.HasTrait("Paralyzed", "Catatonic")) {
                         positiveCharacters.Add(character);
                     }
                 }
@@ -4022,14 +4008,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //positiveFlirtationWeight += 10 * relData.flirtationCount; //TODO
         }
         //x2 all positive modifiers per Drunk
-        if (traitContainer.GetNormalTrait<Trait>("Drunk") != null) {
+        if (traitContainer.HasTrait("Drunk")) {
             positiveFlirtationWeight *= 2;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Drunk") != null) {
+        if (targetCharacter.traitContainer.HasTrait("Drunk")) {
             positiveFlirtationWeight *= 2;
         }
 
-        Unfaithful unfaithful = traitContainer.GetNormalTrait<Trait>("Unfaithful") as Unfaithful;
+        Unfaithful unfaithful = traitContainer.GetNormalTrait<Unfaithful>("Unfaithful");
         //x0.5 all positive modifiers per negative relationship
         if (opinionComponent.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.NEGATIVE) {
             positiveFlirtationWeight *= 0.5f;
@@ -4049,8 +4035,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (!RelationshipManager.Instance.IsSexuallyCompatibleOneSided(targetCharacter, this)) {
             positiveFlirtationWeight *= 0.1f;
         }
-        bool thisIsUgly = traitContainer.GetNormalTrait<Trait>("Ugly") != null;
-        bool otherIsUgly = targetCharacter.traitContainer.GetNormalTrait<Trait>("Ugly") != null;
+        bool thisIsUgly = traitContainer.HasTrait("Ugly");
+        bool otherIsUgly = targetCharacter.traitContainer.HasTrait("Ugly");
         if (thisIsUgly != otherIsUgly) { //if at least one of the characters are ugly
             positiveFlirtationWeight *= 0.75f;
         }
@@ -4088,10 +4074,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 //positiveWeight += 30 * relData.flirtationCount;//TODO
             }
             //x2 all positive modifiers per Drunk
-            if (traitContainer.GetNormalTrait<Trait>("Drunk") != null) {
+            if (traitContainer.HasTrait("Drunk")) {
                 positiveWeight *= 2;
             }
-            if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Drunk") != null) {
+            if (targetCharacter.traitContainer.HasTrait("Drunk")) {
                 positiveWeight *= 2;
             }
             //x0.1 all positive modifiers per sexually incompatible
@@ -4104,8 +4090,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //x0 if a character is a beast
             //added to initial checking instead.
 
-            bool thisIsUgly = traitContainer.GetNormalTrait<Trait>("Ugly") != null;
-            bool otherIsUgly = targetCharacter.traitContainer.GetNormalTrait<Trait>("Ugly") != null;
+            bool thisIsUgly = traitContainer.HasTrait("Ugly");
+            bool otherIsUgly = targetCharacter.traitContainer.HasTrait("Ugly");
             if (thisIsUgly != otherIsUgly) { //if at least one of the characters are ugly
                 positiveWeight *= 0.75f;
             }
@@ -4144,12 +4130,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 //+30 Weight per previous flirtation
                 //positiveWeight += 50 * relData.flirtationCount; //TODO
             }
-            Unfaithful unfaithful = traitContainer.GetNormalTrait<Trait>("Unfaithful") as Unfaithful;
+            Unfaithful unfaithful = traitContainer.GetNormalTrait<Unfaithful>("Unfaithful");
             //x2 all positive modifiers per Drunk
-            if (traitContainer.GetNormalTrait<Trait>("Drunk") != null) {
+            if (traitContainer.HasTrait("Drunk")) {
                 positiveWeight *= 2.5f;
             }
-            if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Drunk") != null) {
+            if (targetCharacter.traitContainer.HasTrait("Drunk")) {
                 positiveWeight *= 2.5f;
             }
             //x0.1 all positive modifiers per sexually incompatible
@@ -4173,12 +4159,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.RELATIVE)) {
                 positiveWeight *= 0.01f;
             }
-            if (lover != null && lover is ITraitable && (lover as ITraitable).traitContainer.GetNormalTrait<Trait>("Ugly") != null) { //if lover is ugly
+            if (lover != null && lover is ITraitable && (lover as ITraitable).traitContainer.HasTrait("Ugly")) { //if lover is ugly
                 positiveWeight += positiveWeight * 0.75f;
             }
             //x0 if a character has a lover and does not have the Unfaithful trait
-            if ((relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TYPE.LOVER).Count > 0 && traitContainer.GetNormalTrait<Trait>("Unfaithful") == null) 
-                || (targetCharacter.relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TYPE.LOVER).Count > 0 && targetCharacter.traitContainer.GetNormalTrait<Trait>("Unfaithful") == null)) {
+            if ((relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TYPE.LOVER).Count > 0 && !traitContainer.HasTrait("Unfaithful")) 
+                || (targetCharacter.relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TYPE.LOVER).Count > 0 && !targetCharacter.traitContainer.HasTrait("Unfaithful"))) {
                 positiveWeight *= 0;
                 negativeWeight *= 0;
             }
@@ -4852,13 +4838,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                                 return;
                             }
                         }
-                        if(isLazy) {
+                        if(traitContainer.HasTrait("Lazy")) {
                             log += "\n - Character is lazy, has 20% chance to not perform job if it is a needs type job...";
                             if (currentTopPrioJob.jobType.IsNeedsTypeJob()) {
                                 int chance = UnityEngine.Random.Range(0, 100);
                                 log += "\n - Roll: " + chance;
                                 if (chance < 20) {
-                                    Lazy lazy = traitContainer.GetNormalTrait<Trait>("Lazy") as Lazy;
+                                    Lazy lazy = traitContainer.GetNormalTrait<Lazy>("Lazy");
                                     if (lazy.TriggerLazy()) {
                                         log += "\n - Character triggered lazy, not going to do job";
                                         logComponent.PrintLogIfActive(log);
@@ -5556,6 +5542,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         } else {
             marker.InitialPlaceMarkerAt(tileLocation, false);
         }
+        needsComponent.CheckExtremeNeeds();
         Messenger.Broadcast(Signals.ON_UNSEIZE_CHARACTER, this);
     }
     #endregion
@@ -6291,7 +6278,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.ZAP].CanPerformAbilityTowards(this), 
             () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.ZAP].ActivateAbility(this));
         PlayerAction seizeAction = new PlayerAction("Seize", 
-            () => !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && this.traitContainer.GetNormalTrait<Trait>("Leader", "Blessed") == null, 
+            () => !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && !this.traitContainer.HasTrait("Leader", "Blessed"), 
             () => PlayerManager.Instance.player.seizeComponent.SeizePOI(this));
         // PlayerAction shareIntelAction = new PlayerAction("Share Intel", () => false, null);
         

@@ -25,7 +25,7 @@ namespace Interrupts {
             } else if (opinionLabel == OpinionComponent.Rival) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, actor);
             }
-            if (witness.traitContainer.GetNormalTrait<Trait>("Coward") != null) {
+            if (witness.traitContainer.HasTrait("Coward")) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor);
             }
             return response;

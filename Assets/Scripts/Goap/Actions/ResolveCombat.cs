@@ -52,7 +52,7 @@ public class ResolveCombat : GoapAction {
             //target character must be
             // - unable to move
             //to consider the combat as finished
-            if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Unconscious") != null || targetCharacter.isDead) {
+            if (targetCharacter.traitContainer.HasTrait("Unconscious") || targetCharacter.isDead) {
                 return true;
             }
         } else {

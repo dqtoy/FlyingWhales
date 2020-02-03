@@ -48,7 +48,7 @@ public class ReleaseCharacter : GoapAction {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
             Character target = poiTarget as Character;
-            return target.traitContainer.GetNormalTrait<Trait>("Restrained") != null;
+            return target.traitContainer.HasTrait("Restrained");
         }
         return false;
     }
@@ -121,7 +121,7 @@ public class ReleaseCharacterData : GoapActionData {
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         if (poiTarget is Character) {
             Character target = poiTarget as Character;
-            return target.traitContainer.GetNormalTrait<Trait>("Restrained") != null;
+            return target.traitContainer.HasTrait("Restrained");
         }
         return false;
     }

@@ -61,7 +61,7 @@ public class Jolt : PlayerSpell {
         if (targetCharacter.isDead) {
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Jolted") != null) {
+        if (targetCharacter.traitContainer.HasTrait("Jolted")) {
             return false;
         }
         //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
@@ -102,7 +102,7 @@ public class Jolt : PlayerSpell {
         if (targetCharacter.isDead) {
             return false;
         }
-        if (targetCharacter.traitContainer.GetNormalTrait<Trait>("Jolted") != null) {
+        if (targetCharacter.traitContainer.HasTrait("Jolted")) {
             return false;
         }
         //if (targetCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {

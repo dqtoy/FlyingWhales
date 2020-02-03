@@ -76,7 +76,7 @@ public class CharacterNameplateItem : NameplateItem<Character> {
             travellingIcon.SetActive(false);
             arrivedIcon.SetActive(true);
             restrainedIcon.SetActive(false);
-        } else if (character.traitContainer.GetNormalTrait<Trait>("Restrained") != null) {
+        } else if (character.traitContainer.HasTrait("Restrained")) {
             //character is restrained
             travellingIcon.SetActive(false);
             arrivedIcon.SetActive(false);

@@ -10,6 +10,7 @@ namespace Traits {
         private List<Trait> _allTraits;
         public Dictionary<string, int> stacks { get; private set; }
         public Dictionary<string, List<string>> scheduleTickets { get; private set; }
+        public Dictionary<string, bool> traitSwitches { get; private set; }
         //public Dictionary<Trait, int> currentDurations { get; private set; } //Temporary only, fix this by making all traits instanced based and just object pool them
 
         #region getters/setters
@@ -20,6 +21,7 @@ namespace Traits {
             _allTraits = new List<Trait>();
             stacks = new Dictionary<string, int>();
             scheduleTickets = new Dictionary<string, List<string>>();
+            traitSwitches = new Dictionary<string, bool>();
             //currentDurations = new Dictionary<Trait, int>();
         }
 
@@ -355,6 +357,37 @@ namespace Traits {
                     scheduleTickets[traitName].RemoveAt(0);
                 }
             } 
+        }
+        #endregion
+        
+        #region Switches
+        public void SwitchOnTrait(string name) {
+            if (traitSwitches.ContainsKey(name)) {
+                traitSwitches[name] = true;
+            } else {
+                traitSwitches.Add(name, true);
+            }
+        }
+        public void SwitchOffTrait(string name) {
+            if (traitSwitches.ContainsKey(name)) {
+                traitSwitches[name] = false;
+            } else {
+                traitSwitches.Add(name, false);
+            }
+        }
+        private bool HasTraitSwitch(string name) {
+            if (traitSwitches.ContainsKey(name)) {
+                return traitSwitches[name];
+            }
+            return false;
+        }
+        public bool HasTrait(params string[] traitNames) {
+            for (int i = 0; i < traitNames.Length; i++) {
+                if (HasTraitSwitch(traitNames[i])) {
+                    return true;
+                }
+            }
+            return false;
         }
         #endregion
     }

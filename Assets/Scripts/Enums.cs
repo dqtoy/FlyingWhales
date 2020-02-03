@@ -1652,7 +1652,7 @@ public static class Extensions {
                 return true;
             }
             for (int i = 0; i < data.canBeCraftedBy.Length; i++) {
-                if (character.traitContainer.GetNormalTrait<Trait>(data.canBeCraftedBy[i]) != null) {
+                if (character.traitContainer.HasTrait(data.canBeCraftedBy[i])) {
                     return true;
                 }
             }
@@ -1686,7 +1686,7 @@ public static class Extensions {
         if (string.IsNullOrEmpty(data.neededTraitType)) {
             return true;
         }
-        return character.traitContainer.GetNormalTrait<Trait>(data.neededTraitType) != null;
+        return character.traitContainer.HasTrait(data.neededTraitType);
     }
     #endregion
 

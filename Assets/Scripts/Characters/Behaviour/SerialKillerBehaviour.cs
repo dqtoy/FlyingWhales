@@ -13,7 +13,7 @@ public class SerialKillerBehaviour : CharacterBehaviourComponent {
         int chance = UnityEngine.Random.Range(0, 100);
         log += "\n  -RNG roll: " + chance;
         if (chance < 15) {
-            SerialKiller serialKiller = character.traitContainer.GetNormalTrait<Trait>("Serial Killer") as SerialKiller;
+            SerialKiller serialKiller = character.traitContainer.GetNormalTrait<SerialKiller>("Serial Killer");
             //serialKiller.CheckTargetVictimIfStillAvailable();
             if(serialKiller.targetVictim != null) {
                 log += "\n  -Target victim is " + serialKiller.targetVictim.name + ", will try to Hunt Victim";

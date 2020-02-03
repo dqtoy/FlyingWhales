@@ -247,7 +247,7 @@ public class CharacterNeedsComponent {
         OnRefreshed(wasRefreshed, wasTired, wasExhausted);
     }
     public void AdjustTiredness(float adjustment) {
-        if(adjustment < 0 && _character.isVampire) {
+        if(adjustment < 0 && _character.traitContainer.HasTrait("Vampiric")) {
             _character.logComponent.PrintLogIfActive("Trying to reduce energy meter but character is a vampire, will ignore reduction.");
             return;
         }
@@ -425,7 +425,7 @@ public class CharacterNeedsComponent {
                 }
                 JOB_TYPE jobType = JOB_TYPE.ENERGY_RECOVERY_URGENT;
                 bool triggerSpooked = false;
-                Spooked spooked = character.traitContainer.GetNormalTrait<Trait>("Spooked") as Spooked;
+                Spooked spooked = character.traitContainer.GetNormalTrait<Spooked>("Spooked");
                 if (spooked != null) {
                     triggerSpooked = UnityEngine.Random.Range(0, 100) < 20;
                 }
@@ -450,7 +450,7 @@ public class CharacterNeedsComponent {
                 }
 
                 bool triggerSpooked = false;
-                Spooked spooked = character.traitContainer.GetNormalTrait<Trait>("Spooked") as Spooked;
+                Spooked spooked = character.traitContainer.GetNormalTrait<Spooked>("Spooked");
                 if (spooked != null) {
                     triggerSpooked = UnityEngine.Random.Range(0, 100) < 20;
                 }
@@ -477,7 +477,7 @@ public class CharacterNeedsComponent {
                     jobType = JOB_TYPE.ENERGY_RECOVERY_URGENT;
                 }
                 bool triggerSpooked = false;
-                Spooked spooked = character.traitContainer.GetNormalTrait<Trait>("Spooked") as Spooked;
+                Spooked spooked = character.traitContainer.GetNormalTrait<Spooked>("Spooked");
                 if (spooked != null) {
                     triggerSpooked = UnityEngine.Random.Range(0, 100) < 20;
                 }
@@ -516,7 +516,7 @@ public class CharacterNeedsComponent {
 
     #region Happiness
     public void ResetHappinessMeter() {
-        if (_character.isSerialKiller) {
+        if (_character.traitContainer.HasTrait("Serial Killer")) {
             //Psychopath's Happiness is always fixed at 50 and is not changed by anything.
             return;
         }
@@ -530,7 +530,7 @@ public class CharacterNeedsComponent {
         //OnHappinessAdjusted();
     }
     public void AdjustHappiness(float adjustment) {
-        if (_character.isSerialKiller) {
+        if (_character.traitContainer.HasTrait("Serial Killer")) {
             //Psychopath's Happiness is always fixed at 50 and is not changed by anything.
             return;
         }
@@ -553,7 +553,7 @@ public class CharacterNeedsComponent {
         //OnHappinessAdjusted();
     }
     public void SetHappiness(float amount) {
-        if (_character.isSerialKiller) {
+        if (_character.traitContainer.HasTrait("Serial Killer")) {
             //Psychopath's Happiness is always fixed at 50 and is not changed by anything.
             return;
         }
@@ -650,12 +650,12 @@ public class CharacterNeedsComponent {
                 }
                 if (chance < value || isSulking) {
                     bool triggerBrokenhearted = false;
-                    Heartbroken heartbroken = character.traitContainer.GetNormalTrait<Trait>("Heartbroken") as Heartbroken;
+                    Heartbroken heartbroken = character.traitContainer.GetNormalTrait<Heartbroken>("Heartbroken");
                     if (heartbroken != null) {
                         triggerBrokenhearted = UnityEngine.Random.Range(0, 100) < 20;
                     }
                     if (!triggerBrokenhearted) {
-                        Hardworking hardworking = character.traitContainer.GetNormalTrait<Trait>("Hardworking") as Hardworking;
+                        Hardworking hardworking = character.traitContainer.GetNormalTrait<Hardworking>("Hardworking");
                         if (hardworking != null) {
                             bool isPlanningRecoveryProcessed = false;
                             if (hardworking.ProcessHardworkingTrait(character, ref isPlanningRecoveryProcessed)) {
@@ -863,7 +863,7 @@ public class CharacterNeedsComponent {
                     jobType = JOB_TYPE.FULLNESS_RECOVERY_URGENT;
                 }
                 bool triggerGrieving = false;
-                Griefstricken griefstricken = character.traitContainer.GetNormalTrait<Trait>("Griefstricken") as Griefstricken;
+                Griefstricken griefstricken = character.traitContainer.GetNormalTrait<Griefstricken>("Griefstricken");
                 if (griefstricken != null) {
                     triggerGrieving = UnityEngine.Random.Range(0, 100) < 20;
                 }
@@ -906,7 +906,7 @@ public class CharacterNeedsComponent {
                 }
                 JOB_TYPE jobType = JOB_TYPE.FULLNESS_RECOVERY_URGENT;
                 bool triggerGrieving = false;
-                Griefstricken griefstricken = character.traitContainer.GetNormalTrait<Trait>("Griefstricken") as Griefstricken;
+                Griefstricken griefstricken = character.traitContainer.GetNormalTrait<Griefstricken>("Griefstricken");
                 if (griefstricken != null) {
                     triggerGrieving = UnityEngine.Random.Range(0, 100) < 100;
                 }
@@ -959,7 +959,7 @@ public class CharacterNeedsComponent {
         if (!_character.jobQueue.HasJob(JOB_TYPE.FULLNESS_RECOVERY_NORMAL)) {
             JOB_TYPE jobType = JOB_TYPE.FULLNESS_RECOVERY_NORMAL;
             bool triggerGrieving = false;
-            Griefstricken griefstricken = _character.traitContainer.GetNormalTrait<Trait>("Griefstricken") as Griefstricken;
+            Griefstricken griefstricken = _character.traitContainer.GetNormalTrait<Griefstricken>("Griefstricken");
             if (griefstricken != null) {
                 triggerGrieving = UnityEngine.Random.Range(0, 100) < 20;
             }
@@ -1211,7 +1211,7 @@ public class CharacterNeedsComponent {
         //    jobQueue.CancelAllJobs(JOB_TYPE.HUNGER_RECOVERY, JOB_TYPE.HUNGER_RECOVERY_STARVING);
         //}
         bool triggerGrieving = false;
-        Griefstricken griefstricken = character.traitContainer.GetNormalTrait<Trait>("Griefstricken") as Griefstricken;
+        Griefstricken griefstricken = character.traitContainer.GetNormalTrait<Griefstricken>("Griefstricken");
         if (griefstricken != null) {
             triggerGrieving = UnityEngine.Random.Range(0, 100) < 20;
         }

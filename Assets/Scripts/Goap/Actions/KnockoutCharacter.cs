@@ -77,7 +77,7 @@ public class KnockoutCharacter : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
-            return actor != poiTarget && (actor.isSerialKiller || actor.isVampire);
+            return actor != poiTarget && (actor.traitContainer.HasTrait("Serial Killer") || actor.traitContainer.HasTrait("Vampiric"));
         }
         return false;
     }
@@ -296,6 +296,6 @@ public class KnockoutCharacterData : GoapActionData {
     }
 
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor != poiTarget && actor.isSerialKiller;
+        return actor != poiTarget && actor.traitContainer.HasTrait("Serial Killer");
     }
 }

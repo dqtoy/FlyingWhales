@@ -58,7 +58,7 @@ public class Ignite : PlayerSpell {
         } else if (level >= 3) {
             tiles.AddRange(origin.neighbourList);
         }
-        return tiles.Where(x => x.genericTileObject != null && x.genericTileObject.traitContainer.GetNormalTrait<Trait>("Burning", "Burnt", "Wet", "Fireproof") == null && x.genericTileObject.traitContainer.GetNormalTrait<Trait>("Flammable") != null).ToList();
+        return tiles.Where(x => x.genericTileObject != null && !x.genericTileObject.traitContainer.HasTrait("Burning", "Burnt", "Wet", "Fireproof") && x.genericTileObject.traitContainer.HasTrait("Flammable")).ToList();
     }
 }
 
@@ -79,13 +79,13 @@ public class IgniteData : SpellData {
         PlayerManager.Instance.player.ShowNotification(log);
     }
     public override bool CanPerformAbilityTowards(TileObject tileObject) {
-        if (tileObject.gridTileLocation == null || tileObject.gridTileLocation.genericTileObject.traitContainer.GetNormalTrait<Trait>("Burning") != null) {
+        if (tileObject.gridTileLocation == null || tileObject.gridTileLocation.genericTileObject.traitContainer.HasTrait("Burning")) {
             return false;
         }
         return base.CanPerformAbilityTowards(tileObject);
     }
     public override bool CanPerformAbilityTowards(SpecialToken item) {
-        if (item.gridTileLocation == null || item.gridTileLocation.genericTileObject.traitContainer.GetNormalTrait<Trait>("Burning") != null) {
+        if (item.gridTileLocation == null || item.gridTileLocation.genericTileObject.traitContainer.HasTrait("Burning")) {
             return false;
         }
         return base.CanPerformAbilityTowards(item);

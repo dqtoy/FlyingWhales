@@ -569,7 +569,7 @@ public class Player : ILeader {
         if(poi is Character) {
             Character character = poi as Character;
             hoverText = string.Empty;
-            if(character.traitContainer.GetNormalTrait<Trait>("Blessed", "Catatonic") != null) {
+            if(character.traitContainer.HasTrait("Blessed", "Catatonic")) {
                 hoverText = "Blessed/Catatonic characters cannot be targetted.";
                 return false;
             }
