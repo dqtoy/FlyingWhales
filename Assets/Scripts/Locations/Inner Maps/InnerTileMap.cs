@@ -363,7 +363,7 @@ namespace Inner_Maps {
 
         #region Utilities
         public void CleanUp() {
-            Utilities.DestroyChildren(objectsParent);
+            Ruinarch.Utilities.DestroyChildren(objectsParent);
         }
         public void Open() { }
         public void Close() { }

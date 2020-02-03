@@ -18,15 +18,15 @@ public class SpecialObject : IWorldObject {
     #endregion
 
     public SpecialObject(SPECIAL_OBJECT_TYPE specialObjType) {
-        id = Utilities.SetID(this);
+        id = Ruinarch.Utilities.SetID(this);
         this.specialObjType = specialObjType;
-        this.name = Utilities.NormalizeStringUpperCaseFirstLetters(specialObjType.ToString());
+        this.name = Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(specialObjType.ToString());
         TokenManager.Instance.AddSpecialObject(this);
     }
     public SpecialObject(SaveDataSpecialObject data) {
-        id = Utilities.SetID(this, data.id);
+        id = Ruinarch.Utilities.SetID(this, data.id);
         this.specialObjType = data.specialObjType;
-        this.name = Utilities.NormalizeStringUpperCaseFirstLetters(specialObjType.ToString());
+        this.name = Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(specialObjType.ToString());
         TokenManager.Instance.AddSpecialObject(this);
     }
 

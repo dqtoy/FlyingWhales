@@ -39,7 +39,7 @@ public class Log {
     }
 
     public Log(GameDate date, string category, string file, string key, ActualGoapNode node = null) {
-        this.id = Utilities.SetID<Log>(this);
+        this.id = Ruinarch.Utilities.SetID<Log>(this);
         this.month = (MONTH)date.month;
         this.day = date.day;
         this.year = date.year;
@@ -55,7 +55,7 @@ public class Log {
     }
 
     public Log(GameDate date, string message, ActualGoapNode goapAction = null) {
-        this.id = Utilities.SetID<Log>(this);
+        this.id = Ruinarch.Utilities.SetID<Log>(this);
         this.month = (MONTH)date.month;
         this.day = date.day;
         this.year = date.year;
@@ -69,7 +69,7 @@ public class Log {
     }
 
     public Log(SaveDataLog data) {
-        id = Utilities.SetID(this, data.id);
+        id = Ruinarch.Utilities.SetID(this, data.id);
         month = data.month;
         day = data.day;
         year = data.year;

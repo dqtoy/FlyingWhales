@@ -58,7 +58,7 @@ public class Artifact : TileObject, IWorldObject {
         OnPlaceArtifactOn(tile);
     }
     public override string ToString() {
-        return Utilities.NormalizeStringUpperCaseFirstLetters(type.ToString());
+        return Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(type.ToString());
     }
     #endregion
 

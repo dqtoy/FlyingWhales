@@ -56,11 +56,11 @@ namespace Inner_Maps {
         
         //this specifies what light intensity is to be used while inside the specific range in ticks
         private readonly Dictionary<int, float> lightSettings = new Dictionary<int, float>() { 
-#if UNITY_EDITOR
-            { 228, 1f }, { 61, 1.8f }
-#else
+// #if UNITY_EDITOR
+//             { 228, 1f }, { 61, 1.8f }
+// #else
             { 228, 0.3f }, { 61, 0.8f }
-#endif
+// #endif
         };
         public Dictionary<TILE_OBJECT_TYPE, List<TileObject>> allTileObjects { get; private set; }
         public InnerTileMap currentlyShowingMap { get; private set; }
@@ -715,7 +715,7 @@ namespace Inner_Maps {
             return null;
         }
         public T CreateNewTileObject<T>(TILE_OBJECT_TYPE tileObjectType) where T : TileObject {
-            var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(tileObjectType.ToString());
+            var typeName = Ruinarch.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(tileObjectType.ToString());
             System.Type type = System.Type.GetType(typeName);
             if (type != null) {
                 T obj = System.Activator.CreateInstance(type) as T;

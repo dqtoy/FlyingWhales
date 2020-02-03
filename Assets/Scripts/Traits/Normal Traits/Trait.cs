@@ -142,7 +142,7 @@ namespace Traits {
             if (LocalizationManager.Instance.HasLocalizedValue("Trait", name, key)) {
                 Log log = new Log(GameManager.Instance.Today(), "Trait", name, key);
                 log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                return Utilities.LogReplacer(log);
+                return Ruinarch.Utilities.LogReplacer(log);
             }
             return string.Empty;
         }

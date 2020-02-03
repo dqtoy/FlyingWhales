@@ -32,7 +32,7 @@ public class NewMinionAbilityUI : MonoBehaviour {
             UIManager.Instance.Pause();
             UIManager.Instance.SetSpeedTogglesState(false);
         }
-        Utilities.DestroyChildren(choicesParent);
+        Ruinarch.Utilities.DestroyChildren(choicesParent);
         string identifier = string.Empty;
         if (objectToAdd is CombatAbility) {
             titleText.text = "New Combat Ability";

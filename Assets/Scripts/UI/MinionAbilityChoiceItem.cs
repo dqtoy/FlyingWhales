@@ -30,7 +30,7 @@ public class MinionAbilityChoiceItem : MonoBehaviour {
     }
 
     private void UpdateAbilityItems() {
-        Utilities.DestroyChildren(abilityGrid.transform);
+        Ruinarch.Utilities.DestroyChildren(abilityGrid.transform);
         if(abilityIdentifier == "combat") {
             GameObject go = GameObject.Instantiate(abilityItemPrefab, abilityGrid.transform);
             AbilityItem item = go.GetComponent<AbilityItem>();

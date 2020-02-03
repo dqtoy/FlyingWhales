@@ -30,9 +30,27 @@ public class Daydream : GoapAction {
         base.Perform(goapNode);
         SetState("Daydream Success", goapNode);
     }
+<<<<<<< Updated upstream
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         //**Cost**: randomize between 10-30
         return Utilities.rng.Next(10, 31);
+=======
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+        string costLog = "\n" + name + " " + target.nameWithID + ":";
+        int cost = Ruinarch.Utilities.rng.Next(90, 131);
+        costLog += " +" + cost + "(Initial)";
+        int numOfTimesActionDone = actor.jobComponent.GetNumOfTimesActionDone(this);
+        if (numOfTimesActionDone > 5) {
+            cost += 2000;
+            costLog += " +2000(Times Daydreamed > 5)";
+        } else {
+            int timesCost = 10 * numOfTimesActionDone;
+            cost += timesCost;
+            costLog += " +" + timesCost + "(10 x Times Daydreamed)";
+        }
+        actor.logComponent.AppendCostLog(costLog);
+        return cost;
+>>>>>>> Stashed changes
     }
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);

@@ -1758,7 +1758,7 @@ public static class Extensions {
             case SUMMON_TYPE.ThiefSummon:
                 return "Thief";
             default:
-                return Utilities.NormalizeStringUpperCaseFirstLetters(type.ToString());
+                return Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(type.ToString());
         }
     }
     public static bool CanBeSummoned(this SUMMON_TYPE type) {
@@ -1851,7 +1851,7 @@ public static class Extensions {
             case LANDMARK_TYPE.NONE:
                 return "Empty";
             default:
-                return Utilities.NormalizeStringUpperCaseFirstLetters(type.ToString());
+                return Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(type.ToString());
         }
     }
     #endregion

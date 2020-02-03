@@ -165,5 +165,76 @@ public class OpinionComponent {
         }
         return RELATIONSHIP_EFFECT.NONE;
     }
+<<<<<<< Updated upstream
+=======
+    public int GetCompatibility(Character target) {
+        if (HasOpinion(target)) {
+            return opinions[target].compatibilityValue;
+        }
+        return -1;
+    }
+    public string GetRelationshipNameWith(Character target) {
+        if (owner.relationshipContainer.HasRelationshipWith(target)) {
+            IRelationshipData data = owner.relationshipContainer.GetRelationshipDataWith(target);
+            RELATIONSHIP_TYPE relType = data.GetFirstMajorRelationship();
+            return Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetterOnly(relType.ToString());    
+        } else if (HasOpinion(target)) {
+            return GetOpinionLabel(target);
+        }
+        return Acquaintance;
+    }
+    #endregion
+}
+
+//TODO: Object pool this
+public class OpinionData {
+    public Dictionary<string, int> allOpinions;
+    public int compatibilityValue; //NOTE: Getting compatibility value must be gotten from RelationshipManager, DO NOT CALL THIS DIRECTLY!
+
+    #region getters
+    public int totalOpinion => allOpinions.Sum(x => x.Value);
+    #endregion
+
+    public OpinionData() {
+        allOpinions = new Dictionary<string, int>();
+    }
+
+    public void AdjustOpinion(string text, int value) {
+        if (allOpinions.ContainsKey(text)) {
+            allOpinions[text] += value;
+        } else {
+            allOpinions.Add(text, value);
+        }
+    }
+    public void SetOpinion(string text, int value) {
+        if (allOpinions.ContainsKey(text)) {
+            allOpinions[text] = value;
+        } else {
+            allOpinions.Add(text, value);
+        }
+    }
+    public bool RemoveOpinion(string text) {
+        if (allOpinions.ContainsKey(text)) {
+            return allOpinions.Remove(text);
+        }
+        return false;
+    }
+    public bool HasOpinion(string text) {
+        return allOpinions.ContainsKey(text);
+    }
+    public void SetRandomCompatibilityValue() {
+        compatibilityValue = UnityEngine.Random.Range(0, 6); //0 - 5 compatibility value
+    }
+    public void SetCompatibilityValue(int value) {
+        compatibilityValue = value;
+    }
+
+    #region Object Pool
+    public void Initialize() { }
+    public void Reset() {
+        allOpinions.Clear();
+        compatibilityValue = 0;
+    }
+>>>>>>> Stashed changes
     #endregion
 }

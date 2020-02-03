@@ -33,7 +33,7 @@ public class Play : GoapAction {
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         //**Cost**: randomize between 6-15
-        return Utilities.rng.Next(6, 16);
+        return Ruinarch.Utilities.rng.Next(6, 16);
     }
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);

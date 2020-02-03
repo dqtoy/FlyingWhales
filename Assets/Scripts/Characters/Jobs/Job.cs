@@ -21,7 +21,11 @@ public class Job {
 
     public Job (Character character, JOB jobType) {
         _jobType = jobType;
+<<<<<<< Updated upstream
         _name = Utilities.NormalizeString(_jobType.ToString());
+=======
+        _name = Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetterOnly(_jobType.ToString());
+>>>>>>> Stashed changes
         _character = character;
     }
 

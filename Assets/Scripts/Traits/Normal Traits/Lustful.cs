@@ -25,18 +25,18 @@ namespace Traits {
                         Unfaithful unfaithful = actor.traitContainer.GetNormalTrait<Trait>("Unfaithful") as Unfaithful;
                         if (unfaithful != null && actor.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TYPE.PARAMOUR)) {
                             if (unfaithful.level == 1) {
-                                cost = Utilities.rng.Next(15, 37);
+                                cost = Ruinarch.Utilities.rng.Next(15, 37);
                             } else if (unfaithful.level == 2) {
-                                cost = Utilities.rng.Next(8, 21);
+                                cost = Ruinarch.Utilities.rng.Next(8, 21);
                             } else if (unfaithful.level == 3) {
-                                cost = Utilities.rng.Next(5, 16);
+                                cost = Ruinarch.Utilities.rng.Next(5, 16);
                             }
                         }
                     }
                     //Lustful(Early Night or Late Night 5 - 25)
-                    cost = Utilities.rng.Next(5, 26);
+                    cost = Ruinarch.Utilities.rng.Next(5, 26);
                 }
-                cost = Utilities.rng.Next(15, 26);
+                cost = Ruinarch.Utilities.rng.Next(15, 26);
             }
         }
         public override void ExecuteActionPerTickEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) {

@@ -40,7 +40,7 @@ public class ShareIntelMenu : MonoBehaviour {
         endOfConversationLbl.transform.SetParent(this.transform);
         endOfConversationLbl.gameObject.SetActive(false);
 
-        Utilities.DestroyChildren(dialogScrollView.content);
+        Ruinarch.Utilities.DestroyChildren(dialogScrollView.content);
 
         GameObject targetDialog = ObjectPoolManager.Instance.InstantiateObjectFromPool(dialogItemPrefab.name, Vector3.zero, Quaternion.identity, dialogScrollView.content);
         DialogItem item = targetDialog.GetComponent<DialogItem>();
@@ -70,7 +70,7 @@ public class ShareIntelMenu : MonoBehaviour {
         endOfConversationLbl.transform.SetParent(this.transform);
         endOfConversationLbl.gameObject.SetActive(false);
 
-        Utilities.DestroyChildren(dialogScrollView.content);
+        Ruinarch.Utilities.DestroyChildren(dialogScrollView.content);
 
         GameObject targetDialog = ObjectPoolManager.Instance.InstantiateObjectFromPool(dialogItemPrefab.name, Vector3.zero, Quaternion.identity, dialogScrollView.content);
         DialogItem item = targetDialog.GetComponent<DialogItem>();
@@ -78,7 +78,11 @@ public class ShareIntelMenu : MonoBehaviour {
 
         GameObject actorDialog = ObjectPoolManager.Instance.InstantiateObjectFromPool(dialogItemPrefab.name, Vector3.zero, Quaternion.identity, dialogScrollView.content);
         DialogItem actorItem = actorDialog.GetComponent<DialogItem>();
+<<<<<<< Updated upstream
         actorItem.SetData(actor, "I am here to share information with you.", DialogItem.Position.Right);
+=======
+        actorItem.SetData(actor, Ruinarch.Utilities.LogReplacer(intelToShare.node.descriptionLog), DialogItem.Position.Right);
+>>>>>>> Stashed changes
 
         DirectlyShowIntelReaction(intelToShare);
     }

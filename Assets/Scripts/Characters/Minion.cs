@@ -191,7 +191,12 @@ public class Minion {
             } else {
                 deathLog = _deathLog;
             }
+<<<<<<< Updated upstream
             UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Minion Died: " +  Utilities.LogReplacer(deathLog), null);
+=======
+            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Minion Died: " +  Ruinarch.Utilities.LogReplacer(deathLog), null);
+            Unsummon();
+>>>>>>> Stashed changes
         }
     }
 

@@ -32,7 +32,7 @@ public class CharacterRole {
 
     protected CharacterRole(CHARACTER_ROLE roleType, string classNameOrIdentifier, INTERACTION_CATEGORY[] interactionCategories) {
         this.roleType = roleType;
-        this.name = Utilities.NormalizeStringUpperCaseFirstLetters(roleType.ToString());
+        this.name = Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(roleType.ToString());
         this.classNameOrIdentifier = classNameOrIdentifier;
         this.interactionCategories = interactionCategories;
     }

@@ -269,7 +269,7 @@ public class FactionManager : MonoBehaviour {
     #region Faction Ideologies
     public FactionIdeology CreateIdeology(FACTION_IDEOLOGY ideologyType) {
         string ideologyStr = ideologyType.ToString();
-        var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(ideologyStr);
+        var typeName = Ruinarch.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(ideologyStr);
         System.Type type = System.Type.GetType(typeName);
         if (type != null) {
             FactionIdeology data = System.Activator.CreateInstance(type) as FactionIdeology;

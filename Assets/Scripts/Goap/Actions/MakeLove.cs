@@ -28,8 +28,36 @@ public class MakeLove : GoapAction {
         base.Perform(goapNode);
         SetState("Make Love Success", goapNode);
     }
+<<<<<<< Updated upstream
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return Utilities.rng.Next(30, 57);
+=======
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+        string costLog = "\n" + name + " " + target.nameWithID + ":";
+        int cost = Ruinarch.Utilities.rng.Next(80, 121);
+        costLog += " +" + cost + "(Initial)";
+        Trait trait = actor.traitContainer.GetNormalTrait<Trait>("Chaste", "Lustful");
+        if (trait != null && trait.name == "Chaste") {
+            cost += 2000;
+            costLog += " +2000(Chaste)";
+        }
+        if (trait != null && trait.name == "Lustful") {
+            cost += -15;
+            costLog += " -15(Lustful)";
+        } else {
+            int numOfTimesActionDone = actor.jobComponent.GetNumOfTimesActionDone(this);
+            if (numOfTimesActionDone > 5) {
+                cost += 2000;
+                costLog += " +2000(Times Made Love > 5)";
+            } else {
+                int timesCost = 10 * numOfTimesActionDone;
+                cost += timesCost;
+                costLog += " +" + timesCost + "(10 x Times Made Love)";
+            }
+        }
+        actor.logComponent.AppendCostLog(costLog);
+        return cost;
+>>>>>>> Stashed changes
     }
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);

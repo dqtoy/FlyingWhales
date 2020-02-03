@@ -122,11 +122,16 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     public string nameWithID => name;
     public string raceClassName {
         get {
+<<<<<<< Updated upstream
             if (Utilities.IsRaceBeast(race)) {
                 return Utilities.NormalizeString(race.ToString()) + " " + role.name;
+=======
+            if (Ruinarch.Utilities.IsRaceBeast(race)) {
+                return Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetterOnly(race.ToString()) + " " + role.name;
+>>>>>>> Stashed changes
             }
             //if(role.name == characterClass.className) {
-            return Utilities.GetNormalizedRaceAdjective(race) + " " + characterClass.className;
+            return Ruinarch.Utilities.GetNormalizedRaceAdjective(race) + " " + characterClass.className;
             //}
             //return Utilities.GetNormalizedRaceAdjective(race) + " " + role.name + " " + characterClass.className;
         }
@@ -252,7 +257,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     #endregion
 
     public Character(CharacterRole role, RACE race, GENDER gender) : this() {
-        _id = Utilities.SetID(this);
+        _id = Ruinarch.Utilities.SetID(this);
         _gender = gender;
         RaceSetting raceSetting = RaceManager.Instance.racesDictionary[race.ToString()];
         _raceSetting = raceSetting.CreateNewCopy();
@@ -266,7 +271,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         visuals = new CharacterVisuals(this);
     }
     public Character(CharacterRole role, string className, RACE race, GENDER gender) : this() {
-        _id = Utilities.SetID(this);
+        _id = Ruinarch.Utilities.SetID(this);
         _gender = gender;
         RaceSetting raceSetting = RaceManager.Instance.racesDictionary[race.ToString()];
         _raceSetting = raceSetting.CreateNewCopy();
@@ -280,7 +285,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         visuals = new CharacterVisuals(this);
     }
     public Character(CharacterRole role, string className, RACE race, GENDER gender, SEXUALITY sexuality) : this() {
-        _id = Utilities.SetID(this);
+        _id = Ruinarch.Utilities.SetID(this);
         _gender = gender;
         RaceSetting raceSetting = RaceManager.Instance.racesDictionary[race.ToString()];
         _raceSetting = raceSetting.CreateNewCopy();
@@ -294,7 +299,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         visuals = new CharacterVisuals(this);
     }
     public Character(SaveDataCharacter data) {
-        _id = Utilities.SetID(this, data.id);
+        _id = Ruinarch.Utilities.SetID(this, data.id);
         _gender = data.gender;
         SetSexuality(data.sexuality);
         _characterClass = CharacterManager.Instance.CreateNewCharacterClass(data.className);
@@ -852,7 +857,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
             } else {
                 deathLog = _deathLog;
             }
-            deathStr = Utilities.LogReplacer(deathLog);
+            deathStr = Ruinarch.Utilities.LogReplacer(deathLog);
             Messenger.Broadcast(Signals.CHARACTER_DEATH, this);
         }
     }
@@ -887,7 +892,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
     #region Character Class
     public virtual string GetClassForRole(CharacterRole role) {
         if (role == CharacterRole.BEAST) {
-            return Utilities.GetRespectiveBeastClassNameFromByRace(race);
+            return Ruinarch.Utilities.GetRespectiveBeastClassNameFromByRace(race);
         } else {
             string className = CharacterManager.Instance.GetRandomClassByIdentifier(role.classNameOrIdentifier);
             if (className != string.Empty) {
@@ -2434,17 +2439,26 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         if (minion != null) {
             if (minion.busyReasonLog != null) {
                 log = minion.busyReasonLog;
-                return Utilities.LogReplacer(minion.busyReasonLog);
+                return Ruinarch.Utilities.LogReplacer(minion.busyReasonLog);
             } else {
                 return $"{name} is ready to do your bidding.";
             }
             return string.Empty; 
         }
+<<<<<<< Updated upstream
+=======
+        //Interrupt
+        if (interruptComponent.isInterrupted && interruptComponent.thoughtBubbleLog != null) {
+            log = interruptComponent.thoughtBubbleLog;
+            return Ruinarch.Utilities.LogReplacer(interruptComponent.thoughtBubbleLog);
+        }
+
+>>>>>>> Stashed changes
         //Action
         if (currentActionNode != null) {
             Log currentLog = currentActionNode.GetCurrentLog();
             log = currentLog;
-            return Utilities.LogReplacer(currentLog);
+            return Ruinarch.Utilities.LogReplacer(currentLog);
         }
 
         //Disabler Thought
@@ -2460,7 +2474,7 @@ public class Character : ILeader, IPointOfInterest, IJobOwner {
         //Character State
         if (stateComponent.currentState != null) {
             log = stateComponent.currentState.thoughtBubbleLog;
-            return Utilities.LogReplacer(stateComponent.currentState.thoughtBubbleLog);
+            return Ruinarch.Utilities.LogReplacer(stateComponent.currentState.thoughtBubbleLog);
         }
         //fleeing
         if (marker != null && marker.hasFleePath) {

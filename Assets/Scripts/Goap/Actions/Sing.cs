@@ -27,8 +27,36 @@ public class Sing : GoapAction {
         base.Perform(goapNode);
         SetState("Sing Success", goapNode);
     }
+<<<<<<< Updated upstream
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return Utilities.rng.Next(20, 37);
+=======
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+        string costLog = "\n" + name + " " + target.nameWithID + ":";
+        int cost = Ruinarch.Utilities.rng.Next(90, 131);
+        costLog += " +" + cost + "(Initial)";
+        int numOfTimesActionDone = actor.jobComponent.GetNumOfTimesActionDone(this);
+        if (numOfTimesActionDone > 5) {
+            cost += 2000;
+            costLog += " +2000(Times Played > 5)";
+        } else {
+            int timesCost = 10 * numOfTimesActionDone;
+            cost += timesCost;
+            costLog += " +" + timesCost + "(10 x Times Played)";
+        }
+        Trait trait = actor.traitContainer.GetNormalTrait<Trait>("Music Hater", "Music Lover");
+        if (trait != null) {
+            if (trait.name == "Music Hater") {
+                cost += 2000;
+                costLog += " +2000(Music Hater)";
+            } else {
+                cost += -15;
+                costLog += " -15(Music Lover)";
+            }
+        }
+        actor.logComponent.AppendCostLog(costLog);
+        return cost;
+>>>>>>> Stashed changes
     }
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);

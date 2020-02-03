@@ -37,7 +37,7 @@ public class MinionCard : MonoBehaviour {
         }
         txtName.text = minionName;
         txtClass.text = "Demon " + this.minionData.className;
-        txtCombatAbility.text = "<link=\"0\">" + Utilities.NormalizeStringUpperCaseFirstLetters(this.minionData.combatAbility.ToString()) + "</link>";
+        txtCombatAbility.text = "<link=\"0\">" + Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(this.minionData.combatAbility.ToString()) + "</link>";
 
         DeadlySin deadlySin = CharacterManager.Instance.GetDeadlySin(this.minionData.className);
         string actions = string.Empty;
@@ -45,7 +45,7 @@ public class MinionCard : MonoBehaviour {
             if(i > 0) {
                 actions += ", ";
             }
-            actions += "<link=\"" + i.ToString() + "\">" + Utilities.NormalizeStringUpperCaseFirstLetters(deadlySin.assignments[i].ToString()) + "</link>";
+            actions += "<link=\"" + i.ToString() + "\">" + Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(deadlySin.assignments[i].ToString()) + "</link>";
         }
         txtActions.text = actions;
 
@@ -55,7 +55,7 @@ public class MinionCard : MonoBehaviour {
                 if (i > 0) {
                     research += ", ";
                 }
-                research += "<link=\"" + i.ToString() + "\">" + Utilities.NormalizeStringUpperCaseFirstLetters(this.minionData.interventionAbilitiesToResearch[i].ToString()) + "</link>";
+                research += "<link=\"" + i.ToString() + "\">" + Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(this.minionData.interventionAbilitiesToResearch[i].ToString()) + "</link>";
             }
             txtResearch.text = research;
             researchGO.SetActive(true);
@@ -86,7 +86,7 @@ public class MinionCard : MonoBehaviour {
                 if (i > 0) {
                     actions += ", ";
                 }
-                actions += "<link=\"" + i.ToString() + "\">" + Utilities.NormalizeStringUpperCaseFirstLetters(minion.deadlySin.assignments[i].ToString()) + "</link>";
+                actions += "<link=\"" + i.ToString() + "\">" + Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(minion.deadlySin.assignments[i].ToString()) + "</link>";
             }
             txtActions.text = actions;
 
@@ -96,7 +96,7 @@ public class MinionCard : MonoBehaviour {
                     if (i > 0) {
                         research += ", ";
                     }
-                    research += "<link=\"" + i.ToString() + "\">" + Utilities.NormalizeStringUpperCaseFirstLetters(minion.interventionAbilitiesToResearch[i].ToString()) + "</link>";
+                    research += "<link=\"" + i.ToString() + "\">" + Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(minion.interventionAbilitiesToResearch[i].ToString()) + "</link>";
                 }
                 txtResearch.text = research;
                 researchGO.SetActive(true);
@@ -125,7 +125,7 @@ public class MinionCard : MonoBehaviour {
                 DeadlySin deadlySin = CharacterManager.Instance.GetDeadlySin(this.minionData.className);
                 action = deadlySin.assignments[index];
             }
-            UIManager.Instance.ShowSmallInfo(action.Description(), Utilities.NormalizeStringUpperCaseFirstLetters(action.ToString()));
+            UIManager.Instance.ShowSmallInfo(action.Description(), Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(action.ToString()));
         }
     }
     public void OnHoverExitAbility() {
@@ -141,7 +141,11 @@ public class MinionCard : MonoBehaviour {
             } else {
                 spell = minionData.interventionAbilitiesToResearch[index];
             }
+<<<<<<< Updated upstream
             UIManager.Instance.ShowSmallInfo(PlayerManager.Instance.allInterventionAbilitiesData[spell].description, Utilities.NormalizeStringUpperCaseFirstLetters(spell.ToString()));
+=======
+            UIManager.Instance.ShowSmallInfo(PlayerManager.Instance.allSpellsData[spell].description, Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(spell.ToString()));
+>>>>>>> Stashed changes
         }
     }
     public void OnHoverExitSpell() {
@@ -156,7 +160,7 @@ public class MinionCard : MonoBehaviour {
         } else {
             action = minionData.combatAbility;
         }
-        UIManager.Instance.ShowSmallInfo(action.Description(), Utilities.NormalizeStringUpperCaseFirstLetters(action.ToString()));
+        UIManager.Instance.ShowSmallInfo(action.Description(), Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(action.ToString()));
     }
     public void OnHoverExitCombatAbility() {
         UIManager.Instance.HideSmallInfo();

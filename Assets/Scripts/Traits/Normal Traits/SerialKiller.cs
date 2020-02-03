@@ -406,15 +406,56 @@ namespace Traits {
         private void GenerateText() {
             string firstText = string.Empty;
             string secondText = string.Empty;
+<<<<<<< Updated upstream
             if (victimSecondDescription != "Builder" && victimSecondDescription != "Criminal") {
                 firstText = victimSecondDescription;
                 secondText = PluralizeText(Utilities.NormalizeStringUpperCaseFirstLetters(victimFirstDescription));
+=======
+            bool isFirstTypeProcessed = true;
+            //if (victimSecondDescription != "Builder" && victimSecondDescription != "Criminal") {
+            //    firstText = victimSecondDescription;
+            //    secondText = PluralizeText(Utilities.NormalizeStringUpperCaseFirstLetters(victimFirstDescription));
+            //} else {
+            //    firstText = Utilities.NormalizeStringUpperCaseFirstLetters(victimFirstDescription);
+            //    secondText = PluralizeText(victimSecondDescription);
+            //}
+
+            //If there is a Gender, it is always the first text
+            if(victimFirstType == SERIAL_VICTIM_TYPE.GENDER) {
+                isFirstTypeProcessed = true;
+                firstText = Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetterOnly(victimFirstDescription[0]);
+            } else if (victimSecondType == SERIAL_VICTIM_TYPE.GENDER) {
+                isFirstTypeProcessed = false;
+                firstText = Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetterOnly(victimSecondDescription[0]);
+            }
+            if(firstText == string.Empty) {
+                //If there is no Gender, the first text must be Race
+                if (victimFirstType == SERIAL_VICTIM_TYPE.RACE) {
+                    isFirstTypeProcessed = true;
+                    firstText = Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetterOnly(victimFirstDescription[0]);
+                } else if (victimSecondType == SERIAL_VICTIM_TYPE.RACE) {
+                    isFirstTypeProcessed = false;
+                    firstText = Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetterOnly(victimSecondDescription[0]);
+                }
+                if (firstText == string.Empty) {
+                    //If there is no Race or Gender victim type, generate description normally
+                    firstText = GetDescriptionText(false);
+                    secondText = GetDescriptionText(true);
+                    if (firstText != string.Empty && secondText != string.Empty) {
+                        secondText = secondText.Insert(0, "and ");
+                    }
+                } else {
+                    secondText = GetDescriptionText(isFirstTypeProcessed);
+                }
+
+>>>>>>> Stashed changes
             } else {
                 firstText = Utilities.NormalizeStringUpperCaseFirstLetters(victimFirstDescription);
                 secondText = PluralizeText(victimSecondDescription);
             }
             this.text = firstText + " " + secondText;
         }
+<<<<<<< Updated upstream
 
         private string PluralizeText(string text) {
             string newText = text + "s";
@@ -422,6 +463,21 @@ namespace Traits {
                 newText = text.Replace("man", "men");
             }else if (text.EndsWith("ty")) {
                 newText = text.Replace("ty", "ties");
+=======
+        private string GetDescriptionText(bool fromSecondType) {
+            List<string> secondDescriptions = victimSecondDescription;
+            if (!fromSecondType) {
+                secondDescriptions = victimFirstDescription;
+            }
+            string newDesc = string.Empty;
+            if(secondDescriptions != null) {
+                for (int i = 0; i < secondDescriptions.Count; i++) {
+                    if (i > 0) {
+                        newDesc += ", ";
+                    }
+                    newDesc += Ruinarch.Utilities.PluralizeString(Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(secondDescriptions[i]));
+                }
+>>>>>>> Stashed changes
             }
             return newText;
         }

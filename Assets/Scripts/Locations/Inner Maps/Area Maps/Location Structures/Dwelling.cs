@@ -128,7 +128,7 @@ public class Dwelling : LocationStructure {
     public override string GetNameRelativeTo(Character character) {
         if (character.homeStructure == this) {
             //- Dwelling where Actor Resides: "at [his/her] home"
-            return Utilities.GetPronounString(character.gender, PRONOUN_TYPE.POSSESSIVE, false) + " home";
+            return Ruinarch.Utilities.GetPronounString(character.gender, PRONOUN_TYPE.POSSESSIVE, false) + " home";
         } else if (residents.Count > 0) {
             //- Dwelling where Someone else Resides: "at [Resident Name]'s home"
             string residentSummary = residents[0].name;

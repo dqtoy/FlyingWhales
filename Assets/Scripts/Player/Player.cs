@@ -877,7 +877,7 @@ public class Player : ILeader {
             case SUMMON_TYPE.ThiefSummon:
                 return "Summon a thief that will steal items from the settlements warehouse.";
             default:
-                return "Summon a " + Utilities.NormalizeStringUpperCaseFirstLetters(currentlySelectedSummon.ToString());
+                return "Summon a " + Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(currentlySelectedSummon.ToString());
         }
     }
     private void ClearSummonData(Summon summon) {
@@ -1163,7 +1163,7 @@ public class Player : ILeader {
             case ARTIFACT_TYPE.Miasma_Emitter:
                 return "Characters will avoid the settlement. If any character gets caught within, they will gain Poisoned status effect. Any objects inside the radius are disabled.";
             default:
-                return "Summon a " + Utilities.NormalizeStringUpperCaseFirstLetters(type.ToString());
+                return "Summon a " + Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(type.ToString());
         }
     }
     public Artifact GetRandomArtifact() {

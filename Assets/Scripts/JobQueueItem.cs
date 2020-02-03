@@ -37,18 +37,18 @@ public class JobQueueItem {
     }
 
     protected void Initialize(JOB_TYPE jobType, IJobOwner owner) {
-        id = Utilities.SetID(this);
+        id = Ruinarch.Utilities.SetID(this);
         this.jobType = jobType;
         this.originalOwner = owner;
         if (this.originalOwner == null) {
             throw new Exception($"Original owner of job {this.ToString()} is null");
         }
-        this.name = Utilities.NormalizeStringUpperCaseFirstLetters(this.jobType.ToString());
+        this.name = Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(this.jobType.ToString());
         //this.blacklistedCharacters = new List<Character>();
         SetInitialPriority();
     }
     protected void Initialize(SaveDataJobQueueItem data) {
-        id = Utilities.SetID(this, data.id);
+        id = Ruinarch.Utilities.SetID(this, data.id);
         name = data.name;
         jobType = data.jobType;
         isNotSavable = data.isNotSavable;

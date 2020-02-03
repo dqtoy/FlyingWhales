@@ -38,11 +38,19 @@ namespace Inner_Maps {
             LocationStructure structure = location.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
             for (int i = 0; i < allTiles.Count; i++) {
                 LocationGridTile tile = allTiles[i];
+<<<<<<< Updated upstream
                 bool isAtEdges = Utilities.IsInRange(tile.localPlace.x, 0, WestEdge) ||
                                  Utilities.IsInRange(tile.localPlace.x, width - EastEdge, width) ||
                                  Utilities.IsInRange(tile.localPlace.y, 0, SouthEdge) ||
                                  Utilities.IsInRange(tile.localPlace.y, height - NorthEdge, width);
                 if (isAtEdges == false && tile.buildSpotOwner.hexTileOwner != null) {
+=======
+                bool isAtEdges = Ruinarch.Utilities.IsInRange(tile.localPlace.x, 0, WestEdge) ||
+                                 Ruinarch.Utilities.IsInRange(tile.localPlace.x, width - EastEdge, width) ||
+                                 Ruinarch.Utilities.IsInRange(tile.localPlace.y, 0, SouthEdge) ||
+                                 Ruinarch.Utilities.IsInRange(tile.localPlace.y, height - NorthEdge, width);
+                if (isAtEdges == false) { //&& tile.buildSpotOwner.isPartOfParentRegionMap
+>>>>>>> Stashed changes
                     tile.CreateGenericTileObject();
                     tile.SetStructure(structure);
                 }
@@ -103,8 +111,8 @@ namespace Inner_Maps {
                     if (tile != null) {
                         //the row will be indented if its row type (odd/even) is not the same as the row type of the left most tile.
                         //and the first tile in it's row is not null.
-                        bool isIndented = Utilities.IsEven(tile.yCoordinate) !=
-                                          Utilities.IsEven(leftMostTile.yCoordinate);
+                        bool isIndented = Ruinarch.Utilities.IsEven(tile.yCoordinate) !=
+                                          Ruinarch.Utilities.IsEven(leftMostTile.yCoordinate);
 
                         int buildSpotColumn1 = localX * 2;
                         int buildSpotColumn2 = buildSpotColumn1 + 1;

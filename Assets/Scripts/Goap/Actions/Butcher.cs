@@ -22,8 +22,58 @@ public class Butcher : GoapAction {
         base.Perform(goapNode);
         SetState("Transform Success", goapNode);
     }
+<<<<<<< Updated upstream
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return Utilities.rng.Next(15, 26);
+=======
+    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
+        string costLog = "\n" + name + " " + target.nameWithID + ":";
+        Character deadCharacter = GetDeadCharacter(target);
+        int cost = 0;
+        //int cost = GetFoodAmountTakenFromDead(deadCharacter);
+        //costLog += " +" + cost + "(Initial)";
+        if(deadCharacter != null) {
+            if (actor == deadCharacter) {
+                cost += 2000;
+                costLog += " +2000(Actor/Target Same)";
+            } else {
+                if (actor.traitContainer.GetNormalTrait<Trait>("Cannibal") != null) {
+                    if (actor.opinionComponent.IsFriendsWith(deadCharacter)) {
+                        cost += 2000;
+                        costLog += " +2000(Cannibal, Friend/Close)";
+                    } else if ((deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES) &&
+                               !actor.needsComponent.isStarving) {
+                        cost += 2000;
+                        costLog += " +2000(Cannibal, Human/Elf, not Starving)";
+                    }
+                } else {
+                    if (deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES) {
+                        cost += 2000;
+                        costLog += " +2000(not Cannibal, Human/Elf)";
+                    }
+                }
+            }
+            if(deadCharacter.race == RACE.HUMANS) {
+                cost += Ruinarch.Utilities.rng.Next(40, 51);
+                costLog += " +" + cost + "(Human)";
+            } else if (deadCharacter.race == RACE.ELVES) {
+                cost += Ruinarch.Utilities.rng.Next(40, 51);
+                costLog += " +" + cost + "(Elf)";
+            } else if (deadCharacter.race == RACE.WOLF) {
+                cost += Ruinarch.Utilities.rng.Next(20, 31);
+                costLog += " +" + cost + "(Wolf)";
+            } else if (deadCharacter.race == RACE.DEMON) {
+                cost += Ruinarch.Utilities.rng.Next(80, 91);
+                costLog += " +" + cost + "(Demon)";
+            }
+        }
+        if(target is SmallAnimal) {
+            cost += Ruinarch.Utilities.rng.Next(60, 71);
+            costLog += " +" + cost + "(Small Animal)";
+        }
+        actor.logComponent.AppendCostLog(costLog);
+        return cost;
+>>>>>>> Stashed changes
     }
     public override void AddFillersToLog(Log log, ActualGoapNode node) {
         base.AddFillersToLog(log, node);

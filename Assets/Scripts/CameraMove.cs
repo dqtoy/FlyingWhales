@@ -58,7 +58,14 @@ public class CameraMove : MonoBehaviour {
 
     private void Awake(){
 		Instance = this;
+<<<<<<< Updated upstream
 	}
+=======
+        _mainCamera = Camera.main;
+        _mainCameraTransform = _mainCamera.transform;
+        defaultMask = _mainCamera.cullingMask;
+    }
+>>>>>>> Stashed changes
     private void Update() {
         if (!cameraControlEnabled) {
             return;

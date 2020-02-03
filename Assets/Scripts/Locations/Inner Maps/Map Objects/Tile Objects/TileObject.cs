@@ -66,9 +66,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
     #endregion
 
     protected void Initialize(TILE_OBJECT_TYPE tileObjectType) {
-        id = Utilities.SetID(this);
+        id = Ruinarch.Utilities.SetID(this);
         this.tileObjectType = tileObjectType;
-        name = Utilities.NormalizeStringUpperCaseFirstLetters(tileObjectType.ToString());
+        name = Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(tileObjectType.ToString());
         actionHistory = new List<string>();
         allJobsTargetingThis = new List<JobQueueItem>();
         owners = new List<Character>();
@@ -82,7 +82,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest {
         InnerMapManager.Instance.AddTileObject(this);
     }
     protected void Initialize(SaveDataTileObject data) {
-        id = Utilities.SetID(this, data.id);
+        id = Ruinarch.Utilities.SetID(this, data.id);
         tileObjectType = data.tileObjectType;
         actionHistory = new List<string>();
         allJobsTargetingThis = new List<JobQueueItem>();
@@ -755,7 +755,7 @@ public class SaveDataTileObject {
     }
 
     public virtual TileObject Load() {
-        string tileObjectName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(tileObjectType.ToString());
+        string tileObjectName = Ruinarch.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(tileObjectType.ToString());
         TileObject tileObject = System.Activator.CreateInstance(System.Type.GetType(tileObjectName), this) as TileObject;
 
         //if(structureLocationID != -1 && structureLocationAreaID != -1) {
