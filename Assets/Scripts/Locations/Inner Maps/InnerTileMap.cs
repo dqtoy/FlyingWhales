@@ -674,28 +674,20 @@ namespace Inner_Maps {
                 if (!currTile.hasDetail && currTile.HasNeighbouringWalledStructure() == false) {
                     if (sampleDetail < 0.5f) {
                         if (currTile.groundType == LocationGridTile.Ground_Type.Grass || currTile.groundType == LocationGridTile.Ground_Type.Snow) {
-                            List<LocationGridTile> overlappedTiles = GetTiles(new Point(2, 2), currTile, tiles);
-                            int invalidOverlap = overlappedTiles.Count(t => t.hasDetail || !tiles.Contains(t) || t.objHere != null);
-                            if (!currTile.IsAtEdgeOfMap() 
-                                && !currTile.HasNeighborAtEdgeOfMap() && invalidOverlap == 0 
-                                && overlappedTiles.Count == 4 && Random.Range(0, 100) < 5) {
-                                
-                            } else {
-                                if (Random.Range(0, 100) < 50) {
-                                    //shrubs
-                                    if (location.coreTile.biomeType != BIOMES.SNOW && location.coreTile.biomeType != BIOMES.TUNDRA) {
-                                        currTile.hasDetail = true;
-                                        detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.shrubTile);
-                                        if (currTile.structure != null) {
-                                            //place tile object
-                                            ConvertDetailToTileObject(currTile);
-                                        } else {
-                                            //place detail instead
-                                            currTile.SetTileState(LocationGridTile.Tile_State.Empty);
-                                            Matrix4x4 m = Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(0f, 0f, Random.Range(0f, 360f)), Vector3.one);
-                                            detailsTilemap.RemoveTileFlags(currTile.localPlace, TileFlags.LockTransform);
-                                            detailsTilemap.SetTransformMatrix(currTile.localPlace, m);
-                                        }
+                            if (Random.Range(0, 100) < 50) {
+                                //shrubs
+                                if (location.coreTile.biomeType != BIOMES.SNOW && location.coreTile.biomeType != BIOMES.TUNDRA) {
+                                    currTile.hasDetail = true;
+                                    detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.shrubTile);
+                                    if (currTile.structure != null) {
+                                        //place tile object
+                                        ConvertDetailToTileObject(currTile);
+                                    } else {
+                                        //place detail instead
+                                        currTile.SetTileState(LocationGridTile.Tile_State.Empty);
+                                        Matrix4x4 m = Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(0f, 0f, Random.Range(0f, 360f)), Vector3.one);
+                                        detailsTilemap.RemoveTileFlags(currTile.localPlace, TileFlags.LockTransform);
+                                        detailsTilemap.SetTransformMatrix(currTile.localPlace, m);
                                     }
                                 }
                             }

@@ -17,7 +17,7 @@ public class LocationStructure {
                                             && tiles[0].buildSpotOwner.hexTileOwner.settlementOnTile != null 
         ? tiles[0].buildSpotOwner.hexTileOwner.settlementOnTile : null;
     public List<SpecialToken> itemsInStructure { get; private set; }
-    public List<IPointOfInterest> pointsOfInterest { get; private set; }
+    public HashSet<IPointOfInterest> pointsOfInterest { get; private set; }
     public POI_STATE state { get; private set; }
     public LocationStructureObject structureObj {get; private set;}
     public BuildSpotTileObject occupiedBuildSpot { get; private set; }
@@ -38,7 +38,7 @@ public class LocationStructure {
         this.location = location;
         charactersHere = new List<Character>();
         itemsInStructure = new List<SpecialToken>();
-        pointsOfInterest = new List<IPointOfInterest>();
+        pointsOfInterest = new HashSet<IPointOfInterest>();
         tiles = new List<LocationGridTile>();
         unoccupiedTiles = new List<LocationGridTile>();
         SubscribeListeners();
@@ -50,7 +50,7 @@ public class LocationStructure {
         name = data.name;
         charactersHere = new List<Character>();
         itemsInStructure = new List<SpecialToken>();
-        pointsOfInterest = new List<IPointOfInterest>();
+        pointsOfInterest = new HashSet<IPointOfInterest>();
         tiles = new List<LocationGridTile>();
         SubscribeListeners();
     }
@@ -185,8 +185,9 @@ public class LocationStructure {
     public List<IPointOfInterest> GetPOIsOfType(POINT_OF_INTEREST_TYPE type) {
         List<IPointOfInterest> pois = new List<IPointOfInterest>();
         for (int i = 0; i < pointsOfInterest.Count; i++) {
-            if (pointsOfInterest[i].poiType == type) {
-                pois.Add(pointsOfInterest[i]);
+            IPointOfInterest poi = pointsOfInterest.ElementAt(i); 
+            if (poi.poiType == type) {
+                pois.Add(poi);
             }
         }
         return pois;
@@ -194,8 +195,9 @@ public class LocationStructure {
     public List<TileObject> GetTileObjectsOfType(TILE_OBJECT_TYPE type) {
         List<TileObject> objs = new List<TileObject>();
         for (int i = 0; i < pointsOfInterest.Count; i++) {
-            if (pointsOfInterest[i] is TileObject) {
-                TileObject obj = pointsOfInterest[i] as TileObject;
+            IPointOfInterest poi = pointsOfInterest.ElementAt(i); 
+            if (poi is TileObject) {
+                TileObject obj = poi as TileObject;
                 if (obj.tileObjectType == type) {
                     objs.Add(obj);
                 }
@@ -206,8 +208,9 @@ public class LocationStructure {
     public List<T> GetTileObjectsOfType<T>(TILE_OBJECT_TYPE type) where T : TileObject {
         List<T> objs = new List<T>();
         for (int i = 0; i < pointsOfInterest.Count; i++) {
-            if (pointsOfInterest[i] is TileObject) {
-                TileObject obj = pointsOfInterest[i] as TileObject;
+            IPointOfInterest poi = pointsOfInterest.ElementAt(i); 
+            if (poi is TileObject) {
+                TileObject obj = poi as TileObject;
                 if (obj.tileObjectType == type) {
                     objs.Add(obj as T);
                 }
@@ -218,8 +221,9 @@ public class LocationStructure {
     public List<T> GetTileObjectsOfType<T>() where T : TileObject {
         List<T> objs = new List<T>();
         for (int i = 0; i < pointsOfInterest.Count; i++) {
-            if (pointsOfInterest[i] is T) {
-                T obj = pointsOfInterest[i] as T;
+            IPointOfInterest poi = pointsOfInterest.ElementAt(i); 
+            if (poi is T) {
+                T obj = poi as T;
                 objs.Add(obj);
             }
         }
@@ -228,8 +232,9 @@ public class LocationStructure {
     public T GetTileObjectOfType<T>(TILE_OBJECT_TYPE type) where T : TileObject{
         List<TileObject> objs = new List<TileObject>();
         for (int i = 0; i < pointsOfInterest.Count; i++) {
-            if (pointsOfInterest[i] is TileObject) {
-                TileObject obj = pointsOfInterest[i] as TileObject;
+            IPointOfInterest poi = pointsOfInterest.ElementAt(i); 
+            if (poi is TileObject) {
+                TileObject obj = poi as TileObject;
                 if (obj.tileObjectType == type) {
                     return obj as T;
                 }
@@ -241,8 +246,9 @@ public class LocationStructure {
         ResourcePile chosenPile = null;
         int lowestCount = 0;
         for (int i = 0; i < pointsOfInterest.Count; i++) {
-            if (pointsOfInterest[i] is ResourcePile) {
-                ResourcePile obj = pointsOfInterest[i] as ResourcePile;
+            IPointOfInterest poi = pointsOfInterest.ElementAt(i); 
+            if (poi is ResourcePile) {
+                ResourcePile obj = poi as ResourcePile;
                 if (excludeMaximum && obj.IsAtMaxResource(obj.providedResource)) {
                     continue; //skip
                 }
@@ -383,7 +389,7 @@ public class LocationStructure {
     }
     public void DoCleanup() {
         for (int i = 0; i < pointsOfInterest.Count; i++) {
-            IPointOfInterest poi = pointsOfInterest[i];
+            IPointOfInterest poi = pointsOfInterest.ElementAt(i);
             if (poi is TileObject) {
                 (poi as TileObject).DoCleanup();
             } else if (poi is SpecialToken) {
@@ -397,7 +403,7 @@ public class LocationStructure {
     protected List<TileObject> GetTileObjects() {
         List<TileObject> objs = new List<TileObject>();
         for (int i = 0; i < pointsOfInterest.Count; i++) {
-            IPointOfInterest currPOI = pointsOfInterest[i];
+            IPointOfInterest currPOI = pointsOfInterest.ElementAt(i);
             if (currPOI is TileObject) {
                 objs.Add(currPOI as TileObject);
             }
@@ -407,7 +413,7 @@ public class LocationStructure {
     public List<TileObject> GetTileObjectsThatAdvertise(params INTERACTION_TYPE[] types) {
         List<TileObject> objs = new List<TileObject>();
         for (int i = 0; i < pointsOfInterest.Count; i++) {
-            IPointOfInterest currPOI = pointsOfInterest[i];
+            IPointOfInterest currPOI = pointsOfInterest.ElementAt(i);
             if (currPOI is TileObject) {
                 TileObject obj = currPOI as TileObject;
                 if (obj.IsAvailable() && obj.AdvertisesAll(types)) {
@@ -425,8 +431,9 @@ public class LocationStructure {
     }
     public TileObject GetUnoccupiedTileObject(params TILE_OBJECT_TYPE[] type) {
         for (int i = 0; i < pointsOfInterest.Count; i++) {
-            if (pointsOfInterest[i].IsAvailable() && pointsOfInterest[i] is TileObject) {
-                TileObject tileObj = pointsOfInterest[i] as TileObject;
+            IPointOfInterest poi = pointsOfInterest.ElementAt(i); 
+            if (poi.IsAvailable() && poi is TileObject) {
+                TileObject tileObj = poi as TileObject;
                 if (type.Contains(tileObj.tileObjectType) && tileObj.mapObjectState == MAP_OBJECT_STATE.BUILT) {
                     return tileObj;
                 }

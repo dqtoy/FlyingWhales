@@ -45,11 +45,11 @@ namespace Ruinarch {
         public static LANGUAGES defaultLanguage = LANGUAGES.ENGLISH;
         public static string dataPath {
             get {
-#if UNITY_EDITOR
-                return Application.dataPath + "/Resources/Data/";
-#elif UNITY_STANDALONE
+// #if UNITY_EDITOR
+//                 return Application.dataPath + "/Resources/Data/";
+// #elif UNITY_STANDALONE
             return Application.streamingAssetsPath + "/Data/";
-#endif
+// #endif
             }
         }
         public static string worldConfigsSavePath { get { return Application.persistentDataPath + "/Saves/"; } }

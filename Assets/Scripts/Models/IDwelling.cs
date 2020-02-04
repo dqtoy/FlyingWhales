@@ -13,7 +13,7 @@ public interface IDwelling {
     ILocation location { get; }
     Settlement settlementLocation { get; }
     List<SpecialToken> itemsInStructure { get; }
-    List<IPointOfInterest> pointsOfInterest { get; }
+    HashSet<IPointOfInterest> pointsOfInterest { get; }
     POI_STATE state { get; }
     LocationStructureObject structureObj { get; }
     BuildSpotTileObject occupiedBuildSpot { get; }
