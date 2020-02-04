@@ -22,7 +22,7 @@ public class PlaceBlueprint : GoapAction {
     public override void AddFillersToLog(Log log, ActualGoapNode goapNode) {
         base.AddFillersToLog(log, goapNode);
         STRUCTURE_TYPE structureType = (STRUCTURE_TYPE)goapNode.otherData[0];
-        log.AddToFillers(null, Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString()), LOG_IDENTIFIER.STRING_1);
+        log.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString()), LOG_IDENTIFIER.STRING_1);
     }
     #endregion
 
@@ -43,7 +43,7 @@ public class PlaceBlueprint : GoapAction {
     #region State Effects
     public void PrePlaceSuccess(ActualGoapNode goapNode) {
         STRUCTURE_TYPE structureType = (STRUCTURE_TYPE)goapNode.otherData[0];
-        goapNode.descriptionLog.AddToFillers(null, Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString()), LOG_IDENTIFIER.STRING_1);
+        goapNode.descriptionLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString()), LOG_IDENTIFIER.STRING_1);
     }
     public void AfterPlaceSuccess(ActualGoapNode goapNode) {
         STRUCTURE_TYPE structureType = (STRUCTURE_TYPE)goapNode.otherData[0];

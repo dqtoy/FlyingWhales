@@ -34,7 +34,7 @@ public class BuildingSpot {
         centeredLocation = new Vector3(location.x + 0.5f, location.y + 0.5f);
     }
     public BuildingSpot(Vector3Int tileLocation, Vector2Int locationInBuildSpotGrid) {
-        id = Ruinarch.Utilities.SetID(this);
+        id = Utilities.SetID(this);
         location = tileLocation;
         this.locationInBuildSpotGrid = locationInBuildSpotGrid;
         centeredLocation = new Vector3(location.x + 0.5f, location.y + 0.5f);
@@ -76,8 +76,8 @@ public class BuildingSpot {
             GridNeighbourDirection direction = kvp.Key;
             Point exit = kvp.Value;
             Point result = exit.Sum(thisPoint);
-            if (Ruinarch.Utilities.IsInRange(result.X, 0, mapUpperBoundX + 1) &&
-                Ruinarch.Utilities.IsInRange(result.Y, 0, mapUpperBoundY + 1)) {
+            if (Utilities.IsInRange(result.X, 0, mapUpperBoundX + 1) &&
+                Utilities.IsInRange(result.Y, 0, mapUpperBoundY + 1)) {
                 neighbours.Add(direction, map.buildingSpots[result.X, result.Y]);
             }
         }

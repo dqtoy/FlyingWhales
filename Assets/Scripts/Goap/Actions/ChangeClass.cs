@@ -31,7 +31,7 @@ public class ChangeClass : GoapAction {
 
     #region Effects
     public void PreChangeClassSuccess(ActualGoapNode goapNode) {
-        goapNode.descriptionLog.AddToFillers(null, Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters((string)goapNode.otherData[0]), LOG_IDENTIFIER.STRING_1);
+        goapNode.descriptionLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters((string)goapNode.otherData[0]), LOG_IDENTIFIER.STRING_1);
     }
     public void AfterChangeClassSuccess(ActualGoapNode goapNode) {
         string className = (string) goapNode.otherData[0];

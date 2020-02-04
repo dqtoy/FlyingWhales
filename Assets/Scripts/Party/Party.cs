@@ -88,7 +88,7 @@ public class Party {
         if (owner != null) {
             _partyName = owner.name + "'s Party";
         }
-        _id = Ruinarch.Utilities.SetID(this);
+        _id = Utilities.SetID(this);
         _isDead = false;
         //_characters = new List<Character>();
         //specificLocationHistory = new List<string>();

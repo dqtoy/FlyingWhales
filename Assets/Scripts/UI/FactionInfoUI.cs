@@ -89,7 +89,7 @@ public class FactionInfoUI : UIMenu {
 
     #region Characters
     private void UpdateAllCharacters() {
-        Ruinarch.Utilities.DestroyChildren(charactersScrollView.content);
+        Utilities.DestroyChildren(charactersScrollView.content);
         _characterItems.Clear();
 
         for (int i = 0; i < activeFaction.characters.Count; i++) {
@@ -99,7 +99,7 @@ public class FactionInfoUI : UIMenu {
         OrderCharacterItems();
     }
     private LandmarkCharacterItem GetItem(Party party) {
-        LandmarkCharacterItem[] items = Ruinarch.Utilities.GetComponentsInDirectChildren<LandmarkCharacterItem>(charactersScrollView.content.gameObject);
+        LandmarkCharacterItem[] items = Utilities.GetComponentsInDirectChildren<LandmarkCharacterItem>(charactersScrollView.content.gameObject);
         for (int i = 0; i < items.Length; i++) {
             LandmarkCharacterItem item = items[i];
             if (item.character != null) {
@@ -111,7 +111,7 @@ public class FactionInfoUI : UIMenu {
         return null;
     }
     private CharacterNameplateItem GetItem(Character character) {
-        CharacterNameplateItem[] items = Ruinarch.Utilities.GetComponentsInDirectChildren<CharacterNameplateItem>(charactersScrollView.content.gameObject);
+        CharacterNameplateItem[] items = Utilities.GetComponentsInDirectChildren<CharacterNameplateItem>(charactersScrollView.content.gameObject);
         for (int i = 0; i < items.Length; i++) {
             CharacterNameplateItem item = items[i];
             if (item.character != null) {
@@ -162,7 +162,7 @@ public class FactionInfoUI : UIMenu {
 
     #region Regions
     private void UpdateRegions() {
-        Ruinarch.Utilities.DestroyChildren(regionsScrollView.content);
+        Utilities.DestroyChildren(regionsScrollView.content);
         locationItems.Clear();
 
         //TODO:
@@ -209,7 +209,7 @@ public class FactionInfoUI : UIMenu {
 
     #region Relationships
     private void UpdateAllRelationships() {
-        Ruinarch.Utilities.DestroyChildren(relationshipsParent);
+        Utilities.DestroyChildren(relationshipsParent);
 
         foreach (KeyValuePair<Faction, FactionRelationship> keyValuePair in activeFaction.relationships) {
             if (keyValuePair.Key.isActive) {

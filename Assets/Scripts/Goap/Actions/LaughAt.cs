@@ -21,13 +21,8 @@ public class LaughAt : GoapAction {
         base.Perform(goapNode);
         SetState("Laugh Success", goapNode);
     }
-<<<<<<< Updated upstream
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return Utilities.rng.Next(40, 61);
-=======
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
-        return Ruinarch.Utilities.rng.Next(40, 61);
->>>>>>> Stashed changes
     }
     #endregion
 

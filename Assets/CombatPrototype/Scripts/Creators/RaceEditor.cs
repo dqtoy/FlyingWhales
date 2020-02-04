@@ -49,8 +49,8 @@ public class RaceEditor : Editor {
     }
     #region Saving
     private void SaveRaceSettings() {
-		string path = Ruinarch.Utilities.dataPath + "RaceSettings/" + raceComponent.race.ToString() + ".json";
-        if (Ruinarch.Utilities.DoesFileExist(path)) {
+		string path = Utilities.dataPath + "RaceSettings/" + raceComponent.race.ToString() + ".json";
+        if (Utilities.DoesFileExist(path)) {
 			if (EditorUtility.DisplayDialog("Overwrite Race Setting", "A race setting with name " + raceComponent.race.ToString() + " already exists. Replace with these settings?", "Yes", "No")) {
                 File.Delete(path);
                 SaveRaceJson(path);

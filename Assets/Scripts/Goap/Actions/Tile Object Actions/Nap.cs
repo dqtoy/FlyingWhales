@@ -42,7 +42,6 @@ public class Nap : GoapAction {
             if (dwelling.IsResident(actor)) {
                 return 8;
             } else {
-<<<<<<< Updated upstream
                 for (int i = 0; i < dwelling.residents.Count; i++) {
                     Character resident = dwelling.residents[i];
                     if (resident != actor) {
@@ -50,58 +49,6 @@ public class Nap : GoapAction {
                             return 25;
                         }
                     }
-=======
-                if (targetBed.IsOwnedBy(actor)) {
-                    cost += Ruinarch.Utilities.rng.Next(30, 36);
-                    costLog += " +" + cost + "(Owned)";
-                } else {
-                    List<Character> tableOwners = targetBed.GetOwners();
-                    bool isTargetObjectOwnedByFriend = false;
-                    bool isTargetObjectOwnedByEnemy = false;
-                    if (tableOwners != null) {
-                        for (int i = 0; i < tableOwners.Count; i++) {
-                            Character objectOwner = tableOwners[i];
-                            if (actor.opinionComponent.IsFriendsWith(objectOwner)) {
-                                isTargetObjectOwnedByFriend = true;
-                                break;
-                            } else if (actor.opinionComponent.IsEnemiesWith(objectOwner)) {
-                                isTargetObjectOwnedByEnemy = true;
-                            }
-                        }
-                    }
-                    if (isTargetObjectOwnedByFriend) {
-                        cost = Ruinarch.Utilities.rng.Next(55, 66);
-                        costLog += " +" + cost + "(Owned by Friend)";
-                    } else if (isTargetObjectOwnedByEnemy) {
-                        cost += 2000;
-                        costLog += " +2000(Owned by Enemy)";
-                    } else {
-                        cost = Ruinarch.Utilities.rng.Next(50, 71);
-                        costLog += " +" + cost + "(Else)";
-                    }
-                }
-
-                Character alreadySleepingCharacter = null;
-                for (int i = 0; i < targetBed.users.Length; i++) {
-                    if(targetBed.users[i] != null) {
-                        alreadySleepingCharacter = targetBed.users[i];
-                        break;
-                    }
-                }
-
-                if(alreadySleepingCharacter != null) {
-                    string opinionLabel = actor.opinionComponent.GetOpinionLabel(alreadySleepingCharacter);
-                    if(opinionLabel == OpinionComponent.Friend) {
-                        cost += 20;
-                        costLog += " +20(Friend Occupies)";
-                    } else if (opinionLabel == OpinionComponent.Acquaintance) {
-                        cost += 25;
-                        costLog += " +25(Acquaintance Occupies)";
-                    } else if (opinionLabel == OpinionComponent.Enemy || opinionLabel == OpinionComponent.Rival || opinionLabel == string.Empty) {
-                        cost += 100;
-                        costLog += " +100(Enemy/Rival/None Occupies)";
-                    }
->>>>>>> Stashed changes
                 }
                 return 45;
             }

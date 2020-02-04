@@ -35,7 +35,7 @@ public class BaseLandmark {
     private BaseLandmark() { }
     public BaseLandmark(HexTile location, LANDMARK_TYPE specificLandmarkType) : this() {
         LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(specificLandmarkType);
-        _id = Ruinarch.Utilities.SetID(this);
+        _id = Utilities.SetID(this);
         _location = location;
         _specificLandmarkType = specificLandmarkType;
         SetName(RandomNameGenerator.Instance.GetLandmarkName(specificLandmarkType));
@@ -45,7 +45,7 @@ public class BaseLandmark {
         SetInvasionTicks(GameManager.Instance.GetTicksBasedOnHour(4));
     }
     public BaseLandmark(HexTile location, SaveDataLandmark data) : this() {
-        _id = Ruinarch.Utilities.SetID(this, data.id);
+        _id = Utilities.SetID(this, data.id);
         _location = location;
         if(data.connectedTileID != -1) {
             _connectedTile = GridMap.Instance.normalHexTiles[data.connectedTileID];
@@ -103,7 +103,7 @@ public class BaseLandmark {
         }
         if (specificLandmarkType.IsPlayerLandmark()) {
             HexTile tile = _location;
-            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(specificLandmarkType.ToString()) + " was destroyed!", () => UIManager.Instance.ShowRegionInfo(tile.region));
+            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), Utilities.NormalizeStringUpperCaseFirstLetters(specificLandmarkType.ToString()) + " was destroyed!", () => UIManager.Instance.ShowRegionInfo(tile.region));
         }
         ObjectPoolManager.Instance.DestroyObject(nameplate.gameObject);
         _location = null;

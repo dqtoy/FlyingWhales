@@ -37,7 +37,7 @@ public class LevelUpUI : MonoBehaviour {
             UIManager.Instance.Pause();
             UIManager.Instance.SetSpeedTogglesState(false);
         }
-        Ruinarch.Utilities.DestroyChildren(choicesParent);
+        Utilities.DestroyChildren(choicesParent);
         UpdateMinionToLevelUp(minionToLevelUp, identifierToLevelUp);
 
         List<object> choices = new List<object>();

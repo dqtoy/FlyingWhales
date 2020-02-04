@@ -359,30 +359,6 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
         }
         return false;
     }
-<<<<<<< Updated upstream
-=======
-    public string GetDisplayName() {
-        if (settlementOnTile != null) {
-            return settlementOnTile.name;
-        } else if (landmarkOnTile != null) {
-            return landmarkOnTile.landmarkName;
-        } else {
-            string displayName = string.Empty;
-            if (isCorrupted) {
-                displayName = "Corrupted ";
-            }
-            displayName += $"{Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(biomeType.ToString())} " +
-                           $"{Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(elevationType.ToString())}";
-            return displayName;
-        }
-    }
-    public string GetSubName() {
-        if (landmarkOnTile != null) {
-            return Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(landmarkOnTile.specificLandmarkType.ToString());
-        }
-        return string.Empty;
-    }
->>>>>>> Stashed changes
     #endregion
 
     #region Pathfinding
@@ -393,9 +369,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
         List<Point> possibleExits;
 
         if ((yCoordinate % 2) == 0) {
-            possibleExits = Ruinarch.Utilities.EvenNeighbours;
+            possibleExits = Utilities.EvenNeighbours;
         } else {
-            possibleExits = Ruinarch.Utilities.OddNeighbours;
+            possibleExits = Utilities.OddNeighbours;
         }
 
         for (int i = 0; i < possibleExits.Count; i++) {
@@ -440,9 +416,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
         List<Point> possibleExits;
 
         if ((yCoordinate % 2) == 0) {
-            possibleExits = Ruinarch.Utilities.EvenNeighbours;
+            possibleExits = Utilities.EvenNeighbours;
         } else {
-            possibleExits = Ruinarch.Utilities.OddNeighbours;
+            possibleExits = Utilities.OddNeighbours;
         }
 
         for (int i = 0; i < possibleExits.Count; i++) {
@@ -1011,146 +987,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile> {
         } else {
             landmarkOnTile.ChangeLandmarkType(landmarkType);    
         }
-<<<<<<< Updated upstream
         
-=======
-        Debug.Log(log);
-    }
-    #endregion
-    
-    #region Player Action Target
-    public List<PlayerAction> actions { get; private set; }
-    public void ConstructDefaultActions() {
-        actions = new List<PlayerAction>();
-    }
-    public void AddPlayerAction(PlayerAction action) {
-        if (actions.Contains(action) == false) {
-            actions.Add(action);
-            Messenger.Broadcast(Signals.PLAYER_ACTION_ADDED_TO_TARGET, action, this as IPlayerActionTarget);    
-        }
-    }
-    public void RemovePlayerAction(PlayerAction action) {
-        if (actions.Remove(action)) {
-            Messenger.Broadcast(Signals.PLAYER_ACTION_REMOVED_FROM_TARGET, action, this as IPlayerActionTarget);
-        }
-    }
-    private PlayerAction GetPlayerAction(string actionName) {
-        for (int i = 0; i < actions.Count; i++) {
-            PlayerAction playerAction = actions[i];
-            if (playerAction.actionName == actionName) {
-                return playerAction;
-            }
-        }
-        return null;
-    }
-    public void ClearPlayerActions() {
-        actions.Clear();
-    }
-    #endregion
-
-    #region Demonic Structure Building
-    private bool CanBuildDemonicStructure() {
-        return isCorrupted && isCurrentlyBeingCorrupted == false && landmarkOnTile == null 
-               && elevationType != ELEVATION.WATER && elevationType != ELEVATION.MOUNTAIN &&
-            PlayerManager.Instance.player.mana >= EditableValuesManager.Instance.buildStructureManaCost;
-    }
-    private void OnClickBuild() {
-        List<string> landmarkNames = new List<string>();
-        for (int i = 0; i < PlayerManager.Instance.allLandmarksThatCanBeBuilt.Length; i++) {
-            landmarkNames.Add(Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(PlayerManager.Instance.allLandmarksThatCanBeBuilt[i].ToString()));
-        }
-        UIManager.Instance.dualObjectPicker.ShowDualObjectPicker(PlayerManager.Instance.player.minions.Select(x => x.character).ToList(), landmarkNames,
-            "Choose a minion", "Choose a structure",
-            CanChooseMinion, CanChooseLandmark,
-            OnHoverEnterMinion, OnHoverLandmarkChoice,
-            OnHoverExitMinion, OnHoverExitLandmarkChoice,
-            StartBuild, "Build", column2Identifier: "Landmark");
-    }
-    private bool CanChooseMinion(Character character) {
-        return !character.minion.isAssigned && character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.BUILDER);
-    }
-    private void OnHoverEnterMinion(Character character) {
-        if (!CanChooseMinion(character)) {
-            string message = string.Empty;
-            if (character.minion.isAssigned) {
-                message = character.name + " is already doing something else.";
-            } else if (!character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.BUILDER)) {
-                message = character.name + " does not have the required trait: Builder";
-            }
-            UIManager.Instance.ShowSmallInfo(message);
-        }
-    }
-    private void OnHoverExitMinion(Character character) {
-        UIManager.Instance.HideSmallInfo();
-    }
-    private bool CanChooseLandmark(string landmarkName) {
-        return false;
-        if (landmarkName == "The Pit") {
-            return false;
-        }
-        // if(landmarkName == "The Kennel" && !featureComponent.HasFeature(TileFeatureDB.Summons_Feature)) {
-        //     return false;
-        // }
-        // if (landmarkName == "The Crypt" && (!featureComponent.HasFeature(TileFeatureDB.Artifact_Feature) || PlayerManager.Instance.player.playerFaction.HasOwnedRegionWithLandmarkType(LANDMARK_TYPE.THE_CRYPT))) {
-        //     return false;
-        // }
-        return true;
-    }
-    private void OnHoverLandmarkChoice(string landmarkName) {
-        LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkName);
-        string info = landmarkData.description;
-        if (info != string.Empty) {
-            info += "\n";
-        }
-        info += $"Duration: {GameManager.Instance.GetCeilingHoursBasedOnTicks(landmarkData.buildDuration).ToString()} hours";
-        UIManager.Instance.ShowSmallInfo(info);
-    }
-    private void OnHoverExitLandmarkChoice(string landmarkName) {
-        UIManager.Instance.HideSmallInfo();
-    }
-    private void StartBuild(object minionObj, object landmarkObj) {
-        LandmarkData landmarkData = LandmarkManager.Instance.GetLandmarkData(landmarkObj as string);
-        BaseLandmark newLandmark =
-            LandmarkManager.Instance.CreateNewLandmarkOnTile(this, landmarkData.landmarkType, false);
-        LandmarkManager.Instance.CreateStructureObjectForLandmark(newLandmark, settlementOnTile);
-        PlayerManager.Instance.player.AdjustMana(-EditableValuesManager.Instance.buildStructureManaCost);
-    }
-    #endregion
-
-    #region Border Tester
-    [Header("Border Tester")]
-    [SerializeField] private LineRenderer borderLine;
-    [SerializeField] private Transform[] vertices;
-    public Transform[] GetVertices(HEXTILE_DIRECTION direction) {
-        Transform[] _vertices = new Transform[2];
-        switch (direction) {
-            case HEXTILE_DIRECTION.NORTH_WEST:
-                _vertices[0] = vertices[1];
-                _vertices[1] = vertices[0];
-                break;
-            case HEXTILE_DIRECTION.NORTH_EAST:
-                _vertices[0] = vertices[5];
-                _vertices[1] = vertices[0];
-                break;
-            case HEXTILE_DIRECTION.EAST:
-                _vertices[0] = vertices[5];
-                _vertices[1] = vertices[4];
-                break;
-            case HEXTILE_DIRECTION.SOUTH_EAST:
-                _vertices[0] = vertices[4];
-                _vertices[1] = vertices[3];
-                break;
-            case HEXTILE_DIRECTION.SOUTH_WEST:
-                _vertices[0] = vertices[3];
-                _vertices[1] = vertices[2];
-                break;
-            case HEXTILE_DIRECTION.WEST:
-                _vertices[0] = vertices[2];
-                _vertices[1] = vertices[1];
-                break;
-        }
-        return _vertices;
->>>>>>> Stashed changes
     }
     #endregion
 }

@@ -13,7 +13,7 @@ public class ThiefSummon : Summon {
     }
     #endregion
 
-    public ThiefSummon() : base(SUMMON_TYPE.ThiefSummon, CharacterRole.BANDIT, RACE.HUMANS, Ruinarch.Utilities.GetRandomGender()) {
+    public ThiefSummon() : base(SUMMON_TYPE.ThiefSummon, CharacterRole.BANDIT, RACE.HUMANS, Utilities.GetRandomGender()) {
         itemsToSteal = 1;
         //AddInteractionType(INTERACTION_TYPE.STEAL);
     }

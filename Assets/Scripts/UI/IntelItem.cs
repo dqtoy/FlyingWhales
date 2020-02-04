@@ -28,18 +28,10 @@ public class IntelItem : MonoBehaviour {
         SetClickedState(false);
         if (intel != null) {
             iconImg.sprite = objectIntelIcon;
-<<<<<<< Updated upstream
             if (intel is EventIntel) {
                 iconImg.sprite = eventIntelIcon;
             } 
             infoLbl.text = Utilities.LogReplacer(intel.intelLog);
-=======
-            //if (intel is EventIntel) {
-            //    iconImg.sprite = eventIntelIcon;
-            //} 
-            //infoLbl.text = Utilities.LogReplacer(intel.intelLog);
-            infoLbl.text = Ruinarch.Utilities.LogReplacer(intel.node.descriptionLog);
->>>>>>> Stashed changes
             mainBtn.interactable = true;
             iconImg.gameObject.SetActive(true);
         } else {

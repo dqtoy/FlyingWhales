@@ -139,8 +139,8 @@ public class STCManager : MonoBehaviour {
         TileTemplateData[] objectTiles = GetTileData(objectsTilemap, groundTilemap.cellBounds);
         TileTemplateData[] detailTiles = GetTileData(detailsTilemap, groundTilemap.cellBounds);
 
-        BuildingSpotDataMonobehaviour[] buildingSpotMonos = Ruinarch.Utilities.GetComponentsInDirectChildren<BuildingSpotDataMonobehaviour>(connectorsParent.gameObject);
-        FurnitureSpotMono[] furnitureSpotMonos = Ruinarch.Utilities.GetComponentsInDirectChildren<FurnitureSpotMono>(furnitureParent.gameObject);
+        BuildingSpotDataMonobehaviour[] buildingSpotMonos = Utilities.GetComponentsInDirectChildren<BuildingSpotDataMonobehaviour>(connectorsParent.gameObject);
+        FurnitureSpotMono[] furnitureSpotMonos = Utilities.GetComponentsInDirectChildren<FurnitureSpotMono>(furnitureParent.gameObject);
 
         BuildingSpotData[] connectors = new BuildingSpotData[buildingSpotMonos.Length];
         for (int i = 0; i < buildingSpotMonos.Length; i++) {
@@ -198,7 +198,7 @@ public class STCManager : MonoBehaviour {
         DrawTiles(detailsTilemap, st.detailTiles);
 
         //connectors
-        Ruinarch.Utilities.DestroyChildren(connectorsParent);
+        Utilities.DestroyChildren(connectorsParent);
         if (st.connectors != null) {
             BuildingSpotDataMonobehaviour[] createdConnectors = new BuildingSpotDataMonobehaviour[st.connectors.Length];
             BuildingSpotData[] ordered = st.connectors.ToList().OrderBy(x => x.id).ToArray();
@@ -226,7 +226,7 @@ public class STCManager : MonoBehaviour {
         }
 
         //furniture spots
-        Ruinarch.Utilities.DestroyChildren(furnitureParent);
+        Utilities.DestroyChildren(furnitureParent);
         if (st.furnitureSpots != null) {
             for (int i = 0; i < st.furnitureSpots.Length; i++) {
                 FurnitureSpot spot = st.furnitureSpots[i];
@@ -265,7 +265,7 @@ public class STCManager : MonoBehaviour {
         objectsTilemap.ClearAllTiles();
         detailsTilemap.ClearAllTiles();
 
-        Ruinarch.Utilities.DestroyChildren(connectorsParent);
+        Utilities.DestroyChildren(connectorsParent);
     }
     public void LoadAllTilesAssets() {
         allTileAssets = Resources.LoadAll("Tile Map Assets", typeof(TileBase)).Cast<TileBase>().ToList();

@@ -31,13 +31,8 @@ public class GoapAction {
 
     public GoapAction(INTERACTION_TYPE goapType) { //, INTERACTION_ALIGNMENT alignment, Character actor, IPointOfInterest poiTarget
         this.goapType = goapType;
-<<<<<<< Updated upstream
         this.goapName = Utilities.NormalizeStringUpperCaseFirstLetters(goapType.ToString());
         showIntelNotification = true;
-=======
-        this.goapName = Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(goapType.ToString());
-        showNotification = true;
->>>>>>> Stashed changes
         shouldAddLogs = true;
         basePreconditions = new List<Precondition>();
         baseExpectedEffects = new List<GoapEffect>();
@@ -67,7 +62,7 @@ public class GoapAction {
             for (int i = 0; i < statesSetup.Length; i++) {
                 StateNameAndDuration state = statesSetup[i];
                 summary += "\nCreating " + state.name;
-                string trimmedState = Ruinarch.Utilities.RemoveAllWhiteSpace(state.name);
+                string trimmedState = Utilities.RemoveAllWhiteSpace(state.name);
                 Type thisType = this.GetType();
                 string estimatedPreMethodName = "Pre" + trimmedState;
                 string estimatedPerTickMethodName = "PerTick" + trimmedState;
@@ -252,11 +247,7 @@ public class GoapAction {
         Log log = new Log(GameManager.Instance.Today(), "GoapAction", "Generic", "Invalid");
         log.AddToFillers(node.actor, node.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(node.poiTarget, node.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-<<<<<<< Updated upstream
         log.AddToFillers(null, Utilities.NormalizeString(goapType.ToString()), LOG_IDENTIFIER.STRING_1);
-=======
-        log.AddToFillers(null, Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetterOnly(goapType.ToString()), LOG_IDENTIFIER.STRING_1);
->>>>>>> Stashed changes
         log.AddLogToInvolvedObjects();
         PlayerManager.Instance.player.ShowNotificationFrom(node.actor, log);
     }

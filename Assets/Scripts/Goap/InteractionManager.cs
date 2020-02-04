@@ -47,7 +47,7 @@ public partial class InteractionManager : MonoBehaviour {
         INTERACTION_TYPE[] allGoapActions = Utilities.GetEnumValues<INTERACTION_TYPE>();
         for (int i = 0; i < allGoapActions.Length; i++) {
             INTERACTION_TYPE currType = allGoapActions[i];
-            var typeName = Ruinarch.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(currType.ToString());
+            var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(currType.ToString());
             System.Type type = System.Type.GetType(typeName);
             if (type != null) {
                 GoapAction data = System.Activator.CreateInstance(type) as GoapAction;
@@ -57,31 +57,6 @@ public partial class InteractionManager : MonoBehaviour {
             }
         }
     }
-<<<<<<< Updated upstream
-=======
-    private void ConstructInterruptData() {
-        interruptData = new Dictionary<INTERRUPT, Interrupt>();
-        INTERRUPT[] allInterrupts = CollectionUtilities.GetEnumValues<INTERRUPT>();
-        for (int i = 0; i < allInterrupts.Length; i++) {
-            INTERRUPT interrupt = allInterrupts[i];
-            var typeName = $"Interrupts.{ Ruinarch.Utilities.NotNormalizedConversionEnumToStringNoSpaces(interrupt.ToString()) }"; ;
-            System.Type type = System.Type.GetType(typeName);
-            if (type != null) {
-                Interrupt data = System.Activator.CreateInstance(type) as Interrupt;
-                interruptData.Add(interrupt, data);
-            } else {
-                Debug.LogWarning(typeName + " has no data!");
-            }
-        }
-    }
-    public Interrupt GetInterruptData(INTERRUPT interrupt) {
-        if (interruptData.ContainsKey(interrupt)) {
-            return interruptData[interrupt];
-        }
-        return null;
-    }
-
->>>>>>> Stashed changes
     public bool CanSatisfyGoapActionRequirements(INTERACTION_TYPE goapType, Character actor, IPointOfInterest poiTarget, object[] otherData) {
         if (goapActionData.ContainsKey(goapType)) {
             return goapActionData[goapType].CanSatisfyRequirements(actor, poiTarget, otherData);

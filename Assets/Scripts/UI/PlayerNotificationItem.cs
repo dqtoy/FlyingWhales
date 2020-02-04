@@ -23,7 +23,7 @@ public class PlayerNotificationItem : PooledObject {
     public void Initialize(Log log, bool hasExpiry = true, System.Action<PlayerNotificationItem> onDestroyAction = null) {
         shownLog = log;
         tickShown = GameManager.Instance.tick;
-        logLbl.SetText("[" + GameManager.ConvertTickToTime(tickShown) + "] " + Ruinarch.Utilities.LogReplacer(log));
+        logLbl.SetText("[" + GameManager.ConvertTickToTime(tickShown) + "] " + Utilities.LogReplacer(log));
         logItem.SetLog(log);
         //logEnvelopContent.Execute();
         //mainEnvelopContent.Execute();
@@ -38,7 +38,7 @@ public class PlayerNotificationItem : PooledObject {
     }
     public void SetTickShown(int tick) {
         tickShown = tick;
-        logLbl.SetText("[" + GameManager.ConvertTickToTime(tickShown) + "] " + Ruinarch.Utilities.LogReplacer(shownLog));
+        logLbl.SetText("[" + GameManager.ConvertTickToTime(tickShown) + "] " + Utilities.LogReplacer(shownLog));
     }
     private void CheckForExpiry() {
         if (ticksAlive == Expiration_Ticks) {

@@ -95,6 +95,8 @@ public class UIManager : MonoBehaviour {
 
     [Space(10)] //FOR TESTING
     [Header("For Testing")]
+    public ButtonToggle toggleBordersBtn;
+    public ButtonToggle corruptionBtn;
     public POITestingUI poiTestingUI;
 
     [Space(10)]
@@ -129,6 +131,7 @@ public class UIManager : MonoBehaviour {
         Messenger.AddListener<bool>(Signals.PAUSED, UpdateSpeedToggles);
         Messenger.AddListener(Signals.UPDATE_UI, UpdateUI);
         Messenger.AddListener(Signals.INSPECT_ALL, UpdateInteractableInfoUI);
+        ToggleBorders();
     }
     private void Update() {
         if (isHoveringTile) {
@@ -393,15 +396,50 @@ public class UIManager : MonoBehaviour {
         //CameraMove.Instance.UpdateMinimapTexture();
     }
     #endregion
-    
+
+    #region coroutines
+    public IEnumerator RepositionGrid(UIGrid thisGrid) {
+        yield return null;
+        if (thisGrid != null && this.gameObject.activeSelf) {
+            thisGrid.Reposition();
+        }
+        yield return null;
+    }
+    public IEnumerator RepositionTable(UITable thisTable) {
+        yield return new WaitForEndOfFrame();
+        yield return new WaitForEndOfFrame();
+        thisTable.Reposition();
+    }
+    public IEnumerator RepositionScrollView(UIScrollView thisScrollView, bool keepScrollPosition = false) {
+        yield return new WaitForEndOfFrame();
+        yield return new WaitForEndOfFrame();
+        if (keepScrollPosition) {
+            thisScrollView.UpdatePosition();
+        } else {
+            thisScrollView.ResetPosition();
+            thisScrollView.Scroll(0f);
+        }
+        yield return new WaitForEndOfFrame();
+        thisScrollView.UpdateScrollbars();
+    }
+    public IEnumerator LerpProgressBar(UIProgressBar progBar, float targetValue, float lerpTime) {
+        float elapsedTime = 0f;
+        while (elapsedTime < lerpTime) {
+            progBar.value = Mathf.Lerp(progBar.value, targetValue, (elapsedTime/lerpTime));
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+    }
+    #endregion
+
     #region Tooltips
+    public string smallInfoShownFrom { get; private set; }
     public void ShowSmallInfo(string info, string header = "") {
         string message = string.Empty;
         if (!string.IsNullOrEmpty(header)) {
             message = "<font=\"Eczar-Medium\"><line-height=100%><size=18>" + header + "</font>\n";
         }
         message += "<line-height=70%><size=16>" + info;
-
 
         message = message.Replace("\\n", "\n");
 
@@ -412,6 +450,11 @@ public class UIManager : MonoBehaviour {
             //smallInfoEnvelopContent.Execute();
         }
         PositionTooltip(smallInfoGO, smallInfoRT, smallInfoBGRT);
+        System.Diagnostics.StackTrace stackTrace = new System.Diagnostics.StackTrace();
+        // get calling method name
+        smallInfoShownFrom = stackTrace.GetFrame(1).GetMethod().Name;
+        //Debug.Log(smallInfoShownFrom);
+        //Debug.Log("Show small info " + info);
     }
     public void ShowSmallInfo(string info, UIHoverPosition pos, string header = "") {
         string message = string.Empty;
@@ -427,9 +470,15 @@ public class UIManager : MonoBehaviour {
             smallInfoGO.SetActive(true);
         }
         PositionTooltip(pos, smallInfoGO, smallInfoRT);
+        System.Diagnostics.StackTrace stackTrace = new System.Diagnostics.StackTrace();
+        // get calling method name
+        smallInfoShownFrom = stackTrace.GetFrame(1).GetMethod().Name;
+        //Debug.Log(smallInfoShownFrom);
+        //Debug.Log("Show small info " + info);
     }
     public void HideSmallInfo() {
         if (IsSmallInfoShowing()) {
+            smallInfoShownFrom = string.Empty;
             smallInfoGO.SetActive(false);
         }
     }
@@ -508,7 +557,7 @@ public class UIManager : MonoBehaviour {
 
         Vector2 anchorMin = Vector2.zero;
         Vector2 anchorMax = Vector2.zero;
-        Ruinarch.Utilities.GetAnchorMinMax(position.anchor, ref anchorMin, ref anchorMax);
+        Utilities.GetAnchorMinMax(position.anchor, ref anchorMin, ref anchorMax);
         tooltipParentRT.anchorMin = anchorMin;
         tooltipParentRT.anchorMax = anchorMax;
         tooltipParentRT.anchoredPosition = Vector2.zero;
@@ -575,6 +624,26 @@ public class UIManager : MonoBehaviour {
         //     MoveNotificationMenuToDefaultPos();
         // }
     }
+    public void RepositionGridCallback(UIGrid thisGrid) {
+        StartCoroutine(RepositionGrid(thisGrid));
+    }
+    private void EnableUIButton(UIButton btn, bool state) {
+        if (state) {
+            btn.GetComponent<BoxCollider>().enabled = true;
+        } else {
+            btn.GetComponent<BoxCollider>().enabled = false;
+        }
+    }
+    /*
+	 * Generic toggle function, toggles gameobject to on/off state.
+	 * */
+    public void ToggleObject(GameObject objectToToggle) {
+        objectToToggle.SetActive(!objectToToggle.activeSelf);
+    }
+    /*
+	 * Checker for if the mouse is currently
+	 * over a UI Object
+	 * */
     public bool IsMouseOnUI() {
         PointerEventData pointer = new PointerEventData(EventSystem.current);
         pointer.position = Input.mousePosition;
@@ -677,6 +746,10 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     #region For Testing
+    public void ToggleBorders() {
+        CameraMove.Instance.ToggleMainCameraLayer("Borders");
+        CameraMove.Instance.ToggleMainCameraLayer("MinimapAndHextiles");
+    }
     public void SetUIState(bool state) {
         this.gameObject.SetActive(state);
     }
@@ -1148,7 +1221,7 @@ public class UIManager : MonoBehaviour {
         }
     }
     public void ShowPlayerNotificationArea() {
-        Ruinarch.Utilities.DestroyChildren(playerNotifScrollRect.content);
+        Utilities.DestroyChildren(playerNotifScrollRect.content);
         playerNotifGO.SetActive(true);
     }
     public void HidePlayerNotificationArea() {
@@ -1375,7 +1448,7 @@ public class UIManager : MonoBehaviour {
 
         Vector2 anchorMin = Vector2.zero;
         Vector2 anchorMax = Vector2.zero;
-        Ruinarch.Utilities.GetAnchorMinMax(position.anchor, ref anchorMin, ref anchorMax);
+        Utilities.GetAnchorMinMax(position.anchor, ref anchorMin, ref anchorMax);
         tooltipParentRT.anchorMin = anchorMin;
         tooltipParentRT.anchorMax = anchorMax;
         tooltipParentRT.anchoredPosition = Vector2.zero;

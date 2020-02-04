@@ -60,8 +60,8 @@ public class NewResidentEvent : LocationEvent {
         Character spouse1 = location.AddNewResident(race, location.owner);
 
         race = GetRaceForNewResident(location);
-        SEXUALITY sexuality = Ruinarch.Utilities.GetCompatibleSexuality(spouse1.sexuality);
-        GENDER gender = Ruinarch.Utilities.GetOppositeGender(spouse1.gender);
+        SEXUALITY sexuality = Utilities.GetCompatibleSexuality(spouse1.sexuality);
+        GENDER gender = Utilities.GetOppositeGender(spouse1.gender);
         if(spouse1.sexuality == SEXUALITY.BISEXUAL) {
             if(sexuality == SEXUALITY.GAY) {
                 gender = spouse1.gender;

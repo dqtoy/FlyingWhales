@@ -27,35 +27,9 @@ public class Pray : GoapAction {
         base.Perform(goapNode);
         SetState("Pray Success", goapNode);
     }
-<<<<<<< Updated upstream
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         //**Cost**: randomize between 15 - 55
         return Utilities.rng.Next(15, 56);
-=======
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
-        string costLog = "\n" + name + " " + target.nameWithID + ":";
-        int cost = Ruinarch.Utilities.rng.Next(90, 131);
-        costLog += " +" + cost + "(Initial)";
-        int numOfTimesActionDone = actor.jobComponent.GetNumOfTimesActionDone(this);
-        if (numOfTimesActionDone > 5) {
-            cost += 2000;
-            costLog += " +2000(Times Prayed > 5)";
-        } else {
-            int timesCost = 10 * numOfTimesActionDone;
-            cost += timesCost;
-            costLog += " +" + timesCost + "(10 x Times Prayed)";
-        }
-        if (actor.traitContainer.GetNormalTrait<Trait>("Evil", "Serial Killer") != null) {
-            cost += 2000;
-            costLog += " +2000(Evil/Psychopath)";
-        }
-        if (actor.traitContainer.GetNormalTrait<Trait>("Chaste") != null) {
-            cost += -15;
-            costLog += " -15(Chaste)";
-        }
-        actor.logComponent.AppendCostLog(costLog);
-        return cost;
->>>>>>> Stashed changes
     }
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);

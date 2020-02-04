@@ -95,8 +95,8 @@ public class SkillPanelUI : MonoBehaviour {
             EditorUtility.DisplayDialog("Error", "Please specify a Skill Name", "OK");
             return;
         }
-        string path = Ruinarch.Utilities.dataPath + "Skills/" + skillNameInput.text + ".json";
-        if (Ruinarch.Utilities.DoesFileExist(path)) {
+        string path = Utilities.dataPath + "Skills/" + skillNameInput.text + ".json";
+        if (Utilities.DoesFileExist(path)) {
             if (EditorUtility.DisplayDialog("Overwrite Skill", "A skill with name " + skillNameInput.text + " already exists. Replace with this skill?", "Yes", "No")) {
                 File.Delete(path);
                 SaveSkillJson(path);
@@ -128,7 +128,7 @@ public class SkillPanelUI : MonoBehaviour {
     }
     private void UpdateSkillList() {
         allSkills.Clear();
-        string path = Ruinarch.Utilities.dataPath + "Skills/";
+        string path = Utilities.dataPath + "Skills/";
         foreach (string file in Directory.GetFiles(path, "*.json")) {
             allSkills.Add(Path.GetFileNameWithoutExtension(file));
         }

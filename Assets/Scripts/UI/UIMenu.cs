@@ -97,19 +97,7 @@ public class UIMenu : MonoBehaviour {
     }
 
     #region Actions
-<<<<<<< Updated upstream
     protected virtual void LoadActions() {
-=======
-    private List<ActionItem> activeActionItems = new List<ActionItem>();
-    protected virtual void LoadActions(IPlayerActionTarget target) {
-        Ruinarch.Utilities.DestroyChildren(actionsTransform);
-        activeActionItems.Clear();
-        for (int i = 0; i < target.actions.Count; i++) {
-            PlayerAction action = target.actions[i];
-            ActionItem actionItem = AddNewAction(action);
-            actionItem.SetInteractable(action.isActionValidChecker.Invoke());
-        }
->>>>>>> Stashed changes
     }
     protected ActionItem AddNewAction(string actionName, Sprite actionIcon, System.Action action) {
         GameObject obj = ObjectPoolManager.Instance.InstantiateObjectFromPool(actionItemPrefab.name, Vector3.zero,

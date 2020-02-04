@@ -36,13 +36,8 @@ public class Scrap : GoapAction {
         base.Perform(goapNode);
         SetState("Scrap Success", goapNode);
     }
-<<<<<<< Updated upstream
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return Utilities.rng.Next(15, 31);
-=======
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
-        return Ruinarch.Utilities.rng.Next(15, 31);
->>>>>>> Stashed changes
     }
     #endregion
 

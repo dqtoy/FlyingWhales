@@ -25,13 +25,9 @@ public class LocationStructure {
     public LocationGridTile entranceTile { get; private set; }
 
     public LocationStructure(STRUCTURE_TYPE structureType, ILocation location) {
-        id = Ruinarch.Utilities.SetID(this);
+        id = Utilities.SetID(this);
         this.structureType = structureType;
-<<<<<<< Updated upstream
         this.name = $"{Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString())} {id.ToString()}";
-=======
-        name = $"{Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString())} {id.ToString()}";
->>>>>>> Stashed changes
         this.location = location;
         charactersHere = new List<Character>();
         itemsInStructure = new List<SpecialToken>();
@@ -42,15 +38,9 @@ public class LocationStructure {
     }
     public LocationStructure(ILocation location, SaveDataLocationStructure data) {
         this.location = location;
-<<<<<<< Updated upstream
         id = Utilities.SetID(this, data.id);
         this.structureType = data.structureType;
         this.name = data.name;
-=======
-        id = Ruinarch.Utilities.SetID(this, data.id);
-        structureType = data.structureType;
-        name = data.name;
->>>>>>> Stashed changes
         charactersHere = new List<Character>();
         itemsInStructure = new List<SpecialToken>();
         pointsOfInterest = new List<IPointOfInterest>();
@@ -328,7 +318,7 @@ public class LocationStructure {
             case STRUCTURE_TYPE.CITY_CENTER:
                 return "the " + location.name + " city center";
             default:
-                return "the " + Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString());
+                return "the " + Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString());
         }
     }
     public List<LocationGridTile> GetOuterTiles() {

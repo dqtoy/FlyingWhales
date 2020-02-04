@@ -77,11 +77,7 @@ public class DropResource : GoapAction {
     public override void AddFillersToLog(Log log, ActualGoapNode node) {
         base.AddFillersToLog(log, node);
         ResourcePile pile = node.actor.ownParty.carriedPOI as ResourcePile;
-<<<<<<< Updated upstream
         log.AddToFillers(null, Utilities.NormalizeString(pile.providedResource.ToString()), LOG_IDENTIFIER.STRING_2);
-=======
-        log.AddToFillers(null, Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetterOnly(pile.providedResource.ToString()), LOG_IDENTIFIER.STRING_2);
->>>>>>> Stashed changes
     }
     public override void OnStopWhileStarted(ActualGoapNode node) {
         base.OnStopWhileStarted(node);
@@ -134,7 +130,7 @@ public class DropResource : GoapAction {
         //int givenFood = goapNode.actor.food;
         //GoapActionState currentState = goapNode.action.states[goapNode.currentStateName];
         ResourcePile pile = goapNode.actor.ownParty.carriedPOI as ResourcePile;
-        goapNode.descriptionLog.AddToFillers(null, Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(pile.resourceInPile.ToString()), LOG_IDENTIFIER.STRING_1);
+        goapNode.descriptionLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(pile.resourceInPile.ToString()), LOG_IDENTIFIER.STRING_1);
         //goapNode.descriptionLog.AddToFillers(null, pile.providedResource.ToString(), LOG_IDENTIFIER.STRING_2);
         //goapNode.descriptionLog.AddToFillers(goapNode.targetStructure, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
     }

@@ -1,0 +1,10 @@
+tree("Root")
+	fallback
+		HasDiedOfOtherReasons
+//		HasArrivedAtTargetHextile
+//		tree("Move")
+
+tree("Move")
+	fallback
+		HasArrivedAtTargetHextile
+		MoveToNextTile

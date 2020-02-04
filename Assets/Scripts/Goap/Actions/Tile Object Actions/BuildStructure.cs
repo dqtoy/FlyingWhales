@@ -25,7 +25,7 @@ public class BuildStructure : GoapAction {
     public override void AddFillersToLog(Log log, ActualGoapNode goapNode) {
         base.AddFillersToLog(log, goapNode);
         BuildSpotTileObject target = goapNode.poiTarget as BuildSpotTileObject;
-        log.AddToFillers(null, Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(target.spot.blueprintType.ToString()), LOG_IDENTIFIER.STRING_1);
+        log.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(target.spot.blueprintType.ToString()), LOG_IDENTIFIER.STRING_1);
     }
     public override void OnStopWhileStarted(ActualGoapNode node) {
         base.OnStopWhileStarted(node);
@@ -77,7 +77,7 @@ public class BuildStructure : GoapAction {
             carriedPile.AdjustResourceInPile(-50);
             goapNode.poiTarget.AdjustResource(RESOURCE.WOOD, 50);
         }
-        goapNode.descriptionLog.AddToFillers(null, Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(target.spot.blueprintType.ToString()), LOG_IDENTIFIER.STRING_1);
+        goapNode.descriptionLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(target.spot.blueprintType.ToString()), LOG_IDENTIFIER.STRING_1);
     }
     public void AfterBuildSuccess(ActualGoapNode goapNode) {
         BuildSpotTileObject spot = goapNode.poiTarget as BuildSpotTileObject;

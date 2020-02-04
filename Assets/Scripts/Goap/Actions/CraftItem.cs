@@ -33,8 +33,8 @@ public class CraftItem : GoapAction {
             craftedItem = (SPECIAL_TOKEN)node.otherData[0];
         }
 
-        log.AddToFillers(null, Ruinarch.Utilities.GetArticleForWord(craftedItem.ToString()), LOG_IDENTIFIER.STRING_1);
-        log.AddToFillers(null, Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(craftedItem.ToString()), LOG_IDENTIFIER.ITEM_1);
+        log.AddToFillers(null, Utilities.GetArticleForWord(craftedItem.ToString()), LOG_IDENTIFIER.STRING_1);
+        log.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(craftedItem.ToString()), LOG_IDENTIFIER.ITEM_1);
     }
     public override void OnStopWhileStarted(ActualGoapNode node) {
         base.OnStopWhileStarted(node);
@@ -112,8 +112,8 @@ public class CraftItem : GoapAction {
             carriedPile.AdjustResourceInPile(-amount);
             goapNode.poiTarget.AdjustResource(RESOURCE.WOOD, amount);
         }
-        goapNode.descriptionLog.AddToFillers(null, Ruinarch.Utilities.GetArticleForWord(craftedItem.ToString()), LOG_IDENTIFIER.STRING_1);
-        goapNode.descriptionLog.AddToFillers(null, Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(craftedItem.ToString()), LOG_IDENTIFIER.ITEM_1);
+        goapNode.descriptionLog.AddToFillers(null, Utilities.GetArticleForWord(craftedItem.ToString()), LOG_IDENTIFIER.STRING_1);
+        goapNode.descriptionLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(craftedItem.ToString()), LOG_IDENTIFIER.ITEM_1);
     }
     public void AfterCraftSuccess(ActualGoapNode goapNode) {
         SPECIAL_TOKEN craftedItem;

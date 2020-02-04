@@ -53,8 +53,8 @@ public class CharacterClassCreator : Editor {
             EditorUtility.DisplayDialog("Error", "Please specify a Class Name", "OK");
             return;
         }
-        string path = Ruinarch.Utilities.dataPath + "CharacterClasses/" + currCharacterClass.className + ".json";
-        if (Ruinarch.Utilities.DoesFileExist(path)) {
+        string path = Utilities.dataPath + "CharacterClasses/" + currCharacterClass.className + ".json";
+        if (Utilities.DoesFileExist(path)) {
             if (EditorUtility.DisplayDialog("Overwrite Class", "A class with name " + currCharacterClass.className + " already exists. Replace with this class?", "Yes", "No")) {
                 File.Delete(path);
                 SaveCharacterClassJson(currCharacterClass, path);

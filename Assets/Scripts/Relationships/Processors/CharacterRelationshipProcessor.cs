@@ -11,15 +11,9 @@ public class CharacterRelationshipProcessor : IRelationshipProcessor {
     }
 
     public void OnRelationshipAdded(Relatable rel1, Relatable rel2, RELATIONSHIP_TYPE relType) {
-<<<<<<< Updated upstream
         Character character1 = (rel1 as AlterEgoData).owner;
         Character character2 = (rel2 as AlterEgoData).owner;
         string relString = Utilities.NormalizeStringUpperCaseFirstLetters(relType.ToString());
-=======
-        Character character1 = rel1 as Character;
-        Character character2 = rel2 as Character;
-        string relString = Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(relType.ToString());
->>>>>>> Stashed changes
 
         character1.opinionComponent.AdjustOpinion(character2, relString, 0);
         //character2.opinionComponent.AdjustOpinion(character1, relString, 0);
@@ -55,15 +49,9 @@ public class CharacterRelationshipProcessor : IRelationshipProcessor {
     }
 
     public void OnRelationshipRemoved(Relatable rel1, Relatable rel2, RELATIONSHIP_TYPE relType) {
-<<<<<<< Updated upstream
         Character character1 = (rel1 as AlterEgoData).owner;
         Character character2 = (rel2 as AlterEgoData).owner;
         string relString = Utilities.NormalizeStringUpperCaseFirstLetters(relType.ToString());
-=======
-        Character character1 = rel1 as Character;
-        Character character2 = rel2 as Character;
-        string relString = Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(relType.ToString());
->>>>>>> Stashed changes
         character1.opinionComponent.RemoveOpinion(character2, relString);
         //character2.opinionComponent.RemoveOpinion(character1, relString);
         //switch (relType) {

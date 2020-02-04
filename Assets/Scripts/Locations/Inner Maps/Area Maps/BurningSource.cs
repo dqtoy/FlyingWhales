@@ -15,13 +15,8 @@ public class BurningSource {
     private ILocation location;
 
     public BurningSource(ILocation location) {
-<<<<<<< Updated upstream
         id = Utilities.SetID(this);
         dousers = new List<Character>();
-=======
-        id = Ruinarch.Utilities.SetID(this);
-        new List<Character>();
->>>>>>> Stashed changes
         objectsOnFire = new List<ITraitable>();
         this.location = location;
         location.innerMap.AddActiveBurningSource(this);

@@ -30,7 +30,6 @@ public class PlayGuitar : GoapAction {
         base.Perform(goapNode);
         SetState("Play Success", goapNode);
     }
-<<<<<<< Updated upstream
     protected override int GetBaseCost(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         if (poiTarget.gridTileLocation != null) {
             LocationGridTile knownLoc = poiTarget.gridTileLocation;
@@ -51,34 +50,6 @@ public class PlayGuitar : GoapAction {
                         //the actor does NOT have any positive relations with any resident
                         return 99999; //NOTE: Should never reach here since Requirement prevents this.
                     }
-=======
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
-        string costLog = "\n" + name + " " + target.nameWithID + ":";
-        int cost = Ruinarch.Utilities.rng.Next(80, 121);
-        costLog += " +" + cost + "(Initial)";
-        int numOfTimesActionDone = actor.jobComponent.GetNumOfTimesActionDone(this);
-        if (numOfTimesActionDone > 5) {
-            cost += 2000;
-            costLog += " +2000(Times Played > 5)";
-        } else {
-            int timesCost = 10 * numOfTimesActionDone;
-            cost += timesCost;
-            costLog += " +" + timesCost + "(10 x Times Played)";
-        }
-
-        if (target.gridTileLocation != null && target.gridTileLocation.structure is Dwelling
-            && target.gridTileLocation.structure != actor.homeStructure
-            && actor.traitContainer.GetNormalTrait<Trait>("Serial Killer") == null) {
-            Dwelling structureLocation = target.gridTileLocation.structure as Dwelling;
-            if (structureLocation.residents.Count > 0) {
-                Character dwellingOwner = structureLocation.residents[0];
-                if (actor.opinionComponent.IsFriendsWith(dwellingOwner)) {
-                    cost += 20; 
-                    costLog += " +20 Guitar is in friend/close friends home";
-                } else if (actor.opinionComponent.IsEnemiesWith(dwellingOwner)) {
-                    cost += 100; 
-                    costLog += " +100 Guitar is in enemy/rivals home";
->>>>>>> Stashed changes
                 }
             }
         }

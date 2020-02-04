@@ -32,17 +32,8 @@ public class PickUp : GoapAction {
         base.Perform(goapNode);
         SetState("Take Success", goapNode);
     }
-<<<<<<< Updated upstream
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return 10;
-=======
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
-        string costLog = "\n" + name + " " + target.nameWithID + ":";
-        int cost = Ruinarch.Utilities.rng.Next(80, 121);
-        costLog += " +" + cost + "(RNG)";
-        actor.logComponent.AppendCostLog(costLog);
-        return cost;
->>>>>>> Stashed changes
     }
     #endregion
 

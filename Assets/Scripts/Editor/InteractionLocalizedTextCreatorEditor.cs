@@ -64,7 +64,7 @@ public class InteractionLocalizedTextCreatorEditor : EditorWindow {
                 ChecklistItem currChecklistItem = currChecklist.checkItems[j];
                 string text = currChecklistItem.name.Substring(currChecklistItem.name.IndexOf(": ") + 1);
                 text = text.TrimStart();
-                List<string> words = Ruinarch.Utilities.ExtractFromString(text, "[", "]");
+                List<string> words = Utilities.ExtractFromString(text, "[", "]");
                 for (int k = 0; k < words.Count; k++) {
                     string currWord = words[k];
                     currWord = "[" + currWord + "]";
@@ -152,7 +152,7 @@ public class InteractionLocalizedTextCreatorEditor : EditorWindow {
         string newString = source;
         foreach (KeyValuePair<string, LOG_IDENTIFIER> kvp in logReplacers) {
             if (kvp.Value != LOG_IDENTIFIER.NONE) {
-                newString = newString.Replace(kvp.Key, Ruinarch.Utilities.GetStringForIdentifier(kvp.Value));
+                newString = newString.Replace(kvp.Key, Utilities.GetStringForIdentifier(kvp.Value));
             }
         }
 

@@ -30,34 +30,8 @@ public class Steal : GoapAction {
         base.Perform(goapNode);
         SetState("Steal Success", goapNode);
     }
-<<<<<<< Updated upstream
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         return Utilities.rng.Next(35, 56);
-=======
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
-        string costLog = "\n" + name + " " + target.nameWithID + ":";
-        int cost = Ruinarch.Utilities.rng.Next(300, 351);
-        costLog += " +" + cost + "(Initial)";
-        Trait trait = actor.traitContainer.GetNormalTrait<Trait>("Kleptomaniac");
-        if (trait != null) {
-            cost += -200;
-            costLog += " -200(Kleptomaniac)";
-        } else {
-            SpecialToken item = null;
-            if(target is SpecialToken) {
-                item = target as SpecialToken;
-            }
-            if(item != null && item.characterOwner != null) {
-                string opinionLabel = actor.opinionComponent.GetOpinionLabel(item.characterOwner);
-                if(opinionLabel == OpinionComponent.Acquaintance || opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
-                    cost += 2000;
-                    costLog += " +2000(not Kleptomaniac, Friend/Close/Acquaintance)";
-                }
-            }
-        }
-        actor.logComponent.AppendCostLog(costLog);
-        return cost;
->>>>>>> Stashed changes
     }
     public override IPointOfInterest GetTargetToGoTo(ActualGoapNode goapNode) {
         if (goapNode.poiTarget is SpecialToken) {

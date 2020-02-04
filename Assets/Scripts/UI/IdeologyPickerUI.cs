@@ -70,7 +70,7 @@ public class IdeologyPickerUI : MonoBehaviour {
     public void SetExclusiveRequirements(EXCLUSIVE_IDEOLOGY_CATEGORIES exclusiveCategory, string exclusiveRequirement) {
         this.exclusiveCategory = exclusiveCategory;
         this.exclusiveRequirement = exclusiveRequirement;
-        SetRequirementsText(Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(exclusiveCategory.ToString()) + " - " + Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(exclusiveRequirement));
+        SetRequirementsText(Utilities.NormalizeStringUpperCaseFirstLetters(exclusiveCategory.ToString()) + " - " + Utilities.NormalizeStringUpperCaseFirstLetters(exclusiveRequirement));
     }
     #endregion
 }

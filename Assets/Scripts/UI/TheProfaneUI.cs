@@ -82,7 +82,7 @@ public class TheProfaneUI : MonoBehaviour {
             if (chosenAction == "Corrupt") {
                 message += chosenAction + " " + chosenCultist.name + "?";
             } else if (chosenAction == "Sabotage Faction Quest") {
-                message += "instruct " + chosenCultist.name + " to sabotage " + Ruinarch.Utilities.GetPronounString(chosenCultist.gender, PRONOUN_TYPE.POSSESSIVE, false) + " factions quest?";
+                message += "instruct " + chosenCultist.name + " to sabotage " + Utilities.GetPronounString(chosenCultist.gender, PRONOUN_TYPE.POSSESSIVE, false) + " factions quest?";
             } else if (chosenAction == "Destroy Supply" || chosenAction == "Destroy Food") {
                 message += "instruct " + chosenCultist.name + " to " + chosenAction + "?";
             }

@@ -17,6 +17,7 @@ public class PlayerCharacterItem : PooledObject, IDragParentItem {
     public Image bgImage;
     public Sprite lockedSprite;
     public Sprite unlockedSprite;
+    public TweenPosition tweenPos;
     public int supposedIndex;
 
     private Character _character;
@@ -73,11 +74,7 @@ public class PlayerCharacterItem : PooledObject, IDragParentItem {
         if (_character == null) {
             lvlLbl.text = "??? ???";
         } else {
-<<<<<<< Updated upstream
             lvlLbl.text = Utilities.NormalizeString(_character.race.ToString()) + " " + _character.characterClass.className;
-=======
-            lvlLbl.text = Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetterOnly(_character.race.ToString()) + " " + _character.characterClass.className;
->>>>>>> Stashed changes
         }
     }
     public void SetEnabledState(bool state) {

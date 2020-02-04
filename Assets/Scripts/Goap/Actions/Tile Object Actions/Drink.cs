@@ -30,37 +30,9 @@ public class Drink : GoapAction {
         base.Perform(goapNode);
         SetState("Drink Success", goapNode);
     }
-<<<<<<< Updated upstream
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         //**Cost**: 15 - 26
         return Utilities.rng.Next(15, 27);
-=======
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
-        string costLog = "\n" + name + " " + target.nameWithID + ":";
-        int cost = Ruinarch.Utilities.rng.Next(80, 121);
-        costLog += " +" + cost + "(Initial)";
-        if (actor.traitContainer.GetNormalTrait<Trait>("Alcoholic") != null) {
-            cost += -15;
-            costLog += " -15(Alcoholic)";
-        } else {
-            int numOfTimesActionDone = actor.jobComponent.GetNumOfTimesActionDone(this);
-            TIME_IN_WORDS timeOfDay = GameManager.GetCurrentTimeInWordsOfTick();
-            if (timeOfDay == TIME_IN_WORDS.MORNING || timeOfDay == TIME_IN_WORDS.LUNCH_TIME ||  timeOfDay == TIME_IN_WORDS.AFTERNOON) {
-                cost += 2000;
-                costLog += " +2000(not Alcoholic, Morning/Lunch/Afternoon)";
-            }
-            if (numOfTimesActionDone > 5) {
-                cost += 2000;
-                costLog += " +2000(Times Drank > 5)";
-            } else {
-                int timesCost = 10 * numOfTimesActionDone;
-                cost += timesCost;
-                costLog += " +" + timesCost + "(10 x Times Drank)";
-            }
-        }
-        actor.logComponent.AppendCostLog(costLog);
-        return cost;
->>>>>>> Stashed changes
     }
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);

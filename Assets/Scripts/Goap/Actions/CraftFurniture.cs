@@ -32,8 +32,8 @@ public class CraftFurniture : GoapAction {
     public override void AddFillersToLog(Log log, ActualGoapNode node) {
         base.AddFillersToLog(log, node);
         TILE_OBJECT_TYPE furnitureToCreate = (TILE_OBJECT_TYPE)node.otherData[1];
-        log.AddToFillers(null, Ruinarch.Utilities.GetArticleForWord(furnitureToCreate.ToString()), LOG_IDENTIFIER.STRING_1);
-        log.AddToFillers(null, Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(furnitureToCreate.ToString()), LOG_IDENTIFIER.ITEM_1);
+        log.AddToFillers(null, Utilities.GetArticleForWord(furnitureToCreate.ToString()), LOG_IDENTIFIER.STRING_1);
+        log.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(furnitureToCreate.ToString()), LOG_IDENTIFIER.ITEM_1);
     }
     public override void OnStopWhileStarted(ActualGoapNode node) {
         base.OnStopWhileStarted(node);
@@ -93,8 +93,8 @@ public class CraftFurniture : GoapAction {
             goapNode.poiTarget.AdjustResource(RESOURCE.WOOD, cost);
         }
 
-        goapNode.descriptionLog.AddToFillers(null, Ruinarch.Utilities.GetArticleForWord(furnitureToCreate.ToString()), LOG_IDENTIFIER.STRING_1);
-        goapNode.descriptionLog.AddToFillers(null, Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(furnitureToCreate.ToString()), LOG_IDENTIFIER.ITEM_1);
+        goapNode.descriptionLog.AddToFillers(null, Utilities.GetArticleForWord(furnitureToCreate.ToString()), LOG_IDENTIFIER.STRING_1);
+        goapNode.descriptionLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(furnitureToCreate.ToString()), LOG_IDENTIFIER.ITEM_1);
     }
     public void AfterCraftSuccess(ActualGoapNode goapNode) {
         LocationGridTile targetSpot = goapNode.otherData[0] as LocationGridTile;

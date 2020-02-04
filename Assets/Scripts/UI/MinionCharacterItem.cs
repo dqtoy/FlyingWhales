@@ -33,7 +33,7 @@ public class MinionCharacterItem : CharacterNameplateItem {
 
     private void UpdateSubText() {
         if (character.minion.busyReasonLog != null) {
-            supportingLbl.text = Ruinarch.Utilities.LogReplacer(character.minion.busyReasonLog);
+            supportingLbl.text = Utilities.LogReplacer(character.minion.busyReasonLog);
             SetSupportingLabelState(true);
         } else {
             SetSupportingLabelState(false);

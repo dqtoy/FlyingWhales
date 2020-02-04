@@ -66,11 +66,7 @@ public class TakeResource : GoapAction {
     public override void AddFillersToLog(Log log, ActualGoapNode node) {
         base.AddFillersToLog(log, node);
         ResourcePile resourcePile = node.poiTarget as ResourcePile;
-<<<<<<< Updated upstream
         log.AddToFillers(null, Utilities.NormalizeString(resourcePile.providedResource.ToString()), LOG_IDENTIFIER.STRING_2);
-=======
-        log.AddToFillers(null, Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetterOnly(resourcePile.providedResource.ToString()), LOG_IDENTIFIER.STRING_2);
->>>>>>> Stashed changes
     }
     #endregion
 

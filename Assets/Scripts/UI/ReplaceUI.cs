@@ -44,11 +44,11 @@ public class ReplaceUI : MonoBehaviour {
             UIManager.Instance.Pause();
             UIManager.Instance.SetSpeedTogglesState(false);
         }
-        Ruinarch.Utilities.DestroyChildren(choicesParent);
+        Utilities.DestroyChildren(choicesParent);
         if(objectToAdd is Minion) {
             newObjectLbl.text = "New Minion!";
         } else {
-            newObjectLbl.text = "New " + Ruinarch.Utilities.NormalizeNoSpaceString(objectToAdd.GetType().BaseType.ToString()) + "!";
+            newObjectLbl.text = "New " + Utilities.NormalizeNoSpaceString(objectToAdd.GetType().BaseType.ToString()) + "!";
         }
         UpdateObjectToAdd(objectToAdd);
         for (int i = 0; i < choices.Count; i++) {

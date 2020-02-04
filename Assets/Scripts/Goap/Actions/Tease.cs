@@ -23,9 +23,9 @@ public class Tease : GoapAction {
     protected override int GetBaseCost(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         Character targetCharacter = poiTarget as Character;
         if (actor.opinionComponent.IsFriendsWith(targetCharacter)) {
-            return Ruinarch.Utilities.rng.Next(40, 61);
+            return Utilities.rng.Next(40, 61);
         } else {
-            return Ruinarch.Utilities.rng.Next(50, 71);
+            return Utilities.rng.Next(50, 71);
         }
     }
     #endregion

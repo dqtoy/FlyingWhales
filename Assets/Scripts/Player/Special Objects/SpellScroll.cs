@@ -14,9 +14,9 @@ public class SpellScroll : SpecialObject {
         INTERVENTION_ABILITY chosenSpell = spells[Random.Range(0, spells.Length)];
         if (PlayerManager.Instance.player.HasEmptyInterventionSlot()) {
             PlayerManager.Instance.player.GainNewInterventionAbility(chosenSpell);
-            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Gained Spell: " + Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(chosenSpell.ToString()), null);
+            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Gained Spell: " + Utilities.NormalizeStringUpperCaseFirstLetters(chosenSpell.ToString()), null);
         } else {
-            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Gained Spell: " + Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(chosenSpell.ToString()), () => PlayerManager.Instance.player.GainNewInterventionAbility(chosenSpell, true));
+            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Gained Spell: " + Utilities.NormalizeStringUpperCaseFirstLetters(chosenSpell.ToString()), () => PlayerManager.Instance.player.GainNewInterventionAbility(chosenSpell, true));
         }
         
         

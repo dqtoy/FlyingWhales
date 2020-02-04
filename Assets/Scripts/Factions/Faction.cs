@@ -56,16 +56,16 @@ public class Faction {
 
     public Faction(bool isPlayerFaction = false) {
         this.isPlayerFaction = isPlayerFaction;
-        this.id = Ruinarch.Utilities.SetID<Faction>(this);
+        this.id = Utilities.SetID<Faction>(this);
         SetName(RandomNameGenerator.Instance.GenerateKingdomName());
         SetEmblem(FactionManager.Instance.GenerateFactionEmblem(this));
-        SetFactionColor(Ruinarch.Utilities.GetColorForFaction());
+        SetFactionColor(Utilities.GetColorForFaction());
         SetRace(RACE.HUMANS);
         SetMorality(MORALITY.GOOD);
         SetSize(FACTION_SIZE.MAJOR);
         SetFactionActiveState(true);
         level = 1;
-        factionType = Ruinarch.Utilities.GetRandomEnumValue<FACTION_TYPE>();
+        factionType = Utilities.GetRandomEnumValue<FACTION_TYPE>();
         characters = new List<Character>();
         ownedLandmarks = new List<BaseLandmark>();
         relationships = new Dictionary<Faction, FactionRelationship>();
@@ -79,7 +79,7 @@ public class Faction {
     }
     public Faction(SaveDataFaction data) {
         this.isPlayerFaction = data.isPlayerFaction;
-        this.id = Ruinarch.Utilities.SetID(this, data.id);
+        this.id = Utilities.SetID(this, data.id);
         SetName(data.name);
         SetDescription(data.description);
         SetEmblem(FactionManager.Instance.GetFactionEmblem(data.emblemIndex));
@@ -488,7 +488,6 @@ public class Faction {
         List<Character> createdCharacters = new List<Character>();
         for (int i = 0; i < citizenCount; i++) {
             string className = classManager.GetCurrentClassToCreate();
-<<<<<<< Updated upstream
             Character citizen = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, className, race, Utilities.GetRandomGender(), this, settlement);
             if(className == "Leader") {
                 citizen.LevelUp(leaderLevel - 1);
@@ -496,16 +495,6 @@ public class Faction {
             } else {
                 citizen.LevelUp(citizensLevel - 1);
             }
-=======
-            Character citizen = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, className, race, Ruinarch.Utilities.GetRandomGender(), this, settlement);
-            citizen.LevelUp(citizensLevel - 1);
-            //if (className == "Leader") {
-            //    citizen.LevelUp(leaderLevel - 1);
-            //    SetLeader(citizen);
-            //} else {
-            //    citizen.LevelUp(citizensLevel - 1);
-            //}
->>>>>>> Stashed changes
             createdCharacters.Add(citizen);
         }
         settlement.SetInitialResidentCount(citizenCount);
@@ -514,7 +503,7 @@ public class Faction {
     }
    
     public string GetRaceText() {
-        return Ruinarch.Utilities.GetNormalizedRaceAdjective(race) + " Faction";
+        return Utilities.GetNormalizedRaceAdjective(race) + " Faction";
     }
     #endregion
 
@@ -683,7 +672,7 @@ public class Faction {
 
     #region Quests
     public void CreateAndSetActiveQuest(string name, Region region) {
-        var typeName = Ruinarch.Utilities.RemoveAllWhiteSpace(name) + "Quest";
+        var typeName = Utilities.RemoveAllWhiteSpace(name) + "Quest";
         System.Type type = System.Type.GetType(typeName);
         Quest quest = null;
         if(type != null) {

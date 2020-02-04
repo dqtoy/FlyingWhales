@@ -55,17 +55,10 @@ public class PlayerManager : MonoBehaviour {
             , INTERVENTION_ABILITY.PESTILENCE, INTERVENTION_ABILITY.PSYCHOPATHY, INTERVENTION_ABILITY.TORNADO }; //INTERVENTION_ABILITY.JOLT, , INTERVENTION_ABILITY.CLOAK_OF_INVISIBILITY//
         allCombatAbilities = (COMBAT_ABILITY[]) System.Enum.GetValues(typeof(COMBAT_ABILITY));
 
-<<<<<<< Updated upstream
         allInterventionAbilitiesData = new Dictionary<INTERVENTION_ABILITY, PlayerJobActionData>();
         for (int i = 0; i < allInterventionAbilities.Length; i++) {
             var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(allInterventionAbilities[i].ToString()) + "Data";
             allInterventionAbilitiesData.Add(allInterventionAbilities[i], System.Activator.CreateInstance(System.Type.GetType(typeName)) as PlayerJobActionData);
-=======
-        allSpellsData = new Dictionary<SPELL_TYPE, SpellData>();
-        for (int i = 0; i < allSpellTypes.Length; i++) {
-            var typeName = Ruinarch.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(allSpellTypes[i].ToString()) + "Data";
-            allSpellsData.Add(allSpellTypes[i], System.Activator.CreateInstance(System.Type.GetType(typeName)) as SpellData);
->>>>>>> Stashed changes
         }
 
         allLandmarksThatCanBeBuilt = new LANDMARK_TYPE[] { LANDMARK_TYPE.THE_ANVIL, LANDMARK_TYPE.THE_EYE , LANDMARK_TYPE.THE_KENNEL, LANDMARK_TYPE.THE_CRYPT, LANDMARK_TYPE.THE_SPIRE, LANDMARK_TYPE.THE_NEEDLES, LANDMARK_TYPE.THE_PROFANE, LANDMARK_TYPE.THE_PIT, LANDMARK_TYPE.GOADER };
@@ -303,11 +296,11 @@ public class PlayerManager : MonoBehaviour {
         return newArtifact;
     }
     private object CreateNewArtifactClassFromType(ARTIFACT_TYPE artifactType) {
-        var typeName = Ruinarch.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(artifactType.ToString());
+        var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(artifactType.ToString());
         return System.Activator.CreateInstance(System.Type.GetType(typeName));
     }
     private object CreateNewArtifactClassFromType(SaveDataArtifact data) {
-        var typeName = Ruinarch.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(data.artifactType.ToString());
+        var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(data.artifactType.ToString());
         return System.Activator.CreateInstance(System.Type.GetType(typeName), data);
     }
     //private Artifact CreateNewArtifactClassFromType(SaveDataArtifactSlot data) {

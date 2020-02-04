@@ -43,7 +43,7 @@ namespace Traits {
         public override void ExecuteCostModification(INTERACTION_TYPE action, Character actor, IPointOfInterest poiTarget, object[] otherData, ref int cost) {
             base.ExecuteCostModification(action, actor, poiTarget, otherData, ref cost);
             if (action == INTERACTION_TYPE.DRINK) {
-                cost =  Ruinarch.Utilities.rng.Next(5, 20);
+                cost =  Utilities.rng.Next(5, 20);
             }
         }
         #endregion

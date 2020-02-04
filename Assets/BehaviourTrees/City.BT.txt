@@ -1,0 +1,14 @@
+tree("Root")
+	fallback
+		HasReachedLevelCap
+		tree ("Expand")
+
+tree("Expand")
+	sequence
+		GetTargetTile
+		AddToDailyGrowthUntilFull
+		sequence
+			BuyNextTile
+			ResetDailyGrowth
+
+		

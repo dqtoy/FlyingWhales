@@ -27,7 +27,7 @@ public class Tantrum : GoapAction {
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         //**Cost**: randomize between 3-10
-        return Ruinarch.Utilities.rng.Next(3, 11);
+        return Utilities.rng.Next(3, 11);
     }
     #endregion
 

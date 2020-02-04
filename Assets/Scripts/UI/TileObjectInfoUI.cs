@@ -83,7 +83,7 @@ public class TileObjectInfoUI : UIMenu {
         }
     }
     private void UpdateCharacters() {
-        Ruinarch.Utilities.DestroyChildren(charactersScrollView.content);
+        Utilities.DestroyChildren(charactersScrollView.content);
         if (activeTileObject.users != null && activeTileObject.users.Length > 0) {
             for (int i = 0; i < activeTileObject.users.Length; i++) {
                 Character character = activeTileObject.users[i];

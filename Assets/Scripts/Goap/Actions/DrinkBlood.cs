@@ -25,87 +25,10 @@ public class DrinkBlood : GoapAction {
         base.Perform(goapNode);
         SetState("Drink Success", goapNode);
     }
-<<<<<<< Updated upstream
     protected override int GetBaseCost(Character actor, IPointOfInterest target, object[] otherData) {
         if (actor.needsComponent.isStarving)
         {
             return Utilities.rng.Next(20, 35);
-=======
-    protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
-        string costLog = "\n" + name + " " + target.nameWithID + ":";
-        int cost = Ruinarch.Utilities.rng.Next(50, 61);
-        costLog += " +" + cost + "(Initial)";
-        if(target is Character) {
-            Character targetCharacter = target as Character;
-            if (targetCharacter.isVampire) {
-                cost += 2000;
-                costLog += " +2000(Vampire)";
-                actor.logComponent.AppendCostLog(costLog);
-                //Skip further cost processing
-                return cost;
-            }
-            if (targetCharacter.canPerform) {
-                cost += 30;
-                costLog += " +30(Can Perform)";
-            }
-            if (actor.needsComponent.isHungry || (!actor.needsComponent.isHungry && !actor.needsComponent.isStarving)) {
-                if(actor.currentRegion != targetCharacter.currentRegion) {
-                    cost += 2000;
-                    costLog += " +2000(Hungry, Diff Region)";
-                    actor.logComponent.AppendCostLog(costLog);
-                    //Skip further cost processing
-                    return cost;
-                }
-                string opinionLabel = actor.opinionComponent.GetOpinionLabel(targetCharacter);
-                if (opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
-                    cost += 2000;
-                    costLog += " +2000(Hungry, Friend/Close)";
-                    actor.logComponent.AppendCostLog(costLog);
-                    //Skip further cost processing
-                    return cost;
-                } else if (opinionLabel == OpinionComponent.Rival) {
-                    cost += 0;
-                    costLog += " +0(Hungry, Rival)";
-                } else if (opinionLabel == OpinionComponent.Enemy) {
-                    cost += 15;
-                    costLog += " +15(Hungry, Enemy)";
-                } else if (opinionLabel == OpinionComponent.Acquaintance) {
-                    cost += 65;
-                    costLog += " +65(Hungry, Acquaintance)";
-                } else {
-                    cost += 35;
-                    costLog += " +35(Hungry, Other)";
-                }
-            } else if (actor.needsComponent.isStarving) {
-                if (actor.currentRegion != targetCharacter.currentRegion) {
-                    cost += 2000;
-                    costLog += " +2000(Starving, Diff Region)";
-                    actor.logComponent.AppendCostLog(costLog);
-                    //Skip further cost processing
-                    return cost;
-                }
-                string opinionLabel = actor.opinionComponent.GetOpinionLabel(targetCharacter);
-                if (opinionLabel == OpinionComponent.Close_Friend) {
-                    cost += 60;
-                    costLog += " +60(Starving, Close Friend)";
-                } else if (opinionLabel == OpinionComponent.Friend) {
-                    cost += 45;
-                    costLog += " +45(Starving, Friend)";
-                } else if (opinionLabel == OpinionComponent.Rival) {
-                    cost += 0;
-                    costLog += " +0(Starving, Rival)";
-                } else if (opinionLabel == OpinionComponent.Enemy) {
-                    cost += 5;
-                    costLog += " +5(Starving, Enemy)";
-                } else if (opinionLabel == OpinionComponent.Acquaintance) {
-                    cost += 10;
-                    costLog += " +10(Starving, Acquaintance)";
-                } else {
-                    cost += 5;
-                    costLog += " +5(Starving, Other)";
-                }
-            }
->>>>>>> Stashed changes
         }
         return Utilities.rng.Next(45, 60);
     }

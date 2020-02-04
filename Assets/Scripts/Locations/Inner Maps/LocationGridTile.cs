@@ -118,8 +118,8 @@ namespace Inner_Maps {
                 GridNeighbourDirection currDir = kvp.Key;
                 Point exit = kvp.Value;
                 Point result = exit.Sum(thisPoint);
-                if (Ruinarch.Utilities.IsInRange(result.X, 0, mapUpperBoundX + 1) &&
-                    Ruinarch.Utilities.IsInRange(result.Y, 0, mapUpperBoundY + 1)) {
+                if (Utilities.IsInRange(result.X, 0, mapUpperBoundX + 1) &&
+                    Utilities.IsInRange(result.Y, 0, mapUpperBoundY + 1)) {
                     neighbours.Add(currDir, map[result.X, result.Y]);
                     neighbourList.Add(map[result.X, result.Y]);
                 }

@@ -41,7 +41,7 @@ public class ObjectPicker : MonoBehaviour {
 
     public void ShowClickable<T>(List<T> items, Action<object> onConfirmAction, IComparer<T> comparer = null, Func<T, bool> validityChecker = null, 
         string title = "", Action<T> onHoverItemAction = null, Action<T> onHoverExitItemAction = null, string identifier = "", bool showCover = false, int layer = 9, bool closable = true) {
-        Ruinarch.Utilities.DestroyChildren(objectPickerScrollView.content);
+        Utilities.DestroyChildren(objectPickerScrollView.content);
 
         pickedObj = null;
         this.onConfirmAction = onConfirmAction;

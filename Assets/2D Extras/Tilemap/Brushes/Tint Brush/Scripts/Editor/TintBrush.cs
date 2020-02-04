@@ -61,7 +61,7 @@ namespace UnityEditor
 
 
 	[CustomEditor(typeof(TintBrush))]
-	public class TintBrushEditor : UnityEditor.Tilemaps.GridBrushEditorBase
+	public class TintBrushEditor : GridBrushEditorBase
 	{
 		public override GameObject[] validTargets
 		{

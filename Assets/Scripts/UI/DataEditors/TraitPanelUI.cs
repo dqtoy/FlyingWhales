@@ -64,7 +64,7 @@ public class TraitPanelUI : MonoBehaviour {
     }
     private void UpdateTraits() {
         _allTraits.Clear();
-        string path = Ruinarch.Utilities.dataPath + "Traits/";
+        string path = Utilities.dataPath + "Traits/";
         foreach (string file in Directory.GetFiles(path, "*.json")) {
             _allTraits.Add(Path.GetFileNameWithoutExtension(file));
         }
@@ -157,8 +157,8 @@ public class TraitPanelUI : MonoBehaviour {
         _advertisedInteractions.Clear();
         UpdateAdvertisedInteractionsText();
 
-        Ruinarch.Utilities.DestroyChildren(effectsScrollRect.content);
-        Ruinarch.Utilities.DestroyChildren(requirementsScrollRect.content);
+        effectsScrollRect.content.DestroyChildren();
+        requirementsScrollRect.content.DestroyChildren();
     }
     private void UpdateAdvertisedInteractionsText() {
         if(_advertisedInteractions.Count > 0) {
@@ -166,7 +166,7 @@ public class TraitPanelUI : MonoBehaviour {
             for (int i = 0; i < _advertisedInteractions.Count; i++) {
                 interactionsAsString[i] = _advertisedInteractions[i].ToString();
             }
-            advertisedInteractionsText.text = Ruinarch.Utilities.ConvertArrayToString(interactionsAsString, ',');
+            advertisedInteractionsText.text = Utilities.ConvertArrayToString(interactionsAsString, ',');
         } else {
             advertisedInteractionsText.text = string.Empty;
         }
@@ -178,8 +178,8 @@ public class TraitPanelUI : MonoBehaviour {
             EditorUtility.DisplayDialog("Error", "Please specify a Trait Name", "OK");
             return;
         }
-        string path = Ruinarch.Utilities.dataPath + "Traits/" + nameInput.text + ".json";
-        if (Ruinarch.Utilities.DoesFileExist(path)) {
+        string path = Utilities.dataPath + "Traits/" + nameInput.text + ".json";
+        if (Utilities.DoesFileExist(path)) {
             if (EditorUtility.DisplayDialog("Overwrite Trait", "A trait with name " + nameInput.text + " already exists. Replace with this trait?", "Yes", "No")) {
                 File.Delete(path);
                 SaveTraitJson(path);
@@ -224,7 +224,7 @@ public class TraitPanelUI : MonoBehaviour {
 
     private void LoadTrait() {
 #if UNITY_EDITOR
-        string filePath = EditorUtility.OpenFilePanel("Select Trait", Ruinarch.Utilities.dataPath + "Traits/", "json");
+        string filePath = EditorUtility.OpenFilePanel("Select Trait", Utilities.dataPath + "Traits/", "json");
         if (!string.IsNullOrEmpty(filePath)) {
             string dataAsJson = File.ReadAllText(filePath);
             Trait attribute = JsonUtility.FromJson<Trait>(dataAsJson);
@@ -371,10 +371,10 @@ public class TraitPanelUI : MonoBehaviour {
     private string[] GetMutuallyExclusiveTraits() {
         string text = mutuallyExclusiveInput.text;
         //string[] words = text.Split(',').Where(x => !string.IsNullOrEmpty(x)).ToArray();
-        return Ruinarch.Utilities.ConvertStringToArray(text, ',');
+        return Utilities.ConvertStringToArray(text, ',');
     }
     private string ConvertMutuallyExclusiveTraitsToText(Trait trait) {
-        return Ruinarch.Utilities.ConvertArrayToString(trait.mutuallyExclusive, ',');
+        return Utilities.ConvertArrayToString(trait.mutuallyExclusive, ',');
         //string text = string.Empty;
         //if (trait.mutuallyExclusive != null) {
         //    for (int i = 0; i < trait.mutuallyExclusive.Length; i++) {

@@ -376,15 +376,10 @@ public class GoapPlanJob : JobQueueItem {
     public string GetJobDetailString() {
         switch (jobType) {
             case JOB_TYPE.OBTAIN_PERSONAL_ITEM:
-<<<<<<< Updated upstream
             case JOB_TYPE.REMOVE_TRAIT:
                 string text = Utilities.NormalizeStringUpperCaseFirstLetters(jobType.ToString());
-=======
-            case JOB_TYPE.REMOVE_STATUS:
-                string text = Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(jobType.ToString());
->>>>>>> Stashed changes
                 if (!string.IsNullOrEmpty(goal.conditionKey)) {
-                    text += " " + Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(goal.conditionKey);
+                    text += " " + Utilities.NormalizeStringUpperCaseFirstLetters(goal.conditionKey);
                 }
                 return text;
             case JOB_TYPE.HUNGER_RECOVERY:
@@ -398,7 +393,7 @@ public class GoapPlanJob : JobQueueItem {
                 return "Tiredness Recovery";
             default:
                 if (targetInteractionType != INTERACTION_TYPE.NONE) {
-                    return Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(targetInteractionType.ToString());
+                    return Utilities.NormalizeStringUpperCaseFirstLetters(targetInteractionType.ToString());
                 } else {
                     return name;
                 }

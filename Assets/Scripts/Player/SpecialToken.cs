@@ -62,9 +62,9 @@ public class SpecialToken : MapObject<SpecialToken>, IPointOfInterest {
     #endregion
 
     public SpecialToken(SPECIAL_TOKEN specialTokenType, int appearanceRate) {
-        id = Ruinarch.Utilities.SetID(this);
+        id = Utilities.SetID(this);
         this.specialTokenType = specialTokenType;
-        this.name = Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(this.specialTokenType.ToString());
+        this.name = Utilities.NormalizeStringUpperCaseFirstLetters(this.specialTokenType.ToString());
         weight = appearanceRate;
         advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PICK_UP, INTERACTION_TYPE.STEAL, INTERACTION_TYPE.SCRAP, INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.DROP_ITEM};
         allJobsTargetingThis = new List<JobQueueItem>();
@@ -75,7 +75,7 @@ public class SpecialToken : MapObject<SpecialToken>, IPointOfInterest {
         ConstructResources();
     }
     public void SetID(int id) {
-        this.id = Ruinarch.Utilities.SetID(this, id);
+        this.id = Utilities.SetID(this, id);
     }
 
     #region Virtuals

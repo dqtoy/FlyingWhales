@@ -73,7 +73,7 @@ public class ItemPanelUI : MonoBehaviour {
         _allArmors.Clear();
 
         _allArmors.Add("None");
-        string path = Ruinarch.Utilities.dataPath + "Items/";
+        string path = Utilities.dataPath + "Items/";
         string[] directories = Directory.GetDirectories(path);
         for (int i = 0; i < directories.Length; i++) {
             string folderName = new DirectoryInfo(directories[i]).Name;
@@ -179,8 +179,8 @@ public class ItemPanelUI : MonoBehaviour {
             EditorUtility.DisplayDialog("Error", "Please specify an Item Name", "OK");
             return;
         }
-        string path = Ruinarch.Utilities.dataPath + "Items/" + itemTypeOptions.options[itemTypeOptions.value].text + "/" + nameInput.text + ".json";
-        if (Ruinarch.Utilities.DoesFileExist(path)) {
+        string path = Utilities.dataPath + "Items/" + itemTypeOptions.options[itemTypeOptions.value].text + "/" + nameInput.text + ".json";
+        if (Utilities.DoesFileExist(path)) {
             if (EditorUtility.DisplayDialog("Overwrite Item", "An item with name " + nameInput.text + " already exists. Replace with this item?", "Yes", "No")) {
                 File.Delete(path);
                 SaveItemJson(path);

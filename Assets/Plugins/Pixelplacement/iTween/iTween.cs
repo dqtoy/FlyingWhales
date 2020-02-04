@@ -37,7 +37,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
-using UnityEngine.UI;
 #endregion
 
 /// <summary>
@@ -360,7 +359,7 @@ public class iTween : MonoBehaviour{
 		CameraFadeAdd(Defaults.cameraFadeDepth);
 		
 		//rescale cameraFade just in case screen size has changed to ensure it takes up the full screen:
-		cameraFade.Image.pixelInset=new Rect(0,0,Screen.width,Screen.height);
+		cameraFade.guiTexture.pixelInset=new Rect(0,0,Screen.width,Screen.height);
 		*/
 	
 		if(cameraFade){
@@ -458,7 +457,7 @@ public class iTween : MonoBehaviour{
 	}
 	
 	/// <summary>
-	/// Changes a GameObject's alpha value instantly then returns it to the provided alpha over time with MINIMUM customization options.  If a Text or Image component is attached, it will become the target of the animation. Identical to using ColorFrom and using the "a" parameter. 
+	/// Changes a GameObject's alpha value instantly then returns it to the provided alpha over time with MINIMUM customization options.  If a GUIText or GUITexture component is attached, it will become the target of the animation. Identical to using ColorFrom and using the "a" parameter. 
 	/// </summary>
 	/// <param name="target">
 	/// A <see cref="GameObject"/> to be the target of the animation.
@@ -474,7 +473,7 @@ public class iTween : MonoBehaviour{
 	}
 	
 	/// <summary>
-	/// Changes a GameObject's alpha value instantly then returns it to the provided alpha over time with FULL customization options.  If a Text or Image component is attached, it will become the target of the animation. Identical to using ColorFrom and using the "a" parameter.
+	/// Changes a GameObject's alpha value instantly then returns it to the provided alpha over time with FULL customization options.  If a GUIText or GUITexture component is attached, it will become the target of the animation. Identical to using ColorFrom and using the "a" parameter.
 	/// </summary>
 	/// <param name="alpha">
 	/// A <see cref="System.Single"/> or <see cref="System.Double"/> for the initial alpha value of the animation.
@@ -529,7 +528,7 @@ public class iTween : MonoBehaviour{
 	}		
 	
 	/// <summary>
-	/// Changes a GameObject's alpha value over time with MINIMUM customization options.  If a Text or Image component is attached, it will become the target of the animation. Identical to using ColorTo and using the "a" parameter.
+	/// Changes a GameObject's alpha value over time with MINIMUM customization options.  If a GUIText or GUITexture component is attached, it will become the target of the animation. Identical to using ColorTo and using the "a" parameter.
 	/// </summary>
 	/// <param name="target">
 	/// A <see cref="GameObject"/> to be the target of the animation.
@@ -545,7 +544,7 @@ public class iTween : MonoBehaviour{
 	}	
 
 	/// <summary>
-	/// Changes a GameObject's alpha value over time with FULL customization options.  If a Text or Image component is attached, it will become the target of the animation. Identical to using ColorTo and using the "a" parameter.
+	/// Changes a GameObject's alpha value over time with FULL customization options.  If a GUIText or GUITexture component is attached, it will become the target of the animation. Identical to using ColorTo and using the "a" parameter.
 	/// </summary>
 	/// <param name="alpha">
 	/// A <see cref="System.Single"/> or <see cref="System.Double"/> for the final alpha value of the animation.
@@ -600,7 +599,7 @@ public class iTween : MonoBehaviour{
 	}		
 	
 	/// <summary>
-	/// Changes a GameObject's color values instantly then returns them to the provided properties over time with MINIMUM customization options.  If a Text or Image component is attached, it will become the target of the animation.
+	/// Changes a GameObject's color values instantly then returns them to the provided properties over time with MINIMUM customization options.  If a GUIText or GUITexture component is attached, it will become the target of the animation.
 	/// </summary>
 	/// <param name="target">
 	/// A <see cref="GameObject"/> to be the target of the animation.
@@ -616,7 +615,7 @@ public class iTween : MonoBehaviour{
 	}
 	
 	/// <summary>
-	/// Changes a GameObject's color values instantly then returns them to the provided properties over time with FULL customization options.  If a Text or Image component is attached, it will become the target of the animation.
+	/// Changes a GameObject's color values instantly then returns them to the provided properties over time with FULL customization options.  If a GUIText or GUITexture component is attached, it will become the target of the animation.
 	/// </summary>
 	/// <param name="color">
 	/// A <see cref="Color"/> to change the GameObject's color to.
@@ -700,10 +699,10 @@ public class iTween : MonoBehaviour{
 		}
 		
 		//set tempColor and base fromColor:
-		if(target.GetComponent<Image>()){
-			tempColor=fromColor=target.GetComponent<Image>().color;	
-		}else if(target.GetComponent<Image>()){
-			tempColor=fromColor=target.GetComponent<Image>().material.color;
+		if(target.GetComponent<GUITexture>()){
+			tempColor=fromColor=target.GetComponent<GUITexture>().color;	
+		}else if(target.GetComponent<GUIText>()){
+			tempColor=fromColor=target.GetComponent<GUIText>().material.color;
 		}else if(target.GetComponent<Renderer>()){
 			tempColor=fromColor=target.GetComponent<Renderer>().material.color;
 		}else if(target.GetComponent<Light>()){
@@ -738,10 +737,10 @@ public class iTween : MonoBehaviour{
 		}
 		
 		//apply fromColor:
-		if(target.GetComponent<Image>()){
-			target.GetComponent<Image>().color=fromColor;	
-		}else if(target.GetComponent<Image>()){
-			target.GetComponent<Image>().material.color=fromColor;
+		if(target.GetComponent<GUITexture>()){
+			target.GetComponent<GUITexture>().color=fromColor;	
+		}else if(target.GetComponent<GUIText>()){
+			target.GetComponent<GUIText>().material.color=fromColor;
 		}else if(target.GetComponent<Renderer>()){
 			target.GetComponent<Renderer>().material.color=fromColor;
 		}else if(target.GetComponent<Light>()){
@@ -758,7 +757,7 @@ public class iTween : MonoBehaviour{
 	}		
 	
 	/// <summary>
-	/// Changes a GameObject's color values over time with MINIMUM customization options.  If a Text or Image component is attached, they will become the target of the animation.
+	/// Changes a GameObject's color values over time with MINIMUM customization options.  If a GUIText or GUITexture component is attached, they will become the target of the animation.
 	/// </summary>
 	/// <param name="target">
 	/// A <see cref="GameObject"/> to be the target of the animation.
@@ -774,7 +773,7 @@ public class iTween : MonoBehaviour{
 	}
 	
 	/// <summary>
-	/// Changes a GameObject's color values over time with FULL customization options.  If a Text or Image component is attached, they will become the target of the animation.
+	/// Changes a GameObject's color values over time with FULL customization options.  If a GUIText or GUITexture component is attached, they will become the target of the animation.
 	/// </summary>
 	/// <param name="color">
 	/// A <see cref="Color"/> to change the GameObject's color to.
@@ -3327,12 +3326,12 @@ public class iTween : MonoBehaviour{
 		//colors = new Color[3];
 		
 		//from and init to values:
-		if(GetComponent<Image>()){
+		if(GetComponent<GUITexture>()){
 			colors = new Color[1,3];
-			colors[0,0] = colors[0,1] = GetComponent<Image>().color;
-		}else if(GetComponent<Image>()){
+			colors[0,0] = colors[0,1] = GetComponent<GUITexture>().color;
+		}else if(GetComponent<GUIText>()){
 			colors = new Color[1,3];
-			colors[0,0] = colors[0,1] = GetComponent<Image>().material.color;
+			colors[0,0] = colors[0,1] = GetComponent<GUIText>().material.color;
 		}else if(GetComponent<Renderer>()){
 			colors = new Color[GetComponent<Renderer>().materials.Length,3];
 			for (int i = 0; i < GetComponent<Renderer>().materials.Length; i++) {
@@ -4103,12 +4102,12 @@ public class iTween : MonoBehaviour{
 		*/
 		
 		//apply:
-		if(GetComponent<Image>()){
-			//Image.color=colors[2];
-			GetComponent<Image>().color=colors[0,2];
-		}else if(GetComponent<Text>()){
+		if(GetComponent<GUITexture>()){
+			//guiTexture.color=colors[2];
+			GetComponent<GUITexture>().color=colors[0,2];
+		}else if(GetComponent<GUIText>()){
 			//guiText.material.color=colors[2];
-			GetComponent<Text>().material.color=colors[0,2];
+			GetComponent<GUIText>().material.color=colors[0,2];
 		}else if(GetComponent<Renderer>()){
 			//renderer.material.color=colors[2];
 			for (int i = 0; i < colors.GetLength(0); i++) {
@@ -4121,12 +4120,12 @@ public class iTween : MonoBehaviour{
 		
 		//dial in:
 		if(percentage==1){
-			if(GetComponent<Image>()){
-				//Image.color=colors[1];
-				GetComponent<Image>().color=colors[0,1];
-			}else if(GetComponent<Text>()){
+			if(GetComponent<GUITexture>()){
+				//guiTexture.color=colors[1];
+				GetComponent<GUITexture>().color=colors[0,1];
+			}else if(GetComponent<GUIText>()){
 				//guiText.material.color=colors[1];
-				GetComponent<Text>().material.color=colors[0,1];
+				GetComponent<GUIText>().material.color=colors[0,1];
 			}else if(GetComponent<Renderer>()){
 				//renderer.material.color=colors[1];	
 				for (int i = 0; i < colors.GetLength(0); i++) {
@@ -4849,10 +4848,10 @@ public class iTween : MonoBehaviour{
 		}
 		
 		//init values:
-		if(target.GetComponent<Image>()){
-			colors[0] = colors[1] = target.GetComponent<Image>().color;
-		}else if(target.GetComponent<Text>()){
-			colors[0] = colors[1] = target.GetComponent<Text>().material.color;
+		if(target.GetComponent<GUITexture>()){
+			colors[0] = colors[1] = target.GetComponent<GUITexture>().color;
+		}else if(target.GetComponent<GUIText>()){
+			colors[0] = colors[1] = target.GetComponent<GUIText>().material.color;
 		}else if(target.GetComponent<Renderer>()){
 			colors[0] = colors[1] = target.GetComponent<Renderer>().material.color;
 		}else if(target.GetComponent<Light>()){
@@ -4884,10 +4883,10 @@ public class iTween : MonoBehaviour{
 		colors[3].a=Mathf.SmoothDamp(colors[0].a,colors[1].a,ref colors[2].a,time);
 				
 		//apply:
-		if(target.GetComponent<Image>()){
-			target.GetComponent<Image>().color=colors[3];
-		}else if(target.GetComponent<Text>()){
-			target.GetComponent<Text>().material.color=colors[3];
+		if(target.GetComponent<GUITexture>()){
+			target.GetComponent<GUITexture>().color=colors[3];
+		}else if(target.GetComponent<GUIText>()){
+			target.GetComponent<GUIText>().material.color=colors[3];
 		}else if(target.GetComponent<Renderer>()){
 			target.GetComponent<Renderer>().material.color=colors[3];
 		}else if(target.GetComponent<Light>()){
@@ -6013,7 +6012,7 @@ public class iTween : MonoBehaviour{
 	/// </param>
 	public static void CameraFadeSwap(Texture2D texture){
 		if(cameraFade){
-			cameraFade.GetComponent<Image>().material.mainTexture=texture;
+			cameraFade.GetComponent<GUITexture>().texture=texture;
 		}
 	}
 	
@@ -6036,9 +6035,9 @@ public class iTween : MonoBehaviour{
 			//establish colorFade object:
 			cameraFade = new GameObject("iTween Camera Fade");
 			cameraFade.transform.position= new Vector3(.5f,.5f,depth);
-			cameraFade.AddComponent<Image>();
-			cameraFade.GetComponent<Image>().material.mainTexture=texture;
-			cameraFade.GetComponent<Image>().color = new Color(.5f,.5f,.5f,0);
+			cameraFade.AddComponent<GUITexture>();
+			cameraFade.GetComponent<GUITexture>().texture=texture;
+			cameraFade.GetComponent<GUITexture>().color = new Color(.5f,.5f,.5f,0);
 			return cameraFade;
 		}
 	}
@@ -6059,9 +6058,9 @@ public class iTween : MonoBehaviour{
 			//establish colorFade object:
 			cameraFade = new GameObject("iTween Camera Fade");
 			cameraFade.transform.position= new Vector3(.5f,.5f,Defaults.cameraFadeDepth);
-			cameraFade.AddComponent<Image>();
-			cameraFade.GetComponent<Image>().material.mainTexture=texture;
-			cameraFade.GetComponent<Image>().color = new Color(.5f,.5f,.5f,0);
+			cameraFade.AddComponent<GUITexture>();
+			cameraFade.GetComponent<GUITexture>().texture=texture;
+			cameraFade.GetComponent<GUITexture>().color = new Color(.5f,.5f,.5f,0);
 			return cameraFade;
 		}
 	}
@@ -6079,9 +6078,9 @@ public class iTween : MonoBehaviour{
 			//establish colorFade object:
 			cameraFade = new GameObject("iTween Camera Fade");
 			cameraFade.transform.position= new Vector3(.5f,.5f,Defaults.cameraFadeDepth);
-			cameraFade.AddComponent<Image>();
-			cameraFade.GetComponent<Image>().material.mainTexture=CameraTexture(Color.black);
-			cameraFade.GetComponent<Image>().color = new Color(.5f,.5f,.5f,0);
+			cameraFade.AddComponent<GUITexture>();
+			cameraFade.GetComponent<GUITexture>().texture=CameraTexture(Color.black);
+			cameraFade.GetComponent<GUITexture>().color = new Color(.5f,.5f,.5f,0);
 			return cameraFade;
 		}
 	}	
