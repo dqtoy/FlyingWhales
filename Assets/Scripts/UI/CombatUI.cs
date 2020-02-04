@@ -72,7 +72,7 @@ public class CombatUI : MonoBehaviour {
         //resultsText.text += "\n" + text;
     }
     private void ResetCombatLogs() {
-        combatLogsScrollView.content.DestroyChildren();
+        Utilities.DestroyChildren(combatLogsScrollView.content);
     }
     public void HighlightAttacker(Character character, SIDES side) {
         if (!combatGO.activeSelf) {

@@ -199,10 +199,10 @@ public class ClassPanelUI : MonoBehaviour {
         _armorTiers.Clear();
         _accessoryTiers.Clear();
         _traitNames.Clear();
-        weaponsContentTransform.DestroyChildren();
-        armorsContentTransform.DestroyChildren();
-        accessoriesContentTransform.DestroyChildren();
-        traitsScrollRect.content.DestroyChildren();
+        Utilities.DestroyChildren(weaponsContentTransform);
+        Utilities.DestroyChildren(armorsContentTransform);
+        Utilities.DestroyChildren(accessoriesContentTransform);
+        Utilities.DestroyChildren(traitsScrollRect.content);
     }
     private void SaveClass() {
         if (string.IsNullOrEmpty(classNameInput.text)) {

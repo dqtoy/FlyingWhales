@@ -17,7 +17,6 @@ public class PlayerCharacterItem : PooledObject, IDragParentItem {
     public Image bgImage;
     public Sprite lockedSprite;
     public Sprite unlockedSprite;
-    public TweenPosition tweenPos;
     public int supposedIndex;
 
     private Character _character;

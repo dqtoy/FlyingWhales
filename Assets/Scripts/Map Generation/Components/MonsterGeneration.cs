@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UtilityScripts;
 
 public class MonsterGeneration : MapGenerationComponent {
@@ -14,6 +15,8 @@ public class MonsterGeneration : MapGenerationComponent {
 			Settlement settlementOnTile = monsterLair.tileLocation.settlementOnTile;
 			LocationStructure monsterLairStructure =
 				settlementOnTile.GetRandomStructureOfType(STRUCTURE_TYPE.MONSTER_LAIR);
+			Assert.IsTrue(monsterLairStructure.unoccupiedTiles.Count > 0, 
+				$"Monster Lair at {monsterLair.tileLocation.region.name} does not have any unoccupied tiles, but is trying to spawn monsters!");
 			if (randomSet == "Golem") {
 				int randomAmount = Random.Range(1, 3);
 				for (int j = 0; j < randomAmount; j++) {

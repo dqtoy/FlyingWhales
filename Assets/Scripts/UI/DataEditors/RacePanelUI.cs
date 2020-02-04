@@ -105,9 +105,9 @@ public class RacePanelUI : MonoBehaviour {
         _traitNames.Clear();
         _hpPerLevel.Clear();
         _attackPerLevel.Clear();
-        traitsScrollRect.content.DestroyChildren();
-        hpPerLevelScrollRect.content.DestroyChildren();
-        attackPerLevelScrollRect.content.DestroyChildren();
+        Utilities.DestroyChildren(traitsScrollRect.content);
+        Utilities.DestroyChildren(hpPerLevelScrollRect.content);
+        Utilities.DestroyChildren(attackPerLevelScrollRect.content);
     }
     private void SaveRace() {
         if (raceOptions.value == 0) {

@@ -167,8 +167,8 @@ public class TraitPanelUI : MonoBehaviour {
         _advertisedInteractions.Clear();
         UpdateAdvertisedInteractionsText();
 
-        effectsScrollRect.content.DestroyChildren();
-        requirementsScrollRect.content.DestroyChildren();
+        Utilities.DestroyChildren(effectsScrollRect.content);
+        Utilities.DestroyChildren(requirementsScrollRect.content);
     }
     private void UpdateAdvertisedInteractionsText() {
         if(_advertisedInteractions.Count > 0) {

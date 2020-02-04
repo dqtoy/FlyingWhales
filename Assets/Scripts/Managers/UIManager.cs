@@ -93,8 +93,6 @@ public class UIManager : MonoBehaviour {
 
     [Space(10)] //FOR TESTING
     [Header("For Testing")]
-    public ButtonToggle toggleBordersBtn;
-    public ButtonToggle corruptionBtn;
     public POITestingUI poiTestingUI;
 
     [Space(10)]
@@ -138,7 +136,7 @@ public class UIManager : MonoBehaviour {
     private void Update() {
         if (isHoveringTile) {
             // if (currentTileHovered.landmarkOnTile != null) {
-                currentTileHovered.ShowTileInfo();
+                // currentTileHovered.ShowTileInfo();
             // }
             currentTileHovered.region?.OnHoverOverAction();
         }
@@ -375,41 +373,6 @@ public class UIManager : MonoBehaviour {
     }
     #endregion
 
-    #region coroutines
-    public IEnumerator RepositionGrid(UIGrid thisGrid) {
-        yield return null;
-        if (thisGrid != null && this.gameObject.activeSelf) {
-            thisGrid.Reposition();
-        }
-        yield return null;
-    }
-    public IEnumerator RepositionTable(UITable thisTable) {
-        yield return new WaitForEndOfFrame();
-        yield return new WaitForEndOfFrame();
-        thisTable.Reposition();
-    }
-    public IEnumerator RepositionScrollView(UIScrollView thisScrollView, bool keepScrollPosition = false) {
-        yield return new WaitForEndOfFrame();
-        yield return new WaitForEndOfFrame();
-        if (keepScrollPosition) {
-            thisScrollView.UpdatePosition();
-        } else {
-            thisScrollView.ResetPosition();
-            thisScrollView.Scroll(0f);
-        }
-        yield return new WaitForEndOfFrame();
-        thisScrollView.UpdateScrollbars();
-    }
-    public IEnumerator LerpProgressBar(UIProgressBar progBar, float targetValue, float lerpTime) {
-        float elapsedTime = 0f;
-        while (elapsedTime < lerpTime) {
-            progBar.value = Mathf.Lerp(progBar.value, targetValue, (elapsedTime/lerpTime));
-            elapsedTime += Time.deltaTime;
-            yield return null;
-        }
-    }
-    #endregion
-
     #region Tooltips
     public string smallInfoShownFrom { get; private set; }
     public void ShowSmallInfo(string info, string header = "") {
@@ -602,22 +565,6 @@ public class UIManager : MonoBehaviour {
         //     MoveNotificationMenuToDefaultPos();
         // }
     }
-    public void RepositionGridCallback(UIGrid thisGrid) {
-        StartCoroutine(RepositionGrid(thisGrid));
-    }
-    private void EnableUIButton(UIButton btn, bool state) {
-        if (state) {
-            btn.GetComponent<BoxCollider>().enabled = true;
-        } else {
-            btn.GetComponent<BoxCollider>().enabled = false;
-        }
-    }
-    /*
-	 * Generic toggle function, toggles gameobject to on/off state.
-	 * */
-    public void ToggleObject(GameObject objectToToggle) {
-        objectToToggle.SetActive(!objectToToggle.activeSelf);
-    }
     /*
 	 * Checker for if the mouse is currently
 	 * over a UI Object
@@ -646,14 +593,10 @@ public class UIManager : MonoBehaviour {
     private void OnInteractionMenuOpened() {
        if (characterInfoUI.isShowing) {
             lastOpenedMenu = characterInfoUI;
-        }
-        //if (objectPicker.gameObject.activeSelf) {
-        //    HideObjectPicker();
-        //}
-        //HideMenus();
-        if (characterInfoUI.isShowing) {
+       }
+       if (characterInfoUI.isShowing) {
             characterInfoUI.gameObject.SetActive(false);
-        }
+       }
     }
     private void OnInteractionMenuClosed() {
         //reopen last opened menu
