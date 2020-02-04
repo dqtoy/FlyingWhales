@@ -56,6 +56,7 @@ public class CameraMove : MonoBehaviour {
 		Instance = this;
         _mainCamera = Camera.main;
         _mainCameraTransform = _mainCamera.transform;
+        defaultMask = _mainCamera.cullingMask;
     }
     private void Update() {
         if (!cameraControlEnabled) {
@@ -317,11 +318,11 @@ public class CameraMove : MonoBehaviour {
     private void OnMenuOpened(UIMenu openedMenu) { }
     private void OnMenuClosed(UIMenu openedMenu) { }
     private void OnInnerMapOpened(ILocation location) {
-        _mainCamera.cullingMask = 0;
+        // _mainCamera.cullingMask = 0;
         SetCameraControlState(false);
     }
     private void OnInnerMapClosed(ILocation location) {
-        _mainCamera.cullingMask = defaultMask;
+        // _mainCamera.cullingMask = defaultMask;
         SetCameraControlState(true);
     }
     #endregion

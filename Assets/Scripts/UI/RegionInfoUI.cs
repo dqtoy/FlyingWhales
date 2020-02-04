@@ -133,7 +133,7 @@ public class RegionInfoUI : UIMenu {
         }
     }
     private void UpdateCharacters() {
-        Utilities.DestroyChildren(charactersScrollView.content);
+        Ruinarch.Utilities.DestroyChildren(charactersScrollView.content);
         for (int i = 0; i < activeRegion.charactersAtLocation.Count; i++) {
             Character character = activeRegion.charactersAtLocation[i];
             GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(characterItemPrefab.name, Vector3.zero, Quaternion.identity, charactersScrollView.content);
@@ -147,7 +147,7 @@ public class RegionInfoUI : UIMenu {
         List<CharacterNameplateItem> visitors = new List<CharacterNameplateItem>();
 
         List<CharacterNameplateItem> residents = new List<CharacterNameplateItem>();
-        CharacterNameplateItem[] characterItems = Utilities.GetComponentsInDirectChildren<CharacterNameplateItem>(charactersScrollView.content.gameObject);
+        CharacterNameplateItem[] characterItems = Ruinarch.Utilities.GetComponentsInDirectChildren<CharacterNameplateItem>(charactersScrollView.content.gameObject);
         for (int i = 0; i < characterItems.Length; i++) {
             CharacterNameplateItem currItem = characterItems[i];
             if (currItem.character.homeRegion != null && activeRegion.id == currItem.character.homeRegion.id) {
@@ -287,7 +287,7 @@ public class RegionInfoUI : UIMenu {
     #region Events
     private void UpdateEventInfo() {
         if(worldEventsScrollView.content.childCount > 0) {
-            Utilities.DestroyChildren(worldEventsScrollView.content);
+            Ruinarch.Utilities.DestroyChildren(worldEventsScrollView.content);
         }
     }
     private void GenerateWorldEventNameplate(Region region) {

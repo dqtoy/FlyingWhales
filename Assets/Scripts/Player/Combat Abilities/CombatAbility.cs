@@ -22,7 +22,7 @@ public class CombatAbility {
 
     public CombatAbility(COMBAT_ABILITY type) {
         this.type = type;
-        name = Utilities.NormalizeStringUpperCaseFirstLetters(this.type.ToString());
+        name = Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(this.type.ToString());
         lvl = 1;
         tier = 3;
         OnLevelUp();

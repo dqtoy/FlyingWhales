@@ -13,7 +13,7 @@ namespace Interrupts {
 
         public Interrupt(INTERRUPT interrupt) {
             this.interrupt = interrupt;
-            this.name = Utilities.NotNormalizedConversionEnumToString(interrupt.ToString());
+            this.name = Ruinarch.Utilities.NotNormalizedConversionEnumToString(interrupt.ToString());
             isSimulateneous = false;
         }
 

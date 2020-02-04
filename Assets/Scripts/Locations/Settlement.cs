@@ -54,7 +54,7 @@ public class Settlement : IJobOwner {
     public Settlement(Region region, LOCATION_TYPE locationType, int citizenCount) {
         this.region = region;
         SetName(RandomNameGenerator.Instance.GenerateCityName(RACE.HUMANS));
-        id = Utilities.SetID(this);
+        id = Ruinarch.Utilities.SetID(this);
         this.citizenCount = citizenCount;
         new List<Character>();
         tiles = new List<HexTile>();
@@ -74,7 +74,7 @@ public class Settlement : IJobOwner {
     public Settlement(SaveDataArea saveDataArea) {
         region = GridMap.Instance.GetRegionByID(saveDataArea.regionID);
         SetName(RandomNameGenerator.Instance.GenerateCityName(RACE.HUMANS));
-        id = Utilities.SetID(this, saveDataArea.id);
+        id = Ruinarch.Utilities.SetID(this, saveDataArea.id);
         citizenCount = saveDataArea.citizenCount;
         //charactersAtLocation = new List<Character>();
         tiles = new List<HexTile>();
@@ -295,7 +295,7 @@ public class Settlement : IJobOwner {
     }
     public Character AddNewResident(RACE race, Faction faction) {
         string className = classManager.GetCurrentClassToCreate();
-        Character citizen = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, className, race, Utilities.GetRandomGender(), faction, this);
+        Character citizen = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, className, race, Ruinarch.Utilities.GetRandomGender(), faction, this);
         PlaceNewResidentInInnerMap(citizen);
         //citizen.CenterOnCharacter();
         return citizen;
@@ -322,7 +322,7 @@ public class Settlement : IJobOwner {
         return citizen;
     }
     public Character CreateNewResidentNoLocation(RACE race, string className, Faction faction) {
-        Character citizen = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, className, race, Utilities.GetRandomGender(), faction);
+        Character citizen = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, className, race, Ruinarch.Utilities.GetRandomGender(), faction);
         return citizen;
     }
     public void PlaceNewResidentInInnerMap(Character newResident) {
@@ -664,7 +664,7 @@ public class Settlement : IJobOwner {
     }
     public LocationStructure GetRandomStructureOfType(STRUCTURE_TYPE type) {
         if (structures.ContainsKey(type)) {
-            return structures[type][Utilities.rng.Next(0, structures[type].Count)];
+            return structures[type][Ruinarch.Utilities.rng.Next(0, structures[type].Count)];
         }
         return null;
     }

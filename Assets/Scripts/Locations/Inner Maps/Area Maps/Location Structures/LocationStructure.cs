@@ -32,9 +32,9 @@ public class LocationStructure {
     #endregion
 
     public LocationStructure(STRUCTURE_TYPE structureType, ILocation location) {
-        id = Utilities.SetID(this);
+        id = Ruinarch.Utilities.SetID(this);
         this.structureType = structureType;
-        name = $"{Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString())} {id.ToString()}";
+        name = $"{Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString())} {id.ToString()}";
         this.location = location;
         charactersHere = new List<Character>();
         itemsInStructure = new List<SpecialToken>();
@@ -45,7 +45,7 @@ public class LocationStructure {
     }
     public LocationStructure(ILocation location, SaveDataLocationStructure data) {
         this.location = location;
-        id = Utilities.SetID(this, data.id);
+        id = Ruinarch.Utilities.SetID(this, data.id);
         structureType = data.structureType;
         name = data.name;
         charactersHere = new List<Character>();
@@ -368,7 +368,7 @@ public class LocationStructure {
             case STRUCTURE_TYPE.CITY_CENTER:
                 return "the " + location.name + " city center";
             default:
-                return "the " + Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString());
+                return "the " + Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString());
         }
     }
     public List<LocationGridTile> GetOuterTiles() {

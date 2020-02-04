@@ -855,7 +855,7 @@ public class CharacterManager : MonoBehaviour {
         EMOTION[] allEmotions = CollectionUtilities.GetEnumValues<EMOTION>();
         for (int i = 0; i < allEmotions.Length; i++) {
             EMOTION emotion = allEmotions[i];
-            var typeName = Utilities.NotNormalizedConversionEnumToStringNoSpaces(emotion.ToString());
+            var typeName = Ruinarch.Utilities.NotNormalizedConversionEnumToStringNoSpaces(emotion.ToString());
             System.Type type = System.Type.GetType(typeName);
             if (type != null) {
                 Emotion data = System.Activator.CreateInstance(type) as Emotion;

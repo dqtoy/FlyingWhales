@@ -21,7 +21,7 @@ public class Job {
 
     public Job (Character character, JOB jobType) {
         _jobType = jobType;
-        _name = Utilities.NormalizeStringUpperCaseFirstLetterOnly(_jobType.ToString());
+        _name = Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetterOnly(_jobType.ToString());
         _character = character;
     }
 

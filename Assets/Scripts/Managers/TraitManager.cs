@@ -44,7 +44,7 @@ public class TraitManager : MonoBehaviour {
 
     public void Initialize() {
         _allTraits = new Dictionary<string, Trait>();
-        string path = Utilities.dataPath + "Traits/";
+        string path = Ruinarch.Utilities.dataPath + "Traits/";
         string[] files = Directory.GetFiles(path, "*.json");
         for (int i = 0; i < files.Length; i++) {
             Trait attribute = JsonUtility.FromJson<Trait>(System.IO.File.ReadAllText(files[i]));
@@ -181,7 +181,7 @@ public class TraitManager : MonoBehaviour {
         return false;
     }
     public Trait CreateNewInstancedTraitClass(string traitName) {
-        string noSpacesTraitName = Utilities.RemoveAllWhiteSpace(traitName);
+        string noSpacesTraitName = Ruinarch.Utilities.RemoveAllWhiteSpace(traitName);
         string typeName = $"Traits.{ noSpacesTraitName }";
         Type type = System.Type.GetType(typeName);
         return System.Activator.CreateInstance(type) as Trait;
@@ -234,7 +234,7 @@ public class TraitManager : MonoBehaviour {
         if (character.faction.isPlayerFaction) {
             return false;
         }
-        if (Utilities.IsRaceBeast(character.race)) { // character.role.roleType == CHARACTER_ROLE.BEAST
+        if (Ruinarch.Utilities.IsRaceBeast(character.race)) { // character.role.roleType == CHARACTER_ROLE.BEAST
             return false;
         }
         if (character is Summon) {

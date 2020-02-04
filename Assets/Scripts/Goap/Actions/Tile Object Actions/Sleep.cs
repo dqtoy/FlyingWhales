@@ -35,7 +35,7 @@ public class Sleep : GoapAction {
                 costLog += " +2000(Fully Occupied)";
             } else {
                 if (bed.IsOwnedBy(actor)) {
-                    cost = Utilities.rng.Next(10, 16);
+                    cost = Ruinarch.Utilities.rng.Next(10, 16);
                     costLog += " +" + cost + "(Owned)";
                 } else {
                     List<Character> tableOwners = bed.GetOwners();
@@ -53,13 +53,13 @@ public class Sleep : GoapAction {
                         }
                     }
                     if (isTargetObjectOwnedByFriend) {
-                        cost = Utilities.rng.Next(25, 46);
+                        cost = Ruinarch.Utilities.rng.Next(25, 46);
                         costLog += " +" + cost + "(Owned by Friend)";
                     } else if (isTargetObjectOwnedByEnemy) {
                         cost += 2000;
                         costLog += " +2000(Owned by Enemy)";
                     } else {
-                        cost += Utilities.rng.Next(40, 51);
+                        cost += Ruinarch.Utilities.rng.Next(40, 51);
                         costLog += " +" + cost + "(Else)";
                     }
 

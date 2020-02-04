@@ -28,7 +28,7 @@ public class Steal : GoapAction {
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         string costLog = "\n" + name + " " + target.nameWithID + ":";
-        int cost = Utilities.rng.Next(300, 351);
+        int cost = Ruinarch.Utilities.rng.Next(300, 351);
         costLog += " +" + cost + "(Initial)";
         if (actor.traitContainer.HasTrait("Kleptomaniac")) {
             cost += -200;

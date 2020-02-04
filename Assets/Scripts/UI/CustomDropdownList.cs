@@ -11,7 +11,7 @@ public class CustomDropdownList : MonoBehaviour {
     private Action<string> onClickDropdownItem;
 
     public void ShowDropdown(List<string> items, Action<string> onClickDropdownItem, Func<string, bool> canChooseItem = null) {
-        Utilities.DestroyChildren(dropdownScrollView.content);
+        Ruinarch.Utilities.DestroyChildren(dropdownScrollView.content);
 
         this.onClickDropdownItem = onClickDropdownItem;
 

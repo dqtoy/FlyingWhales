@@ -290,7 +290,7 @@ public class OpinionComponent {
         if (owner.relationshipContainer.HasRelationshipWith(target)) {
             IRelationshipData data = owner.relationshipContainer.GetRelationshipDataWith(target);
             RELATIONSHIP_TYPE relType = data.GetFirstMajorRelationship();
-            return Utilities.NormalizeStringUpperCaseFirstLetterOnly(relType.ToString());    
+            return Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetterOnly(relType.ToString());    
         } else if (HasOpinion(target)) {
             return GetOpinionLabel(target);
         }

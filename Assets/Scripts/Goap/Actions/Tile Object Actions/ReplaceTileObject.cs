@@ -21,7 +21,7 @@ public class ReplaceTileObject : GoapAction {
         base.AddFillersToLog(log, node);
         object[] otherData = node.otherData;
         TileObject tileObjectToReplace = otherData[0] as TileObject;
-        log.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(tileObjectToReplace.tileObjectType.ToString()), LOG_IDENTIFIER.STRING_1);
+        log.AddToFillers(null, Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(tileObjectToReplace.tileObjectType.ToString()), LOG_IDENTIFIER.STRING_1);
     }
     protected override void ConstructBasePreconditionsAndEffects() {
         //if (tileObjectToReplace != null) {
@@ -59,7 +59,7 @@ public class ReplaceTileObject : GoapAction {
     #region State Effects
     public void PreReplaceSuccess(ActualGoapNode goapNode) {
         TileObject tileObjectToReplace = goapNode.otherData[0] as TileObject;
-        goapNode.descriptionLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(tileObjectToReplace.ToString()), LOG_IDENTIFIER.STRING_1);
+        goapNode.descriptionLog.AddToFillers(null, Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(tileObjectToReplace.ToString()), LOG_IDENTIFIER.STRING_1);
     }
     public void AfterReplaceSuccess(ActualGoapNode goapNode) {
         TileObject tileObjectToReplace = goapNode.otherData[0] as TileObject;

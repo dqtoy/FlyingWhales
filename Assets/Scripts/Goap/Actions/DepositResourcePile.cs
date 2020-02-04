@@ -137,7 +137,7 @@ public class DepositResourcePile : GoapAction {
     public override void AddFillersToLog(Log log, ActualGoapNode goapNode) {
         base.AddFillersToLog(log, goapNode);
         ResourcePile pile = goapNode.poiTarget as ResourcePile;
-        log.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(pile.providedResource.ToString()), LOG_IDENTIFIER.STRING_1);
+        log.AddToFillers(null, Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(pile.providedResource.ToString()), LOG_IDENTIFIER.STRING_1);
     }
     #endregion
 
@@ -200,7 +200,7 @@ public class DepositResourcePile : GoapAction {
         //int givenSupply = goapNode.actor.supply - goapNode.actor.role.reservedSupply;
         //goapNode.descriptionLog.AddToFillers(goapNode.targetStructure.location, goapNode.targetStructure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
         goapNode.descriptionLog.AddToFillers(null, pile.resourceInPile.ToString(), LOG_IDENTIFIER.STRING_1);
-        goapNode.descriptionLog.AddToFillers(null, Utilities.NormalizeStringUpperCaseFirstLetters(pile.providedResource.ToString()), LOG_IDENTIFIER.STRING_2);
+        goapNode.descriptionLog.AddToFillers(null, Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(pile.providedResource.ToString()), LOG_IDENTIFIER.STRING_2);
     }
     public void AfterDepositSuccess(ActualGoapNode goapNode) {
         Character actor = goapNode.actor;

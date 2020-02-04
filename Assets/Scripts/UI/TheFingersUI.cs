@@ -171,7 +171,7 @@ public class TheFingersUI : MonoBehaviour {
         //exclusiveIdeologyHolder.SetActive(false);
     }
     private void PopulateCharactersToChooseFrom() {
-        Utilities.DestroyChildren(characterScrollRect.content);
+        Ruinarch.Utilities.DestroyChildren(characterScrollRect.content);
         characterNameplateItems.Clear();
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
             Character character = CharacterManager.Instance.allCharacters[i];

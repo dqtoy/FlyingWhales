@@ -15,7 +15,7 @@ public class Summon : Character, IWorldObject {
     
     #region getters/setters
     public virtual string worldObjectName {
-        get { return name + " (" + Utilities.NormalizeStringUpperCaseFirstLetters(summonType.ToString()) + ")"; }
+        get { return name + " (" + Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(summonType.ToString()) + ")"; }
     }
     public WORLD_OBJECT_TYPE worldObjectType {
         get { return WORLD_OBJECT_TYPE.SUMMON; }

@@ -4,7 +4,7 @@ using UnityEngine;
 using Traits;
 public class Golem : Summon {
 
-    public Golem() : base(SUMMON_TYPE.Golem, CharacterRole.SOLDIER, "Golem", RACE.GOLEM, Utilities.GetRandomGender()) {
+    public Golem() : base(SUMMON_TYPE.Golem, CharacterRole.SOLDIER, "Golem", RACE.GOLEM, Ruinarch.Utilities.GetRandomGender()) {
         SetMaxHPMod(1000);
     }
     public Golem(SaveDataCharacter data) : base(data) { }

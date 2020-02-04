@@ -193,7 +193,7 @@ public class ActualGoapNode {
             if (actor.canMove) {
                 List<LocationGridTile> choices = actor.gridTileLocation.parentMap.GetTilesInRadius(actor.gridTileLocation, 3);
                 if (choices.Count > 0) {
-                    targetTile = choices[Utilities.rng.Next(0, choices.Count)];
+                    targetTile = choices[Ruinarch.Utilities.rng.Next(0, choices.Count)];
                 } else {
                     targetTile = actor.gridTileLocation;
                 }
@@ -203,7 +203,7 @@ public class ActualGoapNode {
         } else if (action.actionLocationType == ACTION_LOCATION_TYPE.RANDOM_LOCATION) {
             List<LocationGridTile> choices = targetStructure.unoccupiedTiles;
             if (choices.Count > 0) {
-                targetTile = choices[Utilities.rng.Next(0, choices.Count)];
+                targetTile = choices[Ruinarch.Utilities.rng.Next(0, choices.Count)];
             } else {
                 throw new System.Exception(actor.name + " target tile of action " + action.goapName + " for " + action.actionLocationType.ToString() + " is null.");
             }
@@ -212,7 +212,7 @@ public class ActualGoapNode {
             if(targetTile == null) {
                 List<LocationGridTile> choices = targetStructure.unoccupiedTiles.Where(x => x.UnoccupiedNeighbours.Count > 0).ToList();
                 if (choices.Count > 0) {
-                    targetTile = choices[Utilities.rng.Next(0, choices.Count)];
+                    targetTile = choices[Ruinarch.Utilities.rng.Next(0, choices.Count)];
                 } else {
                     throw new System.Exception(actor.name + " target tile of action " + action.goapName + " for " + action.actionLocationType.ToString() + " is null.");
                 }
@@ -220,7 +220,7 @@ public class ActualGoapNode {
         } else if (action.actionLocationType == ACTION_LOCATION_TYPE.RANDOM_LOCATION_B) {
             List<LocationGridTile> choices = targetStructure.unoccupiedTiles.Where(x => x.UnoccupiedNeighbours.Count > 0).ToList();
             if (choices.Count > 0) {
-                targetTile = choices[Utilities.rng.Next(0, choices.Count)];
+                targetTile = choices[Ruinarch.Utilities.rng.Next(0, choices.Count)];
             } else {
                 throw new System.Exception(actor.name + " target tile of action " + action.goapName + " for " + action.actionLocationType.ToString() + " is null.");
             }

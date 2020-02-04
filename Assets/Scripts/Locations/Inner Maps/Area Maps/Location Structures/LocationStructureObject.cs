@@ -120,7 +120,7 @@ public class LocationStructureObject : PooledObject {
         }
     }
     private StructureTemplateObjectData[] GetPreplacedObjects() {
-        return Utilities.GetComponentsInDirectChildren<StructureTemplateObjectData>(_objectsParent.gameObject);
+        return Ruinarch.Utilities.GetComponentsInDirectChildren<StructureTemplateObjectData>(_objectsParent.gameObject);
     }
     internal void ReceiveMapObject<T>(MapObjectVisual<T> mapGameObject) where T : IDamageable {
         mapGameObject.transform.SetParent(_objectsParent);
@@ -194,7 +194,7 @@ public class LocationStructureObject : PooledObject {
         }
     }
     private FurnitureSpotMono[] GetFurnitureSpots() {
-        return Utilities.GetComponentsInDirectChildren<FurnitureSpotMono>(_furnitureSpotsParent.gameObject);
+        return Ruinarch.Utilities.GetComponentsInDirectChildren<FurnitureSpotMono>(_furnitureSpotsParent.gameObject);
     }
     #endregion
 
@@ -425,7 +425,7 @@ public class LocationStructureObject : PooledObject {
 
     [ContextMenu("Convert Objects")]
     public void ConvertObjects() {
-        Utilities.DestroyChildren(_objectsParent);
+        Ruinarch.Utilities.DestroyChildren(_objectsParent);
         _detailTileMap.CompressBounds();
         Material mat = Resources.Load<Material>("Fonts & Materials/2D Lighting");
         BoundsInt bounds = _detailTileMap.cellBounds;

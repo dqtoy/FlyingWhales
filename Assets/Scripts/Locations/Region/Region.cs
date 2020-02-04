@@ -46,7 +46,7 @@ public class Region : ILocation {
         awareness = new Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>>();
     }
     public Region(HexTile coreTile) : this() {
-        id = Utilities.SetID(this);
+        id = Ruinarch.Utilities.SetID(this);
         name = RandomNameGenerator.Instance.GetRegionName();
         this.coreTile = coreTile;
         tiles = new List<HexTile>();
@@ -55,7 +55,7 @@ public class Region : ILocation {
         Debug.Log($"Created region {this.name} with core tile {coreTile.ToString()}");
     }
     public Region(SaveDataRegion data) : this() {
-        id = Utilities.SetID(this, data.id);
+        id = Ruinarch.Utilities.SetID(this, data.id);
         name = data.name;
         coreTile = GridMap.Instance.normalHexTiles[data.coreTileID];
         tiles = new List<HexTile>();
@@ -356,7 +356,7 @@ public class Region : ILocation {
         BaseLandmark newLandmark = LandmarkManager.Instance.CreateNewLandmarkOnTile(coreTile, demonicBuildingData.landmarkType, false);
         //newLandmark.OverrideID(previousID);
 
-        UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Finished building " + Utilities.NormalizeStringUpperCaseFirstLetters(newLandmark.specificLandmarkType.ToString()) + " at " + this.name, () => UIManager.Instance.ShowRegionInfo(this));
+        UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Finished building " + Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(newLandmark.specificLandmarkType.ToString()) + " at " + this.name, () => UIManager.Instance.ShowRegionInfo(this));
         demonicBuildingData = new DemonicLandmarkBuildingData();
         //assignedMinion.SetAssignedRegion(null);
         //SetAssignedMinion(null);
@@ -544,7 +544,7 @@ public class Region : ILocation {
     }
     public LocationStructure GetRandomStructureOfType(STRUCTURE_TYPE type) {
         if (structures.ContainsKey(type)) {
-            return structures[type][Utilities.rng.Next(0, structures[type].Count)];
+            return structures[type][Ruinarch.Utilities.rng.Next(0, structures[type].Count)];
         }
         return null;
     }
@@ -704,7 +704,7 @@ public class Region : ILocation {
             for (int y = 0; y <= hexTileMap.GetUpperBound(1); y++) {
                 HexTile tile = hexTileMap[x, y];
                 if (tile.region == this
-                    && Utilities.IsEven(tile.yCoordinate)
+                    && Ruinarch.Utilities.IsEven(tile.yCoordinate)
                     && tile.xCoordinate == leftMostXCoordinate) {
                     return tile;
                 }
@@ -731,7 +731,7 @@ public class Region : ILocation {
             for (int y = 0; y <= hexTileMap.GetUpperBound(1); y++) {
                 HexTile tile = hexTileMap[x, y];
                 if (tile.region == this 
-                    && Utilities.IsEven(tile.yCoordinate) == false 
+                    && Ruinarch.Utilities.IsEven(tile.yCoordinate) == false 
                     && tile.xCoordinate == rightMostXCoordinate) {
                     return tile;
                 }
@@ -764,7 +764,7 @@ public class Region : ILocation {
                 HexTile tile = hexTileMap[x, y];
                 if (tile.region == this
                     && tile.xCoordinate == leftMostTile.xCoordinate
-                    && Utilities.IsEven(leftMostTile.yCoordinate) == Utilities.IsEven(tile.yCoordinate) //only include tiles that are on the same row type as the left most tile (odd/even)
+                    && Ruinarch.Utilities.IsEven(leftMostTile.yCoordinate) == Ruinarch.Utilities.IsEven(tile.yCoordinate) //only include tiles that are on the same row type as the left most tile (odd/even)
                     && rows.Contains(y) == false) {
                     rows.Add(y);
                 }
@@ -780,7 +780,7 @@ public class Region : ILocation {
                 HexTile tile = hexTileMap[x, y];
                 if (tile.region == this
                     && tile.xCoordinate == rightMostTile.xCoordinate
-                    && Utilities.IsEven(rightMostTile.yCoordinate) == Utilities.IsEven(tile.yCoordinate) //only include tiles that are on the same row type as the right most tile (odd/even)
+                    && Ruinarch.Utilities.IsEven(rightMostTile.yCoordinate) == Ruinarch.Utilities.IsEven(tile.yCoordinate) //only include tiles that are on the same row type as the right most tile (odd/even)
                     && rows.Contains(y) == false) {
                     rows.Add(y);
                 }
@@ -797,10 +797,10 @@ public class Region : ILocation {
                 //left most rows and right most rows have at least 1 row in common
                 return true;
             } else {
-                bool isLeftRowEven = Utilities.IsEven(currLeftRow);
+                bool isLeftRowEven = Ruinarch.Utilities.IsEven(currLeftRow);
                 for (int j = 0; j < rightMostRows.Count; j++) {
                     int currRightRow = rightMostRows[j];
-                    bool isRightRowEven = Utilities.IsEven(currRightRow);
+                    bool isRightRowEven = Ruinarch.Utilities.IsEven(currRightRow);
                     if (isLeftRowEven == isRightRowEven) {
                         return true;
                     }

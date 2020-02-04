@@ -131,7 +131,6 @@ public class UIManager : MonoBehaviour {
         Messenger.AddListener<bool>(Signals.PAUSED, UpdateSpeedToggles);
         Messenger.AddListener(Signals.UPDATE_UI, UpdateUI);
         Messenger.AddListener(Signals.INSPECT_ALL, UpdateInteractableInfoUI);
-        ToggleBorders();
     }
     private void Update() {
         if (isHoveringTile) {
@@ -498,7 +497,7 @@ public class UIManager : MonoBehaviour {
 
         Vector2 anchorMin = Vector2.zero;
         Vector2 anchorMax = Vector2.zero;
-        Utilities.GetAnchorMinMax(position.anchor, ref anchorMin, ref anchorMax);
+        Ruinarch.Utilities.GetAnchorMinMax(position.anchor, ref anchorMin, ref anchorMax);
         tooltipParentRT.anchorMin = anchorMin;
         tooltipParentRT.anchorMax = anchorMax;
         tooltipParentRT.anchoredPosition = Vector2.zero;
@@ -605,14 +604,6 @@ public class UIManager : MonoBehaviour {
             lastOpenedMenu = null;
         }
     }
-    public void ScrollRectSnapTo(ScrollRect scrollRect, RectTransform target) {
-        Canvas.ForceUpdateCanvases();
-        Vector2 ogPos = scrollRect.content.anchoredPosition;
-        Vector2 diff = (Vector2)scrollRect.transform.InverseTransformPoint(scrollRect.content.position)
-            - (Vector2)scrollRect.transform.InverseTransformPoint(target.position);
-        scrollRect.content.anchoredPosition = new Vector2(ogPos.x, diff.y);
-            
-    }
     public void SetTempDisableShowInfoUI(bool state) {
         tempDisableShowInfoUI = state;
     }
@@ -667,10 +658,6 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     #region For Testing
-    public void ToggleBorders() {
-        CameraMove.Instance.ToggleMainCameraLayer("Borders");
-        CameraMove.Instance.ToggleMainCameraLayer("MinimapAndHextiles");
-    }
     public void SetUIState(bool state) {
         this.gameObject.SetActive(state);
     }
@@ -1094,7 +1081,7 @@ public class UIManager : MonoBehaviour {
         }
     }
     public void ShowPlayerNotificationArea() {
-        Utilities.DestroyChildren(playerNotifScrollRect.content);
+        Ruinarch.Utilities.DestroyChildren(playerNotifScrollRect.content);
         playerNotifGO.SetActive(true);
     }
     public void HidePlayerNotificationArea() {
@@ -1321,7 +1308,7 @@ public class UIManager : MonoBehaviour {
 
         Vector2 anchorMin = Vector2.zero;
         Vector2 anchorMax = Vector2.zero;
-        Utilities.GetAnchorMinMax(position.anchor, ref anchorMin, ref anchorMax);
+        Ruinarch.Utilities.GetAnchorMinMax(position.anchor, ref anchorMin, ref anchorMax);
         tooltipParentRT.anchorMin = anchorMin;
         tooltipParentRT.anchorMax = anchorMax;
         tooltipParentRT.anchoredPosition = Vector2.zero;

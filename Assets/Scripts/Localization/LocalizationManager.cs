@@ -29,7 +29,7 @@ public class LocalizationManager : MonoBehaviour {
         }
     }
 	internal void Initialize(){
-		this.language = Utilities.defaultLanguage;
+		this.language = Ruinarch.Utilities.defaultLanguage;
 		this.filePath = Application.streamingAssetsPath + "/" + this.language.ToString();
 		LoadLocalizedTexts ();
 	}

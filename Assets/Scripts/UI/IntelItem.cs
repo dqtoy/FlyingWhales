@@ -32,7 +32,7 @@ public class IntelItem : MonoBehaviour {
             //    iconImg.sprite = eventIntelIcon;
             //} 
             //infoLbl.text = Utilities.LogReplacer(intel.intelLog);
-            infoLbl.text = Utilities.LogReplacer(intel.node.descriptionLog);
+            infoLbl.text = Ruinarch.Utilities.LogReplacer(intel.node.descriptionLog);
             mainBtn.interactable = true;
             iconImg.gameObject.SetActive(true);
         } else {

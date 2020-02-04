@@ -94,10 +94,12 @@ public class InnerMapCameraMove : MonoBehaviour {
         SetCameraControlState(true);
         SetCameraBordersForMap(location.innerMap);
         ConstrainCameraBounds();
+        innerMapsCamera.depth = 2;
     }
     private void OnInnerMapClosed(ILocation location) {
         gameObject.SetActive(false);
         SetCameraControlState(false);
+        innerMapsCamera.depth = 0;
     }
     private void OnPooledObjectDestroyed(GameObject obj) {
         if (target == obj.transform || target == obj) {
@@ -130,10 +132,6 @@ public class InnerMapCameraMove : MonoBehaviour {
     #endregion
 
     #region Positioning
-    private void SetInitialCameraPosition() {
-        Vector3 initialPos = new Vector3(-200f, 0f, -10f);
-        this.transform.position = initialPos;
-    }
     public void MoveCamera(Vector3 newPos) {
         //Vector3 point = areaMapsCamera.WorldToViewportPoint(newPos);
         //Vector3 delta = newPos - areaMapsCamera.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, point.z)); //(new Vector3(0.5, 0.5, point.z));

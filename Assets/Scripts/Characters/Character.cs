@@ -149,7 +149,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //     return Utilities.NormalizeStringUpperCaseFirstLetterOnly(race.ToString()) + " " + role.name;
             // }
             //if(role.name == characterClass.className) {
-            return Utilities.GetNormalizedRaceAdjective(race) + " " + characterClass.className;
+            return Ruinarch.Utilities.GetNormalizedRaceAdjective(race) + " " + characterClass.className;
             //}
             //return Utilities.GetNormalizedRaceAdjective(race) + " " + role.name + " " + characterClass.className;
         }
@@ -293,7 +293,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //     visuals = new CharacterVisuals(this);
     // }
     public Character(CharacterRole role, string className, RACE race, GENDER gender) : this() {
-        _id = Utilities.SetID(this);
+        _id = Ruinarch.Utilities.SetID(this);
         _gender = gender;
         RaceSetting raceSetting = RaceManager.Instance.racesDictionary[race.ToString()];
         _raceSetting = raceSetting.CreateNewCopy();
@@ -308,7 +308,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         visuals = new CharacterVisuals(this);
     }
     public Character(CharacterRole role, string className, RACE race, GENDER gender, SEXUALITY sexuality) : this() {
-        _id = Utilities.SetID(this);
+        _id = Ruinarch.Utilities.SetID(this);
         _gender = gender;
         RaceSetting raceSetting = RaceManager.Instance.racesDictionary[race.ToString()];
         _raceSetting = raceSetting.CreateNewCopy();
@@ -323,7 +323,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         visuals = new CharacterVisuals(this);
     }
     public Character(SaveDataCharacter data) {
-        _id = Utilities.SetID(this, data.id);
+        _id = Ruinarch.Utilities.SetID(this, data.id);
         _gender = data.gender;
         SetSexuality(data.sexuality);
         AssignClass(data.className, true);
@@ -600,7 +600,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     #region Sexuality
     private void GenerateSexuality() {
-        if (Utilities.IsRaceBeast(race)) {
+        if (Ruinarch.Utilities.IsRaceBeast(race)) {
             //For beasts:
             //100 % straight
             sexuality = SEXUALITY.STRAIGHT;
@@ -913,7 +913,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             } else {
                 deathLog = _deathLog;
             }
-            deathStr = Utilities.LogReplacer(deathLog);
+            deathStr = Ruinarch.Utilities.LogReplacer(deathLog);
             Messenger.Broadcast(Signals.CHARACTER_DEATH, this);
 
             //for (int i = 0; i < traitContainer.allTraits.Count; i++) {
@@ -954,7 +954,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #region Character Class
     public virtual string GetClassForRole(CharacterRole role) {
         if (role == CharacterRole.BEAST) {
-            return Utilities.GetRespectiveBeastClassNameFromByRace(race);
+            return Ruinarch.Utilities.GetRespectiveBeastClassNameFromByRace(race);
         } else {
             string className = CharacterManager.Instance.GetRandomClassByIdentifier(role.classNameOrIdentifier);
             if (className != string.Empty) {
@@ -2474,7 +2474,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (minion != null) {
             if (minion.busyReasonLog != null) {
                 log = minion.busyReasonLog;
-                return Utilities.LogReplacer(minion.busyReasonLog);
+                return Ruinarch.Utilities.LogReplacer(minion.busyReasonLog);
             } else {
                 return $"{name} is ready to do your bidding.";
             }
@@ -2483,20 +2483,20 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //Interrupt
         if (interruptComponent.isInterrupted && interruptComponent.thoughtBubbleLog != null) {
             log = interruptComponent.thoughtBubbleLog;
-            return Utilities.LogReplacer(interruptComponent.thoughtBubbleLog);
+            return Ruinarch.Utilities.LogReplacer(interruptComponent.thoughtBubbleLog);
         }
 
         //Action
         if (currentActionNode != null) {
             Log currentLog = currentActionNode.GetCurrentLog();
             log = currentLog;
-            return Utilities.LogReplacer(currentLog);
+            return Ruinarch.Utilities.LogReplacer(currentLog);
         }
 
         //Character State
         if (stateComponent.currentState != null) {
             log = stateComponent.currentState.thoughtBubbleLog;
-            return Utilities.LogReplacer(stateComponent.currentState.thoughtBubbleLog);
+            return Ruinarch.Utilities.LogReplacer(stateComponent.currentState.thoughtBubbleLog);
         }
         //fleeing
         if (marker != null && marker.hasFleePath) {
@@ -4047,7 +4047,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         float negativeWeight = 0;
         if (opinionComponent.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.NEGATIVE && targetCharacter.opinionComponent.GetRelationshipEffectWith(this) != RELATIONSHIP_EFFECT.NEGATIVE
             && relationshipValidator.CanHaveRelationship(this, targetCharacter, RELATIONSHIP_TYPE.LOVER) && targetCharacter.relationshipValidator.CanHaveRelationship(targetCharacter, this, RELATIONSHIP_TYPE.LOVER)
-            && !Utilities.IsRaceBeast(race) && !Utilities.IsRaceBeast(targetCharacter.race)) { //&& role.roleType != CHARACTER_ROLE.BEAST && targetCharacter.role.roleType != CHARACTER_ROLE.BEAST
+            && !Ruinarch.Utilities.IsRaceBeast(race) && !Ruinarch.Utilities.IsRaceBeast(targetCharacter.race)) { //&& role.roleType != CHARACTER_ROLE.BEAST && targetCharacter.role.roleType != CHARACTER_ROLE.BEAST
             for (int i = 0; i < moods.Length; i++) {
                 CHARACTER_MOOD mood = moods[i];
                 switch (mood) {
@@ -4104,7 +4104,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         float negativeWeight = 0;
         if (opinionComponent.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.NEGATIVE && targetCharacter.opinionComponent.GetRelationshipEffectWith(this) != RELATIONSHIP_EFFECT.NEGATIVE
             && relationshipValidator.CanHaveRelationship(this, targetCharacter,  RELATIONSHIP_TYPE.AFFAIR) && targetCharacter.relationshipValidator.CanHaveRelationship(targetCharacter, this, RELATIONSHIP_TYPE.AFFAIR)
-            && !Utilities.IsRaceBeast(race) && !Utilities.IsRaceBeast(targetCharacter.race)) { //&& role.roleType != CHARACTER_ROLE.BEAST && targetCharacter.role.roleType != CHARACTER_ROLE.BEAST
+            && !Ruinarch.Utilities.IsRaceBeast(race) && !Ruinarch.Utilities.IsRaceBeast(targetCharacter.race)) { //&& role.roleType != CHARACTER_ROLE.BEAST && targetCharacter.role.roleType != CHARACTER_ROLE.BEAST
             for (int i = 0; i < moods.Length; i++) {
                 CHARACTER_MOOD mood = moods[i];
                 switch (mood) {

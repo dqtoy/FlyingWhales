@@ -28,7 +28,7 @@ public class DrinkBlood : GoapAction {
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         string costLog = "\n" + name + " " + target.nameWithID + ":";
-        int cost = Utilities.rng.Next(50, 61);
+        int cost = Ruinarch.Utilities.rng.Next(50, 61);
         costLog += " +" + cost + "(Initial)";
         if(target is Character) {
             Character targetCharacter = target as Character;

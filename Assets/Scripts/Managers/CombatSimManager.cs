@@ -52,8 +52,8 @@ public class CombatSimManager : MonoBehaviour {
     }
 
     void Start () {
-        characterPath = Utilities.dataPath + "CharacterSims/";
-        monsterPath = Utilities.dataPath + "Monsters/";
+        characterPath = Ruinarch.Utilities.dataPath + "CharacterSims/";
+        monsterPath = Ruinarch.Utilities.dataPath + "Monsters/";
         _allMonsters = new List<string>();
         _allCharacters = new List<string>();
         _sideAList = new List<ICharacterSim>();

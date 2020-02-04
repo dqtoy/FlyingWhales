@@ -345,14 +345,14 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
             if (isCorrupted) {
                 displayName = "Corrupted ";
             }
-            displayName += $"{Utilities.NormalizeStringUpperCaseFirstLetters(biomeType.ToString())} " +
-                           $"{Utilities.NormalizeStringUpperCaseFirstLetters(elevationType.ToString())}";
+            displayName += $"{Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(biomeType.ToString())} " +
+                           $"{Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(elevationType.ToString())}";
             return displayName;
         }
     }
     public string GetSubName() {
         if (landmarkOnTile != null) {
-            return Utilities.NormalizeStringUpperCaseFirstLetters(landmarkOnTile.specificLandmarkType.ToString());
+            return Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(landmarkOnTile.specificLandmarkType.ToString());
         }
         return string.Empty;
     }
@@ -366,9 +366,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         List<Point> possibleExits;
 
         if ((yCoordinate % 2) == 0) {
-            possibleExits = Utilities.EvenNeighbours;
+            possibleExits = Ruinarch.Utilities.EvenNeighbours;
         } else {
-            possibleExits = Utilities.OddNeighbours;
+            possibleExits = Ruinarch.Utilities.OddNeighbours;
         }
 
         for (int i = 0; i < possibleExits.Count; i++) {
@@ -402,9 +402,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         List<Point> possibleExits;
 
         if ((yCoordinate % 2) == 0) {
-            possibleExits = Utilities.EvenNeighbours;
+            possibleExits = Ruinarch.Utilities.EvenNeighbours;
         } else {
-            possibleExits = Utilities.OddNeighbours;
+            possibleExits = Ruinarch.Utilities.OddNeighbours;
         }
 
         for (int i = 0; i < possibleExits.Count; i++) {
@@ -1166,7 +1166,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     private void OnClickBuild() {
         List<string> landmarkNames = new List<string>();
         for (int i = 0; i < PlayerManager.Instance.allLandmarksThatCanBeBuilt.Length; i++) {
-            landmarkNames.Add(Utilities.NormalizeStringUpperCaseFirstLetters(PlayerManager.Instance.allLandmarksThatCanBeBuilt[i].ToString()));
+            landmarkNames.Add(Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(PlayerManager.Instance.allLandmarksThatCanBeBuilt[i].ToString()));
         }
         UIManager.Instance.dualObjectPicker.ShowDualObjectPicker(PlayerManager.Instance.player.minions.Select(x => x.character).ToList(), landmarkNames,
             "Choose a minion", "Choose a structure",

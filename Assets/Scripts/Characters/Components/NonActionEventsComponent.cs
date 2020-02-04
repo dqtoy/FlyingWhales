@@ -25,8 +25,8 @@ public class NonActionEventsComponent {
         if (target.isDead
             || !target.canWitness
             || !owner.canWitness
-            || Utilities.IsRaceBeast(target.race)
-            || Utilities.IsRaceBeast(owner.race)
+            || Ruinarch.Utilities.IsRaceBeast(target.race)
+            || Ruinarch.Utilities.IsRaceBeast(owner.race)
             //|| target.faction.isPlayerFaction
             //|| owner.faction.isPlayerFaction
             //|| target.characterClass.className == "Zombie"

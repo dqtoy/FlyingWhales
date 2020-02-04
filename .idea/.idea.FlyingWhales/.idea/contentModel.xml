@@ -430,7 +430,6 @@
             <e p="UnityReferenceHelper.cs" t="Include" />
           </e>
         </e>
-        <e p="AttackBehaviour.cs" t="Include" />
         <e p="BayatGames" t="Include">
           <e p="SaveGameFree" t="Include">
             <e p="Documentation" t="Include">
@@ -494,44 +493,6 @@
                 <e p="Vector4Save.cs" t="Include" />
               </e>
             </e>
-          </e>
-        </e>
-        <e p="BehaviourTrees" t="Include">
-          <e p="Agents" t="Include">
-            <e p="Abductor.BT.txt" t="Include" />
-            <e p="Adventurer.BT.txt" t="Include" />
-            <e p="Envoy.BT.txt" t="Include" />
-            <e p="Expander.BT.txt" t="Include" />
-            <e p="Exterminator.BT.txt" t="Include" />
-            <e p="General.BT.txt" t="Include" />
-            <e p="Healer.BT.txt" t="Include" />
-            <e p="Instigator.BT.txt" t="Include" />
-            <e p="Intercepter.BT.txt" t="Include" />
-            <e p="Investigator.BT.txt" t="Include" />
-            <e p="Lycanthrope.BT.txt" t="Include" />
-            <e p="MilitaryAllianceOfficer.BT.txt" t="Include" />
-            <e p="Missionary.BT.txt" t="Include" />
-            <e p="Provoker.BT.txt" t="Include" />
-            <e p="Raider.BT.txt" t="Include" />
-            <e p="Ranger.BT.txt" t="Include" />
-            <e p="Reinforcer.BT.txt" t="Include" />
-            <e p="Reliever.BT.txt" t="Include" />
-            <e p="Scourge.BT.txt" t="Include" />
-            <e p="Spy.BT.txt" t="Include" />
-            <e p="Thief.BT.txt" t="Include" />
-            <e p="Trader.BT.txt" t="Include" />
-            <e p="TreatyOfficer.BT.txt" t="Include" />
-            <e p="Tributer.BT.txt" t="Include" />
-            <e p="Witch.BT.txt" t="Include" />
-          </e>
-          <e p="City.BT.txt" t="Include" />
-          <e p="DailyCumulativeEvent.BT.txt" t="Include" />
-          <e p="HandOfFate.BT.txt" t="Include" />
-          <e p="Monsters" t="Include">
-            <e p="Ghoul.BT.txt" t="Include" />
-            <e p="Lycan.BT.txt" t="Include" />
-            <e p="Pere.BT.txt" t="Include" />
-            <e p="StormWitch.BT.txt" t="Include" />
           </e>
         </e>
         <e p="CombatPrototype" t="Include">

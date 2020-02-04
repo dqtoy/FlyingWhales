@@ -29,7 +29,7 @@ public class CustomHorizaontalLayout : MonoBehaviour {
     [ExecuteInEditMode]
     [ContextMenu("Update Children")]
     public void UpdateChildren() {
-        children = Utilities.GetComponentsInDirectChildren<RectTransform>(this.gameObject);
+        children = Ruinarch.Utilities.GetComponentsInDirectChildren<RectTransform>(this.gameObject);
     }
 
 }

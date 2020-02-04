@@ -399,9 +399,9 @@ public class GoapPlanJob : JobQueueItem {
         switch (jobType) {
             case JOB_TYPE.OBTAIN_PERSONAL_ITEM:
             case JOB_TYPE.REMOVE_STATUS:
-                string text = Utilities.NormalizeStringUpperCaseFirstLetters(jobType.ToString());
+                string text = Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(jobType.ToString());
                 if (!string.IsNullOrEmpty(goal.conditionKey)) {
-                    text += " " + Utilities.NormalizeStringUpperCaseFirstLetters(goal.conditionKey);
+                    text += " " + Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(goal.conditionKey);
                 }
                 return text;
             case JOB_TYPE.FULLNESS_RECOVERY_NORMAL:
@@ -414,7 +414,7 @@ public class GoapPlanJob : JobQueueItem {
                 return "Tiredness Recovery";
             default:
                 if (targetInteractionType != INTERACTION_TYPE.NONE) {
-                    return Utilities.NormalizeStringUpperCaseFirstLetters(targetInteractionType.ToString());
+                    return Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(targetInteractionType.ToString());
                 } else {
                     return name;
                 }

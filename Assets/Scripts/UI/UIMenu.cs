@@ -98,7 +98,7 @@ public class UIMenu : MonoBehaviour {
     #region Actions
     private List<ActionItem> activeActionItems = new List<ActionItem>();
     protected virtual void LoadActions(IPlayerActionTarget target) {
-        Utilities.DestroyChildren(actionsTransform);
+        Ruinarch.Utilities.DestroyChildren(actionsTransform);
         activeActionItems.Clear();
         for (int i = 0; i < target.actions.Count; i++) {
             PlayerAction action = target.actions[i];

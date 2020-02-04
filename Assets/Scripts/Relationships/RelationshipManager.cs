@@ -107,7 +107,7 @@ public class RelationshipManager : MonoBehaviour {
                 // Compute the number of relations to create per relationship type
                 switch (currRel) {
                     case RELATIONSHIP_TYPE.RELATIVE:
-                        if (Utilities.IsRaceBeast(currCharacter.race)) { continue; } //a beast character has no relatives
+                        if (Ruinarch.Utilities.IsRaceBeast(currCharacter.race)) { continue; } //a beast character has no relatives
                         // if (currCharacter.role.roleType == CHARACTER_ROLE.BEAST) { continue; } //a beast character has no relatives
                         else {
                             //- a non-beast character may have either zero (75%), one (20%) or two (5%) relatives from characters of the same race
@@ -142,7 +142,7 @@ public class RelationshipManager : MonoBehaviour {
                             // Compute the weight that determines how likely this character will have the current relationship type with current character
                             switch (currRel) {
                                 case RELATIONSHIP_TYPE.RELATIVE:
-                                    if (Utilities.IsRaceBeast(otherCharacter.race)) { continue; } //a beast character has no relatives
+                                    if (Ruinarch.Utilities.IsRaceBeast(otherCharacter.race)) { continue; } //a beast character has no relatives
                                     else {
                                         if (otherCharacter.currentRegion == currCharacter.currentRegion) {
                                             // character is in same location: +50 Weight
@@ -160,7 +160,7 @@ public class RelationshipManager : MonoBehaviour {
                                     break;
                                 case RELATIONSHIP_TYPE.LOVER:
                                     if (GetValidator(currCharacter).CanHaveRelationship(currCharacter, otherCharacter, currRel) && GetValidator(otherCharacter).CanHaveRelationship(otherCharacter, currCharacter, currRel)) {
-                                        if (!Utilities.IsRaceBeast(currCharacter.race)) {
+                                        if (!Ruinarch.Utilities.IsRaceBeast(currCharacter.race)) {
                                             //- if non beast, from valid characters, choose based on these weights
                                             if (otherCharacter.currentRegion == currCharacter.currentRegion) {
                                                 //- character is in same location: +500 Weight
@@ -177,7 +177,7 @@ public class RelationshipManager : MonoBehaviour {
                                                 //- character is sexually incompatible: Weight x0.1
                                                 weight *= 0.05f;
                                             }
-                                            if (Utilities.IsRaceBeast(otherCharacter.race)) {
+                                            if (Ruinarch.Utilities.IsRaceBeast(otherCharacter.race)) {
                                                 //- character is a beast: Weight x0
                                                 weight *= 0;
                                             }

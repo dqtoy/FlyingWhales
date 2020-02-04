@@ -155,6 +155,6 @@ public class WatchData : GoapActionData {
 
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         Character target = poiTarget as Character;
-        return actor != target && !Utilities.IsRaceBeast(target.race); // target.role.roleType != CHARACTER_ROLE.BEAST
+        return actor != target && !Ruinarch.Utilities.IsRaceBeast(target.race); // target.role.roleType != CHARACTER_ROLE.BEAST
     }
 }

@@ -722,7 +722,7 @@ namespace Inner_Maps {
             return null;
         }
         public T CreateNewTileObject<T>(TILE_OBJECT_TYPE tileObjectType) where T : TileObject {
-            var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(tileObjectType.ToString());
+            var typeName = Ruinarch.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(tileObjectType.ToString());
             System.Type type = System.Type.GetType(typeName);
             if (type != null) {
                 T obj = System.Activator.CreateInstance(type) as T;

@@ -78,7 +78,7 @@ public class CharacterCreator : Editor {
     #region Character Classes
     private List<string> GetAllCharacterClasses() {
         List<string> allCharacterClasses = new List<string>();
-        string path = Utilities.dataPath + "CharacterClasses/";
+        string path = Ruinarch.Utilities.dataPath + "CharacterClasses/";
         foreach (string file in Directory.GetFiles(path, "*.json")) {
             allCharacterClasses.Add(Path.GetFileNameWithoutExtension(file));
         }
@@ -89,7 +89,7 @@ public class CharacterCreator : Editor {
     #region Race Setups
     private List<string> GetAllRaceSetups() {
         List<string> allRaceSetups = new List<string>();
-        string path = Utilities.dataPath + "RaceSettings/";
+        string path = Ruinarch.Utilities.dataPath + "RaceSettings/";
         foreach (string file in Directory.GetFiles(path, "*.json")) {
             allRaceSetups.Add(Path.GetFileNameWithoutExtension(file));
         }
@@ -98,7 +98,7 @@ public class CharacterCreator : Editor {
     #endregion
 
     private void SaveCharacter(CharacterSetup characterSetup) {
-		string path = Utilities.dataPath + "CharacterSetups/" + characterComponent.fileName + ".json";
+		string path = Ruinarch.Utilities.dataPath + "CharacterSetups/" + characterComponent.fileName + ".json";
         if (File.Exists(path)) {
 			if (EditorUtility.DisplayDialog("Overwrite Character", characterComponent.fileName + " already exists. Replace with this character?", "Yes", "No")) {
                 File.Delete(path);
@@ -132,7 +132,7 @@ public class CharacterCreator : Editor {
 
 	private List<string> GetAllItemsOfType(ITEM_TYPE itemType) {
 		List<string> allItemsOfType = new List<string>();
-		string path = Utilities.dataPath + "Items/" + itemType.ToString() + "/";
+		string path = Ruinarch.Utilities.dataPath + "Items/" + itemType.ToString() + "/";
 		foreach (string file in System.IO.Directory.GetFiles(path, "*.json")) {
 			allItemsOfType.Add(System.IO.Path.GetFileNameWithoutExtension(file));
 		}

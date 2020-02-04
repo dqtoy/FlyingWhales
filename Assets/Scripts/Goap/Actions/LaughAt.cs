@@ -22,7 +22,7 @@ public class LaughAt : GoapAction {
         SetState("Laugh Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
-        return Utilities.rng.Next(40, 61);
+        return Ruinarch.Utilities.rng.Next(40, 61);
     }
     #endregion
 

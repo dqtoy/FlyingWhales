@@ -38,7 +38,7 @@ public class HaveAffair : GoapAction {
                 cost *= 0;
             }
         }
-        if (Utilities.IsRaceBeast(otherCharacter.race)) {
+        if (Ruinarch.Utilities.IsRaceBeast(otherCharacter.race)) {
             //- character is beast 0 out weight
             cost *= 0;
         }

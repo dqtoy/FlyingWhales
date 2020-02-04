@@ -109,7 +109,7 @@ public class ReactionComponent {
         if(node.actor != owner && node.poiTarget != owner) {
             Log witnessLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "witness_event", node);
             witnessLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.OTHER);
-            witnessLog.AddToFillers(null, Utilities.LogDontReplace(node.descriptionLog), LOG_IDENTIFIER.APPEND);
+            witnessLog.AddToFillers(null, Ruinarch.Utilities.LogDontReplace(node.descriptionLog), LOG_IDENTIFIER.APPEND);
             witnessLog.AddToFillers(node.descriptionLog.fillers);
             owner.logComponent.AddHistory(witnessLog);
 
@@ -163,7 +163,7 @@ public class ReactionComponent {
         Log informedLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "informed_event", node);
         informedLog.AddToFillers(node.descriptionLog.fillers);
         informedLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.OTHER);
-        informedLog.AddToFillers(null, Utilities.LogDontReplace(node.descriptionLog), LOG_IDENTIFIER.APPEND);
+        informedLog.AddToFillers(null, Ruinarch.Utilities.LogDontReplace(node.descriptionLog), LOG_IDENTIFIER.APPEND);
         owner.logComponent.AddHistory(informedLog);
 
         string response = string.Empty;

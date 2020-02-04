@@ -52,8 +52,8 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
             if (throwOnException) {
                 return _mapLocation.innerMap.map[x, y];
             } else {
-                if (Utilities.IsInRange(x, 0, _mapLocation.innerMap.map.GetUpperBound(0) + 1) &&
-                    Utilities.IsInRange(y, 0, _mapLocation.innerMap.map.GetUpperBound(1) + 1)) {
+                if (Ruinarch.Utilities.IsInRange(x, 0, _mapLocation.innerMap.map.GetUpperBound(0) + 1) &&
+                    Ruinarch.Utilities.IsInRange(y, 0, _mapLocation.innerMap.map.GetUpperBound(1) + 1)) {
                     return _mapLocation.innerMap.map[x, y];
                 }
                 return null;

@@ -134,7 +134,7 @@ public partial class LandmarkManager : MonoBehaviour {
     }
     public BaseLandmark CreateNewLandmarkInstance(HexTile location, LANDMARK_TYPE type) {
         if (type.IsPlayerLandmark()) {
-            var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(type.ToString());
+            var typeName = Ruinarch.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(type.ToString());
             System.Type systemType = System.Type.GetType(typeName);
             if (systemType != null) {
                 return System.Activator.CreateInstance(systemType, location, type) as BaseLandmark;
@@ -146,7 +146,7 @@ public partial class LandmarkManager : MonoBehaviour {
     }
     public BaseLandmark CreateNewLandmarkInstance(HexTile location, SaveDataLandmark data) {
         if (data.landmarkType.IsPlayerLandmark()) {
-            var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(data.landmarkType.ToString());
+            var typeName = Ruinarch.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(data.landmarkType.ToString());
             System.Type systemType = System.Type.GetType(typeName);
             if (systemType != null) {
                 return System.Activator.CreateInstance(systemType, location, data) as BaseLandmark;

@@ -118,8 +118,8 @@ namespace Inner_Maps {
                     if (currTile.IsAtEdgeOfMap() || currTile.tileType == LocationGridTile.Tile_Type.Wall) {
                         continue; //skip
                     }
-                    if (!Utilities.IsInRange(currTile.localPlace.x, 0, WestEdge) && 
-                        !Utilities.IsInRange(currTile.localPlace.x, width - EastEdge, width)) {
+                    if (!Ruinarch.Utilities.IsInRange(currTile.localPlace.x, 0, WestEdge) && 
+                        !Ruinarch.Utilities.IsInRange(currTile.localPlace.x, width - EastEdge, width)) {
                         currTile.CreateGenericTileObject();
                         currTile.SetStructure(settlement.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS));
                     }
