@@ -56,11 +56,11 @@ namespace Inner_Maps {
         
         //this specifies what light intensity is to be used while inside the specific range in ticks
         private readonly Dictionary<int, float> lightSettings = new Dictionary<int, float>() { 
-#if UNITY_EDITOR
-            { 228, 1f }, { 61, 1.8f }
-#else
+// #if UNITY_EDITOR
+//             { 228, 1f }, { 61, 1.8f }
+// #else
             { 228, 0.3f }, { 61, 0.8f }
-#endif
+// #endif
         };
         public Dictionary<TILE_OBJECT_TYPE, List<TileObject>> allTileObjects { get; private set; }
         public InnerTileMap currentlyShowingMap { get; private set; }

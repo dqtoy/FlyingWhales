@@ -7,28 +7,28 @@ namespace UtilityScripts {
             string summary = "Locations Job Queue";
             for (int i = 0; i < settlements.Count; i++) {
                 Settlement settlement = settlements[i];
-                summary += $"\n\t{settlement.name} Location Job Queue: ";
+                summary += $"\n{settlement.name} Location Job Queue: ";
                 if (settlement.availableJobs.Count > 0) {
                     for (int j = 0; j < settlement.availableJobs.Count; j++) {
                         JobQueueItem jqi = settlement.availableJobs[j];
                         if (jqi is GoapPlanJob) {
                             GoapPlanJob gpj = jqi as GoapPlanJob;
-                            summary += "\n\t" + gpj.name + " Targeting " + gpj.targetPOI?.name ?? "None";
+                            summary += "\n" + gpj.name + " Targeting " + gpj.targetPOI?.name ?? "None";
                         } else {
-                            summary += "\n\t" + jqi.name;
+                            summary += "\n" + jqi.name;
                         }
-                        summary += "\n\t\tAssigned Character: " + jqi.assignedCharacter?.name ?? "None";
+                        summary += "\nAssigned Character: " + jqi.assignedCharacter?.name ?? "None";
                         if (UIManager.Instance.characterInfoUI.isShowing) {
-                            summary += "\n\t\tCan character take job? " + jqi
+                            summary += "\nCan character take job? " + jqi
                                            .CanCharacterDoJob(UIManager.Instance.characterInfoUI.activeCharacter)
                                            .ToString();
                         }
             
                     }
                 } else {
-                    summary += "\n\tNone";
+                    summary += "\nNone";
                 }
-                summary += "\n\tActive Quest: ";
+                summary += "\nActive Quest: ";
                 if (settlement.owner != null && settlement.owner.activeQuest != null) {
                     summary += settlement.owner.activeQuest.name;
                 } else {
