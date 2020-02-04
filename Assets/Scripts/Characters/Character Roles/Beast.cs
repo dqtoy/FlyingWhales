@@ -1,14 +1,12 @@
-﻿using UnityEngine;
-using System.Collections;
-using ECS;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
 public class Beast : CharacterRole {
-    public Beast(Character character) : base(character) {
-        _roleType = CHARACTER_ROLE.BEAST;
 
-        _roleTasks.Add(new Rest(this._character));
-        _roleTasks.Add(new MoveToBeast(this._character));
-        _roleTasks.Add(new DoNothing(this._character));
-        _roleTasks.Add(new Prowl(this._character, 15));
+    public Beast() : base(CHARACTER_ROLE.BEAST, "Beast", new INTERACTION_CATEGORY[] { INTERACTION_CATEGORY.OFFENSE, INTERACTION_CATEGORY.DEFENSE, INTERACTION_CATEGORY.INVENTORY, INTERACTION_CATEGORY.RECRUITMENT }) {
+        //allowedInteractions = new INTERACTION_TYPE[] {
+        //    INTERACTION_TYPE.ASSAULT,
+        //};
     }
 }

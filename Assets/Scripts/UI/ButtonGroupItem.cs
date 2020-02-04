@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class ButtonGroupItem : MonoBehaviour {
 
@@ -29,10 +30,6 @@ public class ButtonGroupItem : MonoBehaviour {
 		}
 	}
 
-	void OnClick(){
-        buttonGroup.ClickedItem (this);
-	}
-
 	void OnHover(bool isOver){
 		if (isOver) {
             if (hoveredSprite == null) {
@@ -54,8 +51,32 @@ public class ButtonGroupItem : MonoBehaviour {
 		}
 	}
 
+    public void OnPointerEnterUGUI(){
+        if (hoveredSprite == null) {
+            this.GetComponent<UI2DSprite>().color = Color.yellow;
+        }
+        else {
+            this.GetComponent<UI2DSprite>().sprite2D = hoveredSprite;
+        }
+	}
 
-	public void SetAsClicked(){
+    public void OnPointerExitUGUI() {
+        if (isClicked) {
+            if (clickedSprite == null) {
+                this.GetComponent<UI2DSprite>().color = Color.gray;
+            }
+            else {
+                this.GetComponent<UI2DSprite>().sprite2D = clickedSprite;
+            }
+        }
+        else {
+            this.GetComponent<UI2DSprite>().color = Color.white;
+            this.GetComponent<UI2DSprite>().sprite2D = normalSprite;
+        }
+    }
+
+
+    public void SetAsClicked(){
         SetClickState(true);
   //      this.isClicked = true;
 		//this.GetComponent<UI2DSprite> ().sprite2D = clickedSprite;

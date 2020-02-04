@@ -6,265 +6,147 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
+
 
 public class CharacterRole {
-	protected ECS.Character _character;
-    protected CHARACTER_ROLE _roleType;
-    protected List<ROAD_TYPE> _allowedRoadTypes; //states what roads this role can use.
-    protected bool _canPassHiddenRoads; //can the character use roads that haven't been discovered yet?
-    protected List<ACTION_ALIGNMENT> _allowedQuestAlignments;
-    protected List<QUEST_TYPE> _allowedQuestTypes;
-	protected List<CharacterTask> _roleTasks;
-	protected CharacterTask _defaultRoleTask;
-	protected bool _cancelsAllOtherTasks;
-	protected bool _isRemoved;
-    protected int _food;
-    protected int _energy;
-    protected int _joy;
-    protected int _prestige;
-    protected bool _isHungry;
-    protected bool _isFamished;
-    protected bool _isTired;
-    protected bool _isExhausted;
-    protected bool _isSad;
-    protected bool _isDepressed;
-    protected bool _isAnxious;
-    protected bool _isInsecure;
+    public static readonly CharacterRole NONE = new CharacterRole(CHARACTER_ROLE.NONE, "Any", null);
+    public static readonly CharacterRole CIVILIAN = new Civilian();
+    public static readonly CharacterRole PLAYER = new PlayerRole();
+    public static readonly CharacterRole BANDIT = new Bandit();
+    public static readonly CharacterRole LEADER = new Leader();
+    public static readonly CharacterRole BEAST = new Beast();
+    public static readonly CharacterRole NOBLE = new Noble();
+    public static readonly CharacterRole SOLDIER = new Soldier();
+    public static readonly CharacterRole ADVENTURER = new Adventurer();
+    public static readonly CharacterRole MINION = new MinionRole();
+    public static readonly CharacterRole[] ALL = new CharacterRole[] { NONE, CIVILIAN, PLAYER, BANDIT, LEADER, BEAST, NOBLE, SOLDIER, ADVENTURER, MINION };
 
-    #region getters/setters
-    public CHARACTER_ROLE roleType {
-        get { return _roleType; }
+    public string classNameOrIdentifier { get; protected set; }
+    public string name { get; protected set; }
+    public CHARACTER_ROLE roleType { get; protected set; }
+    public INTERACTION_CATEGORY[] interactionCategories { get; protected set; }
+    //public INTERACTION_TYPE[] allowedInteractions { get; protected set; }
+    public virtual int reservedSupply { get { return 0; } }
+    public SPECIAL_TOKEN[] requiredItems { get; protected set; }//this is the list of items that the character must own.
+
+    protected CharacterRole(CHARACTER_ROLE roleType, string classNameOrIdentifier, INTERACTION_CATEGORY[] interactionCategories) {
+        this.roleType = roleType;
+        this.name = Utilities.NormalizeStringUpperCaseFirstLetters(roleType.ToString());
+        this.classNameOrIdentifier = classNameOrIdentifier;
+        this.interactionCategories = interactionCategories;
     }
-	public ECS.Character character{
-		get { return _character; }
-	}
-    public List<ACTION_ALIGNMENT> allowedQuestAlignments {
-        get { return _allowedQuestAlignments; }
+
+    public static CharacterRole GetRoleByRoleType(CHARACTER_ROLE roleType) {
+        for (int i = 0; i < ALL.Length; i++) {
+            if(ALL[i].roleType == roleType) {
+                return ALL[i];
+            }
+        }
+        throw new Exception("There's no character role instance for " + roleType.ToString());
     }
-    public List<QUEST_TYPE> allowedQuestTypes {
-        get { return _allowedQuestTypes; }
-    }
-	public List<CharacterTask> roleTasks {
-		get { return _roleTasks; }
-	}
-	public CharacterTask defaultRoleTask {
-		get { return _defaultRoleTask; }
-	}
-	public bool cancelsAllOtherTasks {
-		get { return _cancelsAllOtherTasks; }
-	}
-	public bool isRemoved {
-		get { return _isRemoved; }
-	}
-    public int food {
-        get { return _food; }
-    }
-    public int energy {
-        get { return _energy; }
-    }
-    public int joy {
-        get { return _joy; }
-    }
-    public int prestige {
-        get { return _prestige; }
+
+    #region Virtuals
+    public virtual void OnDeath(Character character) { }
+    public virtual void OnAssign(Character character) { }
+    public virtual void OnChange(Character character) { }
+    public virtual void AddRoleWorkPlansToCharacterWeights(WeightedDictionary<INTERACTION_TYPE> weights) { }
+    public virtual GoapPlan PickRoleWorkPlanFromCharacterWeights(INTERACTION_TYPE pickedActionType, Character actor) { return null; }
+    /// <summary>
+    /// Try and get a token type that the character needs from this role (Usually his own).
+    /// </summary>
+    /// <param name="character">The character in question.</param>
+    /// <param name="neededItem">The item that this character needs.</param>
+    /// <returns>If there is an item that the character needs.</returns>
+    public virtual bool TryGetNeededItem(Character character, out SPECIAL_TOKEN neededItem) {
+        if (requiredItems != null) {
+            for (int i = 0; i < requiredItems.Length; i++) {
+                SPECIAL_TOKEN currReqItem = requiredItems[i];
+                if (!character.OwnsItemOfType(currReqItem)) {
+                    neededItem = currReqItem;
+                    return true;
+                }
+            }
+        }
+        neededItem = SPECIAL_TOKEN.ACID_FLASK;
+        return false;
     }
     #endregion
 
-    public CharacterRole(ECS.Character character){
-		_character = character;
-		_cancelsAllOtherTasks = false;
-		_isRemoved = false;
-        _allowedQuestTypes = new List<QUEST_TYPE>();
-		_roleTasks = new List<CharacterTask> ();
-		_roleTasks.Add (new RecruitFollowers (this._character, 5));
-        _allowedQuestAlignments = new List<ACTION_ALIGNMENT>();
-    }
-
-
-	#region Virtuals
-	public virtual void DeathRole(){
-		_isRemoved = true;
-	}
-	public virtual void ChangedRole(){
-		_isRemoved = true;
-	}
-	#endregion
-
-    #region Action Weights
-    public virtual void AddTaskWeightsFromRole(WeightedDictionary<CharacterTask> tasks) {
-		for (int i = 0; i < _roleTasks.Count; i++) {
-			CharacterTask currTask = _roleTasks[i];
-			if(currTask.forPlayerOnly || !currTask.AreConditionsMet(_character)){
-				continue;
-			}
-			tasks.AddElement (currTask, currTask.GetSelectionWeight(_character));
-		}
-    }
-    /*
-     This is called once a characters _role variable is assigned
-         */
-    public virtual void OnAssignRole() { }
-    #endregion
-
-	#region Role Tasks
-	public CharacterTask GetRoleTask(TASK_TYPE taskType){
-		for (int i = 0; i < _roleTasks.Count; i++) {
-			CharacterTask task = _roleTasks [i];
-			if(task.taskType == taskType){
-				return task;
-			}
-		}
-		return null;
-	}
-    #endregion
-
-    #region Needs
-    public void DepleteFood() {
-        AdjustFood(-25);
-    }
-    public void SetFood(int amount) {
-        _food = amount;
-    }
-    public void AdjustFood(int amount) {
-        _food += amount;
-        _food = Mathf.Clamp(_food, 0, 1000);
-
-        if(_food <= 100 && !_isFamished) {
-            _isFamished = true;
-            if (_isHungry) {
-                _isHungry = false;
-                _character.RemoveCharacterTag(CHARACTER_TAG.HUNGRY);
-            }
-            _character.AssignTag(CHARACTER_TAG.FAMISHED);
-        }
-        else if(_food > 100 && _food <= 300 && !_isHungry) {
-            _isHungry = true;
-            if (_isFamished) {
-                _isFamished = false;
-                _character.RemoveCharacterTag(CHARACTER_TAG.FAMISHED);
-            }
-            _character.AssignTag(CHARACTER_TAG.HUNGRY);
-        }
-        else if (_food > 300) {
-            if (_isHungry) {
-                _isHungry = false;
-                _character.RemoveCharacterTag(CHARACTER_TAG.HUNGRY);
-            }
-            if (_isFamished) {
-                _isFamished = false;
-                _character.RemoveCharacterTag(CHARACTER_TAG.FAMISHED);
+    #region Items
+    public bool IsRequiredItem(SPECIAL_TOKEN token) {
+        for (int i = 0; i < requiredItems.Length; i++) {
+            SPECIAL_TOKEN currReqItem = requiredItems[i];
+            if (currReqItem == token) {
+                return true;
             }
         }
+        return false;
     }
-
-    public void DepleteEnergy() {
-        AdjustEnergy(-12);
-    }
-    public void SetEnergy(int amount) {
-        _energy = amount;
-    }
-    public void AdjustEnergy(int amount) {
-        _energy += amount;
-        _energy = Mathf.Clamp(_food, 0, 1000);
-
-        if (_energy <= 100 && !_isExhausted) {
-            _isExhausted = true;
-            if (_isTired) {
-                _isTired = false;
-                _character.RemoveCharacterTag(CHARACTER_TAG.TIRED);
-            }
-            _character.AssignTag(CHARACTER_TAG.EXHAUSTED);
-        }
-        else if (_energy > 100 && _energy <= 300 && !_isTired) {
-            _isTired = true;
-            if (_isExhausted) {
-                _isExhausted = false;
-                _character.RemoveCharacterTag(CHARACTER_TAG.EXHAUSTED);
-            }
-            _character.AssignTag(CHARACTER_TAG.TIRED);
-        }
-        else if (_energy > 300) {
-            if (_isTired) {
-                _isTired = false;
-                _character.RemoveCharacterTag(CHARACTER_TAG.TIRED);
-            }
-            if (_isExhausted) {
-                _isExhausted = false;
-                _character.RemoveCharacterTag(CHARACTER_TAG.EXHAUSTED);
+    public int GetRequiredItemAmount(SPECIAL_TOKEN token) {
+        int count = 0;
+        for (int i = 0; i < requiredItems.Length; i++) {
+            SPECIAL_TOKEN currReqItem = requiredItems[i];
+            if (currReqItem == token) {
+                count++;
             }
         }
+        return count;
     }
-
-    public void DepleteJoy() {
-        AdjustJoy(-7);
-    }
-    public void SetJoy(int amount) {
-        _joy = amount;
-    }
-    public void AdjustJoy(int amount) {
-        _joy += amount;
-        if (_joy <= 100 && !_isDepressed) {
-            _isDepressed = true;
-            if (_isSad) {
-                _isSad = false;
-                _character.RemoveCharacterTag(CHARACTER_TAG.SAD);
-            }
-            _character.AssignTag(CHARACTER_TAG.DEPRESSED);
-        }
-        else if (_joy > 100 && _joy <= 300 && !_isSad) {
-            _isSad = true;
-            if (_isDepressed) {
-                _isDepressed = false;
-                _character.RemoveCharacterTag(CHARACTER_TAG.DEPRESSED);
-            }
-            _character.AssignTag(CHARACTER_TAG.SAD);
-        }
-        else if (_joy > 300) {
-            if (_isSad) {
-                _isSad = false;
-                _character.RemoveCharacterTag(CHARACTER_TAG.SAD);
-            }
-            if (_isDepressed) {
-                _isDepressed = false;
-                _character.RemoveCharacterTag(CHARACTER_TAG.DEPRESSED);
+    public bool HasNeededItems(Character character) {
+        if (requiredItems != null) {
+            List<SpecialToken> ownedItems = character.GetItemsOwned();
+            for (int i = 0; i < requiredItems.Length; i++) {
+                SPECIAL_TOKEN itemType = requiredItems[i];
+                bool hasItem = false;
+                for (int j = 0; j < ownedItems.Count; j++) {
+                    SpecialToken currItem = ownedItems[j];
+                    if (currItem.specialTokenType == itemType) {
+                        hasItem = true;
+                        ownedItems.RemoveAt(j);
+                        break;
+                    }
+                }
+                if (!hasItem) {
+                    return false;
+                }
             }
         }
-    }
-
-    public void DepletePrestige() {
-        AdjustPrestige(-4);
-    }
-    public void SetPrestige(int amount) {
-        _prestige = amount;
-    }
-    public void AdjustPrestige(int amount) {
-        _prestige += amount;
-        if (_prestige <= 100 && !_isInsecure) {
-            _isInsecure = true;
-            if (_isAnxious) {
-                _isAnxious = false;
-                _character.RemoveCharacterTag(CHARACTER_TAG.ANXIOUS);
-            }
-            _character.AssignTag(CHARACTER_TAG.INSECURE);
-        }
-        else if (_prestige > 100 && _prestige <= 300 && !_isAnxious) {
-            _isAnxious = true;
-            if (_isInsecure) {
-                _isInsecure = false;
-                _character.RemoveCharacterTag(CHARACTER_TAG.INSECURE);
-            }
-            _character.AssignTag(CHARACTER_TAG.ANXIOUS);
-        }
-        else if (_prestige > 300) {
-            if (_isAnxious) {
-                _isAnxious = false;
-                _character.RemoveCharacterTag(CHARACTER_TAG.ANXIOUS);
-            }
-            if (_isInsecure) {
-                _isInsecure = false;
-                _character.RemoveCharacterTag(CHARACTER_TAG.INSECURE);
-            }
-        }
+        return true;
     }
     #endregion
+    //protected Character _character;
+    //   protected CHARACTER_ROLE _roleType;
+    //protected bool _isRemoved;
+
+    //   #region getters/setters
+    //   public CHARACTER_ROLE roleType {
+    //       get { return _roleType; }
+    //   }
+    //public Character character{
+    //	get { return _character; }
+    //}
+    //public bool isRemoved {
+    //	get { return _isRemoved; }
+    //}
+    //   #endregion
+
+    //   public CharacterRole(Character character){
+    //	_character = character;
+    //	_isRemoved = false;
+    //   }
+
+    //   #region Virtuals
+    //   public virtual void DeathRole(){
+    //	_isRemoved = true;
+    //       //_character.onDailyAction -= StartDepletion;
+    //   }
+    //public virtual void ChangedRole(){
+    //	_isRemoved = true;
+    //       //_character.onDailyAction -= StartDepletion;
+    //   }
+    //   public virtual void OnAssignRole() {
+    //       //_character.onDailyAction += StartDepletion;
+    //   }
+    //   #endregion
 }

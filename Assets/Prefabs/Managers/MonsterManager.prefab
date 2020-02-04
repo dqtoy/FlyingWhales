@@ -1,0 +1,121 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &100100000
+Prefab:
+  m_ObjectHideFlags: 1
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications: []
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 0}
+  m_RootGameObject: {fileID: 1491764412242158}
+  m_IsPrefabParent: 1
+--- !u!1 &1491764412242158
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4501479734804922}
+  - component: {fileID: 114010664997495754}
+  - component: {fileID: 114165885577064042}
+  m_Layer: 5
+  m_Name: MonsterManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4501479734804922
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1491764412242158}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114010664997495754
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1491764412242158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9520609c3a46f164290ae9e2cbecdbfc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  monsterIconPrefab: {fileID: 1000012712350628, guid: 5372250d22a51bc40a200236eee58ac2,
+    type: 2}
+  monsterPartySetups:
+  - {fileID: 114076955503950830, guid: 9bb9b02baf076a345a720f24a40c4928, type: 2}
+  - {fileID: 114260156823697922, guid: 47cbcf11b84d6694899caee34a60a8ee, type: 2}
+  - {fileID: 114445399016585892, guid: fc899463ec4407f42816043304a12267, type: 2}
+  - {fileID: 114038419590652748, guid: 286427b62ca0f1c45894ad103ce4aece, type: 2}
+  - {fileID: 114699570168267200, guid: 75808fa97636091458ed5a69742591dc, type: 2}
+  - {fileID: 114872897285337152, guid: bae98bcd307d58943b2bb0532de8b87d, type: 2}
+  - {fileID: 114735646941030760, guid: 73c507a3f333f224fbd333c9ea85f34e, type: 2}
+  - {fileID: 114735646941030760, guid: f4ee95df282423f4dbb3f3acabda013b, type: 2}
+  - {fileID: 114735646941030760, guid: fe6434147c123db44a53dddba9452945, type: 2}
+  - {fileID: 114735646941030760, guid: 76682a915ebe7fc4c9388fc77bee680e, type: 2}
+  - {fileID: 114735646941030760, guid: 543b8c96f241e7a4d941248ffe35d0d3, type: 2}
+  - {fileID: 114735646941030760, guid: 8bec5992d64de3d438f68171e855aa08, type: 2}
+  - {fileID: 114735646941030760, guid: 330f162a973786b4e9ef15df1afd86d9, type: 2}
+  - {fileID: 114735646941030760, guid: 6333550dd99c917499c78f7be0f2dc2f, type: 2}
+  - {fileID: 114735646941030760, guid: 9830adc92c764444eb8e394104307fd2, type: 2}
+  - {fileID: 114735646941030760, guid: 62d1eb16173c2ee4986e7609984d383b, type: 2}
+  - {fileID: 114735646941030760, guid: 1df669a5db23165428e3714051d5eb6c, type: 2}
+  - {fileID: 114735646941030760, guid: 813aa6d8fee493449b545fee1d074275, type: 2}
+  - {fileID: 114735646941030760, guid: cdc6649179f5f5543878240a2792e53e, type: 2}
+  - {fileID: 114735646941030760, guid: ece47a322f39a3f4ba239e9cc1beb338, type: 2}
+  - {fileID: 114735646941030760, guid: a398f45349e0936429d8f3356e642d41, type: 2}
+  monsterAttackParties:
+  - {fileID: 114076955503950830, guid: 9bb9b02baf076a345a720f24a40c4928, type: 2}
+  - {fileID: 114260156823697922, guid: 47cbcf11b84d6694899caee34a60a8ee, type: 2}
+  - {fileID: 114445399016585892, guid: fc899463ec4407f42816043304a12267, type: 2}
+  catSprite: {fileID: 21300000, guid: ba56a251aea2abe4daa3cc9bad485dce, type: 3}
+  direBeast1Sprite: {fileID: 21300000, guid: bca2aeea0b2a8654ab50e55f0e65d759, type: 3}
+  direBeast2Sprite: {fileID: 21300000, guid: f4edeffc1bf768240a933d4fd98bebb7, type: 3}
+  golem1Sprite: {fileID: 21300000, guid: 1a2433a012316e4499d9e9b00b343922, type: 3}
+  golem2Sprite: {fileID: 21300000, guid: cbbb3610e6b76a646b44ac239505f2e9, type: 3}
+  orc1Sprite: {fileID: 21300000, guid: 6f587e59f2e8c5b49abce62925d237e3, type: 3}
+  rat1Sprite: {fileID: 21300000, guid: daccf935d0347de428088293b1e1064b, type: 3}
+  rat2Sprite: {fileID: 21300000, guid: 2375e0b2dbb652541ba13facd9be9d44, type: 3}
+  slime1Sprite: {fileID: 21300000, guid: 6b6d6c0aef13b8e4e9994c96dbf0134a, type: 3}
+  slime2Sprite: {fileID: 21300000, guid: dee9c593158784248adca784af93fd44, type: 3}
+  wolf1Sprite: {fileID: 21300000, guid: ac4f053fe3b15da41a71da445ef2278f, type: 3}
+--- !u!114 &114165885577064042
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1491764412242158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0788b6ccbc1c4d04ba688e6a262b4f8c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  monsterName: 
+  type: 0
+  category: 0
+  level: 0
+  experienceDrop: 0
+  maxHP: 0
+  maxSP: 0
+  attackPower: 0
+  speed: 0
+  def: 0
+  dodgeChance: 0
+  hitChance: 0
+  critChance: 0
+  skills: []
+  skillNames: []
+  elementChanceWeaknesses: []
+  elementChanceResistances: []

@@ -12,63 +12,48 @@ public class ObjectPoolManager : MonoBehaviour {
     private Dictionary<string, EZObjectPool> allObjectPools;
 
     [SerializeField] private GameObject[] UIPrefabs;
-    //[SerializeField] internal GameObject[] citizenAvatarPrefabs;
-    //[SerializeField] private GameObject[] monsterAvatarPrefabs;
-    //[SerializeField] private GameObject[] agentPrefabs;
     [SerializeField] internal GameObject[] otherPrefabs;
+    [SerializeField] private GameObject UIObjectPoolParent;
+
+    public List<GoapNode> goapNodesPool { get; private set; }
+    public List<OpinionData> opinionDataPool { get; private set; }
 
     private void Awake() {
         Instance = this;
         allObjectPools = new Dictionary<string, EZObjectPool>();
     }
-
-    internal void InitializeObjectPools() {
-        GameObject UIObjectPoolParent = new GameObject("EZ Object Pools UI Container");
-        UIObjectPoolParent.transform.parent = UIManager.Instance.transform;
-        UIObjectPoolParent.transform.localScale = Vector3.one;
-        UIObjectPoolParent.transform.localPosition = Vector3.zero;
-
+    //public void StartInitializeObjectPoolsCoroutine() {
+    //    StartCoroutine(InitializeObjectPoolsCoroutine());
+    //}
+    public IEnumerator InitializeObjectPoolsCoroutine() {
         for (int i = 0; i < UIPrefabs.Length; i++) {
             GameObject currPrefab = UIPrefabs[i];
-            EZObjectPool newUIPool = CreateNewPool(currPrefab, currPrefab.name, 500, true, true, false);
-            newUIPool.transform.SetParent(UIObjectPoolParent.transform);
+            EZObjectPool newUIPool = CreateNewPool(currPrefab, currPrefab.name, 300, true, true, false);
+            newUIPool.transform.SetParent(UIObjectPoolParent.transform, false);
+            yield return null;
         }
-
-        //for (int i = 0; i < citizenAvatarPrefabs.Length; i++) {
-        //    GameObject currPrefab = citizenAvatarPrefabs[i];
-        //    CreateNewPool(currPrefab, currPrefab.name, 300, true, true, false);
-        //}
-
-        //for (int i = 0; i < agentPrefabs.Length; i++) {
-        //    GameObject currPrefab = agentPrefabs[i];
-        //    CreateNewPool(currPrefab, currPrefab.name, 300, true, true, false);
-        //}
+        for (int i = 0; i < otherPrefabs.Length; i++) {
+            GameObject currPrefab = otherPrefabs[i];
+            CreateNewPool(currPrefab, currPrefab.name, 80, true, true, false);
+            yield return null;
+        }
+        ConstructGoapNodes();
+        MapGenerator.Instance.SetIsCoroutineRunning(false);
+    }
+    public void InitializeObjectPools() {
+        for (int i = 0; i < UIPrefabs.Length; i++) {
+            GameObject currPrefab = UIPrefabs[i];
+            EZObjectPool newUIPool = CreateNewPool(currPrefab, currPrefab.name, 300, true, true, false);
+            newUIPool.transform.SetParent(UIObjectPoolParent.transform, false);
+        }
 
         for (int i = 0; i < otherPrefabs.Length; i++) {
             GameObject currPrefab = otherPrefabs[i];
-            CreateNewPool(currPrefab, currPrefab.name, 100, true, true, false);
+            CreateNewPool(currPrefab, currPrefab.name, 80, true, true, false);
         }
 
-        for (int i = 0; i < CityGenerator.Instance.humanStructures.structures.Length; i++) {
-            Structures currStructure = CityGenerator.Instance.humanStructures.structures[i];
-            GameObject[] structurePrefabs = currStructure.structureGameObjects;
-            for (int j = 0; j < structurePrefabs.Length; j++) {
-                CreateNewPool(structurePrefabs[j], structurePrefabs[j].name, 100, true, true, false);
-            }
-        }
-
-        for (int i = 0; i < CityGenerator.Instance.elvenStructures.structures.Length; i++) {
-            Structures currStructure = CityGenerator.Instance.elvenStructures.structures[i];
-            GameObject[] structurePrefabs = currStructure.structureGameObjects;
-            for (int j = 0; j < structurePrefabs.Length; j++) {
-                CreateNewPool(structurePrefabs[j], structurePrefabs[j].name, 100, true, true, false);
-            }
-        }
-
-        //for (int i = 0; i < monsterAvatarPrefabs.Length; i++) {
-        //    GameObject currPrefab = monsterAvatarPrefabs[i];
-        //    CreateNewPool(currPrefab, currPrefab.name, 100, true, true, false);
-        //}
+        ConstructGoapNodes();
+        ConstructOpinionDataPool();
     }
 
     public GameObject InstantiateObjectFromPool(string poolName, Vector3 position, Quaternion rotation, Transform parent = null) {
@@ -84,7 +69,7 @@ public class ObjectPoolManager : MonoBehaviour {
         } else {
             if(objectPoolToUse.TryGetNextObject(Vector3.zero, rotation, out instantiatedObj)) {
                 if(parent != null) {
-                    instantiatedObj.transform.SetParent(parent);
+                    instantiatedObj.transform.SetParent(parent, false);
                 }
                 instantiatedObj.transform.localPosition = position;
             }
@@ -96,8 +81,9 @@ public class ObjectPoolManager : MonoBehaviour {
     public void DestroyObject(GameObject go) {
         PooledObject po = go.GetComponent<PooledObject>();
         if(po == null) {
-            throw new Exception("Cannot Destroy Object via Object Pool! Object " + go.name + " is not from an object pool");
+             Debug.LogWarning("Cannot Destroy Object via Object Pool! Object " + go.name + " is not from an object pool");
         } else {
+            Messenger.Broadcast(Signals.POOLED_OBJECT_DESTROYED, go);
             po.SendObjectBackToPool();
             po.Reset();
             po.transform.SetParent(po.ParentPool.transform);
@@ -122,4 +108,50 @@ public class ObjectPoolManager : MonoBehaviour {
         }
         return false;
     }
+
+    #region Goap Node
+    private void ConstructGoapNodes() {
+        goapNodesPool = new List<GoapNode>();
+    }
+    public GoapNode CreateNewGoapPlanJob(int cost, int level, GoapAction action, IPointOfInterest target) {
+        GoapNode node = GetGoapNodeFromPool();
+        node.Initialize(cost, level, action, target);
+        return node;
+    }
+    public void ReturnGoapNodeToPool(GoapNode node) {
+        node.Reset();
+        goapNodesPool.Add(node);
+    }
+    private GoapNode GetGoapNodeFromPool() {
+        if(goapNodesPool.Count > 0) {
+            GoapNode node = goapNodesPool[0];
+            goapNodesPool.RemoveAt(0);
+            return node;
+        }
+        return new GoapNode();
+    }
+    #endregion
+
+    #region Opinion Data
+    private void ConstructOpinionDataPool() {
+        opinionDataPool = new List<OpinionData>();
+    }
+    public OpinionData CreateNewOpinionData() {
+        OpinionData data = GetOpinionDataFromPool();
+        data.Initialize();
+        return data;
+    }
+    public void ReturnOpinionDataToPool(OpinionData data) {
+        data.Reset();
+        opinionDataPool.Add(data);
+    }
+    private OpinionData GetOpinionDataFromPool() {
+        if (opinionDataPool.Count > 0) {
+            OpinionData data = opinionDataPool[0];
+            opinionDataPool.RemoveAt(0);
+            return data;
+        }
+        return new OpinionData();
+    }
+    #endregion
 }

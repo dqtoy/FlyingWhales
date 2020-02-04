@@ -6,33 +6,34 @@ using System.Text;
 namespace Pathfinding {
 	[AddComponentMenu("Pathfinding/Pathfinding Debugger")]
 	[ExecuteInEditMode]
-	/** Debugger for the A* Pathfinding Project.
-	 * This class can be used to profile different parts of the pathfinding system
-	 * and the whole game as well to some extent.
-	 *
-	 * Clarification of the labels shown when enabled.
-	 * All memory related things profiles <b>the whole game</b> not just the A* Pathfinding System.\n
-	 * - Currently allocated: memory the GC (garbage collector) says the application has allocated right now.
-	 * - Peak allocated: maximum measured value of the above.
-	 * - Last collect peak: the last peak of 'currently allocated'.
-	 * - Allocation rate: how much the 'currently allocated' value increases per second. This value is not as reliable as you can think
-	 * it is often very random probably depending on how the GC thinks this application is using memory.
-	 * - Collection frequency: how often the GC is called. Again, the GC might decide it is better with many small collections
-	 * or with a few large collections. So you cannot really trust this variable much.
-	 * - Last collect fps: FPS during the last garbage collection, the GC will lower the fps a lot.
-	 *
-	 * - FPS: current FPS (not updated every frame for readability)
-	 * - Lowest FPS (last x): As the label says, the lowest fps of the last x frames.
-	 *
-	 * - Size: Size of the path pool.
-	 * - Total created: Number of paths of that type which has been created. Pooled paths are not counted twice.
-	 * If this value just keeps on growing and growing without an apparent stop, you are are either not pooling any paths
-	 * or you have missed to pool some path somewhere in your code.
-	 *
-	 * \see pooling
-	 *
-	 * \todo Add field showing how many graph updates are being done right now
-	 */
+	/// <summary>
+	/// Debugger for the A* Pathfinding Project.
+	/// This class can be used to profile different parts of the pathfinding system
+	/// and the whole game as well to some extent.
+	///
+	/// Clarification of the labels shown when enabled.
+	/// All memory related things profiles <b>the whole game</b> not just the A* Pathfinding System.\n
+	/// - Currently allocated: memory the GC (garbage collector) says the application has allocated right now.
+	/// - Peak allocated: maximum measured value of the above.
+	/// - Last collect peak: the last peak of 'currently allocated'.
+	/// - Allocation rate: how much the 'currently allocated' value increases per second. This value is not as reliable as you can think
+	/// it is often very random probably depending on how the GC thinks this application is using memory.
+	/// - Collection frequency: how often the GC is called. Again, the GC might decide it is better with many small collections
+	/// or with a few large collections. So you cannot really trust this variable much.
+	/// - Last collect fps: FPS during the last garbage collection, the GC will lower the fps a lot.
+	///
+	/// - FPS: current FPS (not updated every frame for readability)
+	/// - Lowest FPS (last x): As the label says, the lowest fps of the last x frames.
+	///
+	/// - Size: Size of the path pool.
+	/// - Total created: Number of paths of that type which has been created. Pooled paths are not counted twice.
+	/// If this value just keeps on growing and growing without an apparent stop, you are are either not pooling any paths
+	/// or you have missed to pool some path somewhere in your code.
+	///
+	/// See: pooling
+	///
+	/// TODO: Add field showing how many graph updates are being done right now
+	/// </summary>
 	[HelpURL("http://arongranberg.com/astar/docs/class_pathfinding_1_1_astar_debugger.php")]
 	public class AstarDebugger : VersionedMonoBehaviour {
 		public int yOffset = 5;
@@ -47,9 +48,10 @@ namespace Pathfinding {
 
 		public int graphBufferSize = 200;
 
-		/** Font to use.
-		 * A monospaced font is the best
-		 */
+		/// <summary>
+		/// Font to use.
+		/// A monospaced font is the best
+		/// </summary>
 		public Font font = null;
 		public int fontSize = 12;
 
@@ -113,6 +115,13 @@ namespace Pathfinding {
 
 		PathTypeDebug[] debugTypes = new PathTypeDebug[] {
 			new PathTypeDebug("ABPath", () => PathPool.GetSize(typeof(ABPath)), () => PathPool.GetTotalCreated(typeof(ABPath)))
+			,
+			new PathTypeDebug("MultiTargetPath", () => PathPool.GetSize(typeof(MultiTargetPath)), () => PathPool.GetTotalCreated(typeof(MultiTargetPath))),
+			new PathTypeDebug("RandomPath", () => PathPool.GetSize(typeof(RandomPath)), () => PathPool.GetTotalCreated(typeof(RandomPath))),
+			new PathTypeDebug("FleePath", () => PathPool.GetSize(typeof(FleePath)), () => PathPool.GetTotalCreated(typeof(FleePath))),
+			new PathTypeDebug("ConstantPath", () => PathPool.GetSize(typeof(ConstantPath)), () => PathPool.GetTotalCreated(typeof(ConstantPath))),
+			new PathTypeDebug("FloodPath", () => PathPool.GetSize(typeof(FloodPath)), () => PathPool.GetTotalCreated(typeof(FloodPath))),
+			new PathTypeDebug("FloodPathTracer", () => PathPool.GetSize(typeof(FloodPathTracer)), () => PathPool.GetTotalCreated(typeof(FloodPathTracer)))
 		};
 
 		struct PathTypeDebug {
@@ -274,6 +283,11 @@ namespace Pathfinding {
 					if (astar == null) {
 						text.Append("\nNo AstarPath Object In The Scene");
 					} else {
+	#if ProfileAstar
+						double searchSpeed = (double)AstarPath.TotalSearchedNodes*10000 / (double)AstarPath.TotalSearchTime;
+						text.Append("\nSearch Speed	(nodes/ms)	").Append(searchSpeed.ToString("0")).Append(" ("+AstarPath.TotalSearchedNodes+" / ").Append(((double)AstarPath.TotalSearchTime/10000F).ToString("0")+")");
+	#endif
+
 						if (Pathfinding.Util.ListPool<Vector3>.GetSize() > maxVecPool) maxVecPool = Pathfinding.Util.ListPool<Vector3>.GetSize();
 						if (Pathfinding.Util.ListPool<Pathfinding.GraphNode>.GetSize() > maxNodePool) maxNodePool = Pathfinding.Util.ListPool<Pathfinding.GraphNode>.GetSize();
 

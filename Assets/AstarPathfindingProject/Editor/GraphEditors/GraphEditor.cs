@@ -5,14 +5,16 @@ namespace Pathfinding {
 	public class GraphEditor : GraphEditorBase {
 		public AstarPathEditor editor;
 
-		/** Stores if the graph is visible or not in the inspector */
+		/// <summary>Stores if the graph is visible or not in the inspector</summary>
 		public FadeArea fadeArea;
 
-		/** Stores if the graph info box is visible or not in the inspector */
+		/// <summary>Stores if the graph info box is visible or not in the inspector</summary>
 		public FadeArea infoFadeArea;
 
-		/** Called by editor scripts to rescan the graphs e.g when the user moved a graph.
-		 * Will only scan graphs if not playing and time to scan last graph was less than some constant (to avoid lag with large graphs) */
+		/// <summary>
+		/// Called by editor scripts to rescan the graphs e.g when the user moved a graph.
+		/// Will only scan graphs if not playing and time to scan last graph was less than some constant (to avoid lag with large graphs)
+		/// </summary>
 		public bool AutoScan () {
 			if (!Application.isPlaying && AstarPath.active != null && AstarPath.active.lastScanTime < 0.11F) {
 				AstarPath.active.Scan();
@@ -33,38 +35,32 @@ namespace Pathfinding {
 
 			if (obj != null) {
 				if (allowSceneObjects && !EditorUtility.IsPersistent(obj)) {
-					//Object is in the scene
+					// Object is in the scene
 					var com = obj as Component;
 					var go = obj as GameObject;
 					if (com != null) {
 						go = com.gameObject;
 					}
-					if (go != null) {
-						var urh = go.GetComponent<UnityReferenceHelper>();
-						if (urh == null) {
-							if (FixLabel("Object's GameObject must have a UnityReferenceHelper component attached")) {
-								go.AddComponent<UnityReferenceHelper>();
-							}
+					if (go != null && go.GetComponent<UnityReferenceHelper>() == null) {
+						if (FixLabel("Object's GameObject must have a UnityReferenceHelper component attached")) {
+							go.AddComponent<UnityReferenceHelper>();
 						}
 					}
 				} else if (EditorUtility.IsPersistent(obj)) {
-					string path = AssetDatabase.GetAssetPath(obj);
-
-					var rg = new System.Text.RegularExpressions.Regex(@"Resources[/|\\][^/]*$");
-
+					string path = AssetDatabase.GetAssetPath(obj).Replace("\\", "/");
+					var rg = new System.Text.RegularExpressions.Regex(@"Resources/.*$");
 
 					if (!rg.IsMatch(path)) {
-						if (FixLabel("Object must be in the 'Resources' folder, top level")) {
+						if (FixLabel("Object must be in the 'Resources' folder")) {
 							if (!System.IO.Directory.Exists(Application.dataPath+"/Resources")) {
 								System.IO.Directory.CreateDirectory(Application.dataPath+"/Resources");
 								AssetDatabase.Refresh();
 							}
-							string ext = System.IO.Path.GetExtension(path);
 
+							string ext = System.IO.Path.GetExtension(path);
 							string error = AssetDatabase.MoveAsset(path, "Assets/Resources/"+obj.name+ext);
 
 							if (error == "") {
-								//Debug.Log ("Successful move");
 								path = AssetDatabase.GetAssetPath(obj);
 							} else {
 								Debug.LogError("Couldn't move asset - "+error);
@@ -75,9 +71,7 @@ namespace Pathfinding {
 					if (!AssetDatabase.IsMainAsset(obj) && obj.name != AssetDatabase.LoadMainAssetAtPath(path).name) {
 						if (FixLabel("Due to technical reasons, the main asset must\nhave the same name as the referenced asset")) {
 							string error = AssetDatabase.RenameAsset(path, obj.name);
-							if (error == "") {
-								//Debug.Log ("Successful");
-							} else {
+							if (error != "") {
 								Debug.LogError("Couldn't rename asset - "+error);
 							}
 						}
@@ -88,7 +82,7 @@ namespace Pathfinding {
 			return obj;
 		}
 
-		/** Draws common graph settings */
+		/// <summary>Draws common graph settings</summary>
 		public void OnBaseInspectorGUI (NavGraph target) {
 			int penalty = EditorGUILayout.IntField(new GUIContent("Initial Penalty", "Initial Penalty for nodes in this graph. Set during Scan."), (int)target.initialPenalty);
 
@@ -96,15 +90,15 @@ namespace Pathfinding {
 			target.initialPenalty = (uint)penalty;
 		}
 
-		/** Override to implement graph inspectors */
+		/// <summary>Override to implement graph inspectors</summary>
 		public virtual void OnInspectorGUI (NavGraph target) {
 		}
 
-		/** Override to implement scene GUI drawing for the graph */
+		/// <summary>Override to implement scene GUI drawing for the graph</summary>
 		public virtual void OnSceneGUI (NavGraph target) {
 		}
 
-		/** Draws a thin separator line */
+		/// <summary>Draws a thin separator line</summary>
 		public static void Separator () {
 			GUIStyle separator = AstarPathEditor.astarSkin.FindStyle("PixelBox3Separator") ?? new GUIStyle();
 
@@ -115,7 +109,7 @@ namespace Pathfinding {
 			}
 		}
 
-		/** Draws a small help box with a 'Fix' button to the right. \returns Boolean - Returns true if the button was clicked */
+		/// <summary>Draws a small help box with a 'Fix' button to the right. Returns: Boolean - Returns true if the button was clicked</summary>
 		public static bool FixLabel (string label, string buttonLabel = "Fix", int buttonWidth = 40) {
 			GUILayout.BeginHorizontal();
 			GUILayout.Space(14*EditorGUI.indentLevel);
@@ -127,12 +121,12 @@ namespace Pathfinding {
 			return returnValue;
 		}
 
-		/** Draws a toggle with a bold label to the right. Does not enable or disable GUI */
+		/// <summary>Draws a toggle with a bold label to the right. Does not enable or disable GUI</summary>
 		public bool ToggleGroup (string label, bool value) {
 			return ToggleGroup(new GUIContent(label), value);
 		}
 
-		/** Draws a toggle with a bold label to the right. Does not enable or disable GUI */
+		/// <summary>Draws a toggle with a bold label to the right. Does not enable or disable GUI</summary>
 		public static bool ToggleGroup (GUIContent label, bool value) {
 			GUILayout.BeginHorizontal();
 			GUILayout.Space(13*EditorGUI.indentLevel);

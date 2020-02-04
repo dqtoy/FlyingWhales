@@ -23,6 +23,9 @@ namespace Pathfinding {
 				EditorGUILayout.HelpBox("Nearest node queries in XZ space is not recommended for rotated graphs since XZ space no longer corresponds to the ground plane", MessageType.Warning);
 			}
 
+			graph.recalculateNormals = EditorGUILayout.Toggle(new GUIContent("Recalculate Normals", "Disable for spherical graphs or other complicated surfaces that allow the agents to e.g walk on walls or ceilings. See docs for more info."), graph.recalculateNormals);
+			graph.enableNavmeshCutting = EditorGUILayout.Toggle(new GUIContent("Affected by navmesh cuts", "Makes this graph affected by NavmeshCut and NavmeshAdd components. See the documentation for more info."), graph.enableNavmeshCutting);
+
 			GUILayout.BeginHorizontal();
 			GUILayout.Space(18);
 			graph.showMeshSurface = GUILayout.Toggle(graph.showMeshSurface, new GUIContent("Show surface", "Toggles gizmos for drawing the surface of the mesh"), EditorStyles.miniButtonLeft);

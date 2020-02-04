@@ -3,177 +3,251 @@ using System.Collections;
 using System.Collections.Generic;
 using EZObjectPools;
 using System;
+using Inner_Maps;
 
-public class CharacterAvatar : PooledObject{
 
-    //public delegate void OnPathFinished();
-    //public OnPathFinished onPathFinished;
+public class CharacterAvatar : MonoBehaviour {
+
     private Action onPathFinished;
+    private Action onPathStarted;
+    private Action onPathCancelled;
+    private Action onArriveAction;
 
     private PathFindingThread _currPathfindingRequest; //the current pathfinding request this avatar is waiting for
 
 	[SerializeField] protected SmoothMovement smoothMovement;
 	[SerializeField] protected DIRECTION direction;
     [SerializeField] protected GameObject _avatarHighlight;
-	[SerializeField] protected SpriteRenderer _avatarSpriteRenderer;
+    [SerializeField] protected GameObject _avatarVisual;
+    [SerializeField] protected SpriteRenderer _avatarSpriteRenderer;
+    [SerializeField] protected SpriteRenderer _frameSpriteRenderer;
+    [SerializeField] protected SpriteRenderer _centerSpriteRenderer;
 
-	protected List<ECS.Character> _characters;
-    protected ECS.Character _mainCharacter;
+    protected Party _party;
 
-    protected ILocation _specificLocation;
-    protected ILocation targetLocation;
+    public Region targetLocation { get; protected set; }
+    public LocationStructure targetStructure { get; protected set; }
+    public LocationGridTile targetTile { get; protected set; }
+    public IPointOfInterest targetPOI { get; protected set; }
+    public bool placeCharacterAsTileObject { get; private set; }
 
-	protected List<HexTile> path;
+    [SerializeField] protected List<HexTile> path;
 
-	protected bool _hasArrived = false;
-    private bool _isInitialized = false;
-    private bool _isMovementPaused = false;
-    private bool _isTravelling = false;
-	private bool _isMovingToHex = false;
-	private Action queuedAction = null;
+	[SerializeField] private bool _hasArrived = false;
+    [SerializeField] private bool _isInitialized = false;
+    [SerializeField] private bool _isMovementPaused = false;
+    [SerializeField] private bool _isTravelling = false;
+    [SerializeField] private bool _isTravellingOutside = false;
+    private int _distanceToTarget;
+    private bool _isVisualShowing;
+    private bool _isTravelCancelled;
+    private PATHFINDING_MODE _pathfindingMode;
+    private TravelLine _travelLine;
+    private Action queuedAction = null;
 
+    public CharacterPortrait characterPortrait { get; private set; }
     #region getters/setters
-    public ECS.Character mainCharacter {
-        get { return _mainCharacter; }
-    }
-    public List<ECS.Character> characters {
-        get { return _characters; }
-    }
-	public ILocation specificLocation {
-		get { return _specificLocation; }
+    public Party party {
+        get { return _party; }
     }
     public bool isTravelling {
         get { return _isTravelling; }
     }
-    public bool isMovementPaused {
-        get { return _isMovementPaused; }
+    public bool isTravellingOutside {
+        get { return _isTravellingOutside; } //if the character is travelling from settlement to settlement, as oppose to only travelling inside settlement map
     }
-
-    public bool isMovingToHex {
-		get { return _isMovingToHex; }
-	}
+    public bool isVisualShowing {
+        get {
+            //if (_isVisualShowing) {
+            //    return _isVisualShowing;
+            //} else {
+            //    //check if this characters current location settlement is being tracked
+            //    if (party.specificLocation != null ) { //&& party.specificLocation.isBeingTracked
+            //        return true;
+            //    }
+            //}
+            return _isVisualShowing;
+        }
+    }
+    public TravelLine travelLine {
+        get { return _travelLine; }
+    }
     #endregion
 
-    internal virtual void Init(ECS.Character character) {
+    public virtual void Init(Party party) {
+        _party = party;
+        //SetPosition(_party.specificLocation.tileLocation.transform.position);
         this.smoothMovement.avatarGO = this.gameObject;
-        _characters = new List<ECS.Character>();
-        AddNewCharacter(character);
-        _mainCharacter = character;
-        _specificLocation = character.specificLocation;
         this.smoothMovement.onMoveFinished += OnMoveFinished;
         _isInitialized = true;
-		if(_mainCharacter.role != null){
-			SetSprite (_mainCharacter.role.roleType);
-		}
-    }
-    internal virtual void Init(Party party) {
-        this.smoothMovement.avatarGO = this.gameObject;
-        _characters = new List<ECS.Character>();
-        for (int i = 0; i < party.partyMembers.Count; i++) {
-            AddNewCharacter(party.partyMembers[i]);
-        }
-        _mainCharacter = party.partyLeader;
-        _specificLocation = party.specificLocation;
-        this.smoothMovement.onMoveFinished += OnMoveFinished;
-        _isInitialized = true;
-		if(_mainCharacter.role != null){
-			SetSprite (_mainCharacter.role.roleType);
-		}
+        _hasArrived = true;
+        SetVisualState(true);
+        // SetSprite(_party.owner.role.roleType);
+        SetIsPlaceCharacterAsTileObject(true);
+
+        this.name = party.owner.name + "'s Avatar";
+        
+        GameObject portraitGO = UIManager.Instance.InstantiateUIObject(CharacterManager.Instance.characterPortraitPrefab.name, this.transform);
+        characterPortrait = portraitGO.GetComponent<CharacterPortrait>();
+        characterPortrait.GeneratePortrait(_party.owner);
+        portraitGO.SetActive(false);
+
+        CharacterManager.Instance.AddCharacterAvatar(this);
     }
 
-    #region For Testing
-    [ContextMenu("Log Characters")]
-    public void LogPartyMembers() {
-        Debug.Log("========== Characters ==========");
-        if (characters[0].party != null) {
-            Debug.Log("Party: " + characters[0].party.name);
+    #region Monobehaviour
+    private void OnDestroy() {
+        //Messenger.RemoveListener(Signals.INSPECT_ALL, OnInspectAll);
+        //if (Messenger.eventTable.ContainsKey(Signals.CHARACTER_TOKEN_ADDED)) {
+            //Messenger.RemoveListener<CharacterToken>(Signals.CHARACTER_TOKEN_ADDED, OnCharacterTokenObtained);
+        //}
+        //Messenger.RemoveListener(Signals.TOGGLE_CHARACTERS_VISIBILITY, OnToggleCharactersVisibility);
+        if (_isTravelling) {
+            CancelledDeparture();
         }
-        for (int i = 0; i < characters.Count; i++) {
-            ECS.Character currMember = characters[i];
-            Debug.Log(currMember.name);
-        }
-    }
-    #endregion
-
-	#region Monobehaviour
-	public void OnMouseDown(){
-		if (UIManager.Instance.IsMouseOnUI()){
-			return;
-		}
-		if(characters[0].party != null){
-			UIManager.Instance.ShowCharacterInfo (characters [0].party.partyLeader);
-		}else{
-			UIManager.Instance.ShowCharacterInfo (characters [0]);
-		}
-	}
-    //public void OnTriggerEnter2D(Collider2D other) {
-    //    if (other is EdgeCollider2D) {
-    //        CharacterAvatar otherAvatar = other.GetComponent<CharacterAvatar>();
-    //        Debug.Log(this.mainCharacter.name + " collided with " + otherAvatar.mainCharacter.name + "'s " + other.GetType().ToString());
-    //        ICombatInitializer combatant1 = mainCharacter;
-    //        if (mainCharacter.party != null) {
-    //            combatant1 = mainCharacter.party;
-    //        }
-    //        ICombatInitializer combatant2 = otherAvatar.mainCharacter;
-    //        if (otherAvatar.mainCharacter.party != null) {
-    //            combatant2 = otherAvatar.mainCharacter.party;
-    //        }
-    //        Messenger.Broadcast(Signals.COLLIDED_WITH_CHARACTER, combatant1, combatant2);
-    //        //if (this.mainCharacter.CanInitiateBattleWith(otherAvatar.mainCharacter)) {
-    //        //    //if (isMovingToHex) {
-    //        //    //    //if this avatar is currently moving from tile to tile, wait for it to arrive at it's destination tile, then pause movement
-    //        //    //    this.smoothMovement.onMoveFinished += PauseMovement;
-    //        //    //} else {
-    //        //        PauseMovement();
-    //        //    //}
-    //        //}
-    //    }
-    //}
-    #endregion
-
-    #region ECS.Character Management
-    public void AddNewCharacter(ECS.Character character) {
-        if (!_characters.Contains(character)) {
-            _characters.Add(character);
-            character.SetAvatar(this);
-            if (UIManager.Instance.characterInfoUI.IsCharacterInfoShowing(character)) {
-                this.SetHighlightState(true);
-            }
-        }
-    }
-    public void RemoveCharacter(ECS.Character character) {
-        _characters.Remove(character);
-        character.SetAvatar(null);
-		if(_characters.Count <= 0){
-			DestroyObject ();
-		}
+        CharacterManager.Instance.RemoveCharacterAvatar(this);
     }
     #endregion
 
     #region Pathfinding
-    internal void SetTarget(ILocation target) {
+    public void SetTarget(Region target, LocationStructure structure, IPointOfInterest poi, LocationGridTile tile) {
         targetLocation = target;
+        targetStructure = structure;
+        targetPOI = poi;
+        targetTile = tile;
     }
-    internal void StartPath(PATHFINDING_MODE pathFindingMode, Action actionOnPathFinished = null) {
-        if (smoothMovement.isMoving) {
-            smoothMovement.ForceStopMovement();
+    public void SetOnPathFinished(Action action) {
+        onPathFinished = action;
+    }
+    public void SetOnArriveAction(Action action) {
+        onArriveAction = action;
+    }
+    public void StartPath(PATHFINDING_MODE pathFindingMode, Action actionOnPathFinished = null, Action actionOnPathStart = null) {
+        Reset();
+        if (targetLocation != null) {
+            SetOnPathFinished(actionOnPathFinished);
+            StartTravelling();
+            actionOnPathStart?.Invoke();
         }
-        if (this.targetLocation != null) {
-            SetHasArrivedState(false);
-            onPathFinished = actionOnPathFinished;
-            //if(actionOnPathFinished != null) {
-            //    onPathFinished += actionOnPathFinished;
-            //}
-			Faction faction = _characters[0].faction;
-            if (_characters[0].party != null) {
-				faction = _characters[0].party.partyLeader.faction;
+    }
+    public void CancelTravel(Action onCancelTravel = null) {
+        if (_isTravelling && !_isTravelCancelled) {
+            _isTravelCancelled = true;
+            onPathCancelled = onCancelTravel;
+            Messenger.RemoveListener(Signals.TICK_STARTED, TraverseCurveLine);
+            Messenger.AddListener(Signals.TICK_STARTED, ReduceCurveLine);
+        }
+    }
+    private void StartTravelling() {
+        SetIsTravellingOutside(true);
+        _party.owner.SetPOIState(POI_STATE.INACTIVE);
+        if (_party.isCarryingAnyPOI) {
+            _party.carriedPOI.SetPOIState(POI_STATE.INACTIVE);
+        }
+        
+        Log arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "left_location");
+        arriveLog.AddToFillers(_party.owner, _party.owner.name, LOG_IDENTIFIER.CHARACTER_LIST_1, false);
+        if (_party.isCarryingAnyPOI) {
+            arriveLog.AddToFillers(_party.carriedPOI, _party.carriedPOI.name, LOG_IDENTIFIER.CHARACTER_LIST_1, false);
+        }
+        arriveLog.AddToFillers(_party.owner.currentRegion, _party.owner.currentRegion.name, LOG_IDENTIFIER.LANDMARK_1);
+        arriveLog.AddLogToInvolvedObjects();
+        
+        _distanceToTarget = 1;
+        Debug.Log($"{_party.owner.name} is travelling from {_party.owner.currentRegion.name} to {targetLocation.name}. Travel time in ticks is: {_distanceToTarget.ToString()}");
+        _travelLine = _party.owner.currentRegion.coreTile.CreateTravelLine(targetLocation.coreTile, _distanceToTarget, _party.owner);
+        _travelLine.SetActiveMeter(isVisualShowing);
+        _party.owner.marker.gameObject.SetActive(false);
+        Messenger.AddListener(Signals.TICK_STARTED, TraverseCurveLine);
+        Messenger.Broadcast(Signals.PARTY_STARTED_TRAVELLING, this.party);
+    }
+    private void TraverseCurveLine() {
+        if (_travelLine == null) {
+            Messenger.RemoveListener(Signals.TICK_STARTED, TraverseCurveLine);
+            return;
+        }
+        if (_travelLine.isDone) {
+            Messenger.RemoveListener(Signals.TICK_STARTED, TraverseCurveLine);
+            ArriveAtLocation();
+            return;
+        }
+        _travelLine.AddProgress();
+    }
+    private void ReduceCurveLine() {
+        if (_travelLine.isDone) {
+            Messenger.RemoveListener(Signals.TICK_STARTED, ReduceCurveLine);
+            CancelTravelDeparture();
+            return;
+        }
+        _travelLine.ReduceProgress();
+    }
+    private void CancelTravelDeparture() {
+        CancelledDeparture();
+        onPathCancelled?.Invoke();
+    }
+    private void CancelledDeparture() {
+        if(_travelLine != null) {
+            SetIsTravelling(false);
+            _isTravelCancelled = false;
+            _travelLine.travelLineParent.RemoveChild(_travelLine);
+            GameObject.Destroy(_travelLine.gameObject);
+            _travelLine = null;
+        }
+    }
+    private void ArriveAtLocation() {
+        SetIsTravelling(false);
+        SetIsTravellingOutside(false);
+        _travelLine.travelLineParent.RemoveChild(_travelLine);
+        GameObject.Destroy(_travelLine.gameObject);
+        _travelLine = null;
+        SetHasArrivedState(true);
+        _party.owner.currentRegion.RemoveCharacterFromLocation(_party.owner);
+        targetLocation.AddCharacterToLocation(_party.owner);
+
+        _party.owner.combatComponent.ClearHostilesInRange();
+        _party.owner.combatComponent.ClearAvoidInRange();
+        _party.owner.marker.ClearPOIsInVisionRange();
+
+        //place marker at edge tile of target location
+        LocationGridTile entrance = targetLocation.innerMap.GetRandomUnoccupiedEdgeTile();
+        _party.owner.marker.PlaceMarkerAt(entrance);
+
+        _party.owner.marker.pathfindingAI.SetIsStopMovement(true);
+        //Debug.Log(GameManager.Instance.TodayLogString() + _party.name + " has arrived at " + targetLocation.name + " on " + _party.owner.gridTileLocation.ToString());
+        Log arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location");
+        _party.owner.SetPOIState(POI_STATE.ACTIVE);
+        arriveLog.AddToFillers(_party.owner, _party.owner.name, LOG_IDENTIFIER.CHARACTER_LIST_1, false);
+        if (_party.isCarryingAnyPOI) {
+            arriveLog.AddToFillers(_party.carriedPOI, _party.carriedPOI.name, LOG_IDENTIFIER.CHARACTER_LIST_1, false);
+        }
+        arriveLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
+        arriveLog.AddLogToInvolvedObjects();
+        //if (_party.characters.Count > 0) {
+        //    for (int i = 0; i < _party.characters.Count; i++) {
+        //        Character character = party.characters[i];
+        //        character.SetPOIState(POI_STATE.ACTIVE);
+        //        //character.SetDailyInteractionGenerationTick();
+        //        arriveLog.AddToFillers(character, character.name, LOG_IDENTIFIER.CHARACTER_LIST_1, false);
+        //    }
+        //    arriveLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
+        //    arriveLog.AddLogToInvolvedObjects();
+        //}
+
+        Messenger.Broadcast(Signals.PARTY_DONE_TRAVELLING, this.party);
+        if(onArriveAction != null) {
+            onArriveAction();
+            SetOnArriveAction(null);
+        }
+        if (targetStructure != null) {
+            _party.owner.MoveToAnotherStructure(targetStructure, targetTile, targetPOI, onPathFinished);
+        } else {
+            if(onPathFinished != null) {
+                onPathFinished();
+                SetOnPathFinished(null);
             }
-			_currPathfindingRequest = PathGenerator.Instance.CreatePath(this, this.specificLocation.tileLocation, targetLocation.tileLocation, pathFindingMode, faction);
-            //this.path = PathGenerator.Instance.GetPath(this.currLocation, this.targetLocation, pathFindingMode, faction);
-            //NewMove();
         }
     }
-    internal virtual void ReceivePath(List<HexTile> path, PathFindingThread fromThread) {
+    public virtual void ReceivePath(List<HexTile> path, PathFindingThread fromThread) {
         if (!_isInitialized) {
             return;
         }
@@ -185,125 +259,92 @@ public class CharacterAvatar : PooledObject{
             }
         }
         if (path == null) {
-            throw new Exception(_characters[0].name + "'s Avatar. There is no path from " + this.specificLocation.tileLocation.name + " to " + targetLocation.tileLocation.name);
+            Debug.LogError(_party.name + ". There is no path from " + _party.owner.currentRegion.name + " to " + targetLocation.name, this);
+            return;
         }
-        if (path != null && path.Count > 0) {
-            if (this.specificLocation.tileLocation.landmarkOnTile != null) {
-                Log leftLog = null;
-                if (_mainCharacter.party != null) {
-                    leftLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "left_location_party");
-                    leftLog.AddToFillers(_mainCharacter.party, _mainCharacter.party.name, LOG_IDENTIFIER.PARTY_1);
-                    leftLog.AddToFillers(this.specificLocation.tileLocation.landmarkOnTile, this.specificLocation.tileLocation.landmarkOnTile.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
-                    leftLog.AddToFillers(null, _mainCharacter.currentTask.GetLeaveActionString(), LOG_IDENTIFIER.ACTION_DESCRIPTION);
-                    leftLog.AddToFillers(targetLocation, targetLocation.locationName, LOG_IDENTIFIER.LANDMARK_2);
-                } else {
-                    leftLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "left_location");
-                    leftLog.AddToFillers(_mainCharacter, _mainCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                    leftLog.AddToFillers(this.specificLocation.tileLocation.landmarkOnTile, this.specificLocation.tileLocation.landmarkOnTile.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
-                    leftLog.AddToFillers(null, _mainCharacter.currentTask.GetLeaveActionString(), LOG_IDENTIFIER.ACTION_DESCRIPTION);
-                    leftLog.AddToFillers(targetLocation, targetLocation.locationName, LOG_IDENTIFIER.LANDMARK_2);
-                }
-                this.specificLocation.tileLocation.landmarkOnTile.AddHistory(leftLog);
-                _mainCharacter.AddHistory(leftLog);
-            }
+        if (path.Count > 0) {
             this.path = path;
             _currPathfindingRequest = null;
-            _isTravelling = true;
+            SetIsTravelling(true);
+            //if(_party.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
+            //    _party.specificLocation.coreTile.landmarkOnTile.landmarkVisual.OnCharacterExitedLandmark(_party);
+            //}
             NewMove();
-        }
-    }
-    internal virtual void NewMove() {
-//		if(_characters[0].isInCombat){
-//			_characters[0].SetCurrentFunction (() => NewMove ());
-//			return;
-//		}
-        if (this.targetLocation != null) {
-            if (this.path != null) {
-                if (this.path.Count > 0) {
-					this.MakeCitizenMove(this.specificLocation.tileLocation, this.path[0]);
-                    RemoveCharactersFromLocation(this.specificLocation);
-                    AddCharactersToLocation(this.specificLocation.tileLocation);
-                }
+            if(onPathStarted != null) {
+                onPathStarted();
             }
         }
     }
-    internal void MakeCitizenMove(HexTile startTile, HexTile targetTile) {
-		CharacterHasLeftTile ();
-		_isMovingToHex = true;
-        this.smoothMovement.Move(targetTile.transform.position, this.direction);
+    public virtual void NewMove() {
+        if (this.targetLocation != null && this.path != null) {
+            if (this.path.Count > 0) {
+				//this.MakeCitizenMove(_party.specificLocation.tileLocation, this.path[0]);
+    //            if(_party.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
+    //                RemoveCharactersFromLocation(_party.specificLocation);
+    //            }
+                //AddCharactersToLocation(this.path[0]);
+                //this.path.RemoveAt(0);
+            }
+        }
     }
     /*
      This is called each time the avatar traverses a node in the
      saved path.
          */
-    internal virtual void OnMoveFinished() {
-		_isMovingToHex = false;
+    public virtual void OnMoveFinished() {
 		if(this.path == null){
 			Debug.LogError (GameManager.Instance.Today ().ToStringDate());
-			Debug.LogError ("Character: " + _characters [0].name + ", " + _characters[0].specificLocation.locationName);
-			if(_characters[0].party != null){
-				Debug.LogError ("Party: " + _characters [0].party.name + ", " + _characters[0].party.specificLocation.locationName);
-			}
-			Debug.LogError ("Location: " + specificLocation.locationName);
+			Debug.LogError ("Location: " + _party.owner.currentRegion.name);
 		}
+        //if (_trackTarget != null) {
+        //    if(_trackTarget.currentParty.specificLocation.id != targetLocation.id) {
+        //        _party.GoToLocation(_trackTarget.currentParty.specificLocation.coreTile, _pathfindingMode, onPathFinished, _trackTarget, onPathReceived);
+        //        return;
+        //    }
+        //}
         if (this.path.Count > 0) {
-            RemoveCharactersFromLocation(this.specificLocation);
-            AddCharactersToLocation(this.path[0]);
-
-			//_specificLocation = this.path[0];
+            //if(_party.specificLocation.locIdentifier == LOCATION_IDENTIFIER.HEXTILE) {
+            //    RemoveCharactersFromLocation(_party.specificLocation);
+            //}
+            //AddCharactersToLocation(this.path[0]);
             this.path.RemoveAt(0);
         }
-        //RevealRoads();
-        //RevealLandmarks();
         HasArrivedAtTargetLocation();
     }
-    internal virtual void HasArrivedAtTargetLocation() {
-		if (this.specificLocation.tileLocation.id == targetLocation.tileLocation.id) {
+    public virtual void HasArrivedAtTargetLocation() {
+		if (_party.owner.currentRegion == targetLocation) {
             if (!this._hasArrived) {
-                _isTravelling = false;
-                AddCharactersToLocation(targetLocation);
-                _specificLocation = targetLocation; //set location as the target location, in case the target location is a landmark
-                if (_mainCharacter.currentTask == null) {
-                    throw new Exception(_mainCharacter.name + "'s task is null!");
-                }
-				if (this.specificLocation.locIdentifier == LOCATION_IDENTIFIER.LANDMARK) {
-                    Log arriveLog = null;
-                    if (_mainCharacter.currentTask is MoveTo) {
-                        arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "visit_location");
-                        if (_mainCharacter.party != null) {
-                            arriveLog.AddToFillers(_mainCharacter.party, _mainCharacter.party.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                        } else {
-                            arriveLog.AddToFillers(_mainCharacter, _mainCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                        }
-                        arriveLog.AddToFillers(this.specificLocation.tileLocation.landmarkOnTile, this.specificLocation.tileLocation.landmarkOnTile.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
-                    } else {
-                        if (_mainCharacter.party != null) {
-                            arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location_party");
-                            arriveLog.AddToFillers(_mainCharacter.party, _mainCharacter.party.name, LOG_IDENTIFIER.PARTY_1);
-                            arriveLog.AddToFillers(this.specificLocation.tileLocation.landmarkOnTile, this.specificLocation.tileLocation.landmarkOnTile.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
-                            arriveLog.AddToFillers(null, _mainCharacter.currentTask.GetArriveActionString(), LOG_IDENTIFIER.ACTION_DESCRIPTION);
-                        } else {
-                            arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location");
-                            arriveLog.AddToFillers(_mainCharacter, _mainCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                            arriveLog.AddToFillers(this.specificLocation.tileLocation.landmarkOnTile, this.specificLocation.tileLocation.landmarkOnTile.landmarkName, LOG_IDENTIFIER.LANDMARK_1);
-                            arriveLog.AddToFillers(null, _mainCharacter.currentTask.GetArriveActionString(), LOG_IDENTIFIER.ACTION_DESCRIPTION);
-                        }
-                    }
-                    this.specificLocation.tileLocation.landmarkOnTile.AddHistory(arriveLog);
-                    _mainCharacter.AddHistory(arriveLog);
-                }
+                SetIsTravelling(false);
+                //_trackTarget = null;
                 SetHasArrivedState(true);
-                if(onPathFinished != null) {
-                    onPathFinished();
-                }
+                targetLocation.AddCharacterToLocation(_party.owner);
+                //Debug.Log(_party.name + " has arrived at " + targetLocation.name + " on " + GameManager.Instance.continuousDays);
+                ////Every time the party arrives at home, check if it still not ruined
+                //if(_party.mainCharacter.homeLandmark.specificLandmarkType == LANDMARK_TYPE.CAMP) {
+                //    //Check if the location the character arrived at is the character's home landmark
+                //    if (targetLocation.tileLocation.id == _party.mainCharacter.homeLandmark.tileLocation.id) {
+                //        //Check if the current landmark in the location is a camp and it is not yet ruined
+                //        if (targetLocation.tileLocation.landmarkOnTile.specificLandmarkType == LANDMARK_TYPE.CAMP) {
+                //            Character character = _party.mainCharacter;
+                //            if (targetLocation.tileLocation.landmarkOnTile.landmarkObj.currentState.stateName != "Ruined") {
+                //                //Make it the character's new home landmark
+                //                _party.mainCharacter.homeLandmark.RemoveCharacterHomeOnLandmark(character);
+                //                targetLocation.tileLocation.landmarkOnTile.AddCharacterHomeOnLandmark(character);
+                //            } else {
+                //                //Create new camp
+                //                BaseLandmark newCamp = targetLocation.tileLocation.settlementOfTile.CreateCampOnTile(targetLocation.tileLocation);
+                //                _party.mainCharacter.homeLandmark.RemoveCharacterHomeOnLandmark(character);
+                //                newCamp.AddCharacterHomeOnLandmark(character);
+                //            }
+                //        }
+                //    }
+                //}
+                onPathFinished?.Invoke();
             }
 			if(queuedAction != null){
 				queuedAction ();
 				queuedAction = null;
 				return;
-			}
-			if(_characters.Count > 0){
-				_characters[0].DestroyAvatar(); //Destroy this avatar once it reaches it's destination
 			}
 		}else{
 			if(queuedAction != null){
@@ -316,121 +357,65 @@ public class CharacterAvatar : PooledObject{
             }
 		}
     }
-    internal void SetHasArrivedState(bool state) {
+    public void SetHasArrivedState(bool state) {
         _hasArrived = state;
     }
-    internal void PauseMovement() {
-        Debug.Log(this.mainCharacter.name + "'s avatar has paused movement!");
-        _isMovementPaused = true;
-        smoothMovement.ForceStopMovement();
-        //this.smoothMovement.onMoveFinished -= PauseMovement;
+    public void SetIsTravelling(bool state) {
+        _isTravelling = state;
     }
-    internal void ResumeMovement() {
-        Debug.Log(this.mainCharacter.name + "'s avatar has resumed movement!");
-        _isMovementPaused = false;
-        NewMove();
+    public void SetIsTravellingOutside(bool state) {
+        _isTravellingOutside = state;
+    }
+    public void SetIsPlaceCharacterAsTileObject(bool state) {
+        placeCharacterAsTileObject = state;
     }
     #endregion
 
     #region Utilities
-    /*
-     This will set the avatar reference of all characters
-     using this avatar to null, then return this object back to the pool.
-         */
-    public void DestroyObject() {
-        ObjectPoolManager.Instance.DestroyObject(this.gameObject);
+    public void SetVisualState(bool state) {
+        _isVisualShowing = state;
+        if(_travelLine != null) {
+            _travelLine.SetActiveMeter(isVisualShowing);
+        }
     }
-	public void InstantDestroyAvatar(){
-		for (int i = 0; i < _characters.Count; i++) {
-			_characters[i].SetAvatar (null);
-		}
-		_characters.Clear ();
-		DestroyObject ();
-	}
-    private void RevealRoads() {
-		this.specificLocation.tileLocation.SetRoadState(true);
-    }
-    protected void RemoveCharactersFromLocation(ILocation location) {
-		if(_characters[0].party == null){
-			location.RemoveCharacterFromLocation(_characters[0]);
-//			for (int i = 0; i < _characters.Count; i++) {
-//				ECS.Character currCharacter = _characters[i];
-//				location.RemoveCharacterFromLocation(currCharacter);
-//			}
-		}else{
-			location.RemoveCharacterFromLocation(_characters[0].party);
-		}
-        
-		UIManager.Instance.UpdateHexTileInfo();
-        UIManager.Instance.UpdateLandmarkInfo();
-    }
-	protected void AddCharactersToLocation(ILocation location) {
-        _specificLocation = location;
-        if (_characters[0].party == null){
-			location.AddCharacterToLocation(_characters[0]);
-//			for (int i = 0; i < _characters.Count; i++) {
-//				ECS.Character currCharacter = _characters[i];
-//				location.AddCharacterToLocation(currCharacter, startCombatOnReachLocation);
-//			}
-		}else{
-			location.AddCharacterToLocation(_characters[0].party);
-		}
-
-		UIManager.Instance.UpdateHexTileInfo();
-        UIManager.Instance.UpdateLandmarkInfo();
-    }
-	public void SetQueuedAction(Action action){
-		queuedAction = action;
-	}
     public void SetHighlightState(bool state) {
         _avatarHighlight.SetActive(state);
     }
-	private void CharacterHasLeftTile(){
-		LeaveCharacterTrace();
-        CheckForItemDrop();
-	}
-	public void SetSprite(CHARACTER_ROLE role){
+    public void SetPosition(Vector3 position) {
+        this.transform.position = position;
+    }
+    public void SetSprite(CHARACTER_ROLE role){
 		Sprite sprite = CharacterManager.Instance.GetSpriteByRole (role);
 		if(sprite != null){
 			_avatarSpriteRenderer.sprite = sprite;
 		}
 	}
-    #endregion
-
-	#region Traces
-	private void LeaveCharacterTrace(){
-		if(_characters[0].party == null){
-			_characters [0].LeaveTraceOnLandmark ();
-		}else{
-			_characters [0].party.partyLeader.LeaveTraceOnLandmark ();
-		}
-	}
-    #endregion
-
-    #region Items
-    private void CheckForItemDrop() {
-        if (_characters[0].party == null) {
-            _characters[0].CheckForItemDrop();
-        } else {
-            _characters[0].party.partyLeader.CheckForItemDrop();
-        }
+    public void SetFrameOrderLayer(int layer) {
+        _frameSpriteRenderer.sortingOrder = layer;
+    }
+    public void SetCenterOrderLayer(int layer) {
+        _centerSpriteRenderer.sortingOrder = layer;
     }
     #endregion
 
     #region overrides
-    public override void Reset() {
-        base.Reset();
+    public void Reset() {
+        //base.Reset();
         smoothMovement.Reset();
-        onPathFinished = null;
+        SetOnPathFinished(null);
+        onPathStarted = null;
         direction = DIRECTION.LEFT;
-		//_specificLocation = null;
-        targetLocation = null;
+        //targetLocation = null;
         path = null;
         _isMovementPaused = false;
         _hasArrived = false;
-        _isInitialized = false;
+        _isTravelCancelled = false;
+        //_trackTarget = null;
+        //_isInitialized = false;
         _currPathfindingRequest = null;
         SetHighlightState(false);
     }
     #endregion
+
+
 }

@@ -5,17 +5,15 @@ namespace Pathfinding {
 	[CanEditMultipleObjects]
 	public class RaycastModifierEditor : EditorBase {
 		protected override void Inspector () {
-			PropertyField("iterations");
-			ClampInt("iterations", 0);
+			PropertyField("quality");
 
-			if (PropertyField("useRaycasting")) {
+			if (PropertyField("useRaycasting", "Use Physics Raycasting")) {
 				EditorGUI.indentLevel++;
 
 				PropertyField("use2DPhysics");
 				if (PropertyField("thickRaycast")) {
 					EditorGUI.indentLevel++;
-					PropertyField("thickRaycastRadius");
-					Clamp("thickRaycastRadius", 0f);
+					FloatField("thickRaycastRadius", min: 0f);
 					EditorGUI.indentLevel--;
 				}
 
@@ -25,10 +23,9 @@ namespace Pathfinding {
 			}
 
 			PropertyField("useGraphRaycasting");
-			if (FindProperty("useGraphRaycasting").boolValue) {
-				EditorGUILayout.HelpBox("Graph raycasting is only available in the pro version for all built-in graphs.", MessageType.Info);
+			if (!FindProperty("useGraphRaycasting").boolValue && !FindProperty("useRaycasting").boolValue) {
+				EditorGUILayout.HelpBox("You should use either raycasting, graph raycasting or both, otherwise this modifier will not do anything", MessageType.Warning);
 			}
-			PropertyField("subdivideEveryIter", "Subdivide Every Iteration");
 		}
 	}
 }

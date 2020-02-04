@@ -2,383 +2,408 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System;
+using Traits;
 
-namespace ECS {
-    public class CombatManager : MonoBehaviour {
+public class CombatManager : MonoBehaviour {
+    public static CombatManager Instance = null;
 
-        public static CombatManager Instance = null;
+    public float updateIntervals;
+    public int numOfCombatActionPerDay;
 
-        public CharacterSetup[] baseCharacters;
-		public Color[] characterColors;
-//		public AttributeSkill[] attributeSkills;
-		public Dictionary<WEAPON_TYPE, List<Skill>> weaponTypeSkills = new Dictionary<WEAPON_TYPE, List<Skill>> ();
+    public Combat combat;
+    public NewCombat newCombat;
 
-		private List<Color> unusedColors = new List<Color>();
-		private List<Color> usedColors = new List<Color>();
-		public Combat combat;
+    public CharacterSetup[] baseCharacters;
+	public Color[] characterColors;
 
-        private Dictionary<ICombatInitializer, CombatRoom> _combatRooms;
+	private List<Color> unusedColors;
+	private List<Color> usedColors;
 
-        private void Awake() {
-            Instance = this;
+    public const int pursueDuration = 10;
+
+    private void Awake() {
+        Instance = this;
+    }
+	internal void Initialize(){
+        unusedColors = new List<Color>();
+        usedColors = new List<Color>();
+        newCombat.Initialize();
+    }
+    private void ConstructBaseCharacters() {
+        string path = Utilities.dataPath + "CharacterSetups/";
+        string[] baseCharacterJsons = System.IO.Directory.GetFiles(path, "*.json");
+        baseCharacters = new CharacterSetup[baseCharacterJsons.Length];
+        for (int i = 0; i < baseCharacterJsons.Length; i++) {
+            string file = baseCharacterJsons[i];
+            string dataAsJson = System.IO.File.ReadAllText(file);
+            CharacterSetup charSetup = JsonUtility.FromJson<CharacterSetup>(dataAsJson);
+            baseCharacters[i] = charSetup;
         }
-		internal void Initialize(){
-			ConstructBaseCharacters();
-			ConstructCharacterColors ();
-//			ConstructAttributeSkills ();
-			NewCombat ();
-            _combatRooms = new Dictionary<ICombatInitializer, CombatRoom>();
-            Messenger.AddListener<ICombatInitializer, ICombatInitializer>(Signals.COLLIDED_WITH_CHARACTER, CheckForCombat);
-        }
-        private void ConstructBaseCharacters() {
-            string path = "Assets/CombatPrototype/Data/CharacterSetups/";
-            string[] baseCharacterJsons = System.IO.Directory.GetFiles(path, "*.json");
-            baseCharacters = new CharacterSetup[baseCharacterJsons.Length];
-            for (int i = 0; i < baseCharacterJsons.Length; i++) {
-                string file = baseCharacterJsons[i];
-                string dataAsJson = System.IO.File.ReadAllText(file);
-                CharacterSetup charSetup = JsonUtility.FromJson<CharacterSetup>(dataAsJson);
-                baseCharacters[i] = charSetup;
+    }
+
+    /*
+        * Create a new character given a base character setup.
+        * */
+    //internal Character CreateNewCharacter(CharacterSetup baseCharacter) {
+    //    return new Character(baseCharacter, Utilities.GetRandomGender());
+    //}
+
+	private void ConstructCharacterColors(){
+		unusedColors = characterColors.ToList (); 
+	}
+
+	internal Color UseRandomCharacterColor(){
+		Color chosenColor = Color.black;
+		if(unusedColors.Count > 0){
+			chosenColor = unusedColors [UnityEngine.Random.Range (0, unusedColors.Count)];
+			unusedColors.Remove (chosenColor);
+			usedColors.Add (chosenColor);
+		}else{
+			if(characterColors != null && characterColors.Length > 0){
+				chosenColor = characterColors [UnityEngine.Random.Range (0, characterColors.Length)];
+			}
+		}
+		return chosenColor;
+	}
+
+	internal void ReturnCharacterColorToPool(Color color){
+		if(usedColors.Remove(color)){
+			unusedColors.Add (color);
+		}
+	}
+
+    internal CharacterSetup GetBaseCharacterSetup(string className) {
+        for (int i = 0; i < this.baseCharacters.Length; i++) {
+            CharacterSetup currBase = this.baseCharacters[i];
+            if (currBase.characterClassName.ToLower() == className.ToLower()) {
+                return currBase;
             }
         }
+        return null;
+    }
 
-        /*
-         * Create a new character given a base character setup.
-         * */
-        internal ECS.Character CreateNewCharacter(CharacterSetup baseCharacter) {
-            return new ECS.Character(baseCharacter);
+    #region Chance Combat
+    public void GetCombatChanceOfTwoLists(List<Character> allies, List<Character> enemies, out float allyChance, out float enemyChance) {
+        int sideAWeight = 0;
+        int sideBWeight = 0;
+        GetCombatWeightsOfTwoLists(allies, enemies, out sideAWeight, out sideBWeight);
+        int totalWeight = sideAWeight + sideBWeight;
+        
+        allyChance = (sideAWeight / (float) totalWeight) * 100f;
+        enemyChance = (sideBWeight / (float) totalWeight) * 100f;
+
+        //Debug.Log("COMBAT " + allies[0].name + ": " + allyChance + "! " + enemies[0].name + ": " + enemyChance);
+    }
+    public void GetCombatWeightsOfTwoLists(List<Character> allies, List<Character> enemies, out int allyWeight, out int enemyWeight) {
+        if(allies == null) {
+            allyWeight = 0;
+            enemyWeight = 1;
+            return;
         }
+        if (enemies == null) {
+            allyWeight = 1;
+            enemyWeight = 0;
+            return;
+        }
+        //int pairCombatCount = allies.Count;
+        //if (enemies.Count > allies.Count) {
+        //    pairCombatCount = enemies.Count;
+        //}
+        //for (int i = 0; i < allies.Count; i++) {
+        //    allies[i].pairCombatStats = new PairCombatStats[pairCombatCount];
+        //}
+        //for (int i = 0; i < enemies.Count; i++) {
+        //    enemies[i].pairCombatStats = new PairCombatStats[pairCombatCount];
+        //}
 
-		private void ConstructCharacterColors(){
-			unusedColors = characterColors.ToList (); 
-		}
+        allyWeight = GetTotalWinWeight(allies, enemies);
+        enemyWeight = GetTotalWinWeight(enemies, allies);
+    }
+    private int GetTotalWinWeight(List<Character> characters1, List<Character> characters2) {
+        int totalWeight = 0;
+        for (int i = 0; i < characters1.Count; i++) {
+            Character character = characters1[i];
 
-		internal Color UseRandomCharacterColor(){
-			Color chosenColor = Color.black;
-			if(unusedColors.Count > 0){
-				chosenColor = unusedColors [UnityEngine.Random.Range (0, unusedColors.Count)];
-				unusedColors.Remove (chosenColor);
-				usedColors.Add (chosenColor);
-			}else{
-				if(characterColors != null && characterColors.Length > 0){
-					chosenColor = characterColors [UnityEngine.Random.Range (0, characterColors.Length)];
-				}
-			}
-			return chosenColor;
-		}
+            float speedFormula = 1f + (character.speed / 200f);
+            float totalPower = ((character.attackPower / 10f) * speedFormula) + ((character.maxHP / 30f) * speedFormula);
 
-		internal void ReturnCharacterColorToPool(Color color){
-			if(usedColors.Remove(color)){
-				unusedColors.Add (color);
-			}
-		}
-
-//		private void ConstructAttributeSkills(){
-//			string path = "Assets/CombatPrototype/Data/AttributeSkills/";
-//			string[] attributeSkillsJson = System.IO.Directory.GetFiles(path, "*.json");
-//			attributeSkills = new AttributeSkill[attributeSkillsJson.Length];
-//			for (int i = 0; i < attributeSkillsJson.Length; i++) {
-//				string file = attributeSkillsJson[i];
-//				string dataAsJson = System.IO.File.ReadAllText(file);
-//				AttributeSkill attSkill = JsonUtility.FromJson<AttributeSkill>(dataAsJson);
-//				attSkill.ConstructAttributeSkillsList ();
-//				attributeSkills[i] = attSkill;
-//			}
-//		}
-		internal CharacterSetup GetBaseCharacterSetupBasedOnClass(string className){
-			for (int i = 0; i < this.baseCharacters.Length; i++) {
-                CharacterSetup currBase = this.baseCharacters[i];
-                if (currBase.characterClassName.ToLower() == className.ToLower()){
-					return currBase;
-				}
-			}
-			return null;
-		}
-
-        internal CharacterSetup GetBaseCharacterSetup(string className, RACE race) {
-            for (int i = 0; i < this.baseCharacters.Length; i++) {
-                CharacterSetup currBase = this.baseCharacters[i];
-                if (currBase.characterClassName.ToLower() == className.ToLower() && currBase.raceSetting.race == race) {
-                    return currBase;
+            if (characters2.Count == 1) {
+                if (character.race == RACE.DRAGON) {
+                    totalPower *= 1.25f;
                 }
-            }
-            return null;
-        }
+                if (character.isFactionLeader) {
+                    totalPower *= 1.25f;
+                }
 
-		internal CharacterSetup GetBaseCharacterSetup(string fileName) {
-			for (int i = 0; i < this.baseCharacters.Length; i++) {
-				CharacterSetup currBase = this.baseCharacters[i];
-				if (currBase.fileName == fileName) {
-					return currBase;
-				}
-			}
-			return null;
-		}
-
-		internal void NewCombat(){
-			this.combat = new Combat (null, null, null);
-		}
-		public void StartCombat(){
-			this.combat.CombatSimulation ();
-		}
-		public void CombatResults(Combat combat){
-			for (int i = 0; i < combat.deadCharacters.Count; i++) {
-                Character currDeadCharacter = combat.deadCharacters[i];
-                currDeadCharacter.Death (combat.GetOpposingCharacters(currDeadCharacter));
-			}
-
-			//Prisoner or Leave to Die
-			List<ECS.Character> winningCharacters = null;
-			int leaveToDieWeight = 100;
-			if(combat.winningSide == SIDES.A){
-				if(combat.charactersSideA[0].faction == null){
-					leaveToDieWeight += 200;
-				}
-				winningCharacters = combat.charactersSideA;
-			}else{
-				if(combat.charactersSideB[0].faction == null){
-					leaveToDieWeight += 200;
-				}
-				winningCharacters = combat.charactersSideB;
-			}
-
-			if(combat.faintedCharacters.Count > 0){
-				WeightedDictionary<string> prisonWeights = new WeightedDictionary<string>();
-				if(!winningCharacters[0].doesNotTakePrisoners){
-					int prisonerWeight = 50;
-					prisonWeights.AddElement ("prison", prisonerWeight);
-				}
-				prisonWeights.AddElement ("leave", leaveToDieWeight);
-				string pickedWeight = prisonWeights.PickRandomElementGivenWeights ();
-
-				if(pickedWeight == "prison"){
-					for (int i = 0; i < combat.faintedCharacters.Count; i++) {
-                        ECS.Character currFaintedChar = combat.faintedCharacters[i];
-                        if (currFaintedChar.currentSide != combat.winningSide){
-							if(!currFaintedChar.cannotBeTakenAsPrisoner){
-								//currFaintedChar.Faint ();
-								//if the currFaintedChar has a party, and it is not yet disbanded
-								if (currFaintedChar.party != null && !currFaintedChar.party.isDisbanded) {
-									//Check if he/she is the party leader
-									if (currFaintedChar.party.IsCharacterLeaderOfParty(currFaintedChar)) {
-										//if he/she is, disband the party
-										currFaintedChar.party.DisbandParty();
-									}
-								}
-								winningCharacters[0].AddPrisoner(currFaintedChar);
-							}else{
-								if(combat.location != null && combat.location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
-									BaseLandmark landmark = combat.location as BaseLandmark;
-									//landmark.AddHistory (currFaintedChar.name + " is left to die.");
-								}
-								currFaintedChar.Death(combat.GetOpposingCharacters(currFaintedChar));
-							}
-						}else{
-                            currFaintedChar.SetHP(1);
-						}
-					}
-				}else{
-					for (int i = 0; i < combat.faintedCharacters.Count; i++) {
-                        ECS.Character currFaintedChar = combat.faintedCharacters[i];
-                        if (currFaintedChar.currentSide != combat.winningSide){
-							if(combat.location != null && combat.location.locIdentifier == LOCATION_IDENTIFIER.LANDMARK){
-								BaseLandmark landmark = combat.location as BaseLandmark;
-								//landmark.AddHistory (currFaintedChar.name + " is left to die.");
-							}
-                            currFaintedChar.Death(combat.GetOpposingCharacters(currFaintedChar));
-						}else{
-                            currFaintedChar.SetHP(1);
-						}
-					}
-				}
-			}
-
-			//Check prisoners of defeated party or character
-			if(combat.losingSide == SIDES.A && combat.sideAPrisoners != null){
-				CheckDefeatedPartyPrisoners (winningCharacters, combat.sideAPrisoners);
-			}else if(combat.losingSide == SIDES.B && combat.sideBPrisoners != null){
-				CheckDefeatedPartyPrisoners (winningCharacters, combat.sideBPrisoners);
-			}
-
-			for (int i = 0; i < combat.fledCharacters.Count; i++) {
-                ECS.Character currFleeCharacter = combat.fledCharacters[i];
-                //if the current character is a follower, check if his/her party leader also fled
-                if (currFleeCharacter.isFollower) {
-                    //if they did, keep the current character in the party
-                    if (!combat.fledCharacters.Contains(currFleeCharacter.party.partyLeader)) {
-                        //if they did not, remove the current character from the party and add him/her as a civilian in the nearest settlement of his/her faction
-                        currFleeCharacter.party.RemovePartyMember(currFleeCharacter, true);
-                        Settlement nearestSettlement = currFleeCharacter.GetNearestSettlementFromFaction();
-                        nearestSettlement.AdjustCivilians(currFleeCharacter.raceSetting.race, 1);
+                if (character.race == RACE.HUMANS) {
+                    // if(characters2[0].role.roleType == CHARACTER_ROLE.BEAST) {
+                    //     totalPower *= 1.25f;
+                    // }
+                } else if (character.race == RACE.ELVES) {
+                    if (characters2[0].characterClass.attackType == ATTACK_TYPE.MAGICAL) {
+                        totalPower *= 1.25f;
+                    }
+                } else if (character.race == RACE.GOBLIN) {
+                    if (characters2[0].characterClass.attackType == ATTACK_TYPE.PHYSICAL) {
+                        totalPower *= 0.85f;
+                    }
+                } else if (character.race == RACE.FAERY) {
+                    if (characters2[0].characterClass.rangeType == RANGE_TYPE.MELEE) {
+                        totalPower *= 1.25f;
+                    }
+                } else if (character.race == RACE.SKELETON) {
+                    if (characters2[0].characterClass.rangeType == RANGE_TYPE.RANGED && characters2[0].characterClass.attackType == ATTACK_TYPE.PHYSICAL) {
+                        totalPower *= 0.75f;
+                    }
+                } else if (character.race == RACE.SPIDER) {
+                    if (characters2[0].race == RACE.FAERY) {
+                        totalPower *= 1.25f;
+                    }
+                } else if (character.race == RACE.WOLF) {
+                    if (characters2[0].race == RACE.GOBLIN) {
+                        totalPower *= 1.25f;
+                    }
+                } else if (character.race == RACE.GOLEM) {
+                    if (characters2[0].race == RACE.ELVES) {
+                        totalPower *= 1.25f;
                     }
                 }
 
-				//if(currFleeCharacter.currentSide == combat.losingSide){
-    //                //the current character is part of the losing side
-				//	if(currFleeCharacter.party != null){
-				//		combat.fledCharacters [i].party.SetIsDefeated (false);
-				//		combat.fledCharacters [i].party.GoBackToQuestGiver(TASK_STATUS.CANCEL);
-				//		break;
-				//	}else{
-				//		combat.fledCharacters [i].SetIsDefeated (false);
-				//		combat.fledCharacters [i].GoToNearestNonHostileSettlement (() => combat.fledCharacters [i].DetermineAction());
-				//	}
-				//}
-			}
-		}
-
-		private void CheckDefeatedPartyPrisoners(List<ECS.Character> winningCharacters, List<ECS.Character> prisoners){
-			WeightedDictionary<string> weights = new WeightedDictionary<string> ();
-			string pickedWeight = string.Empty;
-			int takePrisonerWeight = 50;
-			int releaseWeight = 100;
-			int killWeight = 10;
-			if(winningCharacters[0].party != null){
-				if(winningCharacters[0].party.partyLeader.HasTrait(TRAIT.RUTHLESS)){
-					killWeight += 500;
-				}
-				if(winningCharacters[0].party.partyLeader.HasTrait(TRAIT.BENEVOLENT)){
-					releaseWeight += 500;
-				}
-				if(winningCharacters[0].party.partyLeader.HasTrait(TRAIT.PACIFIST)){
-					killWeight -= 100;
-					if(killWeight < 0){
-						killWeight = 0;
-					}
-				}
-			}else{
-				if(winningCharacters[0].HasTrait(TRAIT.RUTHLESS)){
-					killWeight += 500;
-				}
-				if(winningCharacters[0].HasTrait(TRAIT.BENEVOLENT)){
-					releaseWeight += 500;
-				}
-				if(winningCharacters[0].HasTrait(TRAIT.PACIFIST)){
-					killWeight -= 100;
-					if(killWeight < 0){
-						killWeight = 0;
-					}
-				}
-			}
-
-			weights.AddElement ("prisoner", takePrisonerWeight);
-			weights.AddElement ("release", releaseWeight);
-
-			while(prisoners.Count > 0) {
-				if(prisoners[0].faction != null){
-					if(winningCharacters[0].faction != null){
-						if (prisoners [0].faction.id == winningCharacters [0].faction.id) {
-							prisoners [0].ReleasePrisoner ();
-							continue;
-						} else {
-							FactionRelationship fr = prisoners [0].faction.GetRelationshipWith (winningCharacters [0].faction);
-							if(fr != null && fr.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE){
-								killWeight += 200;
-							}
-						}
-					}else{
-						killWeight += 200;
-					}
-				}else{
-					killWeight += 200;
-				}
-
-				if (winningCharacters [0].party != null){
-					if (winningCharacters [0].party.partyLeader.raceSetting.race != prisoners [0].raceSetting.race && winningCharacters [0].party.partyLeader.HasTrait (TRAIT.RACIST)) {
-						killWeight += 100;
-					}
-				}else{
-					if (winningCharacters [0].raceSetting.race != prisoners [0].raceSetting.race && winningCharacters [0].HasTrait (TRAIT.RACIST)) {
-						killWeight += 100;
-					}
-				}
-
-				weights.ChangeElement ("kill", killWeight);
-				pickedWeight = weights.PickRandomElementGivenWeights ();
-				if(pickedWeight == "prisoner"){
-					if (winningCharacters [0].party != null) {
-						prisoners [0].TransferPrisoner (winningCharacters [0].party);
-					}else{
-						prisoners [0].TransferPrisoner (winningCharacters [0]);
-					}
-				}else if(pickedWeight == "kill"){
-                    if (winningCharacters[0].party != null) {
-                        prisoners[0].Death(winningCharacters[0].party);
-                    } else {
-                        prisoners[0].Death(winningCharacters[0]);
+                if (character.characterClass.rangeType == RANGE_TYPE.MELEE && character.characterClass.attackType == ATTACK_TYPE.PHYSICAL) {
+                    if (characters2[0].characterClass.rangeType == RANGE_TYPE.RANGED && characters2[0].characterClass.attackType == ATTACK_TYPE.PHYSICAL) {
+                        totalPower *= 1.25f;
                     }
-				}else if(pickedWeight == "release"){
-					prisoners [0].ReleasePrisoner ();
-				}
-			}
-		}
+                } else if (character.characterClass.rangeType == RANGE_TYPE.RANGED && character.characterClass.attackType == ATTACK_TYPE.PHYSICAL) {
+                    if (characters2[0].characterClass.rangeType == RANGE_TYPE.RANGED && characters2[0].characterClass.attackType == ATTACK_TYPE.MAGICAL) {
+                        totalPower *= 1.25f;
+                    }
+                } else if (character.characterClass.rangeType == RANGE_TYPE.RANGED && character.characterClass.attackType == ATTACK_TYPE.MAGICAL) {
+                    if (characters2[0].characterClass.rangeType == RANGE_TYPE.MELEE && characters2[0].characterClass.attackType == ATTACK_TYPE.PHYSICAL) {
+                        totalPower *= 1.25f;
+                    }
+                }
+            }
 
-        #region Roads Combat
-        private void CheckForCombat(ICombatInitializer character1, ICombatInitializer character2) {
-            if (character1.IsHostileWith(character2)) { //if the 2 characters are hostile with each other
-                if (character1.CanInitiateCombat() || character2.CanInitiateCombat()) { //can either of the characters initiate combat? (Have combat priorities)
-                    //if at least 1 character can initiate combat and the 2 characters are hostile with each other, create a combat room
-                    //if either of the characters already have a combat room, have the other join their room instead
-                    if (HasCombatRoom(character1) && HasCombatRoom(character2)) {
-                        CombatRoom char1Room = GetCombatRoom(character1);
-                        CombatRoom char2Room = GetCombatRoom(character2);
-                        if (char1Room != char2Room) {
-                            throw new System.Exception(character1.mainCharacter.name + " and " + character2.mainCharacter.name + " already have different combat rooms!");
-                        } else {
-                            Debug.Log(character1.mainCharacter.name + " is already in the same combat room as " + character2.mainCharacter.name);
-                            return;
+            totalWeight += (int) totalPower;
+        }
+        return totalWeight;
+    }
+    //private void ApplyWinWeightOfCharacter(Character icharacter, List<Character> allies, List<Character> enemies) {
+    //    for (int j = 0; j < icharacter.traits.Count; j++) {
+    //        for (int k = 0; k < icharacter.traits[j].effects.Count; k++) {
+    //            TraitEffect traitEffect = icharacter.traits[j].effects[k];
+    //            ApplyTraitEffectPrePairing(icharacter, allies, enemies, traitEffect);
+    //            ApplyTraitEffectPairing(icharacter, enemies, traitEffect);
+    //        }
+    //    }
+    //}
+    //private void ApplyBaseStats(Character character) {
+    //    character.combatBaseAttack = character.attackPower;
+    //    character.combatBaseSpeed = character.speed;
+    //    character.combatBaseHP = character.maxHP;
+    //}
+
+    //private void ApplyTraitEffectPairing(Character icharacter, List<Character> enemies, TraitEffect traitEffect) {
+        //if there is no more enemy but there is still a pair slot, the values are zero
+        //for (int i = 0; i < icharacter.pairCombatStats.Length; i++) {
+        //    if (i < enemies.Count) {
+        //        Character enemy = enemies[i];
+        //        if (traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF) {
+        //            if (traitEffect.hasRequirement) {
+        //                if (CharacterFitsTraitCriteria(enemy, traitEffect)) {
+        //                    if (traitEffect.isPercentage) {
+        //                        if (traitEffect.stat == STAT.ATTACK) {
+        //                            icharacter.pairCombatStats[i].attackMultiplier += (int) traitEffect.amount;
+        //                        } else if (traitEffect.stat == STAT.SPEED) {
+        //                            icharacter.pairCombatStats[i].speedMultiplier += (int) traitEffect.amount;
+        //                        } else if (traitEffect.stat == STAT.HP) {
+        //                            icharacter.pairCombatStats[i].hpMultiplier += (int) traitEffect.amount;
+        //                        } else if (traitEffect.stat == STAT.POWER) {
+        //                            icharacter.pairCombatStats[i].powerMultiplier += (int) traitEffect.amount;
+        //                        }
+        //                    } else {
+        //                        if (traitEffect.stat == STAT.ATTACK) {
+        //                            icharacter.pairCombatStats[i].attackFlat += (int) traitEffect.amount;
+        //                        } else if (traitEffect.stat == STAT.SPEED) {
+        //                            icharacter.pairCombatStats[i].speedFlat += (int) traitEffect.amount;
+        //                        } else if (traitEffect.stat == STAT.HP) {
+        //                            icharacter.pairCombatStats[i].hpFlat += (int) traitEffect.amount;
+        //                        } else if (traitEffect.stat == STAT.POWER) {
+        //                            icharacter.pairCombatStats[i].powerFlat += (int) traitEffect.amount;
+        //                        }
+        //                    }
+        //                }
+        //            } else if (traitEffect.target == TRAIT_REQUIREMENT_TARGET.ENEMY) {
+        //                if (traitEffect.hasRequirement) {
+        //                    if (CharacterFitsTraitCriteria(enemy, traitEffect)) {
+        //                        if (traitEffect.isPercentage) {
+        //                            if (traitEffect.stat == STAT.ATTACK) {
+        //                                enemy.pairCombatStats[i].attackMultiplier += (int) traitEffect.amount;
+        //                            } else if (traitEffect.stat == STAT.SPEED) {
+        //                                enemy.pairCombatStats[i].speedMultiplier += (int) traitEffect.amount;
+        //                            } else if (traitEffect.stat == STAT.HP) {
+        //                                enemy.pairCombatStats[i].hpMultiplier += (int) traitEffect.amount;
+        //                            } else if (traitEffect.stat == STAT.POWER) {
+        //                                enemy.pairCombatStats[i].powerMultiplier += (int) traitEffect.amount;
+        //                            }
+        //                        } else {
+        //                            if (traitEffect.stat == STAT.ATTACK) {
+        //                                enemy.pairCombatStats[i].attackFlat += (int) traitEffect.amount;
+        //                            } else if (traitEffect.stat == STAT.SPEED) {
+        //                                enemy.pairCombatStats[i].speedFlat += (int) traitEffect.amount;
+        //                            } else if (traitEffect.stat == STAT.HP) {
+        //                                enemy.pairCombatStats[i].hpFlat += (int) traitEffect.amount;
+        //                            } else if (traitEffect.stat == STAT.POWER) {
+        //                                enemy.pairCombatStats[i].powerFlat += (int) traitEffect.amount;
+        //                            }
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
+    //}
+    //private void ModifyStat(Character icharacter, TraitEffect traitEffect) {
+    //    if (traitEffect.isPercentage) {
+    //        if (traitEffect.stat == STAT.ATTACK) {
+    //            icharacter.combatAttackMultiplier += (int) traitEffect.amount;
+    //        } else if (traitEffect.stat == STAT.SPEED) {
+    //            icharacter.combatSpeedMultiplier += (int) traitEffect.amount;
+    //        } else if (traitEffect.stat == STAT.HP) {
+    //            icharacter.combatHPMultiplier += (int) traitEffect.amount;
+    //        } else if (traitEffect.stat == STAT.POWER) {
+    //            icharacter.combatPowerMultiplier += (int) traitEffect.amount;
+    //        }
+    //    } else {
+    //        if (traitEffect.stat == STAT.ATTACK) {
+    //            icharacter.combatAttackFlat += (int) traitEffect.amount;
+    //        } else if (traitEffect.stat == STAT.SPEED) {
+    //            icharacter.combatSpeedFlat += (int) traitEffect.amount;
+    //        } else if (traitEffect.stat == STAT.HP) {
+    //            icharacter.combatHPFlat += (int) traitEffect.amount;
+    //        } else if (traitEffect.stat == STAT.POWER) {
+    //            icharacter.combatPowerFlat += (int) traitEffect.amount;
+    //        }
+    //    }
+    //}
+    private List<Character> GetCharactersToBeChecked(TRAIT_REQUIREMENT_CHECKER checker, Character sourceCharacter,
+       List<Character> allies, List<Character> enemies, List<Character> targets = null) {
+
+        List<Character> checkerCharacters = new List<Character>();
+        if (checker == TRAIT_REQUIREMENT_CHECKER.SELF) {
+            checkerCharacters.Add(sourceCharacter);
+        } else if (checker == TRAIT_REQUIREMENT_CHECKER.ENEMY) {
+            checkerCharacters.AddRange(targets);
+        } else if (checker == TRAIT_REQUIREMENT_CHECKER.OTHER_PARTY_MEMBERS) {
+            checkerCharacters = allies.Where(x => x != sourceCharacter).ToList();
+        } else if (checker == TRAIT_REQUIREMENT_CHECKER.ALL_PARTY_MEMBERS) {
+            checkerCharacters.AddRange(allies);
+        } else if (checker == TRAIT_REQUIREMENT_CHECKER.ALL_IN_COMBAT) {
+            checkerCharacters.AddRange(allies);
+            checkerCharacters.AddRange(enemies);
+        } else if (checker == TRAIT_REQUIREMENT_CHECKER.ALL_ENEMIES) {
+            checkerCharacters.AddRange(enemies);
+        }
+        return checkerCharacters;
+    }
+    private bool CharacterFitsTraitCriteria(Character icharacter, TraitEffect traitEffect) {
+        if (traitEffect.requirementType == TRAIT_REQUIREMENT.TRAIT) {
+            if (traitEffect.requirementSeparator == TRAIT_REQUIREMENT_SEPARATOR.AND) {
+                //if there is one mismatch, return false already because the separator is AND, otherwise, return true
+                if (traitEffect.isNot) {
+                    for (int i = 0; i < traitEffect.requirements.Count; i++) {
+                        if (icharacter.traitContainer.HasTrait(traitEffect.requirements[i])) {
+                            return false;
                         }
                     }
-                    if (HasCombatRoom(character1)) {
-                        //make character 2 join character 1 combat room
-                        CombatRoom char1CombatRoom = GetCombatRoom(character1);
-                        char1CombatRoom.AddCombatant(character2);
-                    } else if (HasCombatRoom(character2)) {
-                        //make character 1 join character 2 combat room
-                        CombatRoom char2CombatRoom = GetCombatRoom(character2);
-                        char2CombatRoom.AddCombatant(character1);
-                    } else {
-                        //none of the 2 have combat rooms, create a new one
-                        CreateNewCombatRoomFor(character1, character2);
+                    return true;
+                } else {
+                    for (int i = 0; i < traitEffect.requirements.Count; i++) {
+                        if (!icharacter.traitContainer.HasTrait(traitEffect.requirements[i])) {
+                            return false;
+                        }
                     }
+                    return true;
+                }
+            } else if (traitEffect.requirementSeparator == TRAIT_REQUIREMENT_SEPARATOR.OR) {
+                //if there is one match, return true already because the separator is OR, otherwise, return false   
+                if (traitEffect.isNot) {
+                    for (int i = 0; i < traitEffect.requirements.Count; i++) {
+                        if (!icharacter.traitContainer.HasTrait(traitEffect.requirements[i])) {
+                            return true;
+                        }
+                    }
+                    return false;
+                } else {
+                    for (int i = 0; i < traitEffect.requirements.Count; i++) {
+                        if (icharacter.traitContainer.HasTrait(traitEffect.requirements[i])) {
+                            return true;
+                        }
+                    }
+                    return false;
                 }
             }
-            
-
-        }
-        private CombatRoom CreateNewCombatRoomFor(ICombatInitializer attacker, ICombatInitializer defender) {
-            CombatRoom newCombatRoom = new CombatRoom(attacker, defender, defender.mainCharacter.specificLocation);
-            Debug.Log("Created a new combat room for " + attacker.mainCharacter.name + " and " + defender.mainCharacter.name);
-            return newCombatRoom;
-        }
-        public bool HasCombatRoom(ICombatInitializer combatant) {
-            return _combatRooms.ContainsKey(combatant);
-        }
-        public CombatRoom GetCombatRoom(ICombatInitializer other) {
-            if (_combatRooms.ContainsKey(other)) {
-                return _combatRooms[other];
-            }
-            return null;
-        }
-        public void SetCombatantCombatRoom(ICombatInitializer combatant, CombatRoom combatRoom) {
-            if (!_combatRooms.ContainsKey(combatant)) {
-                _combatRooms.Add(combatant, combatRoom);
-            } else {
-                _combatRooms[combatant] = combatRoom;
-            }
-        }
-        public void RemoveCombatant(ICombatInitializer combatant) {
-            _combatRooms.Remove(combatant);
-        }
-        public List<CombatRoom> GetAllRoadCombats() {
-            List<CombatRoom> combatRooms = new List<CombatRoom>();
-            foreach (KeyValuePair<ICombatInitializer, CombatRoom> kvp in _combatRooms) {
-                if (!combatRooms.Contains(kvp.Value)) {
-                    combatRooms.Add(kvp.Value);
+        } else if (traitEffect.requirementType == TRAIT_REQUIREMENT.RACE) {
+            if (traitEffect.requirementSeparator == TRAIT_REQUIREMENT_SEPARATOR.AND) {
+                //if there is one mismatch, return false already because the separator is AND, otherwise, return true
+                if (traitEffect.isNot) {
+                    for (int i = 0; i < traitEffect.requirements.Count; i++) {
+                        if (traitEffect.requirements[i].ToLower() == icharacter.race.ToString().ToLower()) {
+                            return false;
+                        }
+                    }
+                    return true;
+                } else {
+                    for (int i = 0; i < traitEffect.requirements.Count; i++) {
+                        if (traitEffect.requirements[i].ToLower() != icharacter.race.ToString().ToLower()) {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+            } else if (traitEffect.requirementSeparator == TRAIT_REQUIREMENT_SEPARATOR.OR) {
+                //if there is one match, return true already because the separator is OR, otherwise, return false   
+                if (traitEffect.isNot) {
+                    for (int i = 0; i < traitEffect.requirements.Count; i++) {
+                        if (traitEffect.requirements[i].ToLower() != icharacter.race.ToString().ToLower()) {
+                            return true;
+                        }
+                    }
+                    return false;
+                } else {
+                    for (int i = 0; i < traitEffect.requirements.Count; i++) {
+                        if (traitEffect.requirements[i].ToLower() == icharacter.race.ToString().ToLower()) {
+                            return true;
+                        }
+                    }
+                    return false;
                 }
             }
-            return combatRooms;
         }
-        #endregion
+        return false;
     }
+    public int GetAdjacentIndexGrid(int index) {
+        if(index == 0) {
+            return 1;
+        }else if (index == 1) {
+            return 0;
+        }else if (index == 2) {
+            return 3;
+        }else if (index == 3) {
+            return 2;
+        }
+        return index;
+    }
+    #endregion
+
+    #region Roads Combat
+    public SIDES GetOppositeSide(SIDES side) {
+        if(side == SIDES.A) {
+            return SIDES.B;
+        }
+        return SIDES.A;
+    }
+    #endregion
 }

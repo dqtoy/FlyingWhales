@@ -3,38 +3,40 @@ namespace Pathfinding {
 	using UnityEngine;
 
 	public class NavmeshTile : INavmeshHolder {
-		/** Tile triangles */
+		/// <summary>Tile triangles</summary>
 		public int[] tris;
 
-		/** Tile vertices */
+		/// <summary>Tile vertices</summary>
 		public Int3[] verts;
 
-		/** Tile vertices in graph space */
+		/// <summary>Tile vertices in graph space</summary>
 		public Int3[] vertsInGraphSpace;
 
-		/** Tile X Coordinate */
+		/// <summary>Tile X Coordinate</summary>
 		public int x;
 
-		/** Tile Z Coordinate */
+		/// <summary>Tile Z Coordinate</summary>
 		public int z;
 
-		/** Width, in tile coordinates.
-		 * \warning Widths other than 1 are not supported. This is mainly here for possible future features.
-		 */
+		/// <summary>
+		/// Width, in tile coordinates.
+		/// Warning: Widths other than 1 are not supported. This is mainly here for possible future features.
+		/// </summary>
 		public int w;
 
-		/** Depth, in tile coordinates.
-		 * \warning Depths other than 1 are not supported. This is mainly here for possible future features.
-		 */
+		/// <summary>
+		/// Depth, in tile coordinates.
+		/// Warning: Depths other than 1 are not supported. This is mainly here for possible future features.
+		/// </summary>
 		public int d;
 
-		/** All nodes in the tile */
+		/// <summary>All nodes in the tile</summary>
 		public TriangleMeshNode[] nodes;
 
-		/** Bounding Box Tree for node lookups */
+		/// <summary>Bounding Box Tree for node lookups</summary>
 		public BBTree bbTree;
 
-		/** Temporary flag used for batching */
+		/// <summary>Temporary flag used for batching</summary>
 		public bool flag;
 
 		public NavmeshBase graph;
@@ -50,7 +52,7 @@ namespace Pathfinding {
 			return index & NavmeshBase.VertexIndexMask;
 		}
 
-		/** Get a specific vertex in the tile */
+		/// <summary>Get a specific vertex in the tile</summary>
 		public Int3 GetVertex (int index) {
 			int idx = index & NavmeshBase.VertexIndexMask;
 
@@ -61,7 +63,7 @@ namespace Pathfinding {
 			return vertsInGraphSpace[index & NavmeshBase.VertexIndexMask];
 		}
 
-		/** Transforms coordinates from graph space to world space */
+		/// <summary>Transforms coordinates from graph space to world space</summary>
 		public GraphTransform transform { get { return graph.transform; } }
 
 		#endregion
@@ -69,41 +71,6 @@ namespace Pathfinding {
 		public void GetNodes (System.Action<GraphNode> action) {
 			if (nodes == null) return;
 			for (int i = 0; i < nodes.Length; i++) action(nodes[i]);
-		}
-
-		internal void Destroy () {
-			if (nodes.Length > 0) {
-				// Get this tile's index from the first node
-				var tileIndex = NavmeshBase.GetTileIndex(nodes[0].GetVertexIndex(0));
-				var graphIndex = nodes[0].GraphIndex;
-
-				// Destroy the nodes
-				// To avoid removing connections one by one, which is very inefficient
-				// we set all connections to other nodes in the same tile to null since
-				// we already know that their connections will be destroyed as well.
-				// This reduces the time it takes to destroy the nodes by approximately 50%
-				for (int i = 0; i < nodes.Length; i++) {
-					var node = nodes[i];
-					if (node.connections != null) {
-						for (int j = 0; j < node.connections.Length; j++) {
-							var otherMesh = node.connections[j].node as TriangleMeshNode;
-							// Check if the nodes are in the same graph and the same tile
-							if (otherMesh != null && otherMesh.GraphIndex == graphIndex && NavmeshBase.GetTileIndex(otherMesh.GetVertexIndex(0)) == tileIndex) {
-								node.connections[j].node = null;
-							}
-						}
-					}
-				}
-
-				// This will also remove old connections
-				for (int i = 0; i < nodes.Length; i++) {
-					nodes[i].Destroy();
-				}
-			}
-
-			nodes = null;
-			graph = null;
-			ObjectPool<BBTree>.Release(ref bbTree);
 		}
 	}
 }

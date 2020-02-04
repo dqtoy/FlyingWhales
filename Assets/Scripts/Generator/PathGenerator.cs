@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using Inner_Maps;
+using JetBrains.Annotations;
 
 public class PathGenerator : MonoBehaviour {
 
@@ -12,40 +14,39 @@ public class PathGenerator : MonoBehaviour {
 
     #region For Testing
     [Header("For Testing")]
-    [SerializeField]
-    private HexTile startTile;
+    [SerializeField] private HexTile startTile;
     [SerializeField] private HexTile targetTile;
+    [SerializeField] private Vector2Int startLocGrid;
+    [SerializeField] private Vector2Int destLocGrid;
     public PATHFINDING_MODE modeToUse;
-
-    [ContextMenu("Get Path")]
-    public void GetPathForTesting() {
-        List<HexTile> path = GetPath(startTile, targetTile, modeToUse);
-        if (path != null) {
-            Debug.Log("========== Path from " + startTile.name + " to " + targetTile.name + "============");
-            for (int i = 0; i < path.Count; i++) {
-                Debug.Log(path[i].name, path[i]);
-            }
-        } else {
-            Debug.LogError("Cannot get path from " + startTile.name + " to " + targetTile.name + " using " + modeToUse.ToString());
-        }
-    }
-
+    public GRID_PATHFINDING_MODE gridModeToUse;
+    
     [ContextMenu("Get Distance")]
     public void GetDistance() {
         Debug.Log(Vector2.Distance(startTile.transform.position, targetTile.transform.position));
     }
-
     [ContextMenu("Show all road tiles")]
     public void ShowAllRoadTiles() {
         foreach (HexTile h in roadTiles) {
-            h.GetComponent<SpriteRenderer>().color = Color.red;
+            h.spriteRenderer.color = Color.red;
         }
     }
-
     [ContextMenu("Hide all road tiles")]
     public void HideAllRoadTiles() {
         foreach (HexTile h in roadTiles) {
-            h.GetComponent<SpriteRenderer>().color = Color.white;
+            h.spriteRenderer.color = Color.white;
+        }
+    }
+    [ContextMenu("Get Loc GridPath")]
+    public void GetLocGridPathForTesting() {
+        List<LocationGridTile> path = GetPath(InnerMapManager.Instance.currentlyShowingMap.map[startLocGrid.x, startLocGrid.y], InnerMapManager.Instance.currentlyShowingMap.map[destLocGrid.x, destLocGrid.y], gridModeToUse);
+        if (path != null) {
+            Debug.Log("========== Path from " + startTile.name + " to " + targetTile.name + "============");
+            for (int i = 0; i < path.Count; i++) {
+                Debug.Log(path[i].ToString());
+            }
+        } else {
+            Debug.LogError("Cannot get path from " + startTile.name + " to " + targetTile.name + " using " + modeToUse.ToString());
         }
     }
     #endregion
@@ -53,283 +54,82 @@ public class PathGenerator : MonoBehaviour {
     void Awake(){
 		Instance = this;
 	}
-
-	#region Road Generation
-//	public void GenerateConnections(List<HexTile> habitableTiles){
-//		List<HexTile> pendingTiles = new List<HexTile>();
-//		pendingTiles.Add(habitableTiles[0]);
-//		for (int i = 0; i < pendingTiles.Count; i++) {
-//			HexTile currentHexTile = pendingTiles [i];
-
-//			List<HexTile> habitableTilesOrderedByDistance = this.GetAllHabitableTilesByDistance(currentHexTile);
-//			int randomNumberOfRoads = this.GenerateNumberOfRoads();
-//			int createdRoads = habitableTiles[i].connectedTiles.Count;
-
-//			for (int j = 0; createdRoads < randomNumberOfRoads; j++) {
-//				HexTile tileToConnectTo = habitableTilesOrderedByDistance[j];
-
-//				if ((j + 1) == habitableTilesOrderedByDistance.Count) {
-//					//if j has reached habitableTilesOrderedByDistance's upper bound, connect to nearest city
-//					if (AreTheseTilesConnected(currentHexTile, habitableTilesOrderedByDistance[0], PATHFINDING_MODE.NORMAL)) {
-//						createdRoads++;
-//						if (!currentHexTile.connectedTiles.ContainsKey(habitableTilesOrderedByDistance[0])) {
-//							ConnectCities (currentHexTile, habitableTilesOrderedByDistance[0]);
-//							if (!pendingTiles.Contains(habitableTilesOrderedByDistance[0])) {
-//								pendingTiles.Add(habitableTilesOrderedByDistance[0]);
-//							}
-//						}
-//					}
-//					break;
-//				} else {
-//					if (tileToConnectTo.connectedTiles.Count < 3 && !currentHexTile.connectedTiles.ContainsKey(tileToConnectTo)) {
-//						if (AreTheseTilesConnected (currentHexTile, tileToConnectTo, PATHFINDING_MODE.NORMAL)) {
-//							createdRoads++;
-//							ConnectCities (currentHexTile, tileToConnectTo);
-//							if (!pendingTiles.Contains (tileToConnectTo)) {
-//								pendingTiles.Add (tileToConnectTo);
-//							}
-//						}
-//					}
-//				}
-//			}
-
-//			if (pendingTiles.Count != habitableTiles.Count) {
-////				Debug.Log ("MISSED SOME CITIES!");
-////				Debug.Log ("Create Lines for missed out cities");
-//				for (int x = 0; x < habitableTiles.Count; x++) {
-					
-//					if (!pendingTiles.Contains (habitableTiles[x])) {
-////						Debug.Log ("======Missed out tile: " + habitableTiles [x].name + " ======");
-//						HexTile missedOutTile = habitableTiles[x];
-//						HexTile possibleConnectionTile = FindNearestCityWithConnection (missedOutTile);
-
-//						List<HexTile> habitableTilesOrdered = GetAllHabitableTilesByDistance(missedOutTile);
-
-//						if (possibleConnectionTile == null || !AreTheseTilesConnected (missedOutTile, possibleConnectionTile, PATHFINDING_MODE.NORMAL)) {
-//							for (int j = 0; j < habitableTilesOrdered.Count; j++) {
-//								if (AreTheseTilesConnected (missedOutTile, habitableTilesOrdered [j], PATHFINDING_MODE.NORMAL)) {
-//									possibleConnectionTile = habitableTilesOrdered [j];
-//									break;
-//								}
-//							}
-//						}
-
-//						if (possibleConnectionTile != null && !missedOutTile.connectedTiles.ContainsKey(possibleConnectionTile)) {
-//							if (AreTheseTilesConnected (missedOutTile, possibleConnectionTile, PATHFINDING_MODE.NORMAL)) {
-//								ConnectCities (missedOutTile, possibleConnectionTile);
-//								if (!pendingTiles.Contains (missedOutTile)) {
-//									pendingTiles.Add (missedOutTile);
-//								}
-
-//								if (!pendingTiles.Contains (possibleConnectionTile)) {
-//									pendingTiles.Add (possibleConnectionTile);
-//								}
-//							}
-//						}
-//					}
-//				}
-//			}
-//		}
-//	}
-
-	void ConnectCities(HexTile originTile, HexTile targetTile){
-//		Debug.Log (originTile.name + " is now connected to: " + targetTile.name);
-		this.DeterminePath (originTile, targetTile);
-//		originTile.connectedTiles.Add(targetTile);
-//		targetTile.connectedTiles.Add(originTile);
-	}
-
-
-	/*
-	 * Generate Path From one tile to another
-	 * */
-	public void DeterminePath(HexTile start, HexTile destination){
-		List<HexTile> roadListByDistance = SortAllRoadsByDistance (start, destination); //Sort all road tiles in regards to how far they are from the start
-		for (int i = 0; i < roadListByDistance.Count; i++) {
-			if (AreTheseTilesConnected (roadListByDistance [i], destination, PATHFINDING_MODE.POINT_TO_POINT)) {
-//				Debug.Log ("Connect to roadTile: " + roadListByDistance [i].name + " instead");
-				if (roadListByDistance[i].isHabitable && roadListByDistance[i].connectedTiles.ContainsKey(start)) {
-					return; //use the already created road between the 2 cities.
-				}
-				SetTilesAsRoads(GetPath(start, roadListByDistance[i], PATHFINDING_MODE.NORMAL));
-				return;
-			}
-		}
-		SetTilesAsRoads(GetPath(start, destination, PATHFINDING_MODE.NORMAL));
-	}
-
-	/*
-	 * Get List of tiles (Path) that will connect 2 city tiles
-	 * */
-	public List<HexTile> GetPath(HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, object data = null){
-		if(startingTile == null || destinationTile == null){
-			return null;
-		}
-        if(startingTile.tileTag != destinationTile.tileTag) {
-            return null;
+    public List<LocationGridTile> GetPath(LocationGridTile startingTile, LocationGridTile destinationTile, GRID_PATHFINDING_MODE pathMode = GRID_PATHFINDING_MODE.NORMAL, bool includeFirstTile = false) {
+        List<LocationGridTile> path = null;
+        
+        //normal pathfinding logic
+        Func<LocationGridTile, LocationGridTile, double> distance = (node1, node2) => 1;
+        Func<LocationGridTile, double> estimate = t => Math.Sqrt(Math.Pow(t.localPlace.x - destinationTile.localPlace.x, 2) + Math.Pow(t.localPlace.y - destinationTile.localPlace.y, 2));
+        var p = PathFind.PathFind.FindPath(startingTile, destinationTile, distance, estimate, pathMode);
+        if (p != null) {
+            path = p.ToList();
         }
-
-//        bool isStartingTileRoad = startingTile.isRoad;
-//        bool isDestinationTileRoad = destinationTile.isRoad;
-
-        bool doesStartingTileHaveLandmark = startingTile.hasLandmark;
-        bool doesDestinationTileHaveLandmark = destinationTile.hasLandmark;
-
-//		if (pathfindingMode == PATHFINDING_MODE.POINT_TO_POINT || pathfindingMode == PATHFINDING_MODE.USE_ROADS_WITH_ALLIES || pathfindingMode == PATHFINDING_MODE.USE_ROADS_ONLY_KINGDOM || pathfindingMode == PATHFINDING_MODE.USE_ROADS_TRADE
-//			|| pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS || pathfindingMode == PATHFINDING_MODE.MINOR_ROADS 
-//			|| pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM || pathfindingMode == PATHFINDING_MODE.MINOR_ROADS_ONLY_KINGDOM) {
-//			startingTile.isRoad = true;
-//			destinationTile.isRoad = true;
-//		}
-
-        Func<HexTile, HexTile, double> distance = (node1, node2) => 1;
-		Func<HexTile, double> estimate = t => Math.Sqrt (Math.Pow (t.xCoordinate - destinationTile.xCoordinate, 2) + Math.Pow (t.yCoordinate - destinationTile.yCoordinate, 2));
-
-		var path = PathFind.PathFind.FindPath (startingTile, destinationTile, distance, estimate, pathfindingMode, data);
-
-//		if (pathfindingMode == PATHFINDING_MODE.POINT_TO_POINT || pathfindingMode == PATHFINDING_MODE.USE_ROADS_WITH_ALLIES || pathfindingMode == PATHFINDING_MODE.USE_ROADS_ONLY_KINGDOM || pathfindingMode == PATHFINDING_MODE.USE_ROADS_TRADE
-//			|| pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS || pathfindingMode == PATHFINDING_MODE.MINOR_ROADS 
-//			|| pathfindingMode == PATHFINDING_MODE.MAJOR_ROADS_ONLY_KINGDOM || pathfindingMode == PATHFINDING_MODE.MINOR_ROADS_ONLY_KINGDOM) {
-//			startingTile.isRoad = isStartingTileRoad;
-//			destinationTile.isRoad = isDestinationTileRoad;
-//		}
-
+            
         if (path != null) {
-			if (pathfindingMode == PATHFINDING_MODE.REGION_CONNECTION || pathfindingMode == PATHFINDING_MODE.USE_ROADS_TRADE ||
-                pathfindingMode == PATHFINDING_MODE.LANDMARK_ROADS || pathfindingMode == PATHFINDING_MODE.LANDMARK_CONNECTION) {
-				return path.Reverse().ToList();
-			} else {
-				List<HexTile> newPath = path.Reverse().ToList();
-				if (newPath.Count > 1) {
-					newPath.RemoveAt(0);
-				}
-				return newPath;
-			}
-		}
-		return null;
-	}
-	///*
-	// * Get List of tiles (Path) that will connect 2 city tiles
-	// * */
-	//public void CreatePath(CitizenAvatar citizenAvatar, HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, BASE_RESOURCE_TYPE resourceType = BASE_RESOURCE_TYPE.STONE, object data = null){
-	//	if(startingTile == null || destinationTile == null){
-	//		return;
-	//	}
-	//	if(startingTile.tileTag != destinationTile.tileTag) {
-	//		return;
-	//	}
-	//	PathfindingThreadPool.Instance.AddToThreadPool (new PathFindingThread (citizenAvatar, startingTile, destinationTile, pathfindingMode, data));
-	//}
+            path.Reverse();
+            if (!includeFirstTile) {
+                path.RemoveAt(0);
+            }
+            return path;
+        }
+        return null;
+    }
     public PathFindingThread CreatePath(CharacterAvatar characterAvatar, HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, object data = null) {
         if (startingTile == null || destinationTile == null) {
             return null;
         }
-        if (startingTile.tileTag != destinationTile.tileTag) {
-            return null;
-        }
+        //if (startingTile.tileTag != destinationTile.tileTag) {
+        //    return null;
+        //}
         PathFindingThread newThread = new PathFindingThread(characterAvatar, startingTile, destinationTile, pathfindingMode, data);
-        PathfindingThreadPool.Instance.AddToThreadPool(newThread);
+        MultiThreadPool.Instance.AddToThreadPool(newThread);
         return newThread;
     }
+    public PathFindingThread CreatePath(BaseLandmark landmark, HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, object data = null) {
+        if (startingTile == null || destinationTile == null) {
+            return null;
+        }
+        //if (startingTile.tileTag != destinationTile.tileTag) {
+        //    return null;
+        //}
+        PathFindingThread newThread = new PathFindingThread(landmark, startingTile, destinationTile, pathfindingMode, data);
+        MultiThreadPool.Instance.AddToThreadPool(newThread);
+        return newThread;
+    }
+    public int GetTravelTime(HexTile from, HexTile to) {
+        float distance = Vector3.Distance(from.transform.position, to.transform.position);
+        return (Mathf.CeilToInt(distance / 2.315188f)) * 2;
+    }
+    #region Tile Getters
+    private List<LocationGridTile> SameStructureTiles(LocationGridTile tile, params object[] args) {
+        LocationStructure structure = args[0] as LocationStructure;
+        LocationGridTile startingTile = args[1] as LocationGridTile;
+        LocationGridTile destinationTile = args[2] as LocationGridTile;
 
-    /*
-	 * Counts the number of hex tiles between two input tiles
-	 * */
-    public int GetDistanceBetweenTwoTiles(HexTile startingTile, HexTile destinationTile){
-		Func<HexTile, HexTile, double> distance = (node1, node2) => 1;
-		Func<HexTile, double> estimate = t => Math.Sqrt(Math.Pow(t.xCoordinate - destinationTile.xCoordinate, 2) + Math.Pow(t.yCoordinate - destinationTile.yCoordinate, 2));
-		var path = PathFind.PathFind.FindPath(startingTile, destinationTile, distance, estimate, PATHFINDING_MODE.NORMAL);
+        List<LocationGridTile> tiles = new List<LocationGridTile>();
+        List<LocationGridTile> neighbours = tile.FourNeighbours();
+        for (int i = 0; i < neighbours.Count; i++) {
+            LocationGridTile currTile = neighbours[i];
+            //if (currTile == startingTile || currTile == destinationTile || (currTile.tileAccess == LocationGridTile.Tile_Access.Passable && currTile.structure == structure)) {
+            //    tiles.Add(currTile);
+            //}
+        }
+        return tiles;
+    }
+    private List<LocationGridTile> AllowedStructureTiles(LocationGridTile tile, params object[] args) {
+        List<STRUCTURE_TYPE> allowedTypes = args[0] as List<STRUCTURE_TYPE>;
+        LocationGridTile startingTile = args[1] as LocationGridTile;
+        LocationGridTile destinationTile = args[2] as LocationGridTile;
 
-		if (path != null) {			
-			return (path.ToList().Count - 1);
-		}
-		return 99999;
-	}
-
-	public bool AreTheseTilesConnected(HexTile tile1, HexTile tile2, PATHFINDING_MODE pathfindingMode){
-		Func<HexTile, HexTile, double> distance = (node1, node2) => 1;
-		Func<HexTile, double> estimate = t => Math.Sqrt(Math.Pow(t.xCoordinate - tile2.xCoordinate, 2) + Math.Pow(t.yCoordinate - tile2.yCoordinate, 2));
-
-		if (pathfindingMode == PATHFINDING_MODE.NORMAL) {
-			if (tile1.isHabitable) {
-				tile1.isRoad = true;
-			}
-			if (tile2.isHabitable) {
-				tile2.isRoad = true;
-			}
-		}
-
-		List<HexTile> path = GetPath (tile1, tile2, pathfindingMode);
-
-		if (pathfindingMode == PATHFINDING_MODE.NORMAL) {
-			if (tile1.isHabitable) {
-				tile1.isRoad = false;
-			}
-			if (tile2.isHabitable) {
-				tile2.isRoad = false;
-			}
-		}
-
-		return path != null;
-	}
-
-	List<HexTile> SortAllRoadsByDistance(HexTile startTile, HexTile destinationTile){
-		List<HexTile> tempRoadTiles = roadTiles;
-		/*
-		 * Code if you don't want to use cities included in some paths
-		 * * */
-		for (int i = 0; i < tempRoadTiles.Count; i++) {
-			if (tempRoadTiles [i].isHabitable) {
-				tempRoadTiles.Remove (tempRoadTiles [i]);
-			}
-		}
-		tempRoadTiles.Add(destinationTile);
-
-		List<HexTile> allRoadTiles = tempRoadTiles.OrderBy(
-			x => Vector2.Distance(startTile.transform.position, x.transform.position) 
-		).ToList();
-
-		return allRoadTiles;
-	}
-
-	private void SetTilesAsRoads(List<HexTile> path) {
-		List<HexTile> pathList = path;
-		for (int i = 0; i < pathList.Count; i++) {
-			if (!pathList[i].isHabitable) {
-				pathList[i].isRoad = true;
-				roadTiles.Add(pathList[i]);
-			}
-		}
-	}
-	#endregion
-
-	private int GenerateNumberOfRoads(){
-		int linesRandomizer = UnityEngine.Random.Range (0, 101);
-		if (linesRandomizer >= 0 && linesRandomizer < 10) {
-			return 1;
-		} else if (linesRandomizer >= 10 && linesRandomizer < 70) {
-			return 2;
-		} else {
-			return 3;
-		}
-	}
-
-	//public List<HexTile> GetAllHabitableTilesByDistance(HexTile hexTile){
-	//	List<HexTile> allHabitableTiles = CityGenerator.Instance.stoneHabitableTiles.OrderBy(x => Vector2.Distance(hexTile.transform.position, x.transform.position)).ToList();
-	//	allHabitableTiles.Remove(hexTile);
-	//	return allHabitableTiles;
-	//}
-
-	//public HexTile FindNearestCityWithConnection(HexTile hexTile){
-	//	List<HexTile> habitableTilesOrderedByDistance = this.GetAllHabitableTilesByDistance(hexTile);
-	//	for (int i = 0; i < habitableTilesOrderedByDistance.Count; i++) {
-	//		if (habitableTilesOrderedByDistance[i].connectedTiles.Count > 0) {
-	//			return habitableTilesOrderedByDistance[i];
-	//		}
-	//	}
-	//	if (habitableTilesOrderedByDistance.Count > 0) {
-	//		return habitableTilesOrderedByDistance[0];
-	//	}
-	//	return null;
-	//}
+        List<LocationGridTile> tiles = new List<LocationGridTile>();
+        List<LocationGridTile> neighbours = tile.FourNeighbours();
+        for (int i = 0; i < neighbours.Count; i++) {
+            LocationGridTile currTile = neighbours[i];
+            //if (currTile == startingTile || currTile == destinationTile || (currTile.tileAccess == LocationGridTile.Tile_Access.Passable && currTile.structure != null && allowedTypes.Contains(currTile.structure.structureType))) {
+            //    tiles.Add(currTile);
+            //}
+        }
+        return tiles;
+    }
+    #endregion
 }

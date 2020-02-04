@@ -4,29 +4,45 @@ using System.Collections.Generic;
 namespace Pathfinding {
 	using Pathfinding.Util;
 
-	/** Contains utility methods for getting useful information out of graph.
-	 * This class works a lot with the #Pathfinding.GraphNode class, a useful function to get nodes is #AstarPath.GetNearest.
-	 *
-	 * \see #AstarPath.GetNearest
-	 * \see #Pathfinding.GraphUpdateUtilities
-	 * \see #Pathfinding.PathUtilities
-	 *
-	 * \ingroup utils
-	 */
+	/// <summary>
+	/// Contains utility methods for getting useful information out of graph.
+	/// This class works a lot with the <see cref="Pathfinding.GraphNode"/> class, a useful function to get nodes is <see cref="AstarPath.GetNearest"/>.
+	///
+	/// See: <see cref="AstarPath.GetNearest"/>
+	/// See: <see cref="Pathfinding.GraphUpdateUtilities"/>
+	/// See: <see cref="Pathfinding.PathUtilities"/>
+	///
+	/// \ingroup utils
+	/// </summary>
 	public static class GraphUtilities {
-		/** Convenience method to get a list of all segments of the contours of a graph.
-		 * \returns A list of segments. Every 2 elements form a line segment. The first segment is (result[0], result[1]), the second one is (result[2], result[3]) etc.
-		 * The line segments are oriented so that the navmesh is on the right side of the segments when seen from above.
-		 *
-		 * This method works for navmesh, recast, grid graphs and layered grid graphs. For other graph types it will return an empty list.
-		 *
-		 * If you need more information about how the contours are connected you can take a look at the other variants of this method.
-		 *
-		 * \snippet MiscSnippets.cs GraphUtilities.GetContours2
-		 *
-		 * \shadowimage{navmesh_contour.png}
-		 * \shadowimage{grid_contour.png}
-		 */
+		/// <summary>
+		/// Convenience method to get a list of all segments of the contours of a graph.
+		/// Returns: A list of segments. Every 2 elements form a line segment. The first segment is (result[0], result[1]), the second one is (result[2], result[3]) etc.
+		/// The line segments are oriented so that the navmesh is on the right side of the segments when seen from above.
+		///
+		/// This method works for navmesh, recast, grid graphs and layered grid graphs. For other graph types it will return an empty list.
+		///
+		/// If you need more information about how the contours are connected you can take a look at the other variants of this method.
+		///
+		/// <code>
+		/// // Get the first graph
+		/// var navmesh = AstarPath.active.graphs[0];
+		///
+		/// // Get all contours of the graph (works for grid, navmesh and recast graphs)
+		/// var segments = GraphUtilities.GetContours(navmesh);
+		///
+		/// // Every 2 elements form a line segment. The first segment is (segments[0], segments[1]), the second one is (segments[2], segments[3]) etc.
+		/// // The line segments are oriented so that the navmesh is on the right side of the segments when seen from above.
+		/// for (int i = 0; i < segments.Count; i += 2) {
+		///     var start = segments[i];
+		///     var end = segments[i+1];
+		///     Debug.DrawLine(start, end, Color.red, 3);
+		/// }
+		/// </code>
+		///
+		/// [Open online documentation to see images]
+		/// [Open online documentation to see images]
+		/// </summary>
 		public static List<Vector3> GetContours (NavGraph graph) {
 			List<Vector3> result = ListPool<Vector3>.Claim();
 			if (graph is INavmesh) {
@@ -36,6 +52,7 @@ namespace Pathfinding {
 						result.Add((Vector3)vertices[i]);
 					}
 				});
+#if !ASTAR_NO_GRID_GRAPH
 			} else if (graph is GridGraph) {
 				GetContours(graph as GridGraph, vertices => {
 					for (int j = vertices.Length - 1, i = 0; i < vertices.Length; j = i, i++) {
@@ -43,21 +60,23 @@ namespace Pathfinding {
 						result.Add((Vector3)vertices[i]);
 					}
 				}, 0);
+#endif
 			}
 			return result;
 		}
 
-		/** Traces the contour of a navmesh.
-		 * \param navmesh The navmesh-like object to trace. This can be a recast or navmesh graph or it could be a single tile in one such graph.
-		 * \param results Will be called once for each contour with the contour as a parameter as well as a boolean indicating if the contour is a cycle or a chain (see second image).
-		 *
-		 * \shadowimage{navmesh_contour.png}
-		 *
-		 * This image is just used to illustrate the difference between chains and cycles. That it shows a grid graph is not relevant.
-		 * \shadowimage{grid_contour_compressed.png}
-		 *
-		 * \see #GetContours(NavGraph)
-		 */
+		/// <summary>
+		/// Traces the contour of a navmesh.
+		///
+		/// [Open online documentation to see images]
+		///
+		/// This image is just used to illustrate the difference between chains and cycles. That it shows a grid graph is not relevant.
+		/// [Open online documentation to see images]
+		///
+		/// See: <see cref="GetContours(NavGraph)"/>
+		/// </summary>
+		/// <param name="navmesh">The navmesh-like object to trace. This can be a recast or navmesh graph or it could be a single tile in one such graph.</param>
+		/// <param name="results">Will be called once for each contour with the contour as a parameter as well as a boolean indicating if the contour is a cycle or a chain (see second image).</param>
 		public static void GetContours (INavmesh navmesh, System.Action<List<Int3>, bool> results) {
 			// Assume 3 vertices per node
 			var uses = new bool[3];
@@ -107,29 +126,41 @@ namespace Pathfinding {
 			});
 		}
 
-		/** Finds all contours of a collection of nodes in a grid graph.
-		 * \param grid The grid to find the contours of
-		 * \param callback The callback will be called once for every contour that is found with the vertices of the contour. The contour always forms a cycle.
-		 * \param yMergeThreshold Contours will be simplified if the y coordinates for adjacent vertices differ by no more than this value.
-		 * \param nodes Only these nodes will be searched. If this parameter is null then all nodes in the grid graph will be searched.
-		 *
-		 * \snippet MiscSnippets.cs GraphUtilities.GetContours1
-		 *
-		 * In the image below you can see the contour of a graph.
-		 * \shadowimage{grid_contour.png}
-		 *
-		 * In the image below you can see the contour of just a part of a grid graph (when the \a nodes parameter is supplied)
-		 * \shadowimage{grid_contour_partial.png}
-		 *
-		 * Contour of a hexagon graph
-		 * \shadowimage{grid_contour_hexagon.png}
-		 *
-		 * \see #GetContours(NavGraph)
-		 */
+#if !ASTAR_NO_GRID_GRAPH
+		/// <summary>
+		/// Finds all contours of a collection of nodes in a grid graph.
+		///
+		/// <code>
+		/// var grid = AstarPath.active.data.gridGraph;
+		///
+		/// // Find all contours in the graph and draw them using debug lines
+		/// GraphUtilities.GetContours(grid, vertices => {
+		///     for (int i = 0; i < vertices.Length; i++) {
+		///         Debug.DrawLine(vertices[i], vertices[(i+1)%vertices.Length], Color.red, 4);
+		///     }
+		/// }, 0);
+		/// </code>
+		///
+		/// In the image below you can see the contour of a graph.
+		/// [Open online documentation to see images]
+		///
+		/// In the image below you can see the contour of just a part of a grid graph (when the nodes parameter is supplied)
+		/// [Open online documentation to see images]
+		///
+		/// Contour of a hexagon graph
+		/// [Open online documentation to see images]
+		///
+		/// See: <see cref="GetContours(NavGraph)"/>
+		/// </summary>
+		/// <param name="grid">The grid to find the contours of</param>
+		/// <param name="callback">The callback will be called once for every contour that is found with the vertices of the contour. The contour always forms a cycle.</param>
+		/// <param name="yMergeThreshold">Contours will be simplified if the y coordinates for adjacent vertices differ by no more than this value.</param>
+		/// <param name="nodes">Only these nodes will be searched. If this parameter is null then all nodes in the grid graph will be searched.</param>
 		public static void GetContours (GridGraph grid, System.Action<Vector3[]> callback, float yMergeThreshold, GridNodeBase[] nodes = null) {
 			// Set of all allowed nodes or null if all nodes are allowed
 			HashSet<GridNodeBase> nodeSet = nodes != null ? new HashSet<GridNodeBase>(nodes) : null;
 			// Use all nodes if the nodes parameter is null
+			if (grid is LayerGridGraph) nodes = nodes ?? (grid as LayerGridGraph).nodes;
 			nodes = nodes ?? grid.nodes;
 			int[] neighbourXOffsets = grid.neighbourXOffsets;
 			int[] neighbourZOffsets = grid.neighbourZOffsets;
@@ -142,13 +173,14 @@ namespace Pathfinding {
 
 				for (int i = 0; i < nodes.Length; i++) {
 					var startNode = nodes[i];
-					// The third check is a fast check for if the node has connections in all grid directions, if it has then we can skip processing it
-					if (startNode != null && startNode.Walkable && !startNode.HasConnectionsToAllEightNeighbours) {
+					// The third check is a fast check for if the node has connections in all grid directions, if it has then we can skip processing it (unless the nodes parameter was used in which case we have to handle the edge cases)
+					if (startNode != null && startNode.Walkable && (!startNode.HasConnectionsToAllEightNeighbours || nodeSet != null)) {
 						for (int startDir = 0; startDir < neighbourIndices.Length; startDir++) {
 							int startState = (startNode.NodeIndex << 4) | startDir;
 
 							// Check if there is an obstacle in that direction
-							if (startNode.GetNeighbourAlongDirection(neighbourIndices[startDir]) == null && !seenStates.Contains(startState)) {
+							var startNeighbour = startNode.GetNeighbourAlongDirection(neighbourIndices[startDir]);
+							if ((startNeighbour == null || (nodeSet != null && !nodeSet.Contains(startNeighbour))) && !seenStates.Contains(startState)) {
 								// Start tracing a contour here
 								trace.ClearFast();
 								int dir = startDir;
@@ -208,5 +240,6 @@ namespace Pathfinding {
 				ListPool<Vector3>.Release(ref trace);
 			}
 		}
+#endif
 	}
 }

@@ -1,7 +1,7 @@
 using UnityEngine;
 
 namespace Pathfinding.Util {
-	/** Helper methods for drawing gizmos and debug lines */
+	/// <summary>Helper methods for drawing gizmos and debug lines</summary>
 	public class Draw {
 		public static readonly Draw Debug = new Draw { gizmos = false };
 		public static readonly Draw Gizmos = new Draw { gizmos = true };
@@ -23,7 +23,7 @@ namespace Pathfinding.Util {
 			int steps = 40;
 
 #if UNITY_EDITOR
-			steps = (int)Mathf.Clamp(Mathf.Sqrt(radius / UnityEditor.HandleUtility.GetHandleSize((UnityEngine.Gizmos.matrix * matrix).MultiplyPoint3x4(center))) * 25, 4, 40);
+			if (gizmos) steps = (int)Mathf.Clamp(Mathf.Sqrt(radius / UnityEditor.HandleUtility.GetHandleSize((UnityEngine.Gizmos.matrix * matrix).MultiplyPoint3x4(center))) * 25, 4, 40);
 #endif
 			while (startAngle > endAngle) startAngle -= 2*Mathf.PI;
 

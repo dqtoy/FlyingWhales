@@ -9,6 +9,9 @@ namespace Pathfinding {
 		static bool tagPenaltiesOpen;
 		static List<Seeker> scripts = new List<Seeker>();
 
+		GUIContent[] exactnessLabels = new [] { new GUIContent("Node Center (Snap To Node)"), new GUIContent("Original"), new GUIContent("Interpolate (deprecated)"), new GUIContent("Closest On Node Surface"), new GUIContent("Node Connection") };
+		string[] graphLabels = new string[32];
+
 		protected override void Inspector () {
 			base.Inspector();
 
@@ -21,28 +24,42 @@ namespace Pathfinding {
 			startEndModifierProp.isExpanded = EditorGUILayout.Foldout(startEndModifierProp.isExpanded, startEndModifierProp.displayName);
 			if (startEndModifierProp.isExpanded) {
 				EditorGUI.indentLevel++;
-				PropertyField("startEndModifier.exactStartPoint", "Start Point Snapping");
-				PropertyField("startEndModifier.exactEndPoint", "End Point Snapping");
+				Popup("startEndModifier.exactStartPoint", exactnessLabels, "Start Point Snapping");
+				Popup("startEndModifier.exactEndPoint", exactnessLabels, "End Point Snapping");
 				PropertyField("startEndModifier.addPoints", "Add Points");
 
-				if (PropertyField("startEndModifier.useRaycasting", "Physics Raycasting")) {
-					EditorGUI.indentLevel++;
-					PropertyField("startEndModifier.mask", "Layer Mask");
-					EditorGUI.indentLevel--;
-					EditorGUILayout.HelpBox("Using raycasting to snap the start/end points has largely been superseded by the 'ClosestOnNode' snapping option. It is both faster and usually closer to what you want to achieve.", MessageType.Info);
-				}
+				if (FindProperty("startEndModifier.exactStartPoint").enumValueIndex == (int)StartEndModifier.Exactness.Original || FindProperty("startEndModifier.exactEndPoint").enumValueIndex == (int)StartEndModifier.Exactness.Original) {
+					if (PropertyField("startEndModifier.useRaycasting", "Physics Raycasting")) {
+						EditorGUI.indentLevel++;
+						PropertyField("startEndModifier.mask", "Layer Mask");
+						EditorGUI.indentLevel--;
+						EditorGUILayout.HelpBox("Using raycasting to snap the start/end points has largely been superseded by the 'ClosestOnNode' snapping option. It is both faster and usually closer to what you want to achieve.", MessageType.Info);
+					}
 
-				if (PropertyField("startEndModifier.useGraphRaycasting", "Graph Raycasting")) {
-					EditorGUILayout.HelpBox("Using raycasting to snap the start/end points has largely been superseded by the 'ClosestOnNode' snapping option. It is both faster and usually closer to what you want to achieve.", MessageType.Info);
+					if (PropertyField("startEndModifier.useGraphRaycasting", "Graph Raycasting")) {
+						EditorGUILayout.HelpBox("Using raycasting to snap the start/end points has largely been superseded by the 'ClosestOnNode' snapping option. It is both faster and usually closer to what you want to achieve.", MessageType.Info);
+					}
 				}
 
 				EditorGUI.indentLevel--;
 			}
 
+			// Make sure the AstarPath object is initialized and the graphs are loaded, this is required to be able to show graph names in the mask popup
+			AstarPath.FindAstarPath();
+
+			for (int i = 0; i < graphLabels.Length; i++) {
+				if (AstarPath.active == null || AstarPath.active.data.graphs == null || i >= AstarPath.active.data.graphs.Length || AstarPath.active.data.graphs[i] == null) graphLabels[i] = "Graph " + i + (i == 31 ? "+" : "");
+				else {
+					graphLabels[i] = AstarPath.active.data.graphs[i].name + " (graph " + i + ")";
+				}
+			}
+
+			Mask("graphMask.value", graphLabels, "Traversable Graphs");
+
 			tagPenaltiesOpen = EditorGUILayout.Foldout(tagPenaltiesOpen, new GUIContent("Tags", "Settings for each tag"));
 			if (tagPenaltiesOpen) {
-				EditorGUI.indentLevel++;
 				string[] tagNames = AstarPath.FindTagNames();
+				EditorGUI.indentLevel++;
 				if (tagNames.Length != 32) {
 					tagNames = new string[32];
 					for (int i = 0; i < tagNames.Length; i++) tagNames[i] = "" + i;
@@ -65,6 +82,7 @@ namespace Pathfinding {
 				}
 				EditorGUILayout.EndVertical();
 
+#if !ASTAR_NoTagPenalty
 				EditorGUILayout.BeginVertical();
 				EditorGUILayout.LabelField("Penalty", EditorStyles.boldLabel, GUILayout.MaxWidth(100));
 				var prop = FindProperty("tagPenalties").FindPropertyRelative("Array");
@@ -83,6 +101,7 @@ namespace Pathfinding {
 					}
 				}
 				EditorGUILayout.EndVertical();
+#endif
 
 				EditorGUILayout.BeginVertical();
 				EditorGUILayout.LabelField("Traversable", EditorStyles.boldLabel, GUILayout.MaxWidth(100));

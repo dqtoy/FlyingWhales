@@ -19,11 +19,17 @@ public static class NGUIEditorTools
 	static Texture2D mGradientTex;
 	static GameObject mPrevious;
 
-	/// <summary>
-	/// Returns a blank usable 1x1 white texture.
-	/// </summary>
+#if UNITY_4_7 || UNITY_5_5 || UNITY_5_6
+        static public string textArea = "AS TextArea";
+#else
+    static public string textArea = "TextArea";
+#endif
 
-	static public Texture2D blankTexture
+    /// <summary>
+    /// Returns a blank usable 1x1 white texture.
+    /// </summary>
+
+    static public Texture2D blankTexture
 	{
 		get
 		{
@@ -444,7 +450,7 @@ public static class NGUIEditorTools
 		if (force || !settings.readable || settings.npotScale != TextureImporterNPOTScale.None || settings.alphaIsTransparency)
 		{
 			settings.readable = true;
-			if (NGUISettings.trueColorAtlas) settings.textureFormat = TextureImporterFormat.AutomaticTruecolor;
+			//if (NGUISettings.trueColorAtlas) settings.textureFormat = TextureImporterFormat.AutomaticTruecolor;
 			settings.npotScale = TextureImporterNPOTScale.None;
 			settings.alphaIsTransparency = false;
 			ti.SetTextureSettings(settings);
@@ -463,23 +469,24 @@ public static class NGUIEditorTools
 		TextureImporter ti = AssetImporter.GetAtPath(path) as TextureImporter;
 		if (ti == null) return false;
 
+
 		TextureImporterSettings settings = new TextureImporterSettings();
 		ti.ReadTextureSettings(settings);
 
 		if (force ||
 			settings.readable ||
-			settings.maxTextureSize < 4096 ||
+			//settings.maxTextureSize < 4096 ||
 			settings.wrapMode != TextureWrapMode.Clamp ||
 			settings.npotScale != TextureImporterNPOTScale.ToNearest)
 		{
 			settings.readable = false;
-			settings.maxTextureSize = 4096;
+			//settings.maxTextureSize = 4096;
 			settings.wrapMode = TextureWrapMode.Clamp;
 			settings.npotScale = TextureImporterNPOTScale.ToNearest;
 
 			if (NGUISettings.trueColorAtlas)
 			{
-				settings.textureFormat = TextureImporterFormat.ARGB32;
+				//settings.textureFormat = TextureImporterFormat.ARGB32;
 				settings.filterMode = FilterMode.Trilinear;
 			}
 
@@ -1339,7 +1346,7 @@ public static class NGUIEditorTools
 		{
 			mEndHorizontal = true;
 			GUILayout.BeginHorizontal();
-			EditorGUILayout.BeginHorizontal("AS TextArea", GUILayout.MinHeight(10f));
+			EditorGUILayout.BeginHorizontal(textArea, GUILayout.MinHeight(10f));
 		}
 		else
 		{

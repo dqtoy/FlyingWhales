@@ -7,56 +7,60 @@ namespace Pathfinding.Legacy {
 	using Pathfinding;
 	using Pathfinding.RVO;
 
-	/** AI for following paths.
-	 * This AI is the default movement script which comes with the A* Pathfinding Project.
-	 * It is in no way required by the rest of the system, so feel free to write your own. But I hope this script will make it easier
-	 * to set up movement for the characters in your game. This script is not written for high performance, so I do not recommend using it for large groups of units.
-	 * \n
-	 * \n
-	 * This script will try to follow a target transform, in regular intervals, the path to that target will be recalculated.
-	 * It will on FixedUpdate try to move towards the next point in the path.
-	 * However it will only move in the forward direction, but it will rotate around it's Y-axis
-	 * to make it reach the target.
-	 *
-	 * \section variables Quick overview of the variables
-	 * In the inspector in Unity, you will see a bunch of variables. You can view detailed information further down, but here's a quick overview.\n
-	 * The #repathRate determines how often it will search for new paths, if you have fast moving targets, you might want to set it to a lower value.\n
-	 * The #target variable is where the AI will try to move, it can be a point on the ground where the player has clicked in an RTS for example.
-	 * Or it can be the player object in a zombie game.\n
-	 * The speed is self-explanatory, so is turningSpeed, however #slowdownDistance might require some explanation.
-	 * It is the approximate distance from the target where the AI will start to slow down. Note that this doesn't only affect the end point of the path
-	 * but also any intermediate points, so be sure to set #forwardLook and #pickNextWaypointDist to a higher value than this.\n
-	 * #pickNextWaypointDist is simply determines within what range it will switch to target the next waypoint in the path.\n
-	 * #forwardLook will try to calculate an interpolated target point on the current segment in the path so that it has a distance of #forwardLook from the AI\n
-	 * Below is an image illustrating several variables as well as some internal ones, but which are relevant for understanding how it works.
-	 * Note that the #forwardLook range will not match up exactly with the target point practically, even though that's the goal.
-	 * \shadowimage{aipath_variables.png}
-	 * This script has many movement fallbacks.
-	 * If it finds a NavmeshController, it will use that, otherwise it will look for a character controller, then for a rigidbody and if it hasn't been able to find any
-	 * it will use Transform.Translate which is guaranteed to always work.
-	 *
-	 * \deprecated Use the AIPath class instead. This class only exists for compatibility reasons.
-	 */
+	/// <summary>
+	/// AI for following paths.
+	/// This AI is the default movement script which comes with the A* Pathfinding Project.
+	/// It is in no way required by the rest of the system, so feel free to write your own. But I hope this script will make it easier
+	/// to set up movement for the characters in your game. This script is not written for high performance, so I do not recommend using it for large groups of units.
+	/// \n
+	/// \n
+	/// This script will try to follow a target transform, in regular intervals, the path to that target will be recalculated.
+	/// It will on FixedUpdate try to move towards the next point in the path.
+	/// However it will only move in the forward direction, but it will rotate around it's Y-axis
+	/// to make it reach the target.
+	///
+	/// \section variables Quick overview of the variables
+	/// In the inspector in Unity, you will see a bunch of variables. You can view detailed information further down, but here's a quick overview.\n
+	/// The <see cref="repathRate"/> determines how often it will search for new paths, if you have fast moving targets, you might want to set it to a lower value.\n
+	/// The <see cref="target"/> variable is where the AI will try to move, it can be a point on the ground where the player has clicked in an RTS for example.
+	/// Or it can be the player object in a zombie game.\n
+	/// The speed is self-explanatory, so is turningSpeed, however <see cref="slowdownDistance"/> might require some explanation.
+	/// It is the approximate distance from the target where the AI will start to slow down. Note that this doesn't only affect the end point of the path
+	/// but also any intermediate points, so be sure to set <see cref="forwardLook"/> and <see cref="pickNextWaypointDist"/> to a higher value than this.\n
+	/// <see cref="pickNextWaypointDist"/> is simply determines within what range it will switch to target the next waypoint in the path.\n
+	/// <see cref="forwardLook"/> will try to calculate an interpolated target point on the current segment in the path so that it has a distance of <see cref="forwardLook"/> from the AI\n
+	/// Below is an image illustrating several variables as well as some internal ones, but which are relevant for understanding how it works.
+	/// Note that the <see cref="forwardLook"/> range will not match up exactly with the target point practically, even though that's the goal.
+	/// [Open online documentation to see images]
+	/// This script has many movement fallbacks.
+	/// If it finds a NavmeshController, it will use that, otherwise it will look for a character controller, then for a rigidbody and if it hasn't been able to find any
+	/// it will use Transform.Translate which is guaranteed to always work.
+	///
+	/// Deprecated: Use the AIPath class instead. This class only exists for compatibility reasons.
+	/// </summary>
 	[RequireComponent(typeof(Seeker))]
 	[AddComponentMenu("Pathfinding/Legacy/AI/Legacy AIPath (3D)")]
 	[HelpURL("http://arongranberg.com/astar/docs/class_pathfinding_1_1_legacy_1_1_legacy_a_i_path.php")]
 	public class LegacyAIPath : AIPath {
-		/** Target point is Interpolated on the current segment in the path so that it has a distance of #forwardLook from the AI.
-		 * See the detailed description of AIPath for an illustrative image */
+		/// <summary>
+		/// Target point is Interpolated on the current segment in the path so that it has a distance of <see cref="forwardLook"/> from the AI.
+		/// See the detailed description of AIPath for an illustrative image
+		/// </summary>
 		public float forwardLook = 1;
 
-		/** Do a closest point on path check when receiving path callback.
-		 * Usually the AI has moved a bit between requesting the path, and getting it back, and there is usually a small gap between the AI
-		 * and the closest node.
-		 * If this option is enabled, it will simulate, when the path callback is received, movement between the closest node and the current
-		 * AI position. This helps to reduce the moments when the AI just get a new path back, and thinks it ought to move backwards to the start of the new path
-		 * even though it really should just proceed forward.
-		 */
+		/// <summary>
+		/// Do a closest point on path check when receiving path callback.
+		/// Usually the AI has moved a bit between requesting the path, and getting it back, and there is usually a small gap between the AI
+		/// and the closest node.
+		/// If this option is enabled, it will simulate, when the path callback is received, movement between the closest node and the current
+		/// AI position. This helps to reduce the moments when the AI just get a new path back, and thinks it ought to move backwards to the start of the new path
+		/// even though it really should just proceed forward.
+		/// </summary>
 		public bool closestOnPathCheck = true;
 
 		protected float minMoveScale = 0.05F;
 
-		/** Current index in the path which is current target */
+		/// <summary>Current index in the path which is current target</summary>
 		protected int currentWaypointIndex = 0;
 
 		protected Vector3 lastFoundWaypointPosition;
@@ -64,13 +68,18 @@ namespace Pathfinding.Legacy {
 
 		protected override void Awake () {
 			base.Awake();
+			if (rvoController != null) {
+				if (rvoController is LegacyRVOController) (rvoController as LegacyRVOController).enableRotation = false;
+				else Debug.LogError("The LegacyAIPath component only works with the legacy RVOController, not the latest one. Please upgrade this component", this);
+			}
 		}
 
-		/** Called when a requested path has finished calculation.
-		 * A path is first requested by #SearchPath, it is then calculated, probably in the same or the next frame.
-		 * Finally it is returned to the seeker which forwards it to this function.\n
-		 */
-		public override void OnPathComplete (Path _p) {
+		/// <summary>
+		/// Called when a requested path has finished calculation.
+		/// A path is first requested by <see cref="SearchPath"/>, it is then calculated, probably in the same or the next frame.
+		/// Finally it is returned to the seeker which forwards it to this function.\n
+		/// </summary>
+		protected override void OnPathComplete (Path _p) {
 			ABPath p = _p as ABPath;
 
 			if (p == null) throw new System.Exception("This function only handles ABPaths, do not use special path types");
@@ -95,7 +104,7 @@ namespace Pathfinding.Legacy {
 
 			//Reset some variables
 			currentWaypointIndex = 0;
-			targetReached = false;
+			reachedEndOfPath = false;
 
 			//The next row can be used to find out if the path could be found or not
 			//If it couldn't (error == true), then a message has probably been logged to the console
@@ -115,6 +124,9 @@ namespace Pathfinding.Legacy {
 				dir /= magn;
 				int steps = (int)(magn/pickNextWaypointDist);
 
+	#if ASTARDEBUG
+				Debug.DrawLine(p1, p2, Color.red, 1);
+	#endif
 
 				for (int i = 0; i <= steps; i++) {
 					CalculateVelocity(p1);
@@ -123,7 +135,7 @@ namespace Pathfinding.Legacy {
 			}
 		}
 
-		protected override void Update () {
+		public override void UpdateMe () {
 			if (!canMove) { return; }
 
 			Vector3 dir = CalculateVelocity(GetFeetPosition());
@@ -131,6 +143,9 @@ namespace Pathfinding.Legacy {
 			//Rotate towards targetDirection (filled in by CalculateVelocity)
 			RotateTowards(targetDirection);
 
+			if (rvoController != null) {
+				rvoController.Move(dir);
+			} else
 			if (controller != null) {
 				controller.SimpleMove(dir);
 			} else if (rigid != null) {
@@ -140,8 +155,10 @@ namespace Pathfinding.Legacy {
 			}
 		}
 
-		/** Relative direction to where the AI is heading.
-		 * Filled in by #CalculateVelocity */
+		/// <summary>
+		/// Relative direction to where the AI is heading.
+		/// Filled in by <see cref="CalculateVelocity"/>
+		/// </summary>
 		protected new Vector3 targetDirection;
 
 		protected float XZSqrMagnitude (Vector3 a, Vector3 b) {
@@ -151,18 +168,19 @@ namespace Pathfinding.Legacy {
 			return dx*dx + dz*dz;
 		}
 
-		/** Calculates desired velocity.
-		 * Finds the target path segment and returns the forward direction, scaled with speed.
-		 * A whole bunch of restrictions on the velocity is applied to make sure it doesn't overshoot, does not look too far ahead,
-		 * and slows down when close to the target.
-		 * /see speed
-		 * /see endReachedDistance
-		 * /see slowdownDistance
-		 * /see CalculateTargetPoint
-		 * /see targetPoint
-		 * /see targetDirection
-		 * /see currentWaypointIndex
-		 */
+		/// <summary>
+		/// Calculates desired velocity.
+		/// Finds the target path segment and returns the forward direction, scaled with speed.
+		/// A whole bunch of restrictions on the velocity is applied to make sure it doesn't overshoot, does not look too far ahead,
+		/// and slows down when close to the target.
+		/// /see speed
+		/// /see endReachedDistance
+		/// /see slowdownDistance
+		/// /see CalculateTargetPoint
+		/// /see targetPoint
+		/// /see targetDirection
+		/// /see currentWaypointIndex
+		/// </summary>
 		protected new Vector3 CalculateVelocity (Vector3 currentPosition) {
 			if (path == null || path.vectorPath == null || path.vectorPath.Count == 0) return Vector3.zero;
 
@@ -206,7 +224,7 @@ namespace Pathfinding.Legacy {
 			this.targetDirection = dir;
 
 			if (currentWaypointIndex == vPath.Count-1 && targetDist <= endReachedDistance) {
-				if (!targetReached) { targetReached = true; OnTargetReached(); }
+				if (!reachedEndOfPath) { reachedEndOfPath = true; OnTargetReached(); }
 
 				//Send a move request, this ensures gravity is applied
 				return Vector3.zero;
@@ -216,6 +234,13 @@ namespace Pathfinding.Legacy {
 			float dot = Vector3.Dot(dir.normalized, forward);
 			float sp = maxSpeed * Mathf.Max(dot, minMoveScale) * slowdown;
 
+	#if ASTARDEBUG
+			Debug.DrawLine(vPath[currentWaypointIndex-1], vPath[currentWaypointIndex], Color.black);
+			Debug.DrawLine(GetFeetPosition(), targetPosition, Color.red);
+			Debug.DrawRay(targetPosition, Vector3.up, Color.red);
+			Debug.DrawRay(GetFeetPosition(), dir, Color.yellow);
+			Debug.DrawRay(GetFeetPosition(), forward*sp, Color.cyan);
+	#endif
 
 			if (Time.deltaTime > 0) {
 				sp = Mathf.Clamp(sp, 0, targetDist/(Time.deltaTime*2));
@@ -224,10 +249,11 @@ namespace Pathfinding.Legacy {
 			return forward*sp;
 		}
 
-		/** Rotates in the specified direction.
-		 * Rotates around the Y-axis.
-		 * \see turningSpeed
-		 */
+		/// <summary>
+		/// Rotates in the specified direction.
+		/// Rotates around the Y-axis.
+		/// See: turningSpeed
+		/// </summary>
 		protected void RotateTowards (Vector3 dir) {
 			if (dir == Vector3.zero) return;
 
@@ -243,14 +269,15 @@ namespace Pathfinding.Legacy {
 			tr.rotation = rot;
 		}
 
-		/** Calculates target point from the current line segment.
-		 * \param p Current position
-		 * \param a Line segment start
-		 * \param b Line segment end
-		 * The returned point will lie somewhere on the line segment.
-		 * \see #forwardLook
-		 * \todo This function uses .magnitude quite a lot, can it be optimized?
-		 */
+		/// <summary>
+		/// Calculates target point from the current line segment.
+		/// See: <see cref="forwardLook"/>
+		/// TODO: This function uses .magnitude quite a lot, can it be optimized?
+		/// </summary>
+		/// <param name="p">Current position</param>
+		/// <param name="a">Line segment start</param>
+		/// <param name="b">Line segment end
+		/// The returned point will lie somewhere on the line segment.</param>
 		protected Vector3 CalculateTargetPoint (Vector3 p, Vector3 a, Vector3 b) {
 			a.y = p.y;
 			b.y = p.y;

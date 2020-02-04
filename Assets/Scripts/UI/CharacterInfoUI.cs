@@ -1,400 +1,739 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Inner_Maps;
+using TMPro;
+using UnityEngine.UI;
+using Traits;
+using UnityEngine.Serialization;
 
 public class CharacterInfoUI : UIMenu {
-
-    private const int MAX_HISTORY_LOGS = 20;
-
+    
     [Space(10)]
-    [Header("Content")]
-    [SerializeField] private TweenPosition tweenPos;
-    [SerializeField] private UILabel generalInfoLbl;
-	[SerializeField] private UILabel statInfoLbl;
-	[SerializeField] private UILabel traitInfoLbl;
-	[SerializeField] private UILabel followersLbl;
-	[SerializeField] private UILabel equipmentInfoLbl;
-	[SerializeField] private UILabel inventoryInfoLbl;
-	[SerializeField] private UILabel relationshipsLbl;
-	[SerializeField] private UILabel historyLbl;
-
-	[SerializeField] private UIScrollView followersScrollView;
-    [SerializeField] private UIScrollView equipmentScrollView;
-	[SerializeField] private UIScrollView inventoryScrollView;
-    [SerializeField] private UIScrollView relationshipsScrollView;
+    [Header("Basic Info")]
+    [SerializeField] private CharacterPortrait characterPortrait;
+    [SerializeField] private TextMeshProUGUI nameLbl;
+    [SerializeField] private TextMeshProUGUI lvlClassLbl;
+    [SerializeField] private TextMeshProUGUI plansLbl;
+    [SerializeField] private LogItem plansLblLogItem;
+    
+    [Space(10)]
+    [Header("Location")]
+    [SerializeField] private TextMeshProUGUI factionLbl;
+    [SerializeField] private EventLabel factionEventLbl;
+    [SerializeField] private TextMeshProUGUI currentLocationLbl;
+    [SerializeField] private EventLabel currentLocationEventLbl;
+    [SerializeField] private TextMeshProUGUI homeRegionLbl;
+    [SerializeField] private EventLabel homeRegionEventLbl;
+    [SerializeField] private TextMeshProUGUI houseLbl;
+    [SerializeField] private EventLabel houseEventLbl;
 
     [Space(10)]
     [Header("Logs")]
-    [SerializeField]
-    private GameObject logHistoryPrefab;
-    [SerializeField] private UITable logHistoryTable;
-    [SerializeField] private UIScrollView historyScrollView;
-    [SerializeField] private Color evenLogColor;
-    [SerializeField] private Color oddLogColor;
-
+    [SerializeField] private GameObject logParentGO;
+    [SerializeField] private GameObject logHistoryPrefab;
+    [SerializeField] private ScrollRect historyScrollView;
     private LogHistoryItem[] logHistoryItems;
 
-	private ECS.Character _activeCharacter;
+    [Space(10)]
+    [Header("Stats")]
+    [SerializeField] private TextMeshProUGUI hpLbl;
+    [SerializeField] private TextMeshProUGUI attackLbl;
+    [SerializeField] private TextMeshProUGUI speedLbl;
 
-    internal ECS.Character currentlyShowingCharacter {
-        get { return _data as ECS.Character; }
-    }
+    [Space(10)]
+    [Header("Traits")]
+    [SerializeField] private TextMeshProUGUI statusTraitsLbl;
+    [SerializeField] private TextMeshProUGUI normalTraitsLbl;
+    [SerializeField] private EventLabel statusTraitsEventLbl;
+    [SerializeField] private EventLabel normalTraitsEventLbl;
 
-	internal ECS.Character activeCharacter{
-		get { return _activeCharacter; }
-	}
+    [Space(10)]
+    [Header("Items")]
+    [SerializeField] private TextMeshProUGUI itemsLbl;
+    
+    [Space(10)]
+    [Header("Relationships")]
+    [SerializeField] private EventLabel relationshipNamesEventLbl;
+    [SerializeField] private TextMeshProUGUI relationshipTypesLbl;
+    [SerializeField] private TextMeshProUGUI relationshipNamesLbl;
+    [SerializeField] private TextMeshProUGUI relationshipValuesLbl;
+
+    [Space(10)] 
+    [Header("Mood")] 
+    [SerializeField] private MarkedMeter moodMeter;
+    [SerializeField] private TextMeshProUGUI moodSummary;
+    
+    [Space(10)] 
+    [Header("Needs")] 
+    [SerializeField] private MarkedMeter energyMeter;
+    [SerializeField] private MarkedMeter fullnessMeter;
+    [SerializeField] private MarkedMeter happinessMeter;
+    [SerializeField] private MarkedMeter hopeMeter;
+    [SerializeField] private MarkedMeter comfortMeter;
+    
+    
+    private Character _activeCharacter;
+    private Character _previousCharacter;
+
+    public Character activeCharacter => _activeCharacter;
+    public Character previousCharacter => _previousCharacter;
+    private string normalTextColor = "#CEB67C";
+    private string buffTextColor = "#39FF14";
+    private string flawTextColor = "#FF073A";
 
     internal override void Initialize() {
         base.Initialize();
-        Messenger.AddListener("UpdateUI", UpdateCharacterInfo);
         Messenger.AddListener<object>(Signals.HISTORY_ADDED, UpdateHistory);
-        logHistoryItems = new LogHistoryItem[MAX_HISTORY_LOGS];
+        Messenger.AddListener<Character, Trait>(Signals.TRAIT_ADDED, UpdateTraitsFromSignal);
+        Messenger.AddListener<Character, Trait>(Signals.TRAIT_REMOVED, UpdateTraitsFromSignal);
+        Messenger.AddListener<Character, Trait>(Signals.TRAIT_STACKED, UpdateTraitsFromSignal);
+        Messenger.AddListener<Character, Trait>(Signals.TRAIT_UNSTACKED, UpdateTraitsFromSignal);
+        Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
+        Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
+        Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
+        Messenger.AddListener(Signals.ON_CLOSE_SHARE_INTEL, OnCloseShareIntelMenu);
+        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        Messenger.AddListener<SpecialToken, Character>(Signals.CHARACTER_OBTAINED_ITEM, UpdateInventoryInfoFromSignal);
+        Messenger.AddListener<SpecialToken, Character>(Signals.CHARACTER_LOST_ITEM, UpdateInventoryInfoFromSignal);
+        Messenger.AddListener<Character>(Signals.CHARACTER_SWITCHED_ALTER_EGO, OnCharacterChangedAlterEgo);
+        //Messenger.AddListener<Relatable, Relatable>(Signals.RELATIONSHIP_ADDED, OnRelationshipAdded);
+        //Messenger.AddListener<Relatable, RELATIONSHIP_TRAIT, Relatable>(Signals.RELATIONSHIP_REMOVED, OnRelationshipRemoved);
+        Messenger.AddListener<Character, Character>(Signals.OPINION_ADDED, OnOpinionChanged);
+        Messenger.AddListener<Character, Character>(Signals.OPINION_REMOVED, OnOpinionChanged);
+        Messenger.AddListener<Character, Character, string>(Signals.OPINION_INCREASED, OnOpinionChanged);
+        Messenger.AddListener<Character, Character, string>(Signals.OPINION_DECREASED, OnOpinionChanged);
+
+        Messenger.AddListener<Character>(Signals.UPDATE_THOUGHT_BUBBLE, UpdateThoughtBubbleFromSignal);
+        Messenger.AddListener<MoodComponent>(Signals.MOOD_SUMMARY_MODIFIED, OnMoodModified);
+
+        normalTraitsEventLbl.SetOnClickAction(OnClickTrait);
+        statusTraitsEventLbl.SetOnClickAction(OnClickTrait);
+        relationshipNamesEventLbl.SetOnClickAction(OnClickCharacter);
+        
+        factionEventLbl.SetOnClickAction(OnClickFaction);
+        currentLocationEventLbl.SetOnClickAction(OnClickCurrentLocation);
+        homeRegionEventLbl.SetOnClickAction(OnClickHomeLocation);
+        houseEventLbl.SetOnClickAction(OnClickHomeStructure);
+
+        moodMeter.ResetMarks();
+        moodMeter.AddMark(EditableValuesManager.Instance.criticalMoodHighThreshold/100f, Color.red);
+        moodMeter.AddMark(EditableValuesManager.Instance.lowMoodHighThreshold/100f, Color.yellow);
+
+        energyMeter.ResetMarks();
+        energyMeter.AddMark(CharacterNeedsComponent.REFRESHED_LOWER_LIMIT/100f, Color.green);
+        energyMeter.AddMark(CharacterNeedsComponent.TIRED_UPPER_LIMIT/100f, Color.yellow);
+        energyMeter.AddMark(CharacterNeedsComponent.EXHAUSTED_UPPER_LIMIT/100f, Color.red);
+        
+        fullnessMeter.ResetMarks();
+        fullnessMeter.AddMark(CharacterNeedsComponent.FULL_LOWER_LIMIT/100f, Color.green);
+        fullnessMeter.AddMark(CharacterNeedsComponent.HUNGRY_UPPER_LIMIT/100f, Color.yellow);
+        fullnessMeter.AddMark(CharacterNeedsComponent.STARVING_UPPER_LIMIT/100f, Color.red);
+        
+        happinessMeter.ResetMarks();
+        happinessMeter.AddMark(CharacterNeedsComponent.ENTERTAINED_LOWER_LIMIT/100f, Color.green);
+        happinessMeter.AddMark(CharacterNeedsComponent.BORED_UPPER_LIMIT/100f, Color.yellow);
+        happinessMeter.AddMark(CharacterNeedsComponent.SULKING_UPPER_LIMIT/100f, Color.red);
+        
+        comfortMeter.ResetMarks();
+        comfortMeter.AddMark(CharacterNeedsComponent.RELAXED_LOWER_LIMIT/100f, Color.green);
+        comfortMeter.AddMark(CharacterNeedsComponent.UNCOMFORTABLE_UPPER_LIMIT/100f, Color.yellow);
+        comfortMeter.AddMark(CharacterNeedsComponent.AGONIZING_UPPER_LIMIT/100f, Color.red);
+        
+        hopeMeter.ResetMarks();
+        hopeMeter.AddMark(CharacterNeedsComponent.HOPEFUL_LOWER_LIMIT/100f, Color.green);
+        hopeMeter.AddMark(CharacterNeedsComponent.DISCOURAGED_UPPER_LIMIT/100f, Color.yellow);
+        hopeMeter.AddMark(CharacterNeedsComponent.HOPELESS_UPPER_LIMIT/100f, Color.red);
+        
+        InitializeLogsMenu();
+    }
+
+    #region Overrides
+    public override void CloseMenu() {
+        base.CloseMenu();
+        if (_activeCharacter != null && _activeCharacter.marker != null && InnerMapCameraMove.Instance.target == _activeCharacter.marker.gameObject.transform) {
+            InnerMapCameraMove.Instance.CenterCameraOn(null);    
+        }
+        _activeCharacter = null;
+    }
+    public override void OpenMenu() {
+        _previousCharacter = _activeCharacter;
+        _activeCharacter = _data as Character;
+        base.OpenMenu();
+        if (UIManager.Instance.IsShareIntelMenuOpen()) {
+            backButton.interactable = false;
+        }
+        if (UIManager.Instance.IsObjectPickerOpen()) {
+            UIManager.Instance.HideObjectPicker();
+        }
+        UpdateCharacterInfo();
+        UpdateTraits();
+        UpdateRelationships();
+        UpdateInventoryInfo();
+        UpdateAllHistoryInfo();
+        ResetAllScrollPositions();
+        UpdateMoodSummary();
+    }
+    public override void SetData(object data) {
+        base.SetData(data);
+        //if (isShowing) {
+        //    UpdateCharacterInfo();
+        //}
+    }
+    #endregion
+
+    #region Utilities
+    private void InitializeLogsMenu() {
+        logHistoryItems = new LogHistoryItem[CharacterManager.MAX_HISTORY_LOGS];
         //populate history logs table
-        for (int i = 0; i < MAX_HISTORY_LOGS; i++) {
-            GameObject newLogItem = ObjectPoolManager.Instance.InstantiateObjectFromPool(logHistoryPrefab.name, Vector3.zero, Quaternion.identity, logHistoryTable.transform);
-            newLogItem.name = "-1";
+        for (int i = 0; i < CharacterManager.MAX_HISTORY_LOGS; i++) {
+            GameObject newLogItem = ObjectPoolManager.Instance.InstantiateObjectFromPool(logHistoryPrefab.name, Vector3.zero, Quaternion.identity, historyScrollView.content);
             logHistoryItems[i] = newLogItem.GetComponent<LogHistoryItem>();
             newLogItem.transform.localScale = Vector3.one;
             newLogItem.SetActive(true);
-            logHistoryTable.Reposition();
-            historyScrollView.ResetPosition();
         }
         for (int i = 0; i < logHistoryItems.Length; i++) {
             logHistoryItems[i].gameObject.SetActive(false);
         }
     }
-
-    #region Overrides
-    public override void HideMenu() {
-        if (currentlyShowingCharacter.avatar != null) {
-            currentlyShowingCharacter.avatar.SetHighlightState(false);
+    private void ResetAllScrollPositions() {
+        historyScrollView.verticalNormalizedPosition = 1;
+    }
+    public void UpdateCharacterInfo() {
+        if (_activeCharacter == null) {
+            return;
         }
-        _activeCharacter = null;
-        base.HideMenu();
+        UpdatePortrait();
+        UpdateBasicInfo();
+        UpdateStatInfo();
+        UpdateLocationInfo();
+        UpdateMoodMeter();
+        UpdateNeedMeters();
     }
-    public override void ShowMenu() {
-        base.ShowMenu();
-        _activeCharacter = (ECS.Character)_data;
-        //RepositionHistoryScrollView();
-        UpdateCharacterInfo();
-        UpdateAllHistoryInfo();
+    private void UpdatePortrait() {
+        characterPortrait.GeneratePortrait(_activeCharacter);
     }
-    public override void OpenMenu() {
-        base.OpenMenu();
-        //RepositionHistoryScrollView();
-        //UpdateCharacterInfo();
-        //UpdateAllHistoryInfo();
+    public void UpdateBasicInfo() {
+        nameLbl.text = _activeCharacter.name;
+        lvlClassLbl.text = _activeCharacter.raceClassName;
+        if(activeCharacter.isSettlementRuler || activeCharacter.isFactionLeader) {
+            string additionalText = string.Empty;
+            if (activeCharacter.isSettlementRuler) {
+                additionalText += "Settlement Ruler";
+            }
+            if (activeCharacter.isFactionLeader) {
+                if(additionalText != string.Empty) {
+                    additionalText += ", ";
+                }
+                additionalText += "Faction Leader";
+            }
+            nameLbl.text += " (" + additionalText + ")";
+        }
+        UpdateThoughtBubble();
+    }
+    public void UpdateThoughtBubble() {
+        Log log;
+        plansLbl.text = activeCharacter.GetThoughtBubble(out log);
+        if (log != null) {
+            plansLblLogItem.SetLog(log);
+        }
     }
     #endregion
 
-    public override void SetData(object data) {
-        if (_data != null) {
-            ECS.Character previousCharacter = _data as ECS.Character;
-            if (previousCharacter.avatar != null) {
-                previousCharacter.avatar.SetHighlightState(false);
-            }
-        }
-        base.SetData(data);
-        if (currentlyShowingCharacter.avatar != null) {
-            currentlyShowingCharacter.avatar.SetHighlightState(true);
-        }
-        historyScrollView.ResetPosition();
-        if (isShowing) {
-            UpdateCharacterInfo();
+    #region Stats
+    private void UpdateStatInfo() {
+        hpLbl.text = $"{_activeCharacter.currentHP.ToString()}/{_activeCharacter.maxHP.ToString()}";
+        attackLbl.text = $"{_activeCharacter.attackPower.ToString()}";
+        speedLbl.text = $"{_activeCharacter.speed.ToString()}";
+        if(characterPortrait.character != null) {
+            characterPortrait.UpdateLvl();
         }
     }
+    #endregion
 
-	public void UpdateCharacterInfo(){
-		if(currentlyShowingCharacter == null) {
-			return;
-		}
-		UpdateGeneralInfo();
-		UpdateStatInfo ();
-		UpdateTraitInfo	();
-		UpdateFollowersInfo ();
-		UpdateEquipmentInfo ();
-		UpdateInventoryInfo ();
-		UpdateRelationshipInfo ();
-		//UpdateAllHistoryInfo ();
-	}
-    public void UpdateGeneralInfo() {
-        string text = string.Empty;
-        text += currentlyShowingCharacter.id;
-        text += "\n" + currentlyShowingCharacter.name;
-		text += "\n" + Utilities.GetNormalizedSingularRace (currentlyShowingCharacter.raceSetting.race) + " " + Utilities.NormalizeString (currentlyShowingCharacter.gender.ToString ());
-		if(currentlyShowingCharacter.characterClass != null && currentlyShowingCharacter.characterClass.className != "Classless"){
-			text += " " + currentlyShowingCharacter.characterClass.className;
-		}
-		if(currentlyShowingCharacter.role != null){
-			text += " (" + currentlyShowingCharacter.role.roleType.ToString() + ")";
-		}
-
-		text += "\nFaction: " + (currentlyShowingCharacter.faction != null ? currentlyShowingCharacter.faction.urlName : "NONE");
-        text += ",    Village: ";
-        if (currentlyShowingCharacter.home != null) {
-            text += currentlyShowingCharacter.home.urlName;
+    #region Location
+    private void UpdateLocationInfo() {
+        factionLbl.text = _activeCharacter.faction != null ? $"<link=\"faction\">{_activeCharacter.faction.name}</link>" : "Factionless";
+        currentLocationLbl.text = $"<link=\"currLocation\">{_activeCharacter.currentRegion.name}</link>";
+        homeRegionLbl.text = _activeCharacter.homeRegion != null ? $"<link=\"home\">{_activeCharacter.homeRegion.name}</link>" : "Homeless";
+        houseLbl.text = _activeCharacter.homeStructure != null ? $"<link=\"house\">{_activeCharacter.homeStructure.name}</link>" : "Homeless";
+    }
+    private void OnClickFaction(object obj) {
+        UIManager.Instance.ShowFactionInfo(activeCharacter.faction);
+    }
+    private void OnClickCurrentLocation(object obj) {
+        UIManager.Instance.ShowRegionInfo(activeCharacter.currentRegion);
+    }
+    private void OnClickHomeLocation(object obj) {
+        UIManager.Instance.ShowRegionInfo(activeCharacter.homeRegion);
+    }
+    private void OnClickHomeStructure(object obj) {
+        if (activeCharacter.homeSettlement != null) {
+            if (InnerMapManager.Instance.isAnInnerMapShowing && InnerMapManager.Instance.currentlyShowingMap != activeCharacter.homeSettlement.innerMap) {
+                InnerMapManager.Instance.HideAreaMap();
+            }
+            if (activeCharacter.homeSettlement.innerMap.isShowing == false) {
+                InnerMapManager.Instance.ShowInnerMap(activeCharacter.homeRegion);
+            }
+            InnerMapCameraMove.Instance.CenterCameraOn(activeCharacter.homeStructure.structureObj.gameObject);
         } else {
-            text += "NONE";
+            UIManager.Instance.ShowRegionInfo(activeCharacter.homeRegion);
         }
-        text += "\nCurrent Action: ";
-        if (currentlyShowingCharacter.currentTask != null) {
-            text += currentlyShowingCharacter.currentTask.taskType.ToString() + " ";
-            for (int i = 0; i < currentlyShowingCharacter.currentTask.alignments.Count; i++) {
-                ACTION_ALIGNMENT currAlignment = currentlyShowingCharacter.currentTask.alignments[i];
-                text += currAlignment.ToString();
-                if (i + 1 < currentlyShowingCharacter.currentTask.alignments.Count) {
-                    text += ", ";
+        
+    }
+    #endregion
+
+    #region Traits
+    private void UpdateTraitsFromSignal(Character character, Trait trait) {
+        if(_activeCharacter == null || _activeCharacter != character) {
+            return;
+        }
+        UpdateTraits();
+        UpdateThoughtBubble();
+    }
+    private void UpdateThoughtBubbleFromSignal(Character character) {
+        if (isShowing && _activeCharacter == character) {
+            UpdateThoughtBubble();
+        }
+    }
+    private void UpdateTraits() {
+        // if (_activeCharacter.minion != null) {
+        //     return;
+        // }
+
+        string statusTraits = string.Empty;
+        string normalTraits = string.Empty;
+
+        for (int i = 0; i < _activeCharacter.traitContainer.allTraits.Count; i++) {
+            Trait currTrait = _activeCharacter.traitContainer.allTraits[i];
+            if (currTrait.isHidden) {
+                continue; //skip
+            }
+            if (currTrait.type == TRAIT_TYPE.ABILITY || currTrait.type == TRAIT_TYPE.ATTACK || currTrait.type == TRAIT_TYPE.COMBAT_POSITION
+                || currTrait.name == "Herbivore" || currTrait.name == "Carnivore") {
+                continue; //hide combat traits
+            }
+            if (currTrait.type == TRAIT_TYPE.STATUS || currTrait.type == TRAIT_TYPE.DISABLER || currTrait.type == TRAIT_TYPE.ENCHANTMENT || currTrait.type == TRAIT_TYPE.EMOTION) {
+                string color = normalTextColor;
+                if (currTrait.type == TRAIT_TYPE.BUFF) {
+                    color = buffTextColor;
+                } else if (currTrait.type == TRAIT_TYPE.FLAW) {
+                    color = flawTextColor;
                 }
+                if (!string.IsNullOrEmpty(statusTraits)) {
+                    statusTraits = $"{statusTraits}, ";
+                }
+                statusTraits = $"{statusTraits}<b><color={color}><link=\"{i}\">{currTrait.GetNameInUI(activeCharacter)}</link></color></b>";
+            } else {
+                string color = normalTextColor;
+                if (currTrait.type == TRAIT_TYPE.BUFF) {
+                    color = buffTextColor;
+                } else if (currTrait.type == TRAIT_TYPE.FLAW) {
+                    color = flawTextColor;
+                }
+                if (!string.IsNullOrEmpty(normalTraits)) {
+                    normalTraits = $"{normalTraits}, ";
+                }
+                normalTraits = $"{normalTraits}<b><color={color}><link=\"{i}\">{currTrait.GetNameInUI(activeCharacter)}</link></color></b>";
             }
-        } else {
-            text += "NONE";
         }
-		text += "\nCurrent State: ";
-		if (currentlyShowingCharacter.currentTask != null) {
-			if(currentlyShowingCharacter.currentTask.currentState != null){
-				text += currentlyShowingCharacter.currentTask.currentState.stateName;
-			}
-		} else {
-			text += "NONE";
-		}
-        text += "\nCurrent Quest: ";
-        if (currentlyShowingCharacter.currentQuest != null) {
-            text += currentlyShowingCharacter.currentQuest.questName.ToString() + "(" + currentlyShowingCharacter.currentQuestPhase.phaseName + ")";
-        } else {
-            text += "NONE";
-        }
-        //text += "\nGold: " +  currentlyShowingCharacter.gold.ToString();
-        //text += ",    Prestige: " + currentlyShowingCharacter.prestige.ToString();
-		text += "\nParty: " + (currentlyShowingCharacter.party != null ? currentlyShowingCharacter.party.urlName : "NONE");
-		//text += "\nCivilians: " + "[url=civilians]" + currentlyShowingCharacter.civilians.ToString () + "[/url]";
-        if (currentlyShowingCharacter.role != null) {
-            text += "\nFood: " + currentlyShowingCharacter.role.food + ", Energy: " + currentlyShowingCharacter.role.energy;
-            text += "\nJoy: " + currentlyShowingCharacter.role.joy + ", Prestige: " + currentlyShowingCharacter.role.prestige;
-        }
-        //        foreach (KeyValuePair<RACE, int> kvp in currentlyShowingCharacter.civiliansByRace) {
-        //            if (kvp.Value > 0) {
-        //                text += "\n" + kvp.Key.ToString() + " - " + kvp.Value.ToString();
-        //            }
-        //        }
-        //		text += "\n[b]Skills:[/b] ";
-        //		if(currentlyShowingCharacter.skills.Count > 0){
-        //			for (int i = 0; i < currentlyShowingCharacter.skills.Count; i++) {
-        //				ECS.Skill skill = currentlyShowingCharacter.skills [i];
-        //				text += "\n  - " + skill.skillName;
-        //			}
-        //		}else{
-        //			text += "NONE";
-        //		}
 
-        generalInfoLbl.text = text;
-//        infoScrollView.ResetPosition();
+        statusTraitsLbl.text = string.Empty;
+        if (string.IsNullOrEmpty(statusTraits) == false) {
+            //character has status traits
+            statusTraitsLbl.text = statusTraits; 
+        }
+        normalTraitsLbl.text = string.Empty;
+        if (string.IsNullOrEmpty(normalTraits) == false) {
+            //character has normal traits
+            normalTraitsLbl.text = normalTraits;
+        }
+    }
+    public void OnHoverTrait(object obj) {
+        if (obj is string) {
+            string text = (string) obj;
+            int index = int.Parse(text);
+            Trait trait = activeCharacter.traitContainer.allTraits[index];
+            UIManager.Instance.ShowSmallInfo(trait.description);
+        }
 
     }
+    public void OnHoverOutTrait() {
+        UIManager.Instance.HideSmallInfo();
+    }
+    private void OnClickTrait(object obj) {
+        if (TraitManager.Instance.CanStillTriggerFlaws(activeCharacter)) {
+            if (obj is string) {
+                string text = (string)obj;
+                int index = int.Parse(text);
+                Trait trait = activeCharacter.traitContainer.allTraits[index];
+                string traitDescription = trait.description;
+                if (trait.canBeTriggered) {
+                    traitDescription += "\n" + trait.GetRequirementDescription(activeCharacter) +
+                    "\n\n<b>Effect</b>: " + trait.GetTriggerFlawEffectDescription(activeCharacter, "flaw_effect");
+                }
 
-	private void UpdateStatInfo(){
-		string text = string.Empty;
-		text += "[b]STATS[/b]";
-		text += "\nHP: " + currentlyShowingCharacter.currentHP.ToString() + "/" + currentlyShowingCharacter.maxHP.ToString();
-		text += "\nStr: " + currentlyShowingCharacter.strength.ToString();
-		text += "\nInt: " + currentlyShowingCharacter.intelligence.ToString();
-		text += "\nAgi: " + currentlyShowingCharacter.agility.ToString();
-		statInfoLbl.text = text;
-	}
-	private void UpdateTraitInfo(){
-		string text = string.Empty;
-		text += "[b]TRAITS AND TAGS[/b]";
-		if(currentlyShowingCharacter.traits.Count > 0 || currentlyShowingCharacter.tags.Count > 0){
-			text += "\n";
-			for (int i = 0; i < currentlyShowingCharacter.traits.Count; i++) {
-				Trait trait = currentlyShowingCharacter.traits [i];
-				if(i > 0){
-					text += ", ";
-				}
-				text += trait.traitName;
-			}
-			if(currentlyShowingCharacter.traits.Count > 0){
-				text += ", ";
-			}
-			for (int i = 0; i < currentlyShowingCharacter.tags.Count; i++) {
-				CharacterTag tag = currentlyShowingCharacter.tags [i];
-				if(i > 0){
-					text += ", ";
-				}
-				text += tag.tagName;
-			}
-		}else{
-			text += "\nNONE";
-		}
-		traitInfoLbl.text = text;
-	}
-	private void UpdateFollowersInfo(){
-		string text = string.Empty;
-		if(currentlyShowingCharacter.party != null && currentlyShowingCharacter.party.partyLeader.id == currentlyShowingCharacter.id){
-			for (int i = 0; i < currentlyShowingCharacter.party.followers.Count; i++) {
-				ECS.Character follower = currentlyShowingCharacter.party.followers [i];
-				if(i > 0){
-					text += "\n";
-				}
-				text += follower.urlName;
-			}
-		}else{
-			text += "NONE";
-		}
-		followersLbl.text = text;
-		followersScrollView.UpdatePosition ();
-	}
+                StartCoroutine(HoverOutTraitAfterClick());//Quick fix because tooltips do not disappear. Issue with hover out action in label not being called when other collider goes over it.
+                UIManager.Instance.ShowYesNoConfirmation(trait.name, traitDescription,
+                    onClickYesAction: () => OnClickTriggerFlaw(trait),
+                    showCover: true, layer: 25, yesBtnText:
+                    $"Trigger ({EditableValuesManager.Instance.triggerFlawManaCost.ToString()} Mana)",
+                    yesBtnInteractable: trait.CanFlawBeTriggered(activeCharacter),
+                    pauseAndResume: true,
+                    noBtnActive: false,
+                    yesBtnActive: trait.canBeTriggered,
+                    yesBtnInactiveHoverAction: () => ShowCannotTriggerFlawReason(trait),
+                    yesBtnInactiveHoverExitAction: UIManager.Instance.HideSmallInfo
+                );
+                normalTraitsEventLbl.ResetHighlightValues();
+            }
+        } else {
+            StartCoroutine(HoverOutTraitAfterClick());//Quick fix because tooltips do not disappear. Issue with hover out action in label not being called when other collider goes over it.
+            PlayerUI.Instance.ShowGeneralConfirmation("Invalid", "This character's flaws can no longer be triggered.");
+            normalTraitsEventLbl.ResetHighlightValues();
+        }
+    }
+    private IEnumerator HoverOutTraitAfterClick() {
+        yield return new WaitForEndOfFrame();
+        OnHoverOutTrait();
+    }
+    private void ShowCannotTriggerFlawReason(Trait trait) {
+        string reason = $"You cannot trigger {activeCharacter.name}'s flaw because: ";
+        List<string> reasons = trait.GetCannotTriggerFlawReasons(activeCharacter);
+        for (int i = 0; i < reasons.Count; i++) {
+            reason = $"{reason}\n\t- {reasons[i]}";
+        }
+        UIManager.Instance.ShowSmallInfo(reason);
+    }
+    private void OnClickTriggerFlaw(Trait trait) {
+        string logKey = trait.TriggerFlaw(activeCharacter);
+        if (logKey != "flaw_effect") {
+            UIManager.Instance.ShowYesNoConfirmation(
+                trait.name,
+                trait.GetTriggerFlawEffectDescription(activeCharacter, logKey),
+                showCover: true,
+                layer: 25,
+                yesBtnText: "OK",
+                pauseAndResume: true,
+                noBtnActive: false
+            );
+        }
+    }
+    #endregion
 
-	private void UpdateEquipmentInfo(){
-		string text = string.Empty;
-		if(currentlyShowingCharacter.equippedItems.Count > 0){
-			for (int i = 0; i < currentlyShowingCharacter.equippedItems.Count; i++) {
-				ECS.Item item = currentlyShowingCharacter.equippedItems [i];
-				if(i > 0){
-					text += "\n";
-				}
-				text += item.itemName;
-				if(item is ECS.Weapon){
-					ECS.Weapon weapon = (ECS.Weapon)item;
-					if(weapon.bodyPartsAttached.Count > 0){
-						text += " (";
-						for (int j = 0; j < weapon.bodyPartsAttached.Count; j++) {
-							if(j > 0){
-								text += ", ";
-							}
-							text += weapon.bodyPartsAttached [j].name;
-						}
-						text += ")";
-					}
-				}else if(item is ECS.Armor){
-					ECS.Armor armor = (ECS.Armor)item;
-					text += " (" + armor.bodyPartAttached.name + ")";
-				}
-			}
-		}else{
-			text += "NONE";
-		}
-		equipmentInfoLbl.text = text;
-		equipmentScrollView.UpdatePosition ();
-	}
-
-	private void UpdateInventoryInfo(){
-		string text = string.Empty;
-		if(currentlyShowingCharacter.inventory.Count > 0) {
-			for (int i = 0; i < currentlyShowingCharacter.inventory.Count; i++) {
-				ECS.Item item = currentlyShowingCharacter.inventory [i];
-				if(i > 0){
-					text += "\n";
-				}
-				text += item.itemName;
-			}
-		}else{
-			text += "NONE";
-		}
-		inventoryInfoLbl.text = text;
-		inventoryScrollView.UpdatePosition ();
-	}
-
-	private void UpdateRelationshipInfo(){
-		string text = string.Empty;
-		if (currentlyShowingCharacter.relationships.Count > 0) {
-			bool isFirst = true;
-			foreach (KeyValuePair<ECS.Character, Relationship> kvp in currentlyShowingCharacter.relationships) {
-				if(!isFirst){
-					text += "\n";
-				}else{
-					isFirst = false;
-				}
-				text += kvp.Key.role.roleType.ToString() + " " + kvp.Key.urlName + ": " + kvp.Value.totalValue.ToString();
-				if (kvp.Value.character1.id == kvp.Key.id) {
-					if(kvp.Value.relationshipStatus.Count > 0){
-						text += "(";
-						for (int i = 0; i < kvp.Value.relationshipStatus.Count; i++) {
-							if(i > 0){
-								text += ",";
-							}
-							text += kvp.Value.relationshipStatus [i].character1Relationship.ToString ();
-						}
-						text += ")";
-					}
-				} else if (kvp.Value.character2.id == kvp.Key.id) {
-					if(kvp.Value.relationshipStatus.Count > 0){
-						text += "(";
-						for (int i = 0; i < kvp.Value.relationshipStatus.Count; i++) {
-							if(i > 0){
-								text += ",";
-							}
-							text += kvp.Value.relationshipStatus [i].character2Relationship.ToString ();
-						}
-						text += ")";
-					}
-				}
-			}
-		} else {
-			text += "NONE";
-		}
-
-		relationshipsLbl.text = text;
-		relationshipsScrollView.UpdatePosition();
-	}
+    #region Items
+    private void UpdateInventoryInfoFromSignal(SpecialToken token, Character character) {
+        if (isShowing && _activeCharacter == character) {
+            UpdateInventoryInfo();
+        }
+    }
+    private void UpdateInventoryInfo() {
+        itemsLbl.text = string.Empty;
+        for (int i = 0; i < _activeCharacter.items.Count; i++) {
+            SpecialToken currInventoryItem = _activeCharacter.items[i];
+            itemsLbl.text = $"{itemsLbl.text} {currInventoryItem.name}";
+            if (i < _activeCharacter.items.Count - 1) {
+                itemsLbl.text = $"{itemsLbl.text}, ";
+            }
+        }
+    }
+    #endregion
 
     #region History
     private void UpdateHistory(object obj) {
-        if (obj is ECS.Character && currentlyShowingCharacter != null && (obj as ECS.Character).id == currentlyShowingCharacter.id) {
-            UpdateAllHistoryInfo();
+        var character = obj as Character;
+        if (isShowing && character == _activeCharacter) {
+            if (_activeCharacter.minion != null) {
+                ClearHistory();
+            } else if (character != null && _activeCharacter != null && character.id == _activeCharacter.id) {
+                UpdateAllHistoryInfo();
+            }    
         }
     }
     private void UpdateAllHistoryInfo() {
+        if (_activeCharacter.minion != null) {
+            return;
+        }
+        //List<Log> characterHistory = new List<Log>(_activeCharacter.history.OrderByDescending(x => x.date.year).ThenByDescending(x => x.date.month).ThenByDescending(x => x.date.day).ThenByDescending(x => x.date.tick));
+        int historyCount = _activeCharacter.logComponent.history.Count;
+        int historyLastIndex = historyCount - 1;
         for (int i = 0; i < logHistoryItems.Length; i++) {
             LogHistoryItem currItem = logHistoryItems[i];
-            Log currLog = currentlyShowingCharacter.history.ElementAtOrDefault(i);
-            if (currLog != null) {
-                currItem.SetLog(currLog);
+            if(i < historyCount) {
+                Log currLog = _activeCharacter.logComponent.history[historyLastIndex - i];
                 currItem.gameObject.SetActive(true);
-                if (Utilities.IsEven(i)) {
-                    currItem.SetLogColor(evenLogColor);
-                } else {
-                    currItem.SetLogColor(oddLogColor);
-                }
+                currItem.SetLog(currLog);
             } else {
                 currItem.gameObject.SetActive(false);
             }
         }
-        if (this.gameObject.activeInHierarchy) {
-            StartCoroutine(UIManager.Instance.RepositionTable(logHistoryTable));
-            StartCoroutine(UIManager.Instance.RepositionScrollView(historyScrollView));
-        }
     }
-    private bool IsLogAlreadyShown(Log log) {
+    private void ClearHistory() {
         for (int i = 0; i < logHistoryItems.Length; i++) {
             LogHistoryItem currItem = logHistoryItems[i];
-            if (currItem.thisLog != null) {
-                if (currItem.thisLog.id == log.id) {
-                    return true;
-                }
-            }
+            currItem.gameObject.SetActive(false);
         }
-        return false;
+    }
+    #endregion   
+
+    #region Listeners
+    private void OnMenuOpened(UIMenu openedMenu) {
+        //if (this.isShowing) {
+        //    if (openedMenu is PartyInfoUI) {
+        //        CheckIfMenuShouldBeHidden();
+        //    }
+        //}
+    }
+    private void OnMenuClosed(UIMenu closedMenu) {
+        //if (this.isShowing) {
+        //    if (closedMenu is PartyInfoUI) {
+        //        CheckIfMenuShouldBeHidden();
+        //    }
+        //}
+    }
+    private void OnOpenShareIntelMenu() {
+        backButton.interactable = false;
+    }
+    private void OnCloseShareIntelMenu() {
+        backButton.interactable = UIManager.Instance.GetLastUIMenuHistory() != null;
+    }
+    private void OnCharacterChangedAlterEgo(Character character) {
+        if (isShowing && activeCharacter == character) {
+            UpdateCharacterInfo();
+            UpdateTraits();
+        }
+    }
+    private void OnCharacterDied(Character character) {
+        if (this.isShowing && activeCharacter.id == character.id) {
+            InnerMapCameraMove.Instance.CenterCameraOn(null);
+        }
     }
     #endregion
 
-    public void CenterCameraOnCharacter() {
-        GameObject centerOn = null;
-        if (currentlyShowingCharacter.avatar != null) {
-			centerOn = currentlyShowingCharacter.avatar.specificLocation.tileLocation.gameObject;
-        } else {
-            centerOn = currentlyShowingCharacter.currLocation.gameObject;
+    #region For Testing
+    public void ShowCharacterTestingInfo() {
+        string summary = "Home structure: " + activeCharacter.homeStructure?.ToString() ?? "None";
+        summary = $"{summary}{("\nCurrent structure: " + activeCharacter.currentStructure?.ToString() ?? "None")}";
+        summary = $"{summary}{("\nPOI State: " + activeCharacter.state.ToString())}";
+        summary = $"{summary}{("\nDo Not Get Hungry: " + activeCharacter.needsComponent.doNotGetHungry.ToString())}";
+        summary = $"{summary}{("\nDo Not Get Tired: " + activeCharacter.needsComponent.doNotGetTired.ToString())}";
+        summary = $"{summary}{("\nDo Not Get Bored: " + activeCharacter.needsComponent.doNotGetBored.ToString())}";
+        summary = $"{summary}{("\nDo Not Recover HP: " + activeCharacter.doNotRecoverHP.ToString())}";
+        summary = $"{summary}{("\nCan Move: " + activeCharacter.canMove)}";
+        summary = $"{summary}{("\nCan Witness: " + activeCharacter.canWitness)}";
+        summary = $"{summary}{("\nCan Be Attacked: " + activeCharacter.canBeAtttacked)}";
+        summary = $"{summary}{("\nCan Perform: " + activeCharacter.canPerform)}";
+        summary = $"{summary}{("\nIs Missing: " + activeCharacter.isMissing)}";
+        summary = $"{summary}{("\n" + activeCharacter.needsComponent.GetNeedsSummary())}";
+        summary = $"{summary}{("\nFullness Time: " + (activeCharacter.needsComponent.fullnessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.needsComponent.fullnessForcedTick)))}";
+        summary = $"{summary}{("\nTiredness Time: " + (activeCharacter.needsComponent.tirednessForcedTick == 0 ? "N/A" : GameManager.ConvertTickToTime(activeCharacter.needsComponent.tirednessForcedTick)))}";
+        summary = $"{summary}{("\nRemaining Sleep Ticks: " + activeCharacter.needsComponent.currentSleepTicks.ToString())}";
+        summary = $"{summary}{("\nFood: " + activeCharacter.food.ToString())}";
+        // summary = $"{summary}{("\nRole: " + activeCharacter.role.roleType.ToString())}";
+        summary = $"{summary}{("\nSexuality: " + activeCharacter.sexuality.ToString())}";
+        summary = $"{summary}{("\nMood: " + activeCharacter.moodComponent.moodValue + "/100" + "(" + activeCharacter.moodComponent.moodState.ToString() + ")")}";
+        summary = $"{summary}{("\nHP: " + activeCharacter.currentHP.ToString() + "/" + activeCharacter.maxHP.ToString())}";
+        summary = $"{summary}{("\nIgnore Hostiles: " + activeCharacter.ignoreHostility.ToString())}";
+        summary = $"{summary}{("\nAttack Range: " + activeCharacter.characterClass.attackRange.ToString())}";
+        summary = $"{summary}{("\nAttack Speed: " + activeCharacter.attackSpeed.ToString())}";
+        if (activeCharacter.stateComponent.currentState != null) {
+            summary = $"{summary}{"\nCurrent State: " + activeCharacter.stateComponent.currentState.ToString()}";
+            summary = $"{summary}{"\n\tDuration in state: " + activeCharacter.stateComponent.currentState.currentDuration.ToString() + "/" + activeCharacter.stateComponent.currentState.duration.ToString()}";
         }
-        CameraMove.Instance.CenterCameraOn(centerOn);
+        
+        summary += "\nBehaviour Components: ";
+        for (int i = 0; i < activeCharacter.behaviourComponent.currentBehaviourComponents.Count; i++) {
+            CharacterBehaviourComponent component = activeCharacter.behaviourComponent.currentBehaviourComponents[i];
+            summary += $"{component.ToString()}, ";
+        }
+        
+        summary += "\nPersonal Job Queue: ";
+        if (activeCharacter.jobQueue.jobsInQueue.Count > 0) {
+            for (int i = 0; i < activeCharacter.jobQueue.jobsInQueue.Count; i++) {
+                JobQueueItem poi = activeCharacter.jobQueue.jobsInQueue[i];
+                summary += poi + ", ";
+            }
+        } else {
+            summary += "None";
+        }
+        
+        // summary += "\n" + activeCharacter.needsComponent.GetNeedsSummary();
+        // summary += "\n\nAlter Egos: ";
+        // for (int i = 0; i < activeCharacter.alterEgos.Values.Count; i++) {
+        //     summary += "\n" + activeCharacter.alterEgos.Values.ElementAt(i).GetAlterEgoSummary();
+        // }
+        UIManager.Instance.ShowSmallInfo(summary);
     }
-
-    public bool IsCharacterInfoShowing(ECS.Character character) {
-        return (isShowing && currentlyShowingCharacter == character);
+    public void HideCharacterTestingInfo() {
+        UIManager.Instance.HideSmallInfo();
     }
+    #endregion
 
-	
-//	public void OnClickCloseBtn(){
-////		UIManager.Instance.playerActionsUI.HidePlayerActionsUI ();
-//		HideMenu ();
-//	}
+    #region Relationships
+    private void UpdateRelationships() {
+        relationshipTypesLbl.text = string.Empty;
+        relationshipNamesLbl.text = string.Empty;
+        relationshipValuesLbl.text = string.Empty;
+        Dictionary<Character, OpinionData> orderedOpinions = _activeCharacter.opinionComponent.opinions
+            .OrderByDescending(k => k.Value.totalOpinion)
+            .ToDictionary(k => k.Key, v => v.Value);
+        
+        for (int i = 0; i < orderedOpinions.Keys.Count; i++) {
+            Character target = orderedOpinions.Keys.ElementAt(i);
+            relationshipTypesLbl.text += $"{_activeCharacter.opinionComponent.GetRelationshipNameWith(target)}\n";
+            int opinionOfOther = 0;
+            if (target.opinionComponent.HasOpinion(activeCharacter)) {
+                opinionOfOther = target.opinionComponent.GetTotalOpinion(activeCharacter);
+            }
+            relationshipNamesLbl.text += $"<link=\"{i}\">{target.name}</link>\n";
+            relationshipValuesLbl.text += $"<link=\"{i}\"><color=\"{ OpinionColor(activeCharacter.opinionComponent.GetTotalOpinion(target)) }\"> " +
+                                          $"{GetOpinionText(activeCharacter.opinionComponent.GetTotalOpinion(target))}</color> " +
+                                          $"<color=\"{OpinionColor(opinionOfOther)}\">({GetOpinionText(opinionOfOther)})</color></link>\n";
+        }
+    }
+    public void OnHoverRelationshipValue(object obj) {
+        if (obj is string) {
+            string text = (string)obj;
+            int index = int.Parse(text);
+            Character target = _activeCharacter.opinionComponent.opinions.Keys.ElementAtOrDefault(index);
+            if (target != null) {
+                ShowOpinionData(target);
+            }
+        }
+    }
+    private void OnOpinionChanged(Character owner, Character target, string reason) {
+        if (isShowing && (owner == activeCharacter || target == activeCharacter)) {
+            UpdateRelationships();
+        }
+    }
+    private void OnOpinionChanged(Character owner, Character target) {
+        if (isShowing && (owner == activeCharacter || target == activeCharacter)) {
+            UpdateRelationships();
+        }
+    }
+    private void ShowOpinionData(Character target) {
+        int opinionOfOther = target.opinionComponent.GetTotalOpinion(activeCharacter);
+        string summary = activeCharacter.name + "'s opinion of " + target.name;
+        summary += "\n---------------------";
+        Dictionary<string, int> opinions = activeCharacter.opinionComponent.GetOpinionData(target).allOpinions;
+        foreach (KeyValuePair<string, int> kvp in opinions) {
+            summary += "\n" + kvp.Key + ": " + "<color=" + OpinionColor(kvp.Value) + ">" + GetOpinionText(kvp.Value) + "</color>";
+        }
+        summary += "\n---------------------";
+        summary += "\nTotal: <color=" + OpinionColor(opinionOfOther) + ">" + GetOpinionText(activeCharacter.opinionComponent.GetTotalOpinion(target)) + "</color>";
+        summary += "\n" + target.name + "'s opinion of " + activeCharacter.name + ": <color=" + OpinionColor(opinionOfOther) + ">" + GetOpinionText(opinionOfOther) + "</color>";
+        summary += "\n\nCompatibility: " + RelationshipManager.Instance.GetCompatibilityBetween(activeCharacter, target);
+        UIManager.Instance.ShowSmallInfo(summary);
+    }
+    public void HideRelationshipData() {
+        UIManager.Instance.HideSmallInfo();
+    }
+    private string OpinionColor(int number) {
+        if(number < 0) {
+            return "red";
+        }
+        return "green";
+    }
+    private string GetOpinionText(int number) {
+        if (number < 0) {
+            return "" + number;
+        }
+        return "+" + number;
+    }
+    private void OnClickCharacter(object obj) {
+        if (obj is string) {
+            string text = (string)obj;
+            int index = int.Parse(text);
+            Character target = _activeCharacter.opinionComponent.opinions.Keys.ElementAtOrDefault(index);
+            if (target != null) {
+                UIManager.Instance.ShowCharacterInfo(target,true);    
+            }
+        }
+    }
+    #endregion
+
+    #region Afflict
+    public void ShowAfflictUI() {
+        List<string> afflictions = new List<string>();
+        foreach (SpellData abilityData in PlayerManager.Instance.allSpellsData.Values) {
+            if (abilityData.type == INTERVENTION_ABILITY_TYPE.AFFLICTION) {
+                afflictions.Add(abilityData.name);
+            }
+        }
+        UIManager.Instance.ShowClickableObjectPicker(afflictions, ActivateAffliction, null, CanActivateAffliction, "Select Affliction", identifier: "Intervention Ability", showCover: true, layer: 19);
+    }
+    private void ActivateAffliction(object o) {
+        string afflictionName = (string) o;
+        SPELL_TYPE afflictionType = (SPELL_TYPE) System.Enum.Parse(typeof(SPELL_TYPE), afflictionName.ToUpper().Replace(' ', '_'));
+        PlayerManager.Instance.allSpellsData[afflictionType].ActivateAbility(activeCharacter);
+
+        UIManager.Instance.HideObjectPicker();
+    }
+    private bool CanActivateAffliction(string afflictionName) {
+        SPELL_TYPE afflictionType = (SPELL_TYPE) System.Enum.Parse(typeof(SPELL_TYPE), afflictionName.ToUpper().Replace(' ', '_'));
+        return PlayerManager.Instance.allSpellsData[afflictionType].CanPerformAbilityTowards(activeCharacter);
+    }
+    #endregion
+
+    #region Mood
+    private void OnMoodModified(MoodComponent moodComponent) {
+        if (_activeCharacter != null && _activeCharacter.moodComponent == moodComponent) {
+            UpdateMoodMeter();
+            UpdateMoodSummary();
+        }
+    }
+    private void UpdateMoodMeter() {
+        moodMeter.SetFillAmount(_activeCharacter.moodComponent.moodValue/100f);
+    }
+    private void UpdateMoodSummary() {
+        moodSummary.text = string.Empty;
+        string summary = string.Empty;
+        foreach (KeyValuePair<string, int> pair in _activeCharacter.moodComponent.moodModificationsSummary) {
+            string color = "green";
+            if (pair.Value < 0) {
+                color = "red";
+            }
+            summary += $"<color={color}>{pair.Value.ToString()}</color> {pair.Key}\n";
+        }
+        moodSummary.text = summary;
+    }
+    public void ShowMoodTooltip() {
+        string summary = $"{_activeCharacter.moodComponent.moodValue.ToString()}/100 ({_activeCharacter.moodComponent.moodState})";
+        summary += $"\nChance to trigger Major Mental Break " +
+                   $"{_activeCharacter.moodComponent.currentCriticalMoodEffectChance.ToString()}";
+        summary += $"\nChance to trigger Minor Mental Break " +
+                   $"{_activeCharacter.moodComponent.currentLowMoodEffectChance.ToString()}";
+        UIManager.Instance.ShowSmallInfo(summary);
+    }
+    public void HideSmallInfo() {
+        UIManager.Instance.HideSmallInfo();
+    }
+    #endregion
+
+    #region Needs
+    private void UpdateNeedMeters() {
+        energyMeter.SetFillAmount(_activeCharacter.needsComponent.tiredness/CharacterNeedsComponent.TIREDNESS_DEFAULT);
+        fullnessMeter.SetFillAmount(_activeCharacter.needsComponent.fullness/CharacterNeedsComponent.FULLNESS_DEFAULT);
+        happinessMeter.SetFillAmount(_activeCharacter.needsComponent.happiness/CharacterNeedsComponent.HAPPINESS_DEFAULT);
+        hopeMeter.SetFillAmount(_activeCharacter.needsComponent.hope/CharacterNeedsComponent.HOPE_DEFAULT);
+        comfortMeter.SetFillAmount(_activeCharacter.needsComponent.comfort/CharacterNeedsComponent.COMFORT_DEFAULT);
+    }
+    public void ShowEnergyTooltip() {
+        UIManager.Instance.ShowSmallInfo($"{_activeCharacter.needsComponent.tiredness.ToString()}/100");
+    }
+    public void ShowFullnessTooltip() {
+        UIManager.Instance.ShowSmallInfo($"{_activeCharacter.needsComponent.fullness.ToString()}/100");
+    }
+    public void ShowHappinessTooltip() {
+        UIManager.Instance.ShowSmallInfo($"{_activeCharacter.needsComponent.happiness.ToString()}/100");
+    }
+    public void ShowHopeTooltip() {
+        UIManager.Instance.ShowSmallInfo($"{_activeCharacter.needsComponent.hope.ToString()}/100");
+    }
+    public void ShowComfortTooltip() {
+        UIManager.Instance.ShowSmallInfo($"{_activeCharacter.needsComponent.comfort.ToString()}/100");
+    }
+    #endregion
 }

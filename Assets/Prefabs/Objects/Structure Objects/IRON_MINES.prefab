@@ -1,0 +1,239 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &100100000
+Prefab:
+  m_ObjectHideFlags: 1
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications: []
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 0}
+  m_RootGameObject: {fileID: 1869609091324586}
+  m_IsPrefabParent: 1
+--- !u!1 &1869609091324586
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4500767886698592}
+  - component: {fileID: 114943314918187516}
+  m_Layer: 0
+  m_Name: IRON_MINES
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4500767886698592
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1869609091324586}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114943314918187516
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1869609091324586}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75e931add8ef96d4faa560eff72f4c46, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  states:
+  - _stateName: Default
+    _everydayAction:
+      m_PersistentCalls:
+        m_Calls: []
+      m_TypeName: ActionEvent, Assembly-CSharp, Version=1.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+    _actions:
+    - _actionData:
+        actionType: 37
+        actionCategory: 0
+        actionName: Harvest
+        filters:
+        - filterType: 2
+          condition: 0
+          objects: 05000000
+        advertisedFullness: 0
+        advertisedFun: 0
+        advertisedEnergy: 0
+        advertisedPrestige: 48
+        advertisedSanity: 0
+        advertisedSafety: 0
+        advertisedResource: 0
+        providedFullness: 0
+        providedFun: 0
+        providedEnergy: 0
+        providedPrestige: 3
+        providedSanity: 0
+        providedSafety: 0
+        successRate: 0
+        duration: 16
+        hpRecoveredPercentage: 0
+        resourceGiven: 2
+        minResourceGiven: 20
+        maxResourceGiven: 50
+        resourceNeeded: 0
+        resourceAmountNeeded: 0
+        providedExp: 0
+        successFunction:
+          m_PersistentCalls:
+            m_Calls: []
+          m_TypeName: ActionEvent, Assembly-CSharp, Version=1.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+        failFunction:
+          m_PersistentCalls:
+            m_Calls: []
+          m_TypeName: ActionEvent, Assembly-CSharp, Version=1.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+    - _actionData:
+        actionType: 37
+        actionCategory: 0
+        actionName: Mining
+        filters:
+        - filterType: 2
+          condition: 0
+          objects: 05000000
+        advertisedFullness: 0
+        advertisedFun: 0
+        advertisedEnergy: 0
+        advertisedPrestige: 0
+        advertisedSanity: 0
+        advertisedSafety: 0
+        advertisedResource: 0
+        providedFullness: 0
+        providedFun: 0
+        providedEnergy: 0
+        providedPrestige: 0
+        providedSanity: 0
+        providedSafety: 0
+        successRate: 0
+        duration: 16
+        hpRecoveredPercentage: 0
+        resourceGiven: 2
+        minResourceGiven: 10
+        maxResourceGiven: 50
+        resourceNeeded: 0
+        resourceAmountNeeded: 0
+        providedExp: 0
+        successFunction:
+          m_PersistentCalls:
+            m_Calls: []
+          m_TypeName: ActionEvent, Assembly-CSharp, Version=1.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+        failFunction:
+          m_PersistentCalls:
+            m_Calls: []
+          m_TypeName: ActionEvent, Assembly-CSharp, Version=1.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+  - _stateName: Depleted
+    _everydayAction:
+      m_PersistentCalls:
+        m_Calls: []
+      m_TypeName: ActionEvent, Assembly-CSharp, Version=1.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+    _actions: []
+  - _stateName: Ruined
+    _everydayAction:
+      m_PersistentCalls:
+        m_Calls: []
+      m_TypeName: ActionEvent, Assembly-CSharp, Version=1.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+    _actions: []
+  - _stateName: Corrupted
+    _everydayAction:
+      m_PersistentCalls:
+        m_Calls: []
+      m_TypeName: ActionEvent, Assembly-CSharp, Version=1.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+    _actions: []
+  - _stateName: Under Construction
+    _everydayAction:
+      m_PersistentCalls:
+        m_Calls: []
+      m_TypeName: ActionEvent, Assembly-CSharp, Version=1.0.0.0, Culture=neutral,
+        PublicKeyToken=null
+    _actions:
+    - _actionData:
+        actionType: 28
+        actionCategory: 0
+        actionName: Deposit
+        filters: []
+        advertisedFullness: 0
+        advertisedFun: 0
+        advertisedEnergy: 0
+        advertisedPrestige: 0
+        advertisedSanity: 0
+        advertisedSafety: 0
+        advertisedResource: 0
+        providedFullness: 0
+        providedFun: 0
+        providedEnergy: 0
+        providedPrestige: 5
+        providedSanity: 0
+        providedSafety: 0
+        successRate: 0
+        duration: 0
+        hpRecoveredPercentage: 0
+        resourceGiven: 0
+        minResourceGiven: 0
+        maxResourceGiven: 0
+        resourceNeeded: 0
+        resourceAmountNeeded: 0
+        providedExp: 0
+        successFunction:
+          m_PersistentCalls:
+            m_Calls: []
+          m_TypeName: ActionEvent, Assembly-CSharp, Version=1.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+        failFunction:
+          m_PersistentCalls:
+            m_Calls: []
+          m_TypeName: ActionEvent, Assembly-CSharp, Version=1.0.0.0, Culture=neutral,
+            PublicKeyToken=null
+  specificObjectType: 8
+  isInvisible: 0
+  maxHP: 300
+  onHPReachedZero:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 114943314918187516}
+        m_MethodName: Destroyed
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: ActionEvent, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  onHPReachedFull:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 114943314918187516}
+        m_MethodName: RepairedResourceStructure
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_TypeName: ActionEvent, Assembly-CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null

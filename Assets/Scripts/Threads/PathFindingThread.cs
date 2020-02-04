@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 
-public class PathFindingThread {
+public class PathFindingThread : Multithread {
 	public enum TODO{
 		FIND_PATH,
 	}
@@ -17,6 +17,8 @@ public class PathFindingThread {
 	private PATHFINDING_MODE _pathfindingMode;
 	//private CitizenAvatar _citizenAvatar;
     private CharacterAvatar _characterAvatar;
+    //private BaseLandmark _landmark;
+
     private object _data;
 
 	//public PathFindingThread(CitizenAvatar citizenAvatar, HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, object data){
@@ -36,7 +38,24 @@ public class PathFindingThread {
         this._characterAvatar = characterAvatar;
         this._data = data;
     }
-
+    public PathFindingThread(BaseLandmark landmark, HexTile startingTile, HexTile destinationTile, PATHFINDING_MODE pathfindingMode, object data) {
+        receivedPath = new List<HexTile>();
+        this._startingTile = startingTile;
+        this._destinationTile = destinationTile;
+        this._pathfindingMode = pathfindingMode;
+        //this._landmark = landmark;
+        this._data = data;
+    }
+    #region Overrides
+    public override void DoMultithread() {
+        base.DoMultithread();
+        FindPath();
+    }
+    public override void FinishMultithread() {
+        base.FinishMultithread();
+        ReturnPath();
+    }
+    #endregion
     public void FindPath(){
 //		bool isStartingTileRoad = _startingTile.isRoad;
 //		bool isDestinationTileRoad = _destinationTile.isRoad;
@@ -61,15 +80,9 @@ public class PathFindingThread {
 //		}
 
 		if (path != null) {
-			if (_pathfindingMode == PATHFINDING_MODE.ROAD_CREATION 
-				|| _pathfindingMode == PATHFINDING_MODE.NO_MAJOR_ROADS || _pathfindingMode == PATHFINDING_MODE.USE_ROADS_TRADE) {
-
-				receivedPath = path.Reverse ().ToList ();
-			} else {
-				receivedPath = path.Reverse ().ToList ();
-				if (receivedPath.Count > 1) {
-					receivedPath.RemoveAt (0);
-				}
+			receivedPath = path.Reverse ().ToList ();
+			if (receivedPath.Count > 1) {
+				receivedPath.RemoveAt (0);
 			}
 		}else{
 			receivedPath = null;
@@ -77,11 +90,12 @@ public class PathFindingThread {
 	}
 
 	public void ReturnPath(){
-        //if(_citizenAvatar != null) {
-        //    this._citizenAvatar.ReceivePath(receivedPath);
+        this._characterAvatar.ReceivePath(receivedPath, this);
+        //if (_landmark != null) {
+        //    this._landmark.ReceivePath(receivedPath);
         //} else {
-            this._characterAvatar.ReceivePath(receivedPath, this);
+        //    this._characterAvatar.ReceivePath(receivedPath, this);
         //}
-		
-	}
+
+    }
 }

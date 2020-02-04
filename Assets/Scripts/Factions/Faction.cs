@@ -6,495 +6,847 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using Traits;
+
 
 public class Faction {
-	protected int _id;
-    protected string _name;
-    protected ECS.Character _leader;
-    protected RACE _race;
-    protected FACTION_TYPE _factionType;
-    protected FACTION_SIZE _factionSize;
-    private Sprite _emblem;
-    private Sprite _emblemBG;
-    protected List<Region> _ownedRegions;
-    protected List<BaseLandmark> _ownedLandmarks;
-    protected List<Settlement> _settlements;
-    protected List<TECHNOLOGY> _initialTechnologies;
-    internal Color factionColor;
-    protected List<ECS.Character> _characters; //List of characters that are part of the faction
-    //protected List<OldQuest.Quest> _activeQuests;
-    //protected InternalQuestManager _internalQuestManager;
-    protected Dictionary<Faction, FactionRelationship> _relationships;
-	//protected MilitaryManager _militaryManager;
-	protected int _warmongering;
-	protected Dictionary<PRODUCTION_TYPE, MaterialPreference> _productionPreferences;
-    protected List<BaseLandmark> _landmarkInfo;
+    public int id { get; protected set; }
+    public string name { get; protected set; }
+    public string description { get; protected set; }
+    //public string initialLeaderClass { get; protected set; }
+    public int level { get; protected set; }
+    public bool isPlayerFaction { get; protected set; }
+    public bool isMajorFaction { get; protected set; }
+    public GENDER initialLeaderGender { get; protected set; }
+    public RACE initialLeaderRace { get; protected set; }
+    public RACE race { get; protected set; }
+    public ILeader leader { get; protected set; }
+    public Sprite emblem { get; protected set; }
+    public List<BaseLandmark> ownedLandmarks { get; protected set; }
+    public Color factionColor { get; protected set; }
+    public List<Character> characters { get; protected set; }//List of characters that are part of the faction
+    public List<Settlement> ownedSettlements { get; protected set; }
+    //public List<RACE> recruitableRaces { get; protected set; }
+    //public List<RACE> startingFollowers { get; protected set; }
+    public List<Character> bannedCharacters { get; protected set; }
+    public Dictionary<Faction, FactionRelationship> relationships { get; protected set; }
+
+    public MORALITY morality { get; private set; }
+    public FACTION_SIZE size { get; private set; }
+    public FACTION_TYPE factionType { get; private set; }
+    public bool isActive { get; private set; }
+    public List<Log> history { get; private set; }
+    public Settlement mainRegion { get { return ownedSettlements[0]; } }
+    public Quest activeQuest { get; protected set; }
+
+    //Components
+    public FactionIdeologyComponent ideologyComponent { get; protected set; }
+
+    private int newLeaderDesignationChance;
+    private WeightedDictionary<Character> newLeaderDesignationWeights;
 
     #region getters/setters
-	public int id {
-		get { return _id; }
-	}
-    public string name {
-		get { return _name; }
+    public string urlName {
+        get { return "<link=" + '"' + this.id.ToString() + "_faction" + '"' + ">" + this.name + "</link>"; }
     }
-	public string urlName {
-		get { return "[url=" + this._id.ToString() + "_faction]" + this._name + "[/url]"; }
-	}
-    public ECS.Character leader {
-        get { return _leader; }
+    public bool isDestroyed {
+        get { return characters.Count <= 0; }
     }
-    public RACE race {
-        get { return _race; }
+    public bool isMajorFriendlyNeutral {
+        get { return isMajorFaction || this == FactionManager.Instance.friendlyNeutralFaction; }
     }
-    public FACTION_TYPE factionType {
-        get { return _factionType; }
-    }
-    public FACTION_SIZE factionSize {
-        get { return _factionSize; }
-    }
-    public Sprite emblem {
-        get { return _emblem; }
-    }
-    public Sprite emblemBG {
-        get { return _emblemBG; }
-    }
-    public int totalPopulation {
-        get { return settlements.Sum(x => x.totalPopulation); }
-    }
-    public List<Settlement> settlements {
-        get { return _settlements; }
-    }
-    public List<TECHNOLOGY> initialTechnologies {
-        get { return _initialTechnologies; }
-    }
-    public List<ECS.Character> characters {
-        get { return _characters; }
-    }
-    public List<Region> ownedRegions {
-        get { return _ownedRegions; }
-    }
-    //public List<OldQuest.Quest> activeQuests {
-    //    get { return _activeQuests; }
-    //}
-    //public InternalQuestManager internalQuestManager {
-    //    get { return _internalQuestManager; }
-    //}
-    public Dictionary<Faction, FactionRelationship> relationships {
-        get { return _relationships; }
-    }
-	//public MilitaryManager militaryManager {
-	//	get { return _militaryManager; }
-	//}
-	public int warmongering {
-		get { return _warmongering; }
-	}
-	public float factionPower{
-		get { return this._characters.Sum (x => x.characterPower); }
-	}
-    public int activeWars {
-        get { return relationships.Where(x => x.Value.isAtWar).Count(); }
-    }
-	public Dictionary<PRODUCTION_TYPE, MaterialPreference> productionPreferences {
-		get { return _productionPreferences; }
-	}
-    public List<BaseLandmark> landmarkInfo {
-        get { return _landmarkInfo; }
+    public bool isMajorNonPlayer {
+        get { return isMajorFaction && !isPlayerFaction; }
     }
     #endregion
 
-    public Faction(RACE race, FACTION_TYPE factionType) {
-		this._id = Utilities.SetID<Faction>(this);
-        SetRace(race);
-        _name = RandomNameGenerator.Instance.GenerateKingdomName(race);
-        _factionType = factionType;
-        _factionSize = FACTION_SIZE.SMALL;
-        _emblem = FactionManager.Instance.GenerateFactionEmblem(this);
-        _emblemBG = FactionManager.Instance.GenerateFactionEmblemBG();
-        factionColor = Utilities.GetColorForFaction();
-        _characters = new List<ECS.Character>();
-        _ownedLandmarks = new List<BaseLandmark>();
-        _ownedRegions = new List<Region>();
-        _settlements = new List<Settlement>();
-        ConstructInititalTechnologies();
-        //_activeQuests = new List<OldQuest.Quest>();
-        //_internalQuestManager = new InternalQuestManager(this);
-        _relationships = new Dictionary<Faction, FactionRelationship>();
-		//_militaryManager = new MilitaryManager (this);
-		_warmongering = 0;
-        _landmarkInfo = new List<BaseLandmark>();
-		MaterialPreferences ();
+    public Faction(bool isPlayerFaction = false) {
+        this.isPlayerFaction = isPlayerFaction;
+        this.id = Utilities.SetID<Faction>(this);
+        SetName(RandomNameGenerator.Instance.GenerateKingdomName());
+        SetEmblem(FactionManager.Instance.GenerateFactionEmblem(this));
+        SetFactionColor(Utilities.GetColorForFaction());
+        SetRace(RACE.HUMANS);
+        SetMorality(MORALITY.GOOD);
+        SetSize(FACTION_SIZE.MAJOR);
+        SetFactionActiveState(true);
+        level = 1;
+        factionType = Utilities.GetRandomEnumValue<FACTION_TYPE>();
+        characters = new List<Character>();
+        ownedLandmarks = new List<BaseLandmark>();
+        relationships = new Dictionary<Faction, FactionRelationship>();
+        ownedSettlements = new List<Settlement>();
+        bannedCharacters = new List<Character>();
+        //recruitableRaces = new List<RACE>();
+        //startingFollowers = new List<RACE>();
+        history = new List<Log>();
+        newLeaderDesignationWeights = new WeightedDictionary<Character>();
+        ideologyComponent = new FactionIdeologyComponent(this);
+        ResetNewLeaderDesignationChance();
+        AddListeners();
     }
+    public Faction(SaveDataFaction data) {
+        this.isPlayerFaction = data.isPlayerFaction;
+        this.id = Utilities.SetID(this, data.id);
+        SetName(data.name);
+        SetDescription(data.description);
+        SetEmblem(FactionManager.Instance.GetFactionEmblem(data.emblemIndex));
+        SetFactionColor(data.factionColor);
+        SetRace(data.race);
+        SetMorality(data.morality);
+        SetSize(data.size);
+        SetFactionActiveState(data.isActive);
+        //initialLeaderClass = data.initialLeaderClass;
+        initialLeaderRace = data.initialLeaderRace;
+        initialLeaderGender = data.initialLeaderGender;
+        level = data.level;
+        factionType = data.factionType;
 
-    public void SetRace(RACE race) {
-        _race = race;
+        characters = new List<Character>();
+        ownedLandmarks = new List<BaseLandmark>();
+        relationships = new Dictionary<Faction, FactionRelationship>();
+        ownedSettlements = new List<Settlement>();
+        bannedCharacters = new List<Character>();
+        //recruitableRaces = new List<RACE>();
+        //startingFollowers = new List<RACE>();
+        history = new List<Log>();
+        newLeaderDesignationWeights = new WeightedDictionary<Character>();
+        ideologyComponent = new FactionIdeologyComponent(this);
+        ResetNewLeaderDesignationChance();
+        AddListeners();
     }
-
-    #region virtuals
-    /*
-     Set the leader of this faction, change this per faction type if needed.
-     This creates relationships between the leader and it's village heads by default.
-         */
-    public virtual void SetLeader(ECS.Character leader) {
-        _leader = leader;
-		if(_leader != null){
-			List<ECS.Character> villageHeads = GetCharactersOfType(CHARACTER_ROLE.VILLAGE_HEAD);
-			for (int i = 0; i < villageHeads.Count; i++) {
-				ECS.Character currHead = villageHeads[i];
-				//leaders have relationships with their Village heads and vise versa.
-				CharacterManager.Instance.CreateNewRelationshipBetween(leader, currHead);
-			}
-		}
-    }
-    #endregion
-
-    #region Settlements
-    public void AddSettlement(Settlement settlement) {
-        if (!_settlements.Contains(settlement)) {
-            _settlements.Add(settlement);
-            RecalculateFactionSize();
-            FactionManager.Instance.UpdateFactionOrderBy();
-        }
-    }
-    public void RemoveSettlement(Settlement settlement) {
-        _settlements.Remove(settlement);
-        RecalculateFactionSize();
-        FactionManager.Instance.UpdateFactionOrderBy();
-    }
-    /*
-     Recalculate the size of this faction given the 
-     number of settlements it has.
-         */
-    private void RecalculateFactionSize() {
-        int settlementCount = settlements.Count;
-        if (settlementCount < FactionManager.Instance.smallToMediumReq) {
-            _factionSize = FACTION_SIZE.SMALL;
-        } else if (settlementCount >= FactionManager.Instance.smallToMediumReq && settlementCount < FactionManager.Instance.mediumToLargeReq) {
-            _factionSize = FACTION_SIZE.MEDIUM;
-        } else if (settlementCount >= FactionManager.Instance.mediumToLargeReq) {
-            _factionSize = FACTION_SIZE.LARGE;
-        }
-    }
-    #endregion
-
-    #region Regions
-    public void OwnRegion(Region region) {
-        if (!_ownedRegions.Contains(region)) {
-            _ownedRegions.Add(region);
-        }
-    }
-    public void UnownRegion(Region region) {
-        _ownedRegions.Remove(region);
-    }
-    #endregion
 
     #region Landmarks
     public void OwnLandmark(BaseLandmark landmark) {
-        if (!_ownedLandmarks.Contains(landmark)) {
-            _ownedLandmarks.Add(landmark);
+        if (!ownedLandmarks.Contains(landmark)) {
+            ownedLandmarks.Add(landmark);
         }
     }
     public void UnownLandmark(BaseLandmark landmark) {
-        _ownedLandmarks.Remove(landmark);
-    }
-    #endregion
-
-    #region Technologies
-    protected void ConstructInititalTechnologies() {
-        _initialTechnologies = new List<TECHNOLOGY>();
-        if (FactionManager.Instance.initialRaceTechnologies.ContainsKey(this.race)) {
-            _initialTechnologies.AddRange(FactionManager.Instance.initialRaceTechnologies[this.race]);
-        }
-    }
-    /*
-     Generate bonus tech for this faction.
-         */
-    public void GenerateBonusTech(FACTION_SIZE factionSize) {
-        int bonusTechAmt = 0;
-        if (this.race == RACE.HUMANS || this.race == RACE.ELVES) {
-            switch (factionSize) {
-                case FACTION_SIZE.SMALL:
-                    bonusTechAmt = 3;
-                    break;
-                case FACTION_SIZE.MEDIUM:
-                    bonusTechAmt = 5;
-                    break;
-                case FACTION_SIZE.LARGE:
-                    bonusTechAmt = 7;
-                    break;
-            }
-        }
-        List<TECHNOLOGY> choices = FactionManager.Instance.bonusRaceTechnologies[this.race].Where(x => !_initialTechnologies.Contains(x)).ToList();
-        for (int i = 0; i < bonusTechAmt; i++) {
-            TECHNOLOGY bonusTech = choices[UnityEngine.Random.Range(0, choices.Count)];
-            _initialTechnologies.Add(bonusTech);
-            choices.Remove(bonusTech);
-        }
+        ownedLandmarks.Remove(landmark);
     }
     #endregion
 
     #region Characters
-    public void AddNewCharacter(ECS.Character character) {
-        if (!_characters.Contains(character)) {
-            _characters.Add(character);
-            FactionManager.Instance.UpdateFactionOrderBy();
+    public bool JoinFaction(Character character, bool broadcastSignal = true) {
+        if (ideologyComponent.DoesCharacterFitCurrentIdeologies(character)) {
+            if (!characters.Contains(character)) {
+                characters.Add(character);
+                character.SetFaction(this);
+                // if (this != FactionManager.Instance.neutralFaction && character.role == CharacterRole.BANDIT) {
+                //     if (UnityEngine.Random.Range(0, 2) == 0) {
+                //         character.AssignRole(CharacterRole.SOLDIER);
+                //     } else {
+                //         character.AssignRole(CharacterRole.ADVENTURER);
+                //     }
+                // }
+                if (broadcastSignal) {
+                    Messenger.Broadcast(Signals.CHARACTER_ADDED_TO_FACTION, character, this);
+                }
+            }
+            return true;
         }
+        //else {
+        //  if (GameManager.Instance.gameHasStarted) {
+        //      Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "cannot_join_faction");
+        //      log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        //      log.AddToFillers(this, name, LOG_IDENTIFIER.FACTION_1);
+        //      character.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+        //  }
+        //}
+        return false;
     }
-    public void RemoveCharacter(ECS.Character character) {
-        _characters.Remove(character);
-        FactionManager.Instance.UpdateFactionOrderBy();
+    public bool LeaveFaction(Character character) {
+        if (characters.Remove(character)) {
+            if (leader == character) {
+                SetLeader(null); //so a new leader can be set if the leader is ever removed from the list of characters of this faction
+            }
+            character.SetFaction(null);
+            Messenger.Broadcast(Signals.CHARACTER_REMOVED_FROM_FACTION, character, this);
+            return true;
+        }
+        return false;
+        //if (_leader != null && character.id == _leader.id) {
+        //    SetLeader(null);
+        //}
     }
-    public List<ECS.Character> GetCharactersOfType(CHARACTER_ROLE role) {
-        List<ECS.Character> chars = new List<ECS.Character>();
-        for (int i = 0; i < _characters.Count; i++) {
-            ECS.Character currCharacter = _characters[i];
-            if(currCharacter.role.roleType == role) {
-                chars.Add(currCharacter);
+
+    // public List<Character> GetCharactersOfType(CHARACTER_ROLE role) {
+    //     List<Character> chars = new List<Character>();
+    //     for (int i = 0; i < characters.Count; i++) {
+    //         Character currCharacter = characters[i];
+    //         if (currCharacter.role.roleType == role) {
+    //             chars.Add(currCharacter);
+    //         }
+    //     }
+    //     return chars;
+    // }
+    // public List<Character> GetViableCharacters(GENDER gender, params CHARACTER_ROLE[] role) {
+    //     List<Character> chars = new List<Character>();
+    //     for (int i = 0; i < characters.Count; i++) {
+    //         Character currCharacter = characters[i];
+    //         if (currCharacter.gender == gender && !currCharacter.isDead && !currCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) && !currCharacter.isCriminal) {
+    //             for (int j = 0; j < role.Length; j++) {
+    //                 if (currCharacter.role.roleType == role[j]) {
+    //                     chars.Add(currCharacter);
+    //                     break;
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     return chars;
+    // }
+    public List<Character> GetViableCharacters(GENDER gender, params string[] classNames) {
+        List<Character> chars = new List<Character>();
+        for (int i = 0; i < characters.Count; i++) {
+            Character currCharacter = characters[i];
+            if (currCharacter.gender == gender && !currCharacter.isDead && !currCharacter.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) && !currCharacter.traitContainer.HasTrait("Criminal")) {
+                for (int j = 0; j < classNames.Length; j++) {
+                    if (currCharacter.characterClass.className == classNames[j]) {
+                        chars.Add(currCharacter);
+                        break;
+                    }
+                }
             }
         }
         return chars;
     }
+    //public void SetNewLeader() {
+    //    if (leader != null) {
+    //        Character previousRuler = leader as Character;
+    //        Character newRuler = null;
+    //        string log = GameManager.Instance.TodayLogString() + name + " faction is deciding a new leader...";
+
+    //        log += "\nChecking male relatives of the king...";
+    //        List<Character> maleRelatives = FactionManager.Instance.GetViableRulers(previousRuler, GENDER.MALE, RELATIONSHIP_TYPE.RELATIVE);
+    //        if (maleRelatives.Count > 0) {
+    //            newRuler = maleRelatives[UnityEngine.Random.Range(0, maleRelatives.Count)];
+    //            log += "\nNew Ruler: " + newRuler.name;
+    //        } else {
+    //            log += "\nChecking male nobles...";
+    //            List<Character> maleNobles = GetViableCharacters(GENDER.MALE, "Noble");
+    //            if (maleNobles.Count > 0) {
+    //                newRuler = maleNobles[UnityEngine.Random.Range(0, maleNobles.Count)];
+    //                log += "\nNew Ruler: " + newRuler.name;
+    //            } else {
+    //                log += "\nChecking female relatives of the king...";
+    //                List<Character> femaleRelatives = FactionManager.Instance.GetViableRulers(previousRuler, GENDER.FEMALE, RELATIONSHIP_TYPE.RELATIVE);
+    //                if (femaleRelatives.Count > 0) {
+    //                    newRuler = femaleRelatives[UnityEngine.Random.Range(0, femaleRelatives.Count)];
+    //                    log += "\nNew Ruler: " + newRuler.name;
+    //                } else {
+    //                    log += "\nChecking female nobles...";
+    //                    List<Character> femaleNobles = GetViableCharacters(GENDER.FEMALE, "Noble");
+    //                    if (femaleNobles.Count > 0) {
+    //                        newRuler = femaleNobles[UnityEngine.Random.Range(0, femaleNobles.Count)];
+    //                        log += "\nNew Ruler: " + newRuler.name;
+    //                    } else {
+    //                        log += "\nChecking male soldiers and adventurers...";
+    //                        List<Character> maleSoldiersAndAdventurers = GetViableCharacters(GENDER.MALE, CHARACTER_ROLE.SOLDIER, CHARACTER_ROLE.ADVENTURER);
+    //                        if (maleSoldiersAndAdventurers.Count > 0) {
+    //                            newRuler = maleSoldiersAndAdventurers[UnityEngine.Random.Range(0, maleSoldiersAndAdventurers.Count)];
+    //                            log += "\nNew Ruler: " + newRuler.name;
+    //                        } else {
+    //                            log += "\nChecking female soldiers and adventurers...";
+    //                            List<Character> femaleSoldiersAndAdventurers = GetViableCharacters(GENDER.FEMALE, CHARACTER_ROLE.SOLDIER, CHARACTER_ROLE.ADVENTURER);
+    //                            if (femaleSoldiersAndAdventurers.Count > 0) {
+    //                                newRuler = femaleSoldiersAndAdventurers[UnityEngine.Random.Range(0, femaleSoldiersAndAdventurers.Count)];
+    //                                log += "\nNew Ruler: " + newRuler.name;
+    //                            } else {
+    //                                log += "\nChecking male civilians...";
+    //                                List<Character> maleCivilians = GetViableCharacters(GENDER.MALE, CHARACTER_ROLE.CIVILIAN);
+    //                                if (maleCivilians.Count > 0) {
+    //                                    newRuler = maleCivilians[UnityEngine.Random.Range(0, maleCivilians.Count)];
+    //                                    log += "\nNew Ruler: " + newRuler.name;
+    //                                } else {
+    //                                    log += "\nChecking female civilians...";
+    //                                    List<Character> femaleCivilians = GetViableCharacters(GENDER.FEMALE, CHARACTER_ROLE.CIVILIAN);
+    //                                    if (femaleCivilians.Count > 0) {
+    //                                        newRuler = femaleCivilians[UnityEngine.Random.Range(0, femaleCivilians.Count)];
+    //                                        log += "\nNew Ruler: " + newRuler.name;
+    //                                    }
+    //                                }
+    //                            }
+    //                        }
+    //                    }
+    //                }
+    //            }
+    //        }
+
+    //        previousRuler.PrintLogIfActive(log);
+    //        if (newRuler != null) {
+    //            SetLeader(newRuler);
+
+    //            Log logNotif = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "new_faction_leader");
+    //            logNotif.AddToFillers(newRuler, newRuler.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+    //            logNotif.AddToFillers(this, name, LOG_IDENTIFIER.FACTION_1);
+    //            newRuler.AddHistory(logNotif);
+    //            PlayerManager.Instance.player.ShowNotification(logNotif);
+    //        }
+    //        //else {
+    //        //    Debug.LogError(GameManager.Instance.TodayLogString() + name + " couldn't set a new leader replacing " + previousRuler.name);
+    //        //}
+    //    } else {
+    //        Debug.LogError(GameManager.Instance.TodayLogString() + name + " cannot set new leader because there is no previous leader!");
+    //    }
+    //}
+    public void OnlySetLeader(ILeader leader) {
+        this.leader = leader;
+    }
+    private void OnCharacterClassChange(Character character, CharacterClass previousClass, CharacterClass currentClass) {
+        CheckIfCharacterStillFitsIdeology(character);
+    }
+    private void OnCharacterRaceChange(Character character) {
+        CheckIfCharacterStillFitsIdeology(character);
+    }
+    private void OnCharacterRemoved(Character character) {
+        LeaveFaction(character);
+    }
+    public void CheckIfCharacterStillFitsIdeology(Character character) {
+        if (character.faction == this && !ideologyComponent.DoesCharacterFitCurrentIdeologies(character)) {
+            character.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Faction, character, "left_faction_not_fit");
+            //character.ChangeFactionTo(FactionManager.Instance.friendlyNeutralFaction);
+            //Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "left_faction_not_fit");
+            //log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            //log.AddToFillers(this, name, LOG_IDENTIFIER.FACTION_1);
+            //character.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+        }
+    }
+    public bool IsCharacterBannedFromJoining(Character character) {
+        return HasCharacterBeenBanned(character);
+    }
+    public bool HasCharacterBeenBanned(Character character) {
+        for (int i = 0; i < bannedCharacters.Count; i++) {
+            if (character == bannedCharacters[i]) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public void AddBannedCharacter(Character character) {
+        if (!HasCharacterBeenBanned(character)) {
+            bannedCharacters.Add(character);
+        }
+    }
+    public bool RemoveBannedCharacter(Character character) {
+        return bannedCharacters.Remove(character);
+    }
+    public void KickOutCharacter(Character character) {
+        if(character.faction == this) {
+            AddBannedCharacter(character);
+
+            character.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Faction, character, "kick_out_faction_character");
+            //character.ChangeFactionTo(FactionManager.Instance.friendlyNeutralFaction);
+            //Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "kick_out_faction_character");
+            //log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            //log.AddToFillers(this, name, LOG_IDENTIFIER.FACTION_1);
+            //character.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+        }
+    }
+    private void OnCharacterMissing(Character missingCharacter) {
+        if (leader != null && missingCharacter == leader) {
+            SetLeader(null);
+        }
+    }
+    private void OnCharacterDied(Character deadCharacter) {
+        if (leader != null && deadCharacter == leader) {
+            SetLeader(null);
+        }
+    }
+    public void SetLeader(ILeader newLeader, bool setIdeology = true) {
+        if(!isMajorFaction && !isPlayerFaction) {
+            //Neutral, Friendly Neutral, Disguised Factions cannot have a leader
+            return;
+        }
+        //if (this.leader != null && this.leader is Character) {
+        //    Character previousRuler = this.leader as Character;
+        //    //if (previousRuler.role.roleType != CHARACTER_ROLE.NOBLE) {
+        //    //    previousRuler.AssignRole(CharacterRole.NOBLE);
+        //    //    previousRuler.AssignClassByRole(previousRuler.role);
+        //    //}
+        //    //if (previousRuler.characterClass.className != previousRuler.GetClassForRole(previousRuler.role)) {
+        //    //    previousRuler.AssignClassByRole(previousRuler.role);
+        //    //}
+        //    previousRuler.UnassignBuildStructureComponent();
+        //}
+        //if (newLeader != null && newLeader is Character) {
+        //    Character newRuler = newLeader as Character;
+        //    if (newRuler.role.roleType != CHARACTER_ROLE.LEADER) {
+        //        newRuler.AssignRole(CharacterRole.LEADER);
+        //        newRuler.AssignClassByRole(newRuler.role);
+        //    }
+        //    newRuler.AssignBuildStructureComponent();
+        //    //if (newRuler.characterClass.className != initialLeaderClass) {
+        //    //    newRuler.AssignClass(CharacterManager.Instance.CreateNewCharacterClass(initialLeaderClass));
+        //    //}
+        //}
+        OnlySetLeader(newLeader);
+
+        //Every time the leader changes, faction ideology changes
+        if (!isPlayerFaction) {
+            if (newLeader != null) {
+                if (newLeader is Character) {
+                    Character newRuler = newLeader as Character;
+                    //newRuler.AssignBuildStructureComponent();
+                    if (setIdeology) {
+                        ideologyComponent.RerollIdeologies();
+                    }
+                    newRuler.currentRegion.AddFactionHere(this);
+                    //ResetNewLeaderDesignationChance();
+                    if (Messenger.eventTable.ContainsKey(Signals.HOUR_STARTED)) {
+                        Messenger.RemoveListener(Signals.HOUR_STARTED, CheckForNewLeaderDesignation);
+                    }
+                    Messenger.Broadcast(Signals.ON_SET_AS_FACTION_LEADER, newRuler);
+                }
+                //if(characterLeader.currentRegion != null) {
+                //    characterLeader.currentRegion.AddFactionHere(characterLeader.faction);
+                //} else if (characterLeader.currentArea != null) {
+                //    characterLeader.currentArea.region.AddFactionHere(characterLeader.faction);
+                //}
+            } else {
+                Messenger.AddListener(Signals.HOUR_STARTED, CheckForNewLeaderDesignation);
+            }
+        }
+    }
+    private void CheckForNewLeaderDesignation() {
+        string debugLog = GameManager.Instance.TodayLogString() + "Checking for new faction leader designation for " + name;
+        debugLog += "\n-Chance: " + newLeaderDesignationChance;
+        int chance = UnityEngine.Random.Range(0, 100);
+        debugLog += "\n-Roll: " + chance;
+        Debug.Log(debugLog);
+        if (chance < newLeaderDesignationChance) {
+            DesignateNewLeader();
+        } else {
+            newLeaderDesignationChance += 2;
+        }
+    }
+    public void DesignateNewLeader(bool willLog = true) {
+        string log = "Designating a new settlement faction leader for: " + name + "(chance it triggered: " + newLeaderDesignationChance + ")";
+        newLeaderDesignationWeights.Clear();
+        for (int i = 0; i < characters.Count; i++) {
+            Character member = characters[i];
+            log += "\n\n-" + member.name;
+            if (member.isDead || member.isMissing || member.isBeingSeized) {
+                log += "\nEither dead or missing or seized, will not be part of candidates for faction leader";
+                continue;
+            }
+            int weight = 50;
+            log += "\n  -Base Weight: +50";
+            if (member.isSettlementRuler) {
+                weight += 30;
+                log += "\n  -Settlement Ruler: +30";
+            }
+            if (member.characterClass.className == "Noble") {
+                weight += 40;
+                log += "\n  -Noble: +40";
+            }
+            int numberOfFriends = 0;
+            int numberOfEnemies = 0;
+            for (int j = 0; j < member.opinionComponent.charactersWithOpinion.Count; j++) {
+                Character otherCharacter = member.opinionComponent.charactersWithOpinion[j];
+                if (otherCharacter.faction == this) {
+                    if (otherCharacter.opinionComponent.IsFriendsWith(member)) {
+                        numberOfFriends++;
+                    } else if (otherCharacter.opinionComponent.IsEnemiesWith(member)) {
+                        numberOfEnemies++;
+                    }
+                }
+            }
+            if (numberOfFriends > 0) {
+                weight += (numberOfFriends * 20);
+                log += "\n  -Num of Friend/Close Friend in the Settlement: " + numberOfFriends + ", +" + (numberOfFriends * 20);
+            }
+            if (member.traitContainer.HasTrait("Inspiring")) {
+                weight += 25;
+                log += "\n  -Inspiring: +25";
+            }
+            if (member.traitContainer.HasTrait("Authoritative")) {
+                weight += 50;
+                log += "\n  -Authoritative: +50";
+            }
+
+
+            if (numberOfEnemies > 0) {
+                weight += (numberOfEnemies * -10);
+                log += "\n  -Num of Enemies/Rivals in the Settlement: " + numberOfEnemies + ", +" + (numberOfEnemies * -10);
+            }
+            if (member.traitContainer.HasTrait("Ugly")) {
+                weight += -20;
+                log += "\n  -Ugly: -20";
+            }
+            if (member.hasUnresolvedCrime) {
+                weight += -50;
+                log += "\n  -Has Unresolved Crime: -50";
+            }
+            if (member.traitContainer.HasTrait("Worker")) {
+                weight += -40;
+                log += "\n  -Civilian: -40";
+            }
+            if (member.traitContainer.HasTrait("Ambitious")) {
+                weight = Mathf.RoundToInt(weight * 1.5f);
+                log += "\n  -Ambitious: x1.5";
+            }
+            if(weight < 1) {
+                weight = 1;
+                log += "\n  -Weight cannot be less than 1, setting weight to 1";
+            }
+            log += "\n  -TOTAL WEIGHT: " + weight;
+            if (weight > 0) {
+                newLeaderDesignationWeights.AddElement(member, weight);
+            }
+        }
+        if (newLeaderDesignationWeights.Count > 0) {
+            Character chosenLeader = newLeaderDesignationWeights.PickRandomElementGivenWeights();
+            if (chosenLeader != null) {
+                log += "\nCHOSEN LEADER: " + chosenLeader.name;
+                if (willLog) {
+                    chosenLeader.interruptComponent.TriggerInterrupt(INTERRUPT.Become_Faction_Leader, chosenLeader);
+                } else {
+                    SetLeader(chosenLeader);
+                }
+            } else {
+                log += "\nCHOSEN LEADER: NONE";
+            }
+        } else {
+            log += "\nCHOSEN LEADER: NONE";
+        }
+        ResetNewLeaderDesignationChance();
+        Debug.Log(GameManager.Instance.TodayLogString() + log);
+    }
+    private void ResetNewLeaderDesignationChance() {
+        newLeaderDesignationChance = 5;
+    }
+    public void GenerateInitialOpinionBetweenMembers() {
+        for (int i = 0; i < characters.Count; i++) {
+            for (int j = 0; j < characters.Count; j++) {
+                if(characters[i] != characters[j]) {
+                    characters[i].opinionComponent.AdjustOpinion(characters[j], "Base", 0);
+                }
+            }
+        }
+    }
     #endregion
 
     #region Utilities
-    public List<Faction> GetMajorFactionsWithRelationshipStatus(List<RELATIONSHIP_STATUS> relStatuses) {
-        List<Faction> factionsWithStatus = new List<Faction>();
-        foreach (KeyValuePair<Faction, FactionRelationship> kvp in _relationships) {
-            Faction currFaction = kvp.Key;
-            FactionRelationship currRel = kvp.Value;
-            if (currFaction.factionType == FACTION_TYPE.MAJOR && relStatuses.Contains(currRel.relationshipStatus)) {
-                factionsWithStatus.Add(currFaction);
-            }
-        }
-        return factionsWithStatus;
+    private void AddListeners() {
+        Messenger.AddListener<Character>(Signals.CHARACTER_REMOVED, OnCharacterRemoved);
+        Messenger.AddListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterRaceChange);
+        Messenger.AddListener<Character, CharacterClass, CharacterClass>(Signals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
+        Messenger.AddListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
+        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        //Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        //if (!_isPlayerFaction) {
+        //    Messenger.AddListener(Signals.TICK_STARTED, DailyInteractionGeneration);
+        //}
     }
-    public List<Faction> GetMajorFactionsWithRelationshipStatus(RELATIONSHIP_STATUS relStatus) {
-        List<Faction> factionsWithStatus = new List<Faction>();
-        foreach (KeyValuePair<Faction, FactionRelationship> kvp in _relationships) {
-            Faction currFaction = kvp.Key;
-            FactionRelationship currRel = kvp.Value;
-            if (currFaction.factionType == FACTION_TYPE.MAJOR && relStatus == currRel.relationshipStatus) {
-                factionsWithStatus.Add(currFaction);
-            }
-        }
-        return factionsWithStatus;
+    private void RemoveListeners() {
+        Messenger.RemoveListener<Character>(Signals.CHARACTER_REMOVED, OnCharacterRemoved);
+        Messenger.RemoveListener<Character>(Signals.CHARACTER_CHANGED_RACE, OnCharacterRaceChange);
+        Messenger.RemoveListener<Character, CharacterClass, CharacterClass>(Signals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
+        Messenger.RemoveListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
+        Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        //Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+        //if (!_isPlayerFaction) {
+        //    Messenger.RemoveListener(Signals.TICK_STARTED, DailyInteractionGeneration);
+        //}
     }
-    public ECS.Character GetCharacterByID(int id) {
-        for (int i = 0; i < _characters.Count; i++) {
-            if (_characters[i].id == id) {
-                return _characters[i];
+    public void SetRace(RACE race) {
+        this.race = race;
+    }
+    public void SetSize(FACTION_SIZE size) {
+        this.size = size;
+    }
+    public void SetFactionColor(Color color) {
+        factionColor = color;
+    }
+    public void SetName(string name) {
+        this.name = name;
+    }
+    public void SetDescription(string description) {
+        this.description = description;
+    }
+    public void SetInitialFactionLeaderGender(GENDER gender) {
+        initialLeaderGender = gender;
+    }
+    public void SetIsMajorFaction(bool state) {
+        isMajorFaction = state;
+    }
+    //public void SetInitialFactionLeaderClass(string className) {
+    //    initialLeaderClass = className;
+    //}
+    public void SetInitialFactionLeaderRace(RACE race) {
+        initialLeaderRace = race;
+    }
+    public Character GetCharacterByID(int id) {
+        for (int i = 0; i < characters.Count; i++) {
+            if (characters[i].id == id) {
+                return characters[i];
             }
         }
         return null;
     }
-    public BaseLandmark GetLandmarkByID(int id) {
-        for (int i = 0; i < _settlements.Count; i++) {
-            Settlement currSettlement = _settlements[i];
-			if (currSettlement.id == id) {
-				return currSettlement;
-			}
-            for (int j = 0; j < currSettlement.ownedLandmarks.Count; j++) {
-                if (currSettlement.ownedLandmarks[j].id == id) {
-                    return currSettlement.ownedLandmarks[j];
-                }
-            }
-        }
-        return null;
-    }
-    public Settlement GetSettlementWithHighestPopulation() {
-        Settlement highestPopulationSettlement = null;
-        for (int i = 0; i < _settlements.Count; i++) {
-            Settlement settlement = _settlements[i];
-            if (highestPopulationSettlement == null) {
-                highestPopulationSettlement = settlement;
-            } else {
-                if (settlement.civilians > highestPopulationSettlement.civilians) {
-                    highestPopulationSettlement = settlement;
-                }
-            }
-        }
-        return highestPopulationSettlement;
-	}
-	public bool IsAtWar(){
-		foreach (FactionRelationship factionRel in _relationships.Values) {
-			if(factionRel.factionLookup[this._id].targetFaction.factionType == FACTION_TYPE.MAJOR && factionRel.isAtWar){
-				return true;
-			}else if(factionRel.factionLookup[this._id].targetFaction.factionType == FACTION_TYPE.MINOR && factionRel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE){
-				return true;
-			}
-		}
-		return false;
-	}
-	//public List<BaseLandmark> GetAllPossibleLandmarksToAttack(){
-	//	List<BaseLandmark> allPossibleLandmarksToAttack = new List<BaseLandmark> ();
-	//	for (int i = 0; i < _settlements.Count; i++) {
-	//		BaseLandmark settlement = _settlements[i];
-	//		for (int j = 0; j < settlement.tileLocation.region.landmarks.Count; j++) {
-	//			BaseLandmark regionLandmark = settlement.tileLocation.region.landmarks [j];
-	//			if(regionLandmark.owner != null && regionLandmark.owner.id != this._id && regionLandmark.owner.factionType == FACTION_TYPE.MINOR && regionLandmark.isExplored){
-	//				FactionRelationship factionRel = GetRelationshipWith(regionLandmark.owner);
-	//				if (factionRel != null && factionRel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE) {
-	//					if (!_militaryManager.IsAlreadyBeingAttacked (regionLandmark)) {
-	//						allPossibleLandmarksToAttack.Add (regionLandmark);
-	//					}
-	//				}
-	//			}
-	//		}
-	//		for (int j = 0; j < settlement.tileLocation.region.connections.Count; j++) {
-	//			if(settlement.tileLocation.region.connections[j] is Region){
-	//				Region adjacentRegion = settlement.tileLocation.region.connections [j] as Region;
-	//				if(adjacentRegion.centerOfMass.landmarkOnTile.owner != null && adjacentRegion.centerOfMass.landmarkOnTile.owner.id != this._id){
-	//					FactionRelationship factionRel = GetRelationshipWith(adjacentRegion.centerOfMass.landmarkOnTile.owner);
-	//					if (factionRel != null && factionRel.isAtWar) {
-	//						if (!_militaryManager.IsAlreadyBeingAttacked (adjacentRegion.centerOfMass.landmarkOnTile)) {
-	//							if (!allPossibleLandmarksToAttack.Contains (adjacentRegion.centerOfMass.landmarkOnTile)) {
-	//								allPossibleLandmarksToAttack.Add (adjacentRegion.centerOfMass.landmarkOnTile);
-	//							}
-	//						}
-	//					}
-	//				}
-	//			}
-	//		}
-	//	}
-	//	return allPossibleLandmarksToAttack;
- //   }
     public bool IsHostileWith(Faction faction) {
-        if(faction.id == this.id) {
+        if (faction.id == this.id) {
             return false;
         }
         FactionRelationship rel = GetRelationshipWith(faction);
-        return rel.relationshipStatus == RELATIONSHIP_STATUS.HOSTILE;
+        return rel.relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE;
     }
     public bool HasLandmarkOfType(LANDMARK_TYPE landmarkType) {
-        for (int i = 0; i < _ownedLandmarks.Count; i++) {
-            BaseLandmark currLandmark = _ownedLandmarks[i];
+        for (int i = 0; i < ownedLandmarks.Count; i++) {
+            BaseLandmark currLandmark = ownedLandmarks[i];
             if (currLandmark.specificLandmarkType == landmarkType) {
                 return true;
             }
         }
         return false;
     }
-    public bool HasAccessToLandmarkOfType(LANDMARK_TYPE landmarkType) {
-        for (int i = 0; i < _ownedRegions.Count; i++) {
-            Region currRegion = _ownedRegions[i];
-            if (currRegion.HasLandmarkOfType(landmarkType)) {
-                return true;
-            }
-        }
-        return false;
+    public override string ToString() {
+        return name;
     }
-    public BaseLandmark GetAccessibleLandmarkOfType(LANDMARK_TYPE landmarkType) {
-        for (int i = 0; i < _ownedRegions.Count; i++) {
-            Region currRegion = _ownedRegions[i];
-            if (currRegion.HasLandmarkOfType(landmarkType)) {
-                return currRegion.GetLandmarksOfType(landmarkType).First();
-            }
+    //private void OnCharacterDied(Character characterThatDied) {
+    //    if (leader != null && leader is Character && leader.id == characterThatDied.id) {
+    //        Debug.Log(this.name + "'s Leader that died was " + characterThatDied.name);
+    //        OnLeaderDied();
+    //    }
+    //}
+    //private void OnLeaderDied() {
+    //    Debug.Log(this.name + "'s leader died");
+    //    SetNewLeader();
+    //    //Messenger.Broadcast(Signals.FACTION_LEADER_DIED, this);
+    //}
+    public void SetLevel(int amount) {
+        level = amount;
+    }
+    public void LevelUp() {
+        level++;
+    }
+    public void LevelUp(int amount) {
+        level += amount;
+    }
+    public void SetFactionActiveState(bool state) {
+        if (isActive == state) {
+            return; //ignore change
         }
-        return null;
+        isActive = state;
+        Messenger.Broadcast(Signals.FACTION_ACTIVE_CHANGED, this);
+    }
+    public List<Character> GenerateStartingCitizens(int leaderLevel, int citizensLevel, int citizenCount,
+        LocationClassManager classManager, Settlement settlement) {
+        
+        List<Character> createdCharacters = new List<Character>();
+        for (int i = 0; i < citizenCount; i++) {
+            string className = classManager.GetCurrentClassToCreate();
+            Character citizen = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, className, race, Utilities.GetRandomGender(), this, settlement);
+            citizen.LevelUp(citizensLevel - 1);
+            //if (className == "Leader") {
+            //    citizen.LevelUp(leaderLevel - 1);
+            //    SetLeader(citizen);
+            //} else {
+            //    citizen.LevelUp(citizensLevel - 1);
+            //}
+            createdCharacters.Add(citizen);
+        }
+        settlement.SetInitialResidentCount(citizenCount);
+        RelationshipManager.Instance.GenerateRelationships(this.characters);
+        //DesignateNewLeader();
+        return createdCharacters;
+    }
+    public string GetRaceText() {
+        return Utilities.GetNormalizedRaceAdjective(race) + " Faction";
     }
     #endregion
 
     #region Relationships
     public void AddNewRelationship(Faction relWith, FactionRelationship relationship) {
-        if (!_relationships.ContainsKey(relWith)) {
-            _relationships.Add(relWith, relationship);
+        if (!relationships.ContainsKey(relWith)) {
+            relationships.Add(relWith, relationship);
         } else {
             throw new System.Exception(this.name + " already has a relationship with " + relWith.name + ", but something is trying to create a new one!");
         }
     }
     public void RemoveRelationshipWith(Faction relWith) {
-        if (_relationships.ContainsKey(relWith)) {
-            _relationships.Remove(relWith);
+        if (relationships.ContainsKey(relWith)) {
+            relationships.Remove(relWith);
         }
     }
     public FactionRelationship GetRelationshipWith(Faction faction) {
-        if (_relationships.ContainsKey(faction)) {
-            return _relationships[faction];
+        if (relationships.ContainsKey(faction)) {
+            return relationships[faction];
         }
         return null;
+    }
+    public bool HasRelationshipStatus(FACTION_RELATIONSHIP_STATUS stat, bool excludePlayer = true) {
+        foreach (KeyValuePair<Faction, FactionRelationship> kvp in relationships) {
+            if (excludePlayer && kvp.Key.isPlayerFaction) {
+                continue; //exclude player faction
+            }
+            if (kvp.Value.relationshipStatus == stat) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool HasRelationshipStatusWith(FACTION_RELATIONSHIP_STATUS stat, Faction faction) {
+        if (relationships.ContainsKey(faction)) {
+            return relationships[faction].relationshipStatus == stat;
+        }
+        return false;
+    }
+    public Faction GetFactionWithRelationship(FACTION_RELATIONSHIP_STATUS stat, bool excludePlayer = true) {
+        foreach (KeyValuePair<Faction, FactionRelationship> kvp in relationships) {
+            if (excludePlayer && kvp.Key.isPlayerFaction) {
+                continue; //exclude player faction
+            }
+            if (kvp.Value.relationshipStatus == stat) {
+                return kvp.Key;
+            }
+        }
+        return null;
+    }
+    public List<Faction> GetFactionsWithRelationship(FACTION_RELATIONSHIP_STATUS stat, bool excludePlayer = true) {
+        List<Faction> factions = new List<Faction>();
+        foreach (KeyValuePair<Faction, FactionRelationship> kvp in relationships) {
+            if (excludePlayer && kvp.Key.isPlayerFaction) {
+                continue; //exclude player faction
+            }
+            if (kvp.Value.relationshipStatus == stat) {
+                factions.Add(kvp.Key);
+            }
+        }
+        return factions;
+    }
+    public void AdjustRelationshipFor(Faction otherFaction, int adjustment) {
+        if (relationships.ContainsKey(otherFaction)) {
+            relationships[otherFaction].AdjustRelationshipStatus(adjustment);
+        } else {
+            Debug.LogWarning("There is no key for " + otherFaction.name + " in " + this.name + "'s relationship dictionary");
+        }
+    }
+    public void SetRelationshipFor(Faction otherFaction, FACTION_RELATIONSHIP_STATUS status) {
+        if (relationships.ContainsKey(otherFaction)) {
+            relationships[otherFaction].SetRelationshipStatus(status);
+        } else {
+            Debug.LogWarning("There is no key for " + otherFaction.name + " in " + this.name + "'s relationship dictionary");
+        }
+    }
+    public bool IsAtWar() {
+        foreach (KeyValuePair<Faction, FactionRelationship> kvp in relationships) {
+            if (kvp.Key.isActive && kvp.Value.relationshipStatus == FACTION_RELATIONSHIP_STATUS.HOSTILE) {
+                return true;
+            }
+        }
+        return false;
     }
     #endregion
 
     #region Death
     public void Death() {
+        RemoveListeners();
         FactionManager.Instance.RemoveRelationshipsWith(this);
     }
     #endregion
 
-    #region Resources
-    internal int GetActivelyHarvestedMaterialsOfType(MATERIAL material, Region exceptRegion = null) {
-        int count = 0;
-        for (int i = 0; i < settlements.Count; i++) {
-            Settlement currSettlement = settlements[i];
-			Region regionOfSettlement = currSettlement.tileLocation.region;
-            if(exceptRegion != null) {
-                if(regionOfSettlement.id == exceptRegion.id) {
-                    //Skip this region
-                    continue;
-                }
-            }
-            count += regionOfSettlement.GetActivelyHarvestedMaterialsOfType(material);
-        }
-        return count;
-    }
-	private void MaterialPreferences(){
-		List<MATERIAL> materialsList = (Utilities.GetEnumValues<MATERIAL>()).ToList();
-		materialsList.RemoveAt (0);
-
-		_productionPreferences = new Dictionary<PRODUCTION_TYPE, MaterialPreference> ();
-		_productionPreferences.Add(PRODUCTION_TYPE.WEAPON, new MaterialPreference(Utilities.Shuffle<MATERIAL>(materialsList)));
-		_productionPreferences.Add(PRODUCTION_TYPE.ARMOR, new MaterialPreference(Utilities.Shuffle<MATERIAL>(materialsList)));
-		_productionPreferences.Add(PRODUCTION_TYPE.CONSTRUCTION, new MaterialPreference(Utilities.Shuffle<MATERIAL>(materialsList)));
-		_productionPreferences.Add(PRODUCTION_TYPE.TRAINING, new MaterialPreference(Utilities.Shuffle<MATERIAL>(materialsList)));
-	}
-	internal MATERIAL GetHighestMaterialPriority(PRODUCTION_TYPE productionType){
-		return _productionPreferences [productionType].prioritizedMaterials [0];
-	}
-    /*
-     Get the preferred material for the production type that can
-     be used on that production type.
-         */
-    internal MATERIAL GetHighestElligibleMaterialPriority(PRODUCTION_TYPE productionType) {
-        List<MATERIAL> preferredMats = _productionPreferences[productionType].prioritizedMaterials;
-        for (int i = 0; i < preferredMats.Count; i++) {
-            MATERIAL currMat = preferredMats[i];
-            if(MaterialManager.Instance.CanMaterialBeUsedFor(currMat, productionType)) {
-                return currMat;
-            }
-        }
-        throw new System.Exception("There is no material that can be used for " + productionType.ToString());
-    }
-    #endregion
-
     #region Landmarks
-    /*
-     This returns a list of all the owned landmarks
-     of this faction, this includes settlements as well.
-         */
-    public List<BaseLandmark> GetAllOwnedLandmarks() {
-        List<BaseLandmark> ownedLandmarks = new List<BaseLandmark>();
-        for (int i = 0; i < _settlements.Count; i++) {
-            Settlement currSettlement = _settlements[i];
-            ownedLandmarks.Add(currSettlement);
-            ownedLandmarks.AddRange(currSettlement.ownedLandmarks);
-        }
-        return ownedLandmarks;
-    }
     public BaseLandmark GetOwnedLandmarkOfType(LANDMARK_TYPE landmarkType) {
-        for (int i = 0; i < _ownedLandmarks.Count; i++) {
-            BaseLandmark currLandmark = _ownedLandmarks[i];
+        for (int i = 0; i < ownedLandmarks.Count; i++) {
+            BaseLandmark currLandmark = ownedLandmarks[i];
             if (currLandmark.specificLandmarkType == landmarkType) {
                 return currLandmark;
             }
         }
         return null;
     }
-    public void AddLandmarkInfo(BaseLandmark landmark) {
-        if (!_landmarkInfo.Contains(landmark)) {
-            _landmarkInfo.Add(landmark);
+    #endregion
+
+    #region Areas
+    public void AddToOwnedSettlements(Settlement settlement) {
+        if (!ownedSettlements.Contains(settlement)) {
+            ownedSettlements.Add(settlement);
+            Messenger.Broadcast(Signals.FACTION_OWNED_REGION_ADDED, this, settlement);
         }
     }
-    public void RemoveLandmarkInfo(BaseLandmark landmark) {
-        _landmarkInfo.Remove(landmark);
+    public void RemoveFromOwnedSettlements(Settlement settlement) {
+        if (ownedSettlements.Remove(settlement)) {
+            Messenger.Broadcast(Signals.FACTION_OWNED_REGION_REMOVED, this, settlement);
+        }
+    }
+    public bool HasOwnedRegionWithSettlement() {
+        // for (int i = 0; i < ownedRegions.Count; i++) {
+        //     if (ownedRegions[i].settlement != null) {
+        //         return true;
+        //     }
+        // }
+        return false;
+    }
+    public bool HasOwnedRegionWithLandmarkType(LANDMARK_TYPE type) {
+        //TODO:
+        // for (int i = 0; i < ownedSettlements.Count; i++) {
+        //     if (ownedSettlements[i].mainLandmark != null && ownedSettlements[i].mainLandmark.specificLandmarkType == type) {
+        //         return true;
+        //     }
+        // }
+        return false;
     }
     #endregion
+
+    #region Emblems
+    public void SetEmblem(Sprite sprite) {
+        emblem = sprite;
+    }
+    #endregion
+
+    #region Morality
+    public void SetMorality(MORALITY morality) {
+        this.morality = morality;
+    }
+    #endregion
+
+    #region Logs
+    public void AddHistory(Log log) {
+        if (!history.Contains(log)) {
+            history.Add(log);
+            if (this.history.Count > 60) {
+                //if (this.history[0].node != null) {
+                //    this.history[0].node.AdjustReferenceCount(-1);
+                //}
+                this.history.RemoveAt(0);
+            }
+            //if (log.node != null) {
+            //    log.node.AdjustReferenceCount(1);
+            //}
+            Messenger.Broadcast(Signals.HISTORY_ADDED, this as object);
+        }
+    }
+    #endregion
+
+    #region Quests
+    public void CreateAndSetActiveQuest(string name, Region region) {
+        var typeName = Utilities.RemoveAllWhiteSpace(name) + "Quest";
+        System.Type type = System.Type.GetType(typeName);
+        Quest quest = null;
+        if(type != null) {
+            quest = System.Activator.CreateInstance(type, this, region) as Quest;
+        } else {
+            quest = new Quest(this, region);
+        }
+        SetActiveQuest(quest);
+    }
+    public void SetActiveQuest(Quest quest) {
+        if(activeQuest != null) {
+            activeQuest.FinishQuest();
+        }
+        activeQuest = quest;
+        if(activeQuest != null) {
+            activeQuest.ActivateQuest();
+        }
+    }
+    #endregion
+}
+public struct FactionTaskWeight {
+    public int baseWeight; //Must not be changed by settlement
+    public int areaWeight;
+    public int supplyCost;
+    public bool areaCannotDoTask;
+    public bool factionCannotDoTask;
 }

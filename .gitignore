@@ -29,3 +29,22 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+.vs/
+Assets/Textures/HexTile/PrototypeTile7.png.meta
+Assets/Scripts/Player Events.meta
+Assets/Scripts/Monsters.meta
+Assets/Scripts/General Tasks.meta
+Assets/Resources/Data/Attributes/STRUCTURE.meta
+Assets/CombatPrototype/Data/Skills/GENERAL.meta
+Assets/Scripts/StatusEffects.meta
+Assets/Scripts/Roles.meta
+Assets/Scripts/Lairs.meta
+Assets/Resources/Data/Attributes/CHARACTER.meta
+Assets/CombatPrototype/Data/Skills/GENERAL/OBTAIN_ITEM.meta
+Assets/CombatPrototype/Data.meta
+Assets/AstarPathfindingProject/Editor/Misc.meta
+Assets/Serialization.meta
+Assets/Scripts/TaskManagers.meta
+Assets/CombatPrototype/Data/Skills.meta
+Assets/Serialization/Resources.meta
+Assets/Scripts/KingdomTypes.meta

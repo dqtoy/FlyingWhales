@@ -1,42 +1,55 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
 public class SmoothMovement : MonoBehaviour {
 
     public delegate void OnMoveFinished();
     public OnMoveFinished onMoveFinished;
 
-	internal bool isMoving = false;
-	Vector3 targetPosition = Vector3.zero;
-	internal DIRECTION direction;
-	internal bool hasAttacked;
+    public float moveTicksPerTile;
 
-    [SerializeField] private float step = 0f;
-    [SerializeField] private float timeStarted = 0f;
-    [SerializeField] private float timeSinceStarted = 0f;
+    [NonSerialized] public DIRECTION direction;
+    [NonSerialized] public bool isMoving = false;
+    [NonSerialized] public bool hasAttacked;
+    [NonSerialized] public bool isHalted;
+    [NonSerialized] public GameObject avatarGO;
 
-	internal GameObject avatarGO;
+    //[SerializeField] private float step = 0f;
+    //[SerializeField] private float timeStarted = 0f;
+    //[SerializeField] private float timeSinceStarted = 0f;
 
+    private Vector3 targetPosition = Vector3.zero;
 
-	void Update(){
-		if(this.isMoving && !GameManager.Instance.isPaused){
-			this.step = Time.deltaTime / GameManager.Instance.progressionSpeed;
-			this.avatarGO.transform.position = Vector3.MoveTowards (this.avatarGO.transform.position, this.targetPosition, this.step * 2f);
-			if(this.avatarGO.transform.position == this.targetPosition){
-				StopMoving ();
-			}
-		}
-	}
-
+ //   void Update(){
+	//	if(this.isMoving && !GameManager.Instance.isPaused && !isHalted){
+	//		this.step = Time.deltaTime / GameManager.Instance.progressionSpeed;
+	//		this.avatarGO.transform.position = Vector3.Lerp (this.avatarGO.transform.position, this.targetPosition, this.step * 2f);
+	//		if(this.avatarGO.transform.position == this.targetPosition){
+	//			StopMoving ();
+	//		}
+	//	}
+	//}
+    private IEnumerator MoveToPosition(Vector3 from, Vector3 to) {
+        float t = 0f;
+        while (t < 1) {
+            if (this.isMoving && !GameManager.Instance.isPaused && !isHalted) {
+                t += Time.deltaTime / (moveTicksPerTile * GameManager.Instance.progressionSpeed);
+                transform.position = Vector3.Lerp(from, to, t);
+            }
+            yield return null;
+        }
+        StopMoving();
+    }
     internal void Reset() {
-        step = 0f;
-        timeStarted = 0f;
-        timeSinceStarted = 0f;
+        //step = 0f;
+        //timeStarted = 0f;
+        //timeSinceStarted = 0f;
         isMoving = false;
         targetPosition = Vector3.zero;
         direction = DIRECTION.LEFT;
         hasAttacked = false;
-		onMoveFinished = null;
+		//onMoveFinished = null;
     }
     public void ForceStopMovement() {
         this.isMoving = false;
@@ -53,9 +66,10 @@ public class SmoothMovement : MonoBehaviour {
 		this.direction = direction;
 		this.targetPosition = endPos;
 		this.isMoving = true;
-		this.timeStarted = Time.time;
-		this.timeSinceStarted = 0f;
-		this.step = 0f;
+		//this.timeStarted = Time.time;
+		//this.timeSinceStarted = 0f;
+		//this.step = 0f;
+        StartCoroutine(MoveToPosition(this.avatarGO.transform.position, this.targetPosition));
 	}
 
 	internal string GetIdleDirection(){

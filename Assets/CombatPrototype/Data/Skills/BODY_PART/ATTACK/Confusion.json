@@ -1,1 +1,0 @@
-{"skillName":"Confusion","skillType":0,"description":"Confusion","skillCategory":1,"actWeightType":0,"activationWeight":30,"accuracy":75.0,"range":3,"isEnabled":false,"skillRequirements":[{"itemQuantity":1,"attributeRequired":27}],"attackType":4,"durabilityDamage":1,"durabilityCost":0,"statusEffectRates":[{"statusEffect":7,"ratePercentage":100}]}

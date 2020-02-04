@@ -1,88 +1,62 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UtilityScripts;
 
 public class FactionRelationship {
 
     protected Faction _faction1;
     protected Faction _faction2;
-	protected Dictionary<int, IndividualFactionRelationship> _factionLookup;
-	protected IndividualFactionRelationship _indivFactionRelationship1;
-	protected IndividualFactionRelationship _indivFactionRelationship2;
 
-    protected RELATIONSHIP_STATUS _relationshipStatus;
 
-    protected int _sharedOpinion;
+    private int relationshipStatInt;
+    //protected FACTION_RELATIONSHIP_STATUS _relationshipStatus;
 
-	protected bool _isAtWar;
-	protected bool _isAdjacent;
+    public int currentWarCombatCount { get; private set; } //this will be reset once relationship status is set to anything but AT_WAR
 
     #region getters/setters
-    public RELATIONSHIP_STATUS relationshipStatus {
-		get { return _relationshipStatus; }
+    public FACTION_RELATIONSHIP_STATUS relationshipStatus {
+		get { return (FACTION_RELATIONSHIP_STATUS)relationshipStatInt; }
     }
-    public int sharedOpinion {
-        get { return _sharedOpinion; }
-    }
-	public bool isAtWar {
-		get { return _isAtWar; }
-	}
-	public bool isAdjacent {
-		get { return _isAdjacent; }
-	}
 	public Faction faction1 {
 		get { return _faction1; }
 	}
 	public Faction faction2 {
 		get { return _faction2; }
 	}
-	public Dictionary<int, IndividualFactionRelationship> factionLookup {
-		get { return _factionLookup; }
-	}
     #endregion
 
     public FactionRelationship(Faction faction1, Faction faction2) {
         _faction1 = faction1;
         _faction2 = faction2;
-        _sharedOpinion = 0;
-		_relationshipStatus = RELATIONSHIP_STATUS.NEUTRAL; //TODO: Change this when logic is updated
-		_isAtWar = false;
-		_isAdjacent = false; //TODO: Faction Adjacency
-		_indivFactionRelationship1 = new IndividualFactionRelationship (_faction1, _faction2, this);
-		_indivFactionRelationship2 = new IndividualFactionRelationship (_faction2, _faction1, this);
-
-		_factionLookup = new Dictionary<int, IndividualFactionRelationship> () {
-			{ _faction1.id, _indivFactionRelationship1 },
-			{ _faction2.id, _indivFactionRelationship2 },
-		};
+        relationshipStatInt = 0; //Friendly
     }
-
-    #region Shared Opinion
-    public void AdjustSharedOpinion(int amount) {
-        _sharedOpinion += amount;
-        _sharedOpinion = Mathf.Clamp(_sharedOpinion, -100, 100);
-    }
-    #endregion
 
     #region Relationship Status
-    public void ChangeRelationshipStatus(RELATIONSHIP_STATUS newStatus) {
-		if(newStatus == _relationshipStatus) {
+    public void SetRelationshipStatus(FACTION_RELATIONSHIP_STATUS newStatus) {
+		if(newStatus == relationshipStatus) {
             return;
         }
-		_relationshipStatus = newStatus;
+        FACTION_RELATIONSHIP_STATUS oldStatus = relationshipStatus;
+        //_relationshipStatus = newStatus;
+        relationshipStatInt = (int)newStatus;
+        Messenger.Broadcast(Signals.CHANGE_FACTION_RELATIONSHIP, _faction1, _faction2, relationshipStatus, oldStatus);
+        //if (_relationshipStatus != FACTION_RELATIONSHIP_STATUS.AT_WAR) {
+        //    currentWarCombatCount = 0;
+        //}
+    }
+    public void AdjustRelationshipStatus(int amount) {
+        int previousValue = relationshipStatInt;
+        relationshipStatInt += amount;
+        relationshipStatInt = Mathf.Clamp(relationshipStatInt, 1, CollectionUtilities.GetEnumValues<FACTION_RELATIONSHIP_STATUS>().Length - 1);
+        if (relationshipStatInt != previousValue) {
+            Messenger.Broadcast(Signals.FACTION_RELATIONSHIP_CHANGED, this);
+        }
     }
     #endregion
 
-    #region War
-    public void SetWarStatus(bool warStatus) {
-        _isAtWar = warStatus;
+    public void AdjustWarCombatCount(int amount) {
+        currentWarCombatCount += amount;
+        currentWarCombatCount = Mathf.Max(0, currentWarCombatCount);
     }
-    #endregion
-
-	#region Alliance
-	public bool AreAllies(){
-		//TODO: Alliance
-		return false;
-	}
-	#endregion
 }

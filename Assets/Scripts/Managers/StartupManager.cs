@@ -3,18 +3,33 @@ using System.Collections;
 
 public class StartupManager : MonoBehaviour {
 	public MapGenerator mapGenerator;
+    public Initializer initializer;
 
-	void Start(){
-		LocalizationManager.Instance.Initialize ();
-		ItemManager.Instance.Initialize ();
-		SkillManager.Instance.Initialize ();
-		ECS.CombatManager.Instance.Initialize ();
-		EncounterPartyManager.Instance.Initialize ();
-		CharacterManager.Instance.ConstructTraitDictionary();
-		MaterialManager.Instance.Initialize ();
-		ProductionManager.Instance.Initialize ();
-		TaskManager.Instance.Initialize ();
+    void Awake() {
+        Messenger.Cleanup();
+    }
+    void Start(){
+        Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
+        StartCoroutine(PerformStartup());
+    }
 
-		this.mapGenerator.InitializeWorld ();
-	}
+    private IEnumerator PerformStartup() {
+        LevelLoaderManager.SetLoadingState(true);
+        LevelLoaderManager.UpdateLoadingInfo("Initializing Data...");
+        yield return StartCoroutine(initializer.InitializeDataBeforeWorldCreation());
+
+        LevelLoaderManager.UpdateLoadingInfo("Initializing World...");
+        if (SaveManager.Instance.currentSave != null) {
+            Debug.Log("Loading world from current saved data...");
+            this.mapGenerator.InitializeWorld(SaveManager.Instance.currentSave);
+        } else {
+            Debug.Log("Generating random world...");
+            yield return StartCoroutine(this.mapGenerator.InitializeWorld());
+        }
+    }
+
+    private void OnGameLoaded() {
+        Messenger.RemoveListener(Signals.GAME_LOADED, OnGameLoaded);
+        initializer.InitializeDataAfterWorldCreation();
+    }
 }

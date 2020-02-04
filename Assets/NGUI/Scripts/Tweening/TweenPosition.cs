@@ -115,4 +115,14 @@ public class TweenPosition : UITweener
         to = currentFrom;
         from = currentTo;
     }
+
+    public void OnToggleValueChange(bool state) {
+        if (state) {
+            //open
+            PlayForward();
+        } else {
+            //close
+            PlayReverse();
+        }
+    }
 }

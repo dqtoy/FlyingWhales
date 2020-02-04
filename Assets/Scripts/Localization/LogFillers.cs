@@ -1,14 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public struct LogFiller {
-	public object obj;
-	public string value;
-	public LOG_IDENTIFIER identifier;
+public class LogFillers : MonoBehaviour {
 
-	public LogFiller(object obj, string value, LOG_IDENTIFIER identifier){
-		this.obj = obj;
-		this.value = value;
-		this.identifier = identifier;
+	// Use this for initialization
+	void Start () {
+	
+	}
+	
+	// Update is called once per frame
+	void Update () {
+	
 	}
 }

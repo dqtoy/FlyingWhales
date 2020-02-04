@@ -1,0 +1,76 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &100100000
+Prefab:
+  m_ObjectHideFlags: 1
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications: []
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 0}
+  m_RootGameObject: {fileID: 1030892868950450}
+  m_IsPrefabParent: 1
+--- !u!1 &1030892868950450
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4031686954562362}
+  - component: {fileID: 114707853588054300}
+  m_Layer: 5
+  m_Name: CharacterScheduleManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4031686954562362
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1030892868950450}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114707853588054300
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1030892868950450}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef53dbf8fc4c8fd4f90886893ba19add, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scheduleTemplates:
+    m_keys:
+    - Warrior
+    - Farmer
+    - Miner
+    - Woodcutter
+    - General
+    - Lady
+    - High Priest
+    - Exiled Guardian
+    - Thief
+    - Bandit
+    m_values:
+    - {fileID: 114734657753937842, guid: 66be82e99c8d1d540aa9c8bd589a4c44, type: 2}
+    - {fileID: 114734657753937842, guid: 5eb1921fb87aa1c4b9f5360a4f8fab39, type: 2}
+    - {fileID: 114734657753937842, guid: 5eb1921fb87aa1c4b9f5360a4f8fab39, type: 2}
+    - {fileID: 114734657753937842, guid: 5eb1921fb87aa1c4b9f5360a4f8fab39, type: 2}
+    - {fileID: 114734657753937842, guid: 66be82e99c8d1d540aa9c8bd589a4c44, type: 2}
+    - {fileID: 114734657753937842, guid: 66be82e99c8d1d540aa9c8bd589a4c44, type: 2}
+    - {fileID: 114734657753937842, guid: 66be82e99c8d1d540aa9c8bd589a4c44, type: 2}
+    - {fileID: 114734657753937842, guid: 66be82e99c8d1d540aa9c8bd589a4c44, type: 2}
+    - {fileID: 114734657753937842, guid: 66be82e99c8d1d540aa9c8bd589a4c44, type: 2}
+    - {fileID: 114734657753937842, guid: 66be82e99c8d1d540aa9c8bd589a4c44, type: 2}

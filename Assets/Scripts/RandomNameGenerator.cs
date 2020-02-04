@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UtilityScripts;
 
 public class RandomNameGenerator : MonoBehaviour {
 
@@ -50,10 +51,10 @@ public class RandomNameGenerator : MonoBehaviour {
 		"Thalessa", "Tavrovel", "Thranduil", "Uralen", "Urdwyn", "Valinor", "Vinyamar", "Vasmundin", "Wylia"
 	};
 
-	private string[] baseElvenCityNames = new string[]{
-		"Aglarond", "Alqualonde", "Avallone", "Beleriand", "Brithombar", "Doriath",
-		"Galadhon", "Gondolin", "Harlond", "Imladris", "Lindon", "Lorien", "Lothlorien", "Menegroth", "Mithlond"
-	};
+	//private string[] baseElvenCityNames = new string[]{
+	//	"Aglarond", "Alqualonde", "Avallone", "Beleriand", "Brithombar", "Doriath",
+	//	"Galadhon", "Gondolin", "Harlond", "Imladris", "Lindon", "Lorien", "Lothlorien", "Menegroth", "Mithlond"
+	//};
 
 	private string[] baseElvenFemaleNames = new string[]{
 		"Arwen", "Amarie", "Alassea", "Arasinya", "Aredhel", "Authiel", "Amirala", "Bainwen", "Berissa", "Beriana", "Berondiel" , "Calathiel", "Caladwen", "Celebrian", "Castiel", "Ciristel", "Dayanara", 
@@ -93,12 +94,60 @@ public class RandomNameGenerator : MonoBehaviour {
 	};
 
     private string[] baseRegionNames = new string[] {
-        "Caloocan", "Las Piñas", "Makati", "Malabon", "Mandaluyong", "Manila", "Marikina", "Muntinlupa", "Navotas",
-        "Parañaque", "Pasay", "Pasig", "Quezon", "San Juan", "Taguig", "Valenzuela"
+        "Atlantis", "Albane", "Alamid", "Anderland", "Aurelia", "Ashanti", "Bathria", "Benin", "Bismuth", "Boron", "Burgundy", "Calabon", "Canton", "Croatia", "Ceres",
+        "Darmid", "Delta", "Dirland", "Dohati", "Duscany", "Elarus", "Esmeris", "Erebor", "Emusil", "Erathia", "Folgeron", "Fernica", "Fuchia", "Friedland", "Farrah", "Garwinia", "Grazil", "Gunark",
+        "Gehenna", "Gladius", "Hacatid", "Hermani", "Hisoka", "Howland", "Hunan", "Iridia", "Israel", "Indosin", "Illumina", "Jamalaya", "Jinni", "Jorara", "Justinia", "Jelsebed",
+        "Karamba", "Kaedwen", "Korolus", "Kumael", "Kestrella", "Losendro", "Liria", "Lunesta", "Lusland", "Lyrica", "Makuria", "Meridian", "Morland", "Muskovich", "Nestori", "Norsica",
+        "Nubland", "Naralan", "Nissin", "Obelin", "Ovid", "Opera", "Osmud", "Obelisk", "Patani", "Petersen", "Polaris", "Prissia", "Pusant", "Quatar", "Qualia", "Quenden", "Rastafar", "Remedi", "Russo",
+        "Roveri", "Scythra", "Shetland", "Sundira", "Silveria", "Sahari", "Takatak", "Thenid", "Tilain", "Tesoro", "Tulisia", "Umbra", "Ulbany", "Uruk", "Unibad", "Virindor", "Visaya", "Vanad", "Vesemin",
+        "Vortex", "Zulu", "Zakrand", "Zerena", "Ziria"
+    };
+    // "Caloocan", "Las Piñas", "Makati", "Malabon", "Mandaluyong", "Manila", "Marikina", "Muntinlupa", "Navotas",
+    //    "Parañaque", "Pasay", "Pasig", "Quezon", "San Juan", "Taguig", "Valenzuela",
+
+    private string[] minionNames = new string[] {
+        "Abraxas", "Agares", "Aim", "Alloces", "Amdusias", "Amon", "Amy", "Andras", "Andrealphus", "Adromalius", "Asmodeus",
+        "Astaroth", "Azazel", "Baal", "Baphomet", "Barbatos", "Barong", "Bathin", "Balam", "Beleth", "Belial", "Belphegor",
+        "Berith", "Bifrons", "Botis", "Buer", "Bune", "Caim", "Choronzon", "Crocell", "Dantalion", "Decarabia", "Demogorgon", "Eligos",
+        "Flauros", "Focalor", "Foras", "Forneus", "Furcas", "Furfur", "Gaap", "Gremory", "Glasya-labolas", "Gusion", "Haagenti",
+        "Halphas", "Ipos", "Kimaris", "Leraje", "Lucifer", "Malphas", "Marax", "Marbas", "Marchosias", "Murmur", "Naberius", "Orias",
+        "Orobas", "Ose", "Paimon", "Phenex", "Purson", "Raum", "Ronove", "Sabnock", "Samigina", "Sallos", "Seere", "Shax", "Sitri", "Stolas",
+        "Valac", "Vapula", "Vassago", "Valefor", "Vepar", "Vine", "Vual", "Zepar", "Zagan"
     };
 
-	#region Alliance
-	private string[] allianceType = new string[]{
+    private string[] spiderNames = new string[] {
+        "Glork", "Rakkan", "Bumble", "Lartath", "Typchray", "Kahu", "Kaljou", "Tuvok", "Kyshf", "Palluhae", "Ezeroc",
+        "Spidrid", "Slerdach", "Meleth", "Snendos", "Libnrak", "Umusaq", "Serpigo", "Ijushir", "Eshacer", "Alakyrr", "Iguker", "Skirax",
+        "Ujarak", "Eruanna", "Annelida", "Naraku", "Xaggavea", "Ilphstra", "Ekicak", "Scissa", "Lakkucoa", "Tsuki", "Incey", "Ahmose", "Aurantia", "Alta", "Hesutu",
+        "Anastera", "Krigon", "Seti", "Tal Tal", "Feriave", "Elifif", "Arkaitz", "Adiyis", "Shelob", "Xennowua", "Aine", "Gigit",
+    };
+
+    private string[] faeryFemaleNames = new string[] {
+        "Lorelie", "Nixie", "Sereia", "Tiana", "Naida", "Melia", "Delphine", "Celeste", "Avery", "Asherah", "Ailsa",
+        "Diana", "Cyrena", "Fiona", "Spectra", "Siofra", "Zanna", "Sebille", "Radella", "Oona", "Marigold", "Fayette", "Dariyah",
+        "Asteria", "Kaia", "Aurora",
+    };
+
+    private string[] faeryMaleNames = new string[] {
+        "Caspian", "Arion", "Jareth", "Oberon", "Triton", "Zephyr", "Cosmo", "Aelfdene", "Nyx", "Xantho", "Gullveig",
+        "Flynn", "Helio", "Flix", "Cleon", "Lazuli", "Trevan", "Aphid", "Tarragon", "Caraway", "Carpus", "Skylark", "Cirro",
+        "Alaneo", "Ginko", "Oleander",
+    };
+
+    private string[] goblinFemaleNames = new string[] {
+        "Shanxee", "Fegrahx", "Stebdois", "Trahxi", "Shalx", "Cholme", "Gnokesh", "Deevons", "Blahossa", "Voplehx", "Dofil",
+        "Iofz", "Mikild", "Trohee", "Onxe", "Wraalta", "Retzaga", "Fegsi", "Thriz", "Dyq", "Oinun", "Gyflult", "Klaasai",
+        "Barleeth", "Dyteess",
+    };
+
+    private string[] goblinMaleNames = new string[] {
+        "Kreelk", "Kohdibs", "Lasdoir", "Ukoc", "Sloikz", "Vreg", "Shapvith", "Voss", "Uvrefz", "Yzenk", "Brirx",
+        "Sruiz", "Kegdiart", "Taarsots", "Srurmaar", "Jignierk", "Crezlezz", "Fraatukt", "Zolruirm", "Canralk", "Prevrax", "Hioq", "Zees",
+        "Hobigs", "Fizigs",
+    };
+
+    #region Alliance
+    private string[] allianceType = new string[]{
 		"Alliance", "League", "Coalition", "Axis", "Union", "Entente", "Accord"
 	};
 	private string[] allianceNoun = new string[]{
@@ -157,6 +206,14 @@ public class RandomNameGenerator : MonoBehaviour {
 	private List<string> ancientRuinNames;
 	private List<string> tileNames;
     private List<string> regionNames;
+    private List<string> availableMinionNames;
+    private List<string> availableSpiderNames;
+    private List<string> availableHumanMaleNames;
+    private List<string> availableHumanFemaleNames;
+    private List<string> availableFaeryFemaleNames;
+    private List<string> availableFaeryMaleNames;
+    private List<string> availableGoblinFemaleNames;
+    private List<string> availableGoblinMaleNames;
 
     void Awake(){
 		Instance = this;
@@ -170,7 +227,7 @@ public class RandomNameGenerator : MonoBehaviour {
 		generatedAncientRuinNames = new Sobriquet.Generator (2, baseAncientRuinPrefixes);
 		generatedTileNames = new Sobriquet.Generator (2, baseTileNames);
 
-        generatedRegionNames = new Sobriquet.Generator(2, baseRegionNames);
+        generatedRegionNames = new Sobriquet.Generator(3, baseRegionNames);
 
         humanKingdomNames = new List<string>();
         for (int i = 5; i <= 8; i++) {
@@ -180,7 +237,7 @@ public class RandomNameGenerator : MonoBehaviour {
         humanKingdomNames.AddRange(generatedHumanKingdomNames.AllRaw(10).Take(20000).ToList());
         humanKingdomNames.AddRange(generatedHumanKingdomNames.AllRaw(11).Take(10000).ToList());
         humanKingdomNames.AddRange(generatedHumanKingdomNames.AllRaw(12).Take(10000).ToList());
-        humanKingdomNames = Utilities.Shuffle(humanKingdomNames);
+        humanKingdomNames = CollectionUtilities.Shuffle(humanKingdomNames);
 
 
         humanSurnames = new List<string>();
@@ -191,7 +248,7 @@ public class RandomNameGenerator : MonoBehaviour {
         humanSurnames.AddRange(generatedHumanSurnames.AllRaw(10).Take(20000).ToList());
         humanSurnames.AddRange(generatedHumanSurnames.AllRaw(11).Take(10000).ToList());
         humanSurnames.AddRange(generatedHumanSurnames.AllRaw(12).Take(10000).ToList());
-        humanSurnames = Utilities.Shuffle(humanSurnames);
+        humanSurnames = CollectionUtilities.Shuffle(humanSurnames);
 
         elvenKingdomNames = new List<string>();
         for (int i = 5; i <= 8; i++) {
@@ -201,7 +258,7 @@ public class RandomNameGenerator : MonoBehaviour {
         elvenKingdomNames.AddRange(generatedElvenKingdomNames.AllRaw(10).Take(20000).ToList());
         elvenKingdomNames.AddRange(generatedElvenKingdomNames.AllRaw(11).Take(10000).ToList());
         elvenKingdomNames.AddRange(generatedElvenKingdomNames.AllRaw(12).Take(10000).ToList());
-        elvenKingdomNames = Utilities.Shuffle(elvenKingdomNames);
+        elvenKingdomNames = CollectionUtilities.Shuffle(elvenKingdomNames);
 
         elvenFemaleNames = new List<string>();
         for (int i = 5; i <= 7; i++) {
@@ -212,7 +269,7 @@ public class RandomNameGenerator : MonoBehaviour {
         elvenFemaleNames.AddRange(generatedElvenFemaleNames.AllRaw(10).Take(20000).ToList());
         elvenFemaleNames.AddRange(generatedElvenFemaleNames.AllRaw(11).Take(10000).ToList());
         elvenFemaleNames.AddRange(generatedElvenFemaleNames.AllRaw(12).Take(10000).ToList());
-        elvenFemaleNames = Utilities.Shuffle(elvenFemaleNames);
+        elvenFemaleNames = CollectionUtilities.Shuffle(elvenFemaleNames);
 
         elvenMaleNames = new List<string>();
         for (int i = 5; i <= 7; i++) {
@@ -223,25 +280,34 @@ public class RandomNameGenerator : MonoBehaviour {
         elvenMaleNames.AddRange(generatedElvenMaleNames.AllRaw(10).Take(20000).ToList());
         elvenMaleNames.AddRange(generatedElvenMaleNames.AllRaw(11).Take(10000).ToList());
         elvenMaleNames.AddRange(generatedElvenMaleNames.AllRaw(12).Take(10000).ToList());
-        elvenMaleNames = Utilities.Shuffle(elvenMaleNames);
+        elvenMaleNames = CollectionUtilities.Shuffle(elvenMaleNames);
 
 		ancientRuinNames = new List<string>();
 		for (int i = 4; i <= 6; i++) {
 			ancientRuinNames.AddRange(generatedAncientRuinNames.AllRaw(i).Take(50000).ToList());
 		}
-		ancientRuinNames = Utilities.Shuffle(ancientRuinNames);
+		ancientRuinNames = CollectionUtilities.Shuffle(ancientRuinNames);
 
 		tileNames = new List<string>();
 		for (int i = 6; i <= 9; i++) {
 			tileNames.AddRange(generatedTileNames.AllRaw(i).Take(20000).ToList());
 		}
-		tileNames = Utilities.Shuffle(tileNames);
+		tileNames = CollectionUtilities.Shuffle(tileNames);
 
         regionNames = new List<string>();
         for (int i = 6; i <= 9; i++) {
             regionNames.AddRange(generatedRegionNames.AllRaw(i).Take(20000).ToList());
         }
-        regionNames = Utilities.Shuffle(regionNames);
+        regionNames = CollectionUtilities.Shuffle(regionNames);
+
+        availableMinionNames = new List<string>(minionNames);
+        availableSpiderNames = new List<string>(spiderNames);
+        availableHumanFemaleNames = new List<string>(humanFemaleFirstNames);
+        availableHumanMaleNames = new List<string>(humanMaleFirstNames);
+        availableFaeryFemaleNames = new List<string>(faeryFemaleNames);
+        availableFaeryMaleNames = new List<string>(faeryMaleNames);
+        availableGoblinFemaleNames = new List<string>(goblinFemaleNames);
+        availableGoblinMaleNames = new List<string>(goblinMaleNames);
 
         //generatedHumanSurnames = new MarkovNameGenerator(baseHumanSurnames, 3, 5);
         //      generatedHumanKingdomNames = new MarkovNameGenerator(baseHumanKingdomNames, 3, 5);
@@ -250,37 +316,112 @@ public class RandomNameGenerator : MonoBehaviour {
         //generatedElvenFemaleNames = new MarkovNameGenerator(baseElvenFemaleNames, 3, 4);
         //generatedElvenMaleNames = new MarkovNameGenerator(baseElvenMaleNames, 3, 4);
     }
+    private void Start() {
+        Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
+    }
 
-	public string GenerateRandomName(RACE race, GENDER gender){
+    public string GenerateMinionName() {
+        if (availableMinionNames.Count <= 0) {
+            availableMinionNames.AddRange(minionNames);
+        }
+        string chosenName = availableMinionNames[Random.Range(0, availableMinionNames.Count)];
+        availableMinionNames.Remove(chosenName);
+        //if (availableMinionNames.Count == 0) {
+        //    availableMinionNames.AddRange(minionNames);
+        //}
+        return chosenName;
+    }
+
+    public string GenerateSpiderName() {
+        string chosenName = availableSpiderNames[Random.Range(0, availableSpiderNames.Count)];
+        availableSpiderNames.Remove(chosenName);
+        //if (availableSpiderNames.Count == 0) {
+        //    availableSpiderNames.AddRange(minionNames);
+        //}
+        return chosenName;
+    }
+    public string GenerateFaeryName(GENDER gender) {
+        string chosenName = string.Empty;
+        if(gender == GENDER.MALE) {
+            if (availableFaeryMaleNames.Count <= 0) {
+                availableFaeryMaleNames.AddRange(faeryMaleNames);
+            }
+            int index = UnityEngine.Random.Range(0, availableFaeryMaleNames.Count);
+            chosenName = availableFaeryMaleNames[index];
+            availableFaeryMaleNames.RemoveAt(index);
+        } else {
+            if (availableFaeryFemaleNames.Count <= 0) {
+                availableFaeryFemaleNames.AddRange(faeryFemaleNames);
+            }
+            int index = UnityEngine.Random.Range(0, availableFaeryFemaleNames.Count);
+            chosenName = availableFaeryFemaleNames[index];
+            availableFaeryFemaleNames.RemoveAt(index);
+        }
+        return chosenName;
+    }
+
+    public string GenerateGoblinName(GENDER gender) {
+        string chosenName = string.Empty;
+        if (gender == GENDER.MALE) {
+            if (availableGoblinMaleNames.Count <= 0) {
+                availableGoblinMaleNames.AddRange(goblinMaleNames);
+            }
+            int index = UnityEngine.Random.Range(0, availableGoblinMaleNames.Count);
+            chosenName = availableGoblinMaleNames[index];
+            availableGoblinMaleNames.RemoveAt(index);
+        } else {
+            if (availableGoblinFemaleNames.Count <= 0) {
+                availableGoblinFemaleNames.AddRange(goblinFemaleNames);
+            }
+            int index = UnityEngine.Random.Range(0, availableGoblinFemaleNames.Count);
+            chosenName = availableGoblinFemaleNames[index];
+            availableGoblinFemaleNames.RemoveAt(index);
+        }
+        return chosenName;
+    }
+
+    private void OnCharacterDied(Character characterThatDied) {
+        if (characterThatDied.minion != null) {
+            //minion that died
+            if (!availableMinionNames.Contains(characterThatDied.name)) {
+                availableMinionNames.Add(characterThatDied.name); //return name to pool
+            }
+        }
+    }
+
+    public string GenerateRandomName(RACE race, GENDER gender){
 		if (race == RACE.HUMANS) {
 			return GenerateWholeHumanName(gender);
 		} else if(race == RACE.ELVES) {
 			return GenerateElvenName(gender);
-		}
-		return GenerateElvenName(gender);
-	}
-
-	public string GenerateKingdomName(RACE race){
-		if (race == RACE.HUMANS) {
-            if(humanKingdomNames.Count <= 0) {
-                humanKingdomNames = generatedHumanKingdomNames.AllRaw(12).ToList();
-            }
-            int index = Random.Range(0, humanKingdomNames.Count);
-            string humanKingdomName = humanKingdomNames[index];
-            //humanKingdomNames.RemoveAt(index);
-            return humanKingdomName.Trim();
-		} else if(race == RACE.ELVES) {
-            if (elvenKingdomNames.Count <= 0) {
-                elvenKingdomNames = generatedElvenKingdomNames.AllRaw(12).ToList();
-            }
-            int index = Random.Range(0, elvenKingdomNames.Count);
-            string elvenKingdomName = elvenKingdomNames[index];
-            //elvenKingdomNames.RemoveAt(index);
-            return elvenKingdomName.Trim();
+        } else if (race == RACE.SPIDER) {
+            return GenerateSpiderName();
+        } else if (race == RACE.FAERY) {
+            return GenerateFaeryName(gender);
+        } else if (race == RACE.GOBLIN) {
+            return GenerateGoblinName(gender);
         }
-		return "";
+        return GenerateElvenName(gender);
 	}
-
+	public string GenerateKingdomName(){
+        if(humanKingdomNames.Count <= 0) {
+            humanKingdomNames = generatedHumanKingdomNames.AllRaw(12).ToList();
+        }
+        int index = Random.Range(0, humanKingdomNames.Count);
+        string humanKingdomName = humanKingdomNames[index];
+        //humanKingdomNames.RemoveAt(index);
+        return humanKingdomName.Trim();
+		//} else if(race == RACE.ELVES) {
+  //          if (elvenKingdomNames.Count <= 0) {
+  //              elvenKingdomNames = generatedElvenKingdomNames.AllRaw(12).ToList();
+  //          }
+  //          int index = Random.Range(0, elvenKingdomNames.Count);
+  //          string elvenKingdomName = elvenKingdomNames[index];
+  //          //elvenKingdomNames.RemoveAt(index);
+  //          return elvenKingdomName.Trim();
+  //      }
+		//return "";
+	}
 	public string GenerateCityName(RACE race){
         if (race == RACE.HUMANS) {
             if (humanKingdomNames.Count <= 0) {
@@ -323,6 +464,7 @@ public class RandomNameGenerator : MonoBehaviour {
 //		return "";
 	}
 
+
 	public string GenerateWholeHumanName(GENDER gender){
 		string firstName = GetHumanFirstName(gender);
 		string surname = GetHumanSurname ();
@@ -342,10 +484,20 @@ public class RandomNameGenerator : MonoBehaviour {
 
 	public string GetHumanFirstName(GENDER gender){
 		if (gender == GENDER.MALE) {
-			return humanMaleFirstNames [Random.Range (0, humanMaleFirstNames.Length)];
+            string chosenName = availableHumanMaleNames[Random.Range(0, availableHumanMaleNames.Count)];
+            availableHumanMaleNames.Remove(chosenName);
+            if (availableHumanMaleNames.Count == 0) {
+                availableHumanMaleNames = new List<string>(humanMaleFirstNames);
+            }
+            return chosenName;
 		} else {
-			return humanFemaleFirstNames [Random.Range (0, humanFemaleFirstNames.Length)];
-		}
+            string chosenName = availableHumanFemaleNames[Random.Range(0, availableHumanFemaleNames.Count)];
+            availableHumanFemaleNames.Remove(chosenName);
+            if (availableHumanFemaleNames.Count == 0) {
+                availableHumanFemaleNames = new List<string>(humanFemaleFirstNames);
+            }
+            return chosenName;
+        }
 //		return "";
 	}
 
@@ -374,7 +526,6 @@ public class RandomNameGenerator : MonoBehaviour {
 
 	}
     public string GetLandmarkName(LANDMARK_TYPE landmarkType) {
-        //TODO: Add name generation per specific landmark type
         return GetAncientRuinName();
     }
 
@@ -420,6 +571,19 @@ public class RandomNameGenerator : MonoBehaviour {
     //
     //		return " ";
     //	}
+
+    public void RemoveNameAsAvailable(GENDER gender, RACE race, string name) {
+        switch (race) {
+            case RACE.HUMANS:
+                if (gender == GENDER.MALE) {
+                    availableHumanMaleNames.Remove(name);
+                }else {
+                    availableHumanFemaleNames.Remove(name);
+                }
+                break;
+            
+        }
+    }
 }
 
 
