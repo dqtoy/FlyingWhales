@@ -2275,7 +2275,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return currentRegion.innerMap.map[x, y];
     }
     public void UpdateCanCombatState() {
-        bool combatState = !_characterClass.isNormalNonCombatant && !traitContainer.HasTrait("Injured");
+        bool combatState = traitContainer.HasTrait("Combatant") && !traitContainer.HasTrait("Injured");
         if (canCombat != combatState) {
             canCombat = combatState;
             //if (canCombat && marker != null) {

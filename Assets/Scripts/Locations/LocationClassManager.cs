@@ -121,7 +121,7 @@ public class LocationClassManager {
                     + characterClassGuide["Combatant"].currentNumber + " (supposed number: " + characterClassGuide["Combatant"].supposedNumber + ")" + " and current number of " + residentClassName + " is "
                     + characterClassGuide[residentClassName].currentNumber + " (supposed number: " + characterClassGuide[residentClassName].supposedNumber + ")");
             }
-        } else if (!residentRemoved.characterClass.isNormalNonCombatant) {
+        } else if (residentRemoved.traitContainer.HasTrait("Combatant")) {
             if (characterClassGuide["Combatant"].currentNumber > 0) {
                 AdjustCurrentNumberOfClass("Combatant", -1);
             } else {
@@ -161,7 +161,7 @@ public class LocationClassManager {
             // else if (characterClassGuide["Combatant"].currentNumber > 0) {
             //     AdjustCurrentNumberOfClass("Combatant", -1);
             // }
-        } else if (!previousClass.isNormalNonCombatant) {
+        } else if (previousClass.IsCombatant()) {
             if (characterClassGuide["Combatant"].currentNumber > 0) {
                 AdjustCurrentNumberOfClass("Combatant", -1);
             }
@@ -186,7 +186,7 @@ public class LocationClassManager {
             // else { // if (characterClassGuide["Combatant"].currentNumber > 0)
             //     AdjustCurrentNumberOfClass("Combatant", 1);
             // }
-        } else if (!currentClass.isNormalNonCombatant) {
+        } else if (currentClass.IsCombatant()) {
             AdjustCurrentNumberOfClass("Combatant", 1);
             //if (characterClassGuide["Combatant"].currentNumber > 0) {
             //    AdjustCurrentNumberOfClass("Combatant", 1);
@@ -229,7 +229,7 @@ public class LocationClassManager {
     private bool DoesCharacterClassFitCurrentClass(Character character) {
         string className = characterClassOrder[currentIndex];
         if(className == "Combatant") {
-            return !character.characterClass.isNormalNonCombatant;
+            return character.traitContainer.HasTrait("Combatant");
         }else if (className == "Civilian") {
             return character.characterClass.className == "Miner" || character.characterClass.className == "Peasant" || character.characterClass.className == "Craftsman";
         } else {
@@ -270,7 +270,7 @@ public class LocationClassManager {
             //         return true;
             //     }
             // }
-        } else if (!charClass.isNormalNonCombatant) {
+        } else if (charClass.IsCombatant()) {
             LocationClassNumberGuide numberGuide = characterClassGuide["Combatant"];
             return numberGuide.currentNumber > numberGuide.supposedNumber;
         } else {
@@ -307,7 +307,7 @@ public class LocationClassManager {
             //         return true;
             //     }
             // }
-        } else if (!charClass.isNormalNonCombatant) {
+        } else if (charClass.IsCombatant()) {
             LocationClassNumberGuide numberGuide = characterClassGuide["Combatant"];
             return numberGuide.currentNumber < numberGuide.supposedNumber;
         } else {

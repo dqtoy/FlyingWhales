@@ -1435,6 +1435,28 @@ public class CharacterMarker : MapObjectVisual<Character> {
         fleePath.spread = 4000;
         seeker.StartPath(fleePath);
     }
+    public void OnStartFleeToHome() {
+        if (character.combatComponent.avoidInRange.Count == 0) {
+            return;
+        }
+        pathfindingAI.ClearAllCurrentPathData();
+        SetHasFleePath(true);
+        LocationGridTile chosenTile = character.homeStructure.GetLocationStructure().GetRandomTile();
+        if(character is Summon) {
+            Summon summon = character as Summon;
+            chosenTile = summon.GetRandomLocationGridTileWithPath();
+        }
+        if(chosenTile == null) {
+            chosenTile = character.currentStructure.GetRandomTile();
+        }
+        //pathfindingAI.canSearch = false; //set to false, because if this is true and a destination has been set in the ai path, the ai will still try and go to that point instead of the computed flee path
+        GoTo(chosenTile, OnFinishedTraversingFleePath);
+        //pathfindingAI.canSearch = false;
+        //FleeMultiplePath fleePath = FleeMultiplePath.Construct(this.transform.position, character.combatComponent.avoidInRange.Select(x => x.gridTileLocation.worldLocation).ToArray(), 20000);
+        //fleePath.aimStrength = 1;
+        //fleePath.spread = 4000;
+        //seeker.StartPath(fleePath);
+    }
     public void OnFleePathComputed(Path path) {
         //|| character.stateComponent.currentState == null || character.stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT 
         if (character == null || character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
@@ -1447,12 +1469,12 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     public void OnFinishedTraversingFleePath() {
         //Debug.Log(name + " has finished traversing flee path.");
-        SetHasFleePath(false);
-        if (character.stateComponent.currentState is CombatState) {
+        //SetHasFleePath(false);
+        if (character.isInCombat) {
             (character.stateComponent.currentState as CombatState).FinishedTravellingFleePath();
         }
-        UpdateAnimation();
-        UpdateActionIcon();
+        //UpdateAnimation();
+        //UpdateActionIcon();
     }
     public void SetHasFleePath(bool state) {
         hasFleePath = state;
