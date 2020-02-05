@@ -5,7 +5,7 @@ using UnityEngine;
 using System.Linq;
 
 namespace Traits {
-    public class SerialKiller : Trait {
+    public class Psychopath : Trait {
 
         public SerialVictim victim1Requirement { get; private set; }
         //public SerialVictim victim2Requirement { get; private set; }
@@ -16,8 +16,8 @@ namespace Traits {
         //public bool hasStartedFollowing { get; private set; }
         private Dictionary<Character, OpinionData> opinionCopy;
 
-        public SerialKiller() {
-            name = "Serial Killer";
+        public Psychopath() {
+            name = "Psychopath";
             description = "Serial killers have a specific subset of target victims that they may kidnap and then kill.";
             type = TRAIT_TYPE.FLAW;
             effect = TRAIT_EFFECT.NEUTRAL;
@@ -281,13 +281,12 @@ namespace Traits {
                 return false;
             }
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM, INTERACTION_TYPE.RITUAL_KILLING, targetVictim, character);
-            LocationStructure wilderness = character.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
-            job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { character.homeStructure });
-            // if (character.homeStructure != null && character.homeStructure.residents.Count > 1) {
-            //     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { wilderness });
-            // } else {
-            //     job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { character.homeStructure });
-            // }
+            if (character.homeStructure == null || character.homeStructure.residents.Count > 1) {
+                LocationGridTile outsideSettlementTile = character.currentRegion.GetRandomOutsideSettlementLocationGridTileWithPathTo(character.gridTileLocation);
+                job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { outsideSettlementTile.structure, outsideSettlementTile });
+            } else {
+                job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { character.homeStructure });
+            }
             job.SetIsStealth(true);
             character.jobQueue.AddJobInQueue(job);
             return true;
@@ -616,7 +615,7 @@ namespace Traits {
 
         public override void Save(Trait trait) {
             base.Save(trait);
-            SerialKiller derivedTrait = trait as SerialKiller;
+            Psychopath derivedTrait = trait as Psychopath;
             victim1Requirement = derivedTrait.victim1Requirement;
             //victim2Requirement = derivedTrait.victim2Requirement;
 
@@ -632,7 +631,7 @@ namespace Traits {
 
         public override Trait Load(ref Character responsibleCharacter) {
             Trait trait = base.Load(ref responsibleCharacter);
-            SerialKiller derivedTrait = trait as SerialKiller;
+            Psychopath derivedTrait = trait as Psychopath;
             derivedTrait.SetVictimRequirements(victim1Requirement);
             //derivedTrait.SetVictim2Requirement(victim2Requirement);
 

@@ -63,7 +63,7 @@ namespace Traits {
         //    if (traitOwner is Character) {
         //        Character targetCharacter = traitOwner as Character;
         //        if (!targetCharacter.isDead && !targetCharacter.isCriminal && characterThatWillDoJob.isSerialKiller) {
-        //            SerialKiller serialKiller = characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Serial Killer") as SerialKiller;
+        //            SerialKiller serialKiller = characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Psychopath") as SerialKiller;
         //            serialKiller.SerialKillerSawButWillNotAssist(targetCharacter, this);
         //            return false;
         //            //if (serialKiller != null) {

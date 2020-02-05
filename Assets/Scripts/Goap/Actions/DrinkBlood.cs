@@ -136,7 +136,7 @@ public class DrinkBlood : GoapAction {
             }
             if(witness.traitContainer.HasTrait("Coward")) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor);
-            } else if (!witness.traitContainer.HasTrait("Serial Killer")) {
+            } else if (!witness.traitContainer.HasTrait("Psychopath")) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, actor);
             }
         }
@@ -147,7 +147,7 @@ public class DrinkBlood : GoapAction {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor);
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor);
             } else if (opinionLabel == OpinionComponent.Acquaintance || witness.faction == targetCharacter.faction || witness.homeSettlement == targetCharacter.homeSettlement) {
-                if (!witness.traitContainer.HasTrait("Serial Killer")) {
+                if (!witness.traitContainer.HasTrait("Psychopath")) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor);
                 }
             }

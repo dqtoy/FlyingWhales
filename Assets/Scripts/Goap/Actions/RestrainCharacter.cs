@@ -56,7 +56,7 @@ public class RestrainCharacter : GoapAction {
             } else {
                 if (!witness.opinionComponent.IsEnemiesWith(targetCharacter) && !witness.IsHostileWith(targetCharacter)) {
                     CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.MISDEMEANOR);
-                    if (!witness.traitContainer.HasTrait("Serial Killer") && witness.opinionComponent.IsFriendsWith(targetCharacter)) {
+                    if (!witness.traitContainer.HasTrait("Psychopath") && witness.opinionComponent.IsFriendsWith(targetCharacter)) {
                         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, actor);
                         if(UnityEngine.Random.Range(0, 100) < 20) {
                             if (!witness.traitContainer.HasTrait("Diplomatic")) {
@@ -76,7 +76,7 @@ public class RestrainCharacter : GoapAction {
         if (target is Character) {
             Character targetCharacter = target as Character;
             if (targetCharacter.traitContainer.HasTrait("Criminal")) {
-                if (!witness.traitContainer.HasTrait("Serial Killer") && witness.opinionComponent.IsFriendsWith(targetCharacter)) {
+                if (!witness.traitContainer.HasTrait("Psychopath") && witness.opinionComponent.IsFriendsWith(targetCharacter)) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, targetCharacter);
                 } else if (UnityEngine.Random.Range(0, 100) < 30 && !witness.traitContainer.HasTrait("Diplomatic")) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, targetCharacter);
@@ -84,7 +84,7 @@ public class RestrainCharacter : GoapAction {
             } else {
                 string opinionLabel = witness.opinionComponent.GetOpinionLabel(targetCharacter);
                 if(opinionLabel == OpinionComponent.Acquaintance) {
-                    if (!witness.traitContainer.HasTrait("Serial Killer") && UnityEngine.Random.Range(0, 2) == 0) {
+                    if (!witness.traitContainer.HasTrait("Psychopath") && UnityEngine.Random.Range(0, 2) == 0) {
                         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, targetCharacter);
                     }
                 } else if (opinionLabel == OpinionComponent.Enemy || opinionLabel == OpinionComponent.Rival) {

@@ -294,11 +294,11 @@ public class ReactionComponent {
                                     debugLog += "\n-Target is tired or exhausted, will create Move Character job to bed if Target has a home and an available bed";
                                     if (targetCharacter.homeStructure != null) {
                                         Bed bed = targetCharacter.homeStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.BED) as Bed;
-                                        if (bed != null) {
+                                        if (bed != null && bed.gridTileLocation != targetCharacter.gridTileLocation) {
                                             debugLog += "\n-Target has a home and an available bed, will trigger Move Character job to bed";
                                             owner.jobComponent.TryTriggerMoveCharacter(targetCharacter, targetCharacter.homeStructure.GetLocationStructure(), bed.gridTileLocation);
                                         } else {
-                                            debugLog += "\n-Target has a home but does not have an available bed, will not trigger Move Character job";
+                                            debugLog += "\n-Target has a home but does not have an available bed or already in bed, will not trigger Move Character job";
                                         }
                                     } else {
                                         debugLog += "\n-Target does not have a home, will not trigger Move Character job";

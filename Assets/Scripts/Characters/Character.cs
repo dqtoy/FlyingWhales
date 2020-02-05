@@ -2230,7 +2230,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 needsComponent.AdjustHope(-5f);
             } else if (opinionLabel == OpinionComponent.Close_Friend) {
                 needsComponent.AdjustHope(-10f);
-                if (!traitContainer.HasTrait("Serial Killer")) {
+                if (!traitContainer.HasTrait("Psychopath")) {
                     traitContainer.AddTrait(this, "Griefstricken");
                 }
             }

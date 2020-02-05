@@ -261,10 +261,10 @@ public class NonActionEventsComponent {
     private void TriggerBreakUp(Character target, RELATIONSHIP_TYPE relationship, string reason) {
         RelationshipManager.Instance.RemoveRelationshipBetween(owner, target, relationship);
         //upon break up, if one of them still has a Positive opinion of the other, he will gain Heartbroken trait
-        if (!owner.traitContainer.HasTrait("Serial Killer")) { //owner.opinionComponent.GetTotalOpinion(target) >= 0
+        if (!owner.traitContainer.HasTrait("Psychopath")) { //owner.opinionComponent.GetTotalOpinion(target) >= 0
             owner.traitContainer.AddTrait(owner, "Heartbroken", target);
         }
-        if (!target.traitContainer.HasTrait("Serial Killer")) { //target.opinionComponent.GetTotalOpinion(owner) >= 0
+        if (!target.traitContainer.HasTrait("Psychopath")) { //target.opinionComponent.GetTotalOpinion(owner) >= 0
             target.traitContainer.AddTrait(target, "Heartbroken", owner);
         }
         RelationshipManager.Instance.CreateNewRelationshipBetween(owner, target, RELATIONSHIP_TYPE.EX_LOVER);

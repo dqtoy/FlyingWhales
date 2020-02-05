@@ -70,7 +70,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			if (character.interruptComponent.isInterrupted &&
 			           character.interruptComponent.currentInterrupt.interrupt == INTERRUPT.Narcoleptic_Attack) {
 				//Don't do anything
-			} else if (character.traitContainer.HasTrait("Resting")) {
+			} else if (character.currentActionNode != null && InteractionManager.Instance.IsActionTirednessRecovery(character.currentActionNode.action)) {
 				character.CancelAllJobsExceptForCurrent();
 			} else {
 				character.jobQueue.CancelAllJobs();
@@ -275,7 +275,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 					       character.opinionComponent.HasOpinionLabelWithCharacter(targetCharacter,
 						       OpinionComponent.Rival, OpinionComponent.Enemy) == false 
 					       && isResponsibleForTrait == false
-                           && !character.traitContainer.HasTrait("Serial Killer")
+                           && !character.traitContainer.HasTrait("Psychopath")
                            && character.traitContainer.HasTrait("Healer");	
 				}
 				
@@ -283,7 +283,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 				       character.opinionComponent.HasOpinionLabelWithCharacter(targetCharacter,
 					       OpinionComponent.Rival, OpinionComponent.Enemy) == false 
 				       && isResponsibleForTrait == false
-                       && !character.traitContainer.HasTrait("Serial Killer");
+                       && !character.traitContainer.HasTrait("Psychopath");
 			}
 		}
 		return false;
@@ -297,7 +297,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		}
 		if ((_owner.canMove == false && 
 		     _owner.traitContainer.HasTrait("Exhausted", "Starving", "Sulking"))
-		    || (_owner.traitContainer.HasTrait("Restrained") && _owner.currentStructure.structureType != STRUCTURE_TYPE.PRISON)) {
+            || (_owner.traitContainer.HasTrait("Restrained") && _owner.currentStructure.structureType != STRUCTURE_TYPE.PRISON)) {
 			hasStartedScreamCheck = true;
 			Messenger.AddListener(Signals.HOUR_STARTED, HourlyScreamCheck);
 			Debug.Log($"<color=green>{GameManager.Instance.TodayLogString()}{_owner.name} has started scream check</color>");
@@ -325,14 +325,18 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		}
 	}
 	private void HourlyScreamCheck() {
-		if (_owner.canPerform == false) {
+		if (_owner.canPerform == true) {
 			return;
 		}
+        if (_owner.needsComponent.isExhausted) {
+            _owner.needsComponent.PlanExtremeTirednessRecoveryActionsForCannotPerform();
+            return;
+        }
 		string summary = $"{_owner.name} is checking for scream.";
 		int chance = 50;
 		if (_owner.canMove == false && 
-		    _owner.traitContainer.HasTrait("Exhausted", "Starving", "Sulking")) {
-			chance = 75;
+		    _owner.traitContainer.HasTrait("Starving", "Sulking")) { //"Exhausted", 
+            chance = 75;
 		}
 		summary += $"Chance is {chance.ToString()}.";
 		int roll = Random.Range(0, 100); 

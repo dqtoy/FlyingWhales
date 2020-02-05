@@ -407,7 +407,16 @@ public class CharacterMarker : MapObjectVisual<Character> {
         //    return;
         //}
         if (!character.canWitness) {
-            actionIcon.gameObject.SetActive(false);
+            if (character.currentActionNode != null) {
+                if (character.currentActionNode.action.actionIconString != GoapActionStateDB.No_Icon) {
+                    actionIcon.sprite = actionIconDictionary[character.currentActionNode.action.actionIconString];
+                    actionIcon.gameObject.SetActive(true);
+                } else {
+                    actionIcon.gameObject.SetActive(false);
+                }
+            } else {
+                actionIcon.gameObject.SetActive(false);
+            }
             return;
         }
         if (character.isConversing && !character.isInCombat) {

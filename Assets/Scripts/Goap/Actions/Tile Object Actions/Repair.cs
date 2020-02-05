@@ -43,15 +43,15 @@ public class Repair : GoapAction {
         string stateName = "Target Missing";
         bool defaultTargetMissing = IsRepairTargetMissing(node);
         GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(defaultTargetMissing, stateName);
-        if (defaultTargetMissing == false) {
-            //check the target's traits, if any of them can make this action invalid
-            for (int i = 0; i < poiTarget.traitContainer.allTraits.Count; i++) {
-                Trait trait = poiTarget.traitContainer.allTraits[i];
-                if (trait.TryStopAction(goapType, actor, poiTarget, ref goapActionInvalidity)) {
-                    break; //a trait made this action invalid, stop loop
-                }
-            }
-        }
+        //if (defaultTargetMissing == false) {
+        //    //check the target's traits, if any of them can make this action invalid
+        //    for (int i = 0; i < poiTarget.traitContainer.allTraits.Count; i++) {
+        //        Trait trait = poiTarget.traitContainer.allTraits[i];
+        //        if (trait.TryStopAction(goapType, actor, poiTarget, ref goapActionInvalidity)) {
+        //            break; //a trait made this action invalid, stop loop
+        //        }
+        //    }
+        //}
         return goapActionInvalidity;
     }
     private bool IsRepairTargetMissing(ActualGoapNode node) {

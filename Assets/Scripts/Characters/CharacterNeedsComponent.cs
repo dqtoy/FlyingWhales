@@ -441,6 +441,36 @@ public class CharacterNeedsComponent {
         }
         return false;
     }
+    public bool PlanExtremeTirednessRecoveryActionsForCannotPerform() {
+        if (!_character.jobQueue.HasJob(JOB_TYPE.ENERGY_RECOVERY_URGENT)) {
+            //If there is already a TIREDNESS_RECOVERY JOB and the character becomes Exhausted, replace TIREDNESS_RECOVERY with TIREDNESS_RECOVERY_STARVING only if that character is not doing the job already
+            JobQueueItem tirednessRecoveryJob = _character.jobQueue.GetJob(JOB_TYPE.ENERGY_RECOVERY_NORMAL);
+            if (tirednessRecoveryJob != null) {
+                //Replace this with Tiredness Recovery Exhausted only if the character is not doing the Tiredness Recovery Job already
+                JobQueueItem currJob = _character.currentJob;
+                if (currJob == tirednessRecoveryJob) {
+                    return false;
+                } else {
+                    tirednessRecoveryJob.CancelJob();
+                }
+            }
+            JOB_TYPE jobType = JOB_TYPE.ENERGY_RECOVERY_URGENT;
+            bool triggerSpooked = false;
+            Spooked spooked = _character.traitContainer.GetNormalTrait<Spooked>("Spooked");
+            if (spooked != null) {
+                triggerSpooked = UnityEngine.Random.Range(0, 100) < (25 * _character.traitContainer.stacks[spooked.name]);
+            }
+            if (!triggerSpooked) {
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.SLEEP_OUTSIDE, _character, _character);
+                //job.SetCancelOnFail(true);
+                _character.jobQueue.AddJobInQueue(job);
+            } else {
+                spooked.TriggerFeelingSpooked();
+            }
+            return true;
+        }
+        return false;
+    }
     public void PlanScheduledTirednessRecovery(Character character) {
         if (!hasForcedTiredness && tirednessForcedTick != 0 && GameManager.Instance.tick >= tirednessForcedTick && character.canPerform && doNotGetTired <= 0) {
             if (!character.jobQueue.HasJob(JOB_TYPE.ENERGY_RECOVERY_NORMAL, JOB_TYPE.ENERGY_RECOVERY_URGENT)) {
@@ -516,7 +546,7 @@ public class CharacterNeedsComponent {
 
     #region Happiness
     public void ResetHappinessMeter() {
-        if (_character.traitContainer.HasTrait("Serial Killer")) {
+        if (_character.traitContainer.HasTrait("Psychopath")) {
             //Psychopath's Happiness is always fixed at 50 and is not changed by anything.
             return;
         }
@@ -530,7 +560,7 @@ public class CharacterNeedsComponent {
         //OnHappinessAdjusted();
     }
     public void AdjustHappiness(float adjustment) {
-        if (_character.traitContainer.HasTrait("Serial Killer")) {
+        if (_character.traitContainer.HasTrait("Psychopath")) {
             //Psychopath's Happiness is always fixed at 50 and is not changed by anything.
             return;
         }
@@ -553,7 +583,7 @@ public class CharacterNeedsComponent {
         //OnHappinessAdjusted();
     }
     public void SetHappiness(float amount) {
-        if (_character.traitContainer.HasTrait("Serial Killer")) {
+        if (_character.traitContainer.HasTrait("Psychopath")) {
             //Psychopath's Happiness is always fixed at 50 and is not changed by anything.
             return;
         }
