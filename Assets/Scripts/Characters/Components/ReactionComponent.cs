@@ -105,8 +105,14 @@ public class ReactionComponent {
         if (node.descriptionLog == null) {
             throw new Exception(GameManager.Instance.TodayLogString() + owner.name + " witnessed event " + node.action.goapName + " by " + node.actor.name + " with state " + node.currentStateName + " but it does not have a description log!");
         }
-
-        if(node.actor != owner && node.poiTarget != owner) {
+        IPointOfInterest target = node.poiTarget;
+        if(node.poiTarget is SpecialToken && node.action.goapType == INTERACTION_TYPE.STEAL) {
+            SpecialToken item = node.poiTarget as SpecialToken;
+            if(item.carriedByCharacter != null) {
+                target = item.carriedByCharacter;
+            }
+        }
+        if(node.actor != owner && target != owner) {
             Log witnessLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "witness_event", node);
             witnessLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.OTHER);
             witnessLog.AddToFillers(null, Utilities.LogDontReplace(node.descriptionLog), LOG_IDENTIFIER.APPEND);
@@ -134,8 +140,8 @@ public class ReactionComponent {
             string response = "Witness action reaction of " + owner.name + " to " + node.action.goapName + " of " + node.actor.name + " with target " + node.poiTarget.name
                 + ": " + emotionsToActor + emotionsToTarget;
             owner.logComponent.PrintLogIfActive(response);
-        } else if (node.poiTarget == owner) {
-            if (!node.isStealth) {
+        } else if (target == owner) {
+            if (!node.isStealth || target.traitContainer.HasTrait("Vigilant")) {
                 string emotionsOfTarget = node.action.ReactionOfTarget(node);
                 if (emotionsOfTarget != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsOfTarget)) {
                     string error = "Action Error in Witness Reaction Of Target (Duplicate/Incompatible Emotions Triggered)";

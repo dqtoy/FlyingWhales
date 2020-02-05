@@ -427,7 +427,7 @@ public class CharacterNeedsComponent {
                 bool triggerSpooked = false;
                 Spooked spooked = character.traitContainer.GetNormalTrait<Spooked>("Spooked");
                 if (spooked != null) {
-                    triggerSpooked = UnityEngine.Random.Range(0, 100) < 20;
+                    triggerSpooked = UnityEngine.Random.Range(0, 100) < (25 * character.traitContainer.stacks[spooked.name]);
                 }
                 if (!triggerSpooked) {
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), _character, _character);
@@ -452,7 +452,7 @@ public class CharacterNeedsComponent {
                 bool triggerSpooked = false;
                 Spooked spooked = character.traitContainer.GetNormalTrait<Spooked>("Spooked");
                 if (spooked != null) {
-                    triggerSpooked = UnityEngine.Random.Range(0, 100) < 20;
+                    triggerSpooked = UnityEngine.Random.Range(0, 100) < (25 * character.traitContainer.stacks[spooked.name]);
                 }
                 if (!triggerSpooked) {
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), _character, _character);
@@ -479,7 +479,7 @@ public class CharacterNeedsComponent {
                 bool triggerSpooked = false;
                 Spooked spooked = character.traitContainer.GetNormalTrait<Spooked>("Spooked");
                 if (spooked != null) {
-                    triggerSpooked = UnityEngine.Random.Range(0, 100) < 20;
+                    triggerSpooked = UnityEngine.Random.Range(0, 100) < (25 * character.traitContainer.stacks[spooked.name]);
                 }
                 if (!triggerSpooked) {
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.TIREDNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), _character, _character);
@@ -652,7 +652,7 @@ public class CharacterNeedsComponent {
                     bool triggerBrokenhearted = false;
                     Heartbroken heartbroken = character.traitContainer.GetNormalTrait<Heartbroken>("Heartbroken");
                     if (heartbroken != null) {
-                        triggerBrokenhearted = UnityEngine.Random.Range(0, 100) < 20;
+                        triggerBrokenhearted = UnityEngine.Random.Range(0, 100) < (25 * character.traitContainer.stacks[heartbroken.name]);
                     }
                     if (!triggerBrokenhearted) {
                         Hardworking hardworking = character.traitContainer.GetNormalTrait<Hardworking>("Hardworking");
@@ -865,7 +865,7 @@ public class CharacterNeedsComponent {
                 bool triggerGrieving = false;
                 Griefstricken griefstricken = character.traitContainer.GetNormalTrait<Griefstricken>("Griefstricken");
                 if (griefstricken != null) {
-                    triggerGrieving = UnityEngine.Random.Range(0, 100) < 20;
+                    triggerGrieving = UnityEngine.Random.Range(0, 100) < (25 * character.traitContainer.stacks[griefstricken.name]);
                 }
                 if (!triggerGrieving) {
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), _character, _character);
@@ -908,7 +908,7 @@ public class CharacterNeedsComponent {
                 bool triggerGrieving = false;
                 Griefstricken griefstricken = character.traitContainer.GetNormalTrait<Griefstricken>("Griefstricken");
                 if (griefstricken != null) {
-                    triggerGrieving = UnityEngine.Random.Range(0, 100) < 100;
+                    triggerGrieving = UnityEngine.Random.Range(0, 100) < (25 * character.traitContainer.stacks[griefstricken.name]);
                 }
                 if (!triggerGrieving) {
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), _character, _character);
@@ -961,7 +961,7 @@ public class CharacterNeedsComponent {
             bool triggerGrieving = false;
             Griefstricken griefstricken = _character.traitContainer.GetNormalTrait<Griefstricken>("Griefstricken");
             if (griefstricken != null) {
-                triggerGrieving = UnityEngine.Random.Range(0, 100) < 20;
+                triggerGrieving = UnityEngine.Random.Range(0, 100) < (25 * _character.traitContainer.stacks[griefstricken.name]);
             }
             if (!triggerGrieving) {
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), _character, _character);
@@ -1213,7 +1213,7 @@ public class CharacterNeedsComponent {
         bool triggerGrieving = false;
         Griefstricken griefstricken = character.traitContainer.GetNormalTrait<Griefstricken>("Griefstricken");
         if (griefstricken != null) {
-            triggerGrieving = UnityEngine.Random.Range(0, 100) < 20;
+            triggerGrieving = UnityEngine.Random.Range(0, 100) < (25 * character.traitContainer.stacks[griefstricken.name]);
         }
         if (!triggerGrieving) {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, new GoapEffect(GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, string.Empty, false, GOAP_EFFECT_TARGET.ACTOR), _character, _character);

@@ -191,7 +191,11 @@ public class SpecialToken : MapObject<SpecialToken>, IPointOfInterest, IPlayerAc
                     //if this character is not available, check if the current action type can be advertised even when the character is inactive.
                     continue; //skip
                 }
-                if (PathfindingManager.Instance.HasPath(actor.gridTileLocation, gridTileLocation) && RaceManager.Instance.CanCharacterDoGoapAction(actor, currType)) {
+                LocationGridTile tileLocation = gridTileLocation;
+                if(carriedByCharacter != null) {
+                    tileLocation = carriedByCharacter.gridTileLocation;
+                }
+                if (PathfindingManager.Instance.HasPath(actor.gridTileLocation, tileLocation) && RaceManager.Instance.CanCharacterDoGoapAction(actor, currType)) {
                     object[] data = null;
                     if (otherData != null) {
                         if (otherData.ContainsKey(currType)) {
@@ -232,11 +236,16 @@ public class SpecialToken : MapObject<SpecialToken>, IPointOfInterest, IPlayerAc
     }
     public bool CanAdvertiseActionToActor(Character actor, GoapAction action, JobQueueItem job,
         Dictionary<INTERACTION_TYPE, object[]> otherData, ref int cost) {
+
+        LocationGridTile tileLocation = gridTileLocation;
+        if (carriedByCharacter != null) {
+            tileLocation = carriedByCharacter.gridTileLocation;
+        }
         if ((IsAvailable() || action.canBeAdvertisedEvenIfActorIsUnavailable)
             && advertisedActions != null && advertisedActions.Contains(action.goapType)
             && actor.trapStructure.SatisfiesForcedStructure(this)
             && RaceManager.Instance.CanCharacterDoGoapAction(actor, action.goapType)
-            && PathfindingManager.Instance.HasPath(actor.gridTileLocation, gridTileLocation)) {
+            && PathfindingManager.Instance.HasPath(actor.gridTileLocation, tileLocation)) {
             object[] data = null;
             if (otherData != null) {
                 if (otherData.ContainsKey(action.goapType)) {
