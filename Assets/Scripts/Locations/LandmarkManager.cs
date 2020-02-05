@@ -16,13 +16,9 @@ public partial class LandmarkManager : MonoBehaviour {
     public const int DELAY_DIVINE_INTERVENTION_DURATION = 144;
     public const int SUMMON_MINION_DURATION = 96;
     public const int MAX_RESOURCE_PILE = 500;
-
-    public int initialLandmarkCount;
-
+    
     [SerializeField] private List<LandmarkData> landmarkData;
     public List<AreaData> areaData;
-
-    public int corruptedLandmarksCount;
 
     public List<BaseLandmark> allLandmarks;
     public List<Settlement> allSetttlements;
@@ -33,9 +29,6 @@ public partial class LandmarkManager : MonoBehaviour {
     private Dictionary<LANDMARK_TYPE, LandmarkData> landmarkDataDict;
 
     public AreaTypeSpriteDictionary locationPortraits;
-    [Header("Connections")]
-    [SerializeField] private GameObject landmarkConnectionPrefab;
-
     public List<LocationEvent> locationEventsData { get; private set; }
 
     public STRUCTURE_TYPE[] humanSurvivalStructures { get; private set; }
@@ -49,7 +42,6 @@ public partial class LandmarkManager : MonoBehaviour {
     public Dictionary<string, AnvilResearchData> anvilResearchData;
 
     public void Initialize() {
-        corruptedLandmarksCount = 0;
         allSetttlements = new List<Settlement>();
         allNonPlayerSettlements = new List<Settlement>();
         ConstructLandmarkData();
@@ -134,7 +126,7 @@ public partial class LandmarkManager : MonoBehaviour {
     }
     public BaseLandmark CreateNewLandmarkInstance(HexTile location, LANDMARK_TYPE type) {
         if (type.IsPlayerLandmark()) {
-            var typeName = Ruinarch.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(type.ToString());
+            var typeName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(type.ToString());
             System.Type systemType = System.Type.GetType(typeName);
             if (systemType != null) {
                 return System.Activator.CreateInstance(systemType, location, type) as BaseLandmark;
@@ -146,7 +138,7 @@ public partial class LandmarkManager : MonoBehaviour {
     }
     public BaseLandmark CreateNewLandmarkInstance(HexTile location, SaveDataLandmark data) {
         if (data.landmarkType.IsPlayerLandmark()) {
-            var typeName = Ruinarch.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(data.landmarkType.ToString());
+            var typeName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(data.landmarkType.ToString());
             System.Type systemType = System.Type.GetType(typeName);
             if (systemType != null) {
                 return System.Activator.CreateInstance(systemType, location, data) as BaseLandmark;

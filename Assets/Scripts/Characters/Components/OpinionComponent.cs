@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Traits;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public class OpinionComponent {
     public const string Close_Friend = "Close Friend";
@@ -13,6 +14,9 @@ public class OpinionComponent {
 
     private const int Friend_Requirement = 1; //opinion requirement to consider someone a friend
     private const int Enemy_Requirement = -1; //opinion requirement to consider someone an enemy
+
+    public const int MaxCompatibility = 5;
+    public const int MinCompatibility = 0;
     
     public Character owner { get; private set; }
     public Dictionary<Character, OpinionData> opinions { get; private set; }
@@ -290,7 +294,32 @@ public class OpinionComponent {
         if (owner.relationshipContainer.HasRelationshipWith(target)) {
             IRelationshipData data = owner.relationshipContainer.GetRelationshipDataWith(target);
             RELATIONSHIP_TYPE relType = data.GetFirstMajorRelationship();
-            return Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetterOnly(relType.ToString());    
+            if (relType == RELATIONSHIP_TYPE.CHILD) {
+                if (target.gender == GENDER.MALE) {
+                    return "Son";
+                } else {
+                    return "Daughter";
+                }
+            } else if (relType == RELATIONSHIP_TYPE.PARENT) {
+                if (target.gender == GENDER.MALE) {
+                    return "Father";
+                } else {
+                    return "Mother";
+                }
+            } else if (relType == RELATIONSHIP_TYPE.SIBLING) {
+                if (target.gender == GENDER.MALE) {
+                    return "Brother";
+                } else {
+                    return "Sister";
+                }
+            } else if (relType == RELATIONSHIP_TYPE.LOVER) {
+                if (target.gender == GENDER.MALE) {
+                    return "Husband";
+                } else {
+                    return "Wife";
+                }
+            }
+            return UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(relType.ToString());    
         } else if (HasOpinion(target)) {
             return GetOpinionLabel(target);
         }
@@ -337,9 +366,15 @@ public class OpinionData {
     }
     public void SetRandomCompatibilityValue() {
         compatibilityValue = UnityEngine.Random.Range(0, 6); //0 - 5 compatibility value
+        Assert.IsTrue(compatibilityValue >= OpinionComponent.MinCompatibility 
+                      && compatibilityValue <= OpinionComponent.MaxCompatibility, 
+            $"Compatibility value exceeds the min/max compatibility. Set Value is {compatibilityValue.ToString()}");
     }
     public void SetCompatibilityValue(int value) {
         compatibilityValue = value;
+        Assert.IsTrue(compatibilityValue >= OpinionComponent.MinCompatibility 
+                      && compatibilityValue <= OpinionComponent.MaxCompatibility, 
+            $"Compatibility value exceeds the min/max compatibility. Set Value is {compatibilityValue.ToString()}");
     }
 
     #region Object Pool

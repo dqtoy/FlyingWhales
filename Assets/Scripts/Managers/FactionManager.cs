@@ -44,7 +44,7 @@ public class FactionManager : MonoBehaviour {
 
     #region Faction Generation
     public void CreateNeutralFaction() {
-        Faction newFaction = new Faction();
+        Faction newFaction = new Faction(RACE.NONE);
         newFaction.SetName("Neutral");
         newFaction.SetFactionActiveState(false);
         newFaction.SetEmblem(GetFactionEmblem(4));
@@ -55,7 +55,7 @@ public class FactionManager : MonoBehaviour {
         Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
     }
     public void CreateFriendlyNeutralFaction() {
-        Faction newFaction = new Faction();
+        Faction newFaction = new Faction(RACE.HUMANS);
         newFaction.SetName("Friendly Neutral");
         newFaction.SetFactionActiveState(false);
         newFaction.SetEmblem(GetFactionEmblem(4));
@@ -66,7 +66,7 @@ public class FactionManager : MonoBehaviour {
         Messenger.Broadcast(Signals.FACTION_CREATED, newFaction);
     }
     public void CreateDisguisedFaction() {
-        Faction newFaction = new Faction();
+        Faction newFaction = new Faction(RACE.NONE);
         newFaction.SetName("Disguised");
         newFaction.SetFactionActiveState(false);
         newFaction.SetEmblem(GetFactionEmblem(4));
@@ -85,8 +85,8 @@ public class FactionManager : MonoBehaviour {
     public void SetDisguisedFaction(Faction faction) {
         disguisedFaction = faction;
     }
-    public Faction CreateNewFaction(bool isPlayerFaction = false, string factionName = "") {
-        Faction newFaction = new Faction(isPlayerFaction);
+    public Faction CreateNewFaction(RACE race, bool isPlayerFaction = false, string factionName = "") {
+        Faction newFaction = new Faction(race, isPlayerFaction);
         allFactions.Add(newFaction);
         CreateRelationshipsForFaction(newFaction);
         //CreateFavorsForFaction(newFaction);
@@ -102,7 +102,7 @@ public class FactionManager : MonoBehaviour {
         return newFaction;
     }
     private Faction CreateZombieFaction() {
-        Faction zombies = CreateNewFaction(factionName: "Zombies");
+        Faction zombies = CreateNewFaction(RACE.NONE, factionName: "Zombies");
         foreach (KeyValuePair<Faction,FactionRelationship> pair in zombies.relationships) {
             zombies.SetRelationshipFor(pair.Key, FACTION_RELATIONSHIP_STATUS.HOSTILE);
         }
@@ -268,7 +268,7 @@ public class FactionManager : MonoBehaviour {
     #region Faction Ideologies
     public FactionIdeology CreateIdeology(FACTION_IDEOLOGY ideologyType) {
         string ideologyStr = ideologyType.ToString();
-        var typeName = Ruinarch.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(ideologyStr);
+        var typeName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(ideologyStr);
         System.Type type = System.Type.GetType(typeName);
         if (type != null) {
             FactionIdeology data = System.Activator.CreateInstance(type) as FactionIdeology;

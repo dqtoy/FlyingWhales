@@ -83,8 +83,8 @@ public class DualObjectPicker : MonoBehaviour {
         UIManager.Instance.SetSpeedTogglesState(false);
 
         //destroy existing items
-        Ruinarch.Utilities.DestroyChildren(column1ScrollView.content);
-        Ruinarch.Utilities.DestroyChildren(column2ScrollView.content);
+        UtilityScripts.Utilities.DestroyChildren(column1ScrollView.content);
+        UtilityScripts.Utilities.DestroyChildren(column2ScrollView.content);
 
         //set titles
         column1TitleLbl.text = string.Empty;
@@ -134,8 +134,8 @@ public class DualObjectPicker : MonoBehaviour {
         UIManager.Instance.SetSpeedTogglesState(false);
 
         //destroy existing items
-        Ruinarch.Utilities.DestroyChildren(column1ScrollView.content);
-        Ruinarch.Utilities.DestroyChildren(column2ScrollView.content);
+        UtilityScripts.Utilities.DestroyChildren(column1ScrollView.content);
+        UtilityScripts.Utilities.DestroyChildren(column2ScrollView.content);
 
         //set titles
         column1TitleLbl.text = string.Empty;
@@ -168,9 +168,9 @@ public class DualObjectPicker : MonoBehaviour {
         UIManager.Instance.SetSpeedTogglesState(false);
 
         //destroy existing items
-        Ruinarch.Utilities.DestroyChildren(column1ScrollView.content);
-        Ruinarch.Utilities.DestroyChildren(column2ScrollView.content);
-        Ruinarch.Utilities.DestroyChildren(tabsParent);
+        UtilityScripts.Utilities.DestroyChildren(column1ScrollView.content);
+        UtilityScripts.Utilities.DestroyChildren(column2ScrollView.content);
+        UtilityScripts.Utilities.DestroyChildren(tabsParent);
 
         for (int i = 0; i < tabs.Length; i++) {
             DualObjectPickerTabSetting currTab = tabs[i];
@@ -182,7 +182,7 @@ public class DualObjectPicker : MonoBehaviour {
     }
 
     public void Hide() {
-        Ruinarch.Utilities.DestroyChildren(tabsParent);
+        UtilityScripts.Utilities.DestroyChildren(tabsParent);
         UIManager.Instance.ResumeLastProgressionSpeed();
         this.gameObject.SetActive(false);
     }
@@ -193,7 +193,7 @@ public class DualObjectPicker : MonoBehaviour {
     }
 
     public void PopulateColumn<T>(List<T> items, Func<T, bool> validityChecker, Action<T> hoverEnterAction, Action<T> hoverExitAction, ScrollRect column, ToggleGroup toggleGroup, string columnTitle, string identifier = "") {
-        Ruinarch.Utilities.DestroyChildren(column.content);
+        UtilityScripts.Utilities.DestroyChildren(column.content);
         List<T> validItems;
         List<T> invalidItems;
 

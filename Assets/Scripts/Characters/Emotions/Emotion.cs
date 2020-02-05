@@ -11,7 +11,7 @@ public class Emotion {
 
     public Emotion(EMOTION emotionType) {
         this.emotionType = emotionType;
-        name = Ruinarch.Utilities.NotNormalizedConversionEnumToString(emotionType.ToString());
+        name = UtilityScripts.Utilities.NotNormalizedConversionEnumToString(emotionType.ToString());
         responses = new string[] { name };
     }
     public virtual string ProcessEmotion(Character actor, IPointOfInterest target) {

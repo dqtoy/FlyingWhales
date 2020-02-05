@@ -56,7 +56,7 @@ public class Kleptomania : PlayerSpell {
         if (targetCharacter.isDead) { //|| character.id == targetCharacter.id
             return false;
         }
-        if (Ruinarch.Utilities.IsRaceBeast(targetCharacter.race) || targetCharacter.race == RACE.SKELETON) { // targetCharacter.role.roleType == CHARACTER_ROLE.BEAST
+        if (UtilityScripts.GameUtilities.IsRaceBeast(targetCharacter.race) || targetCharacter.race == RACE.SKELETON) { // targetCharacter.role.roleType == CHARACTER_ROLE.BEAST
             return false;
         }
         if (targetCharacter.traitContainer.HasTrait("Kleptomaniac")) {
@@ -90,7 +90,7 @@ public class Kleptomania : PlayerSpell {
         if (targetCharacter.isDead) {
             return false;
         }
-        if (Ruinarch.Utilities.IsRaceBeast(targetCharacter.race) || targetCharacter.race == RACE.SKELETON) { // targetCharacter.role.roleType == CHARACTER_ROLE.BEAST
+        if (UtilityScripts.GameUtilities.IsRaceBeast(targetCharacter.race) || targetCharacter.race == RACE.SKELETON) { // targetCharacter.role.roleType == CHARACTER_ROLE.BEAST
             return false;
         }
         if (targetCharacter.traitContainer.HasTrait("Kleptomaniac")) {

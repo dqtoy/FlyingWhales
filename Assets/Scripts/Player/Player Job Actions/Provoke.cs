@@ -29,7 +29,7 @@ public class Provoke : PlayerSpell {
         if (targetCharacter.isDead) {
             return false;
         }
-        if (Ruinarch.Utilities.IsRaceBeast(targetCharacter.race) || targetCharacter.isFactionless) {
+        if (UtilityScripts.GameUtilities.IsRaceBeast(targetCharacter.race) || targetCharacter.isFactionless) {
             return false;
         }
         if (targetCharacter.traitContainer.HasTrait("Unconscious")) {
@@ -45,7 +45,7 @@ public class Provoke : PlayerSpell {
         if (targetCharacter.isDead) {
             return false;
         }
-        if (Ruinarch.Utilities.IsRaceBeast(targetCharacter.race) || targetCharacter.isFactionless) {
+        if (UtilityScripts.GameUtilities.IsRaceBeast(targetCharacter.race) || targetCharacter.isFactionless) {
             return false;
         }
         if (targetCharacter.traitContainer.HasTrait("Unconscious")) {

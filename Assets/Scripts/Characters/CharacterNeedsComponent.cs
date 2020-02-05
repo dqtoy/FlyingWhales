@@ -1,6 +1,7 @@
 ﻿using System;
 using Traits;
 using UnityEngine;
+using Random = System.Random;
 
 public class CharacterNeedsComponent {
 
@@ -113,9 +114,6 @@ public class CharacterNeedsComponent {
     }
     public void Initialize() {
         //NOTE: These values will be randomized when this character is placed in his/her settlement map.
-        //tiredness = TIREDNESS_DEFAULT;
-        //fullness = FULLNESS_DEFAULT;
-        //happiness = HAPPINESS_DEFAULT;
         ResetTirednessMeter();
         ResetFullnessMeter();
         ResetHappinessMeter();
@@ -123,24 +121,11 @@ public class CharacterNeedsComponent {
         ResetHopeMeter();
     }
     public void InitialCharacterPlacement() {
-        ResetTirednessMeter();
-        ResetFullnessMeter();
-        ResetHappinessMeter();
-        ResetComfortMeter();
         ResetHopeMeter();
-
-        //tiredness = TIREDNESS_DEFAULT;
-        //if (_character.role.roleType != CHARACTER_ROLE.MINION) {
-        //    ////Fullness value between 2600 and full.
-        //    //SetFullness(UnityEngine.Random.Range(2600, FULLNESS_DEFAULT + 1));
-        //    ////Happiness value between 2600 and full.
-        //    //SetHappiness(UnityEngine.Random.Range(2600, HAPPINESS_DEFAULT + 1));
-        //    fullness = FULLNESS_DEFAULT;
-        //    happiness = HAPPINESS_DEFAULT;
-        //} else {
-        //    fullness = FULLNESS_DEFAULT;
-        //    happiness = HAPPINESS_DEFAULT;
-        //}
+        SetTiredness(UnityEngine.Random.Range(50, 101));
+        SetFullness(UnityEngine.Random.Range(50, 101));
+        SetHappiness(UnityEngine.Random.Range(50, 101));
+        SetComfort(UnityEngine.Random.Range(50, 101));
     }
     #endregion
 

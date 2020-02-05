@@ -84,7 +84,7 @@ public class CharacterClassManager : MonoBehaviour {
         normalCombatantClasses = new List<CharacterClass>();
         identifierClasses = new Dictionary<string, List<CharacterClass>>();
         identifierClasses.Add("All", new List<CharacterClass>());
-        string path = Ruinarch.Utilities.dataPath + "CharacterClasses/";
+        string path = UtilityScripts.Utilities.dataPath + "CharacterClasses/";
         string[] classes = System.IO.Directory.GetFiles(path, "*.json");
         for (int i = 0; i < classes.Length; i++) {
             CharacterClass currentClass = JsonUtility.FromJson<CharacterClass>(System.IO.File.ReadAllText(classes[i]));

@@ -34,7 +34,7 @@ namespace UtilityScripts {
             int n = newList.Count;
             while (n > 1) {
                 n--;
-                int k = Ruinarch.Utilities.rng.Next(n + 1);
+                int k = UtilityScripts.Utilities.rng.Next(n + 1);
                 T value = newList[k];
                 newList[k] = newList[n];
                 newList[n] = value;
@@ -98,13 +98,13 @@ namespace UtilityScripts {
             if (list.Count == 0) {
                 return -1;
             }
-            return Ruinarch.Utilities.rng.Next(0, list.Count);
+            return UtilityScripts.Utilities.rng.Next(0, list.Count);
         }
         public static T GetRandomElement<T>(List<T> list) {
-            return list[Ruinarch.Utilities.rng.Next(0, list.Count)];
+            return list[UtilityScripts.Utilities.rng.Next(0, list.Count)];
         }
         public static T GetRandomElement<T>(T[] list) {
-            return list[Ruinarch.Utilities.rng.Next(0, list.Length)];
+            return list[UtilityScripts.Utilities.rng.Next(0, list.Length)];
         }
     }
 }

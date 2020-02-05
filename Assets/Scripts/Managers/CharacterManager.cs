@@ -94,35 +94,9 @@ public class CharacterManager : MonoBehaviour {
     }
 
     #region Characters
-    /*
-     Create a new character, given a role, class and race.
-         */
-    // public Character CreateNewCharacter(CharacterRole role, RACE race, GENDER gender, Faction faction = null, 
-    //     Settlement homeLocation = null, IDwelling homeStructure = null) {
-    //     Character newCharacter = new Character(role, race, gender);
-    //
-    //     newCharacter.Initialize();
-    //     if (faction != null) {
-    //         if (!faction.JoinFaction(newCharacter)) {
-    //             FactionManager.Instance.friendlyNeutralFaction.JoinFaction(newCharacter);
-    //         }
-    //     }
-    //     else {
-    //         FactionManager.Instance.neutralFaction.JoinFaction(newCharacter);
-    //     }
-    //     newCharacter.ownParty.CreateIcon();
-    //     if(homeLocation != null) {
-    //         newCharacter.MigrateHomeTo(homeLocation, homeStructure, false);
-    //         homeLocation.region.AddCharacterToLocation(newCharacter);
-    //     }
-    //     newCharacter.CreateInitialTraitsByClass();
-    //     //newCharacter.CreateInitialTraitsByRace();
-    //     AddNewCharacter(newCharacter);
-    //     return newCharacter;
-    // }
     public Character CreateNewLimboCharacter(CharacterRole role, RACE race, string className, GENDER gender, Faction faction = null,
     Settlement homeLocation = null, IDwelling homeStructure = null) {
-        Character newCharacter = new Character(role, className, race, gender);
+        Character newCharacter = new Character(className, race, gender);
         newCharacter.SetIsLimboCharacter(true);
         newCharacter.Initialize();
         if (faction != null) {
@@ -144,7 +118,7 @@ public class CharacterManager : MonoBehaviour {
     }
     public Character CreateNewCharacter(CharacterRole role, string className, RACE race, GENDER gender, Faction faction = null, 
         Settlement homeLocation = null, IDwelling homeStructure = null) {
-        Character newCharacter = new Character(role, className, race, gender);
+        Character newCharacter = new Character(className, race, gender);
         newCharacter.Initialize();
         if (faction != null) {
             if (!faction.JoinFaction(newCharacter)) {
@@ -164,7 +138,7 @@ public class CharacterManager : MonoBehaviour {
     }
     public Character CreateNewCharacter(CharacterRole role, string className, RACE race, GENDER gender, SEXUALITY sexuality, Faction faction = null,
         Settlement homeLocation = null, IDwelling homeStructure = null) {
-        Character newCharacter = new Character(role, className, race, gender, sexuality);
+        Character newCharacter = new Character(className, race, gender, sexuality);
         newCharacter.Initialize();
         if (faction != null) {
             if (!faction.JoinFaction(newCharacter)) {
@@ -231,6 +205,29 @@ public class CharacterManager : MonoBehaviour {
         }
 
         AddNewCharacter(newCharacter);
+        return newCharacter;
+    }
+    public Character CreateNewCharacter(PreCharacterData data, string className, Faction faction = null,
+        Settlement homeLocation = null, IDwelling homeStructure = null) {
+        Character newCharacter = new Character(className, data.race, data.gender, data.sexuality, data.id);
+        newCharacter.SetName(data.name);
+        
+        newCharacter.Initialize();
+        if (faction != null) {
+            if (!faction.JoinFaction(newCharacter)) {
+                FactionManager.Instance.friendlyNeutralFaction.JoinFaction(newCharacter);
+            }
+        } else {
+            FactionManager.Instance.neutralFaction.JoinFaction(newCharacter);
+        }
+        newCharacter.ownParty.CreateIcon();
+        if (homeLocation != null) {
+            newCharacter.MigrateHomeTo(homeLocation, homeStructure, false);
+            homeLocation.region.AddCharacterToLocation(newCharacter);
+        }
+        newCharacter.CreateInitialTraitsByClass();
+        AddNewCharacter(newCharacter);
+        data.SetHasBeenSpawned();
         return newCharacter;
     }
     public void AddNewCharacter(Character character, bool broadcastSignal = true) {
@@ -855,7 +852,7 @@ public class CharacterManager : MonoBehaviour {
         EMOTION[] allEmotions = CollectionUtilities.GetEnumValues<EMOTION>();
         for (int i = 0; i < allEmotions.Length; i++) {
             EMOTION emotion = allEmotions[i];
-            var typeName = Ruinarch.Utilities.NotNormalizedConversionEnumToStringNoSpaces(emotion.ToString());
+            var typeName = UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(emotion.ToString());
             System.Type type = System.Type.GetType(typeName);
             if (type != null) {
                 Emotion data = System.Activator.CreateInstance(type) as Emotion;

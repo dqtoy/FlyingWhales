@@ -109,7 +109,7 @@ public class ReactionComponent {
         if(node.actor != owner && node.poiTarget != owner) {
             Log witnessLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "witness_event", node);
             witnessLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.OTHER);
-            witnessLog.AddToFillers(null, Ruinarch.Utilities.LogDontReplace(node.descriptionLog), LOG_IDENTIFIER.APPEND);
+            witnessLog.AddToFillers(null, UtilityScripts.Utilities.LogDontReplace(node.descriptionLog), LOG_IDENTIFIER.APPEND);
             witnessLog.AddToFillers(node.descriptionLog.fillers);
             owner.logComponent.AddHistory(witnessLog);
 
@@ -163,7 +163,7 @@ public class ReactionComponent {
         Log informedLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "informed_event", node);
         informedLog.AddToFillers(node.descriptionLog.fillers);
         informedLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.OTHER);
-        informedLog.AddToFillers(null, Ruinarch.Utilities.LogDontReplace(node.descriptionLog), LOG_IDENTIFIER.APPEND);
+        informedLog.AddToFillers(null, UtilityScripts.Utilities.LogDontReplace(node.descriptionLog), LOG_IDENTIFIER.APPEND);
         owner.logComponent.AddHistory(informedLog);
 
         string response = string.Empty;
@@ -236,7 +236,8 @@ public class ReactionComponent {
                             owner.interruptComponent.TriggerInterrupt(INTERRUPT.Chat, targetCharacter);
                         } else {
                             debugLog += "\n-Chat did not trigger, will now trigger Flirt if Character is Sexually Compatible with Target and Character is Unfaithful, or Target is Lover or Affair, or Character has no Lover";
-                            if (RelationshipManager.Instance.IsSexuallyCompatibleOneSided(owner, targetCharacter)) {
+                            if (RelationshipManager.IsSexuallyCompatibleOneSided(owner.sexuality, targetCharacter.sexuality, owner.gender, targetCharacter.gender)
+                                && owner.relationshipContainer.IsFamilyMember(targetCharacter) == false) {
                                 if (owner.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR)
                                     || owner.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.LOVER) == null
                                     || owner.traitContainer.HasTrait("Unfaithful")) {

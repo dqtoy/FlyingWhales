@@ -1180,7 +1180,7 @@ public class ConsoleMenu : UIMenu {
     }
     private void ConstructClassDropdown() {
         List<string> allClasses = new List<string>();
-        string path = Ruinarch.Utilities.dataPath + "CharacterClasses/";
+        string path = UtilityScripts.Utilities.dataPath + "CharacterClasses/";
         foreach (string file in Directory.GetFiles(path, "*.json")) {
             allClasses.Add(Path.GetFileNameWithoutExtension(file));
         }

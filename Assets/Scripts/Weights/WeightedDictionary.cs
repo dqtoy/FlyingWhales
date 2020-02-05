@@ -104,17 +104,17 @@ public class WeightedDictionary<T> {
      * dictionary.
      * */
     internal T PickRandomElementGivenWeights() {
-        return Ruinarch.Utilities.PickRandomElementWithWeights(_dictionary);
+        return UtilityScripts.Utilities.PickRandomElementWithWeights(_dictionary);
     }
 
     internal void LogDictionaryValues(string title) {
-        Debug.Log(Ruinarch.Utilities.GetWeightsSummary(_dictionary, title));
+        Debug.Log(UtilityScripts.Utilities.GetWeightsSummary(_dictionary, title));
     }
     internal string GetWeightsSummary(string title) {
-        return Ruinarch.Utilities.GetWeightsSummary(_dictionary, title);
+        return UtilityScripts.Utilities.GetWeightsSummary(_dictionary, title);
     }
     internal int GetTotalOfWeights() {
-        return Ruinarch.Utilities.GetTotalOfWeights(_dictionary);
+        return UtilityScripts.Utilities.GetTotalOfWeights(_dictionary);
     }
 
 	internal void Clear(){
@@ -207,17 +207,17 @@ public class WeightedFloatDictionary<T> {
      * dictionary.
      * */
     internal T PickRandomElementGivenWeights() {
-        return Ruinarch.Utilities.PickRandomElementWithWeights(_dictionary);
+        return UtilityScripts.Utilities.PickRandomElementWithWeights(_dictionary);
     }
 
     internal void LogDictionaryValues(string title) {
-        Debug.Log(Ruinarch.Utilities.GetWeightsSummary(_dictionary, title));
+        Debug.Log(UtilityScripts.Utilities.GetWeightsSummary(_dictionary, title));
     }
     internal string GetWeightsSummary(string title) {
-        return Ruinarch.Utilities.GetWeightsSummary(_dictionary, title);
+        return UtilityScripts.Utilities.GetWeightsSummary(_dictionary, title);
     }
     internal float GetTotalOfWeights() {
-        return Ruinarch.Utilities.GetTotalOfWeights(_dictionary);
+        return UtilityScripts.Utilities.GetTotalOfWeights(_dictionary);
     }
 
     internal void Clear() {

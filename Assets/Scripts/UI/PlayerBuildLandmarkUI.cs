@@ -14,7 +14,7 @@ public class PlayerBuildLandmarkUI : MonoBehaviour {
         targetRegion = region;
         List<string> landmarkNames = new List<string>();
         for (int i = 0; i < PlayerManager.Instance.allLandmarksThatCanBeBuilt.Length; i++) {
-            landmarkNames.Add(Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(PlayerManager.Instance.allLandmarksThatCanBeBuilt[i].ToString()));
+            landmarkNames.Add(UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(PlayerManager.Instance.allLandmarksThatCanBeBuilt[i].ToString()));
         }
         UIManager.Instance.dualObjectPicker.ShowDualObjectPicker(PlayerManager.Instance.player.minions.Select(x => x.character).ToList(), landmarkNames,
             "Choose a minion", "Choose a structure",

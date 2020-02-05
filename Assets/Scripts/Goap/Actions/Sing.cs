@@ -24,7 +24,7 @@ public class Sing : GoapAction {
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
         string costLog = "\n" + name + " " + target.nameWithID + ":";
-        int cost = Ruinarch.Utilities.rng.Next(90, 131);
+        int cost = UtilityScripts.Utilities.rng.Next(90, 131);
         costLog += " +" + cost + "(Initial)";
         int numOfTimesActionDone = actor.jobComponent.GetNumOfTimesActionDone(this);
         if (numOfTimesActionDone > 5) {
@@ -63,8 +63,12 @@ public class Sing : GoapAction {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor);
             } else {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor);
+                SEXUALITY sexuality1 = witness.sexuality;
+                SEXUALITY sexuality2 = actor.sexuality;
+                GENDER gender1 = witness.gender;
+                GENDER gender2 = actor.gender;
                 if (RelationshipManager.Instance.GetCompatibilityBetween(witness, actor) >= 4
-                    && RelationshipManager.Instance.IsSexuallyCompatible(witness, actor)
+                    && RelationshipManager.IsSexuallyCompatible(sexuality1, sexuality2, gender1, gender2)
                     && witness.moodComponent.moodState != MOOD_STATE.CRITICAL) {
                     int value = 50;
                     if (actor.traitContainer.HasTrait("Ugly")) {

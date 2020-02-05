@@ -38,7 +38,7 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 				HexTile currHex = hex.GetComponent<HexTile>();
 				currHex.Initialize();
 				currHex.data.id = id;
-				currHex.data.tileName = RandomNameGenerator.Instance.GetTileName();
+				currHex.data.tileName = RandomNameGenerator.GetTileName();
 				currHex.data.xCoordinate = x;
 				currHex.data.yCoordinate = y;
 				allTiles.Add(currHex);

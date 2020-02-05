@@ -147,7 +147,7 @@ public class Player : ILeader {
 
     #region Faction
     public void CreatePlayerFaction() {
-        Faction faction = FactionManager.Instance.CreateNewFaction(true, "Player faction");
+        Faction faction = FactionManager.Instance.CreateNewFaction(RACE.DEMON, true, "Player faction");
         faction.SetLeader(this);
         faction.SetEmblem(FactionManager.Instance.GetFactionEmblem(6));
         SetPlayerFaction(faction);
@@ -312,7 +312,7 @@ public class Player : ILeader {
         for (int i = 0; i < minionsToSummon.Length; i++) {
             int index = UnityEngine.Random.Range(0, choices.Count);
             UnsummonedMinionData minionData = new UnsummonedMinionData() {
-                minionName = RandomNameGenerator.Instance.GenerateMinionName(),
+                minionName = RandomNameGenerator.GenerateMinionName(),
                 className = choices[index],
                 combatAbility = PlayerManager.Instance.allCombatAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allCombatAbilities.Length)],
                 interventionAbilitiesToResearch = CharacterManager.Instance.Get3RandomResearchInterventionAbilities(CharacterManager.Instance.GetDeadlySin(choices[index])),
@@ -573,7 +573,7 @@ public class Player : ILeader {
                 hoverText = "Blessed/Catatonic characters cannot be targetted.";
                 return false;
             }
-            if(!character.faction.isPlayerFaction && !Ruinarch.Utilities.IsRaceBeast(character.race)) { //character.role.roleType != CHARACTER_ROLE.BEAST && character.role.roleType != CHARACTER_ROLE.PLAYER
+            if(!character.faction.isPlayerFaction && !UtilityScripts.GameUtilities.IsRaceBeast(character.race)) { //character.role.roleType != CHARACTER_ROLE.BEAST && character.role.roleType != CHARACTER_ROLE.PLAYER
                 return true;
             }
         }
@@ -836,7 +836,7 @@ public class Player : ILeader {
             case SUMMON_TYPE.ThiefSummon:
                 return "Summon a thief that will steal items from the settlements warehouse.";
             default:
-                return "Summon a " + Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(currentlySelectedSummon.ToString());
+                return "Summon a " + UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(currentlySelectedSummon.ToString());
         }
     }
     private void ClearSummonData(Summon summon) {
@@ -1122,7 +1122,7 @@ public class Player : ILeader {
             case ARTIFACT_TYPE.Miasma_Emitter:
                 return "Characters will avoid the settlement. If any character gets caught within, they will gain Poisoned status effect. Any objects inside the radius are disabled.";
             default:
-                return "Summon a " + Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(type.ToString());
+                return "Summon a " + UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(type.ToString());
         }
     }
     public Artifact GetRandomArtifact() {

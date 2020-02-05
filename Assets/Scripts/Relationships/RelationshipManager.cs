@@ -107,7 +107,7 @@ public class RelationshipManager : MonoBehaviour {
                 // Compute the number of relations to create per relationship type
                 switch (currRel) {
                     case RELATIONSHIP_TYPE.RELATIVE:
-                        if (Ruinarch.Utilities.IsRaceBeast(currCharacter.race)) { continue; } //a beast character has no relatives
+                        if (UtilityScripts.GameUtilities.IsRaceBeast(currCharacter.race)) { continue; } //a beast character has no relatives
                         // if (currCharacter.role.roleType == CHARACTER_ROLE.BEAST) { continue; } //a beast character has no relatives
                         else {
                             //- a non-beast character may have either zero (75%), one (20%) or two (5%) relatives from characters of the same race
@@ -142,7 +142,7 @@ public class RelationshipManager : MonoBehaviour {
                             // Compute the weight that determines how likely this character will have the current relationship type with current character
                             switch (currRel) {
                                 case RELATIONSHIP_TYPE.RELATIVE:
-                                    if (Ruinarch.Utilities.IsRaceBeast(otherCharacter.race)) { continue; } //a beast character has no relatives
+                                    if (UtilityScripts.GameUtilities.IsRaceBeast(otherCharacter.race)) { continue; } //a beast character has no relatives
                                     else {
                                         if (otherCharacter.currentRegion == currCharacter.currentRegion) {
                                             // character is in same location: +50 Weight
@@ -160,7 +160,7 @@ public class RelationshipManager : MonoBehaviour {
                                     break;
                                 case RELATIONSHIP_TYPE.LOVER:
                                     if (GetValidator(currCharacter).CanHaveRelationship(currCharacter, otherCharacter, currRel) && GetValidator(otherCharacter).CanHaveRelationship(otherCharacter, currCharacter, currRel)) {
-                                        if (!Ruinarch.Utilities.IsRaceBeast(currCharacter.race)) {
+                                        if (!UtilityScripts.GameUtilities.IsRaceBeast(currCharacter.race)) {
                                             //- if non beast, from valid characters, choose based on these weights
                                             if (otherCharacter.currentRegion == currCharacter.currentRegion) {
                                                 //- character is in same location: +500 Weight
@@ -173,11 +173,11 @@ public class RelationshipManager : MonoBehaviour {
                                                 //- character is the same race: Weight x5
                                                 weight *= 5;
                                             }
-                                            if (!IsSexuallyCompatible(currCharacter, otherCharacter)) {
+                                            if (!IsSexuallyCompatible(currCharacter.sexuality, otherCharacter.sexuality, currCharacter.gender, otherCharacter.gender)) {
                                                 //- character is sexually incompatible: Weight x0.1
                                                 weight *= 0.05f;
                                             }
-                                            if (Ruinarch.Utilities.IsRaceBeast(otherCharacter.race)) {
+                                            if (UtilityScripts.GameUtilities.IsRaceBeast(otherCharacter.race)) {
                                                 //- character is a beast: Weight x0
                                                 weight *= 0;
                                             }
@@ -241,28 +241,22 @@ public class RelationshipManager : MonoBehaviour {
             Debug.Log(summary);
         }
     }
-    public bool IsSexuallyCompatible(Character character1, Character character2) {
-        bool sexuallyCompatible = IsSexuallyCompatibleOneSided(character1, character2);
+    public static bool IsSexuallyCompatible(SEXUALITY sexuality1, SEXUALITY sexuality2, GENDER gender1, GENDER gender2) {
+        bool sexuallyCompatible = IsSexuallyCompatibleOneSided(sexuality1, sexuality2, gender1, gender2);
         if (!sexuallyCompatible) {
             return false; //if they are already sexually incompatible in one side, return false
         }
-        sexuallyCompatible = IsSexuallyCompatibleOneSided(character2, character1);
+        sexuallyCompatible = IsSexuallyCompatibleOneSided(sexuality2, sexuality1, gender1, gender2);
         return sexuallyCompatible;
     }
-    /// <summary>
-    /// Is a character sexually compatible with another.
-    /// </summary>
-    /// <param name="character1">The character whose sexuality will be taken into account.</param>
-    /// <param name="character2">The character that character 1 is checking.</param>
-    /// <returns></returns>
-    public bool IsSexuallyCompatibleOneSided(Character character1, Character character2) {
-        switch (character1.sexuality) {
+    public static bool IsSexuallyCompatibleOneSided(SEXUALITY sexuality1, SEXUALITY sexuality2, GENDER gender1, GENDER gender2) {
+        switch (sexuality1) {
             case SEXUALITY.STRAIGHT:
-                return character1.gender != character2.gender;
+                return gender1 != gender2;
             case SEXUALITY.BISEXUAL:
                 return true; //because bisexuals are attracted to both genders.
             case SEXUALITY.GAY:
-                return character1.gender == character2.gender;
+                return gender1 == gender2;
             default:
                 return false;
         }

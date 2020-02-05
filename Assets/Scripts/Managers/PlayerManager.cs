@@ -46,7 +46,7 @@ public class PlayerManager : MonoBehaviour {
 
         allSpellsData = new Dictionary<SPELL_TYPE, SpellData>();
         for (int i = 0; i < allSpellTypes.Length; i++) {
-            var typeName = Ruinarch.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(allSpellTypes[i].ToString()) + "Data";
+            var typeName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(allSpellTypes[i].ToString()) + "Data";
             allSpellsData.Add(allSpellTypes[i], System.Activator.CreateInstance(System.Type.GetType(typeName)) as SpellData);
         }
 
@@ -273,11 +273,11 @@ public class PlayerManager : MonoBehaviour {
         return newArtifact;
     }
     private object CreateNewArtifactClassFromType(ARTIFACT_TYPE artifactType) {
-        var typeName = Ruinarch.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(artifactType.ToString());
+        var typeName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(artifactType.ToString());
         return System.Activator.CreateInstance(System.Type.GetType(typeName));
     }
     private object CreateNewArtifactClassFromType(SaveDataArtifact data) {
-        var typeName = Ruinarch.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(data.artifactType.ToString());
+        var typeName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(data.artifactType.ToString());
         return System.Activator.CreateInstance(System.Type.GetType(typeName), data);
     }
     #endregion

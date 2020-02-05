@@ -13,7 +13,7 @@ public class BurningSource {
     private ILocation location;
 
     public BurningSource(ILocation location) {
-        id = Ruinarch.Utilities.SetID(this);
+        id = UtilityScripts.Utilities.SetID(this);
         new List<Character>();
         objectsOnFire = new List<ITraitable>();
         this.location = location;

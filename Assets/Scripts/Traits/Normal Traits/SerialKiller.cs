@@ -513,19 +513,19 @@ namespace Traits {
             //If there is a Gender, it is always the first text
             if(victimFirstType == SERIAL_VICTIM_TYPE.GENDER) {
                 isFirstTypeProcessed = true;
-                firstText = Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetterOnly(victimFirstDescription[0]);
+                firstText = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(victimFirstDescription[0]);
             } else if (victimSecondType == SERIAL_VICTIM_TYPE.GENDER) {
                 isFirstTypeProcessed = false;
-                firstText = Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetterOnly(victimSecondDescription[0]);
+                firstText = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(victimSecondDescription[0]);
             }
             if(firstText == string.Empty) {
                 //If there is no Gender, the first text must be Race
                 if (victimFirstType == SERIAL_VICTIM_TYPE.RACE) {
                     isFirstTypeProcessed = true;
-                    firstText = Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetterOnly(victimFirstDescription[0]);
+                    firstText = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(victimFirstDescription[0]);
                 } else if (victimSecondType == SERIAL_VICTIM_TYPE.RACE) {
                     isFirstTypeProcessed = false;
-                    firstText = Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetterOnly(victimSecondDescription[0]);
+                    firstText = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(victimSecondDescription[0]);
                 }
                 if (firstText == string.Empty) {
                     //If there is no Race or Gender victim type, generate description normally
@@ -554,7 +554,7 @@ namespace Traits {
                     if (i > 0) {
                         newDesc += ", ";
                     }
-                    newDesc += Ruinarch.Utilities.PluralizeString(Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(secondDescriptions[i]));
+                    newDesc += UtilityScripts.Utilities.PluralizeString(UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(secondDescriptions[i]));
                 }
             }
             return newDesc;

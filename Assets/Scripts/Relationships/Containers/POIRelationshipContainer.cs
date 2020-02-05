@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -61,6 +62,13 @@ public class POIRelationshipContainer : IRelationshipContainer {
         }
         return false;
     }
+    public bool IsFamilyMember(Character target) {
+        if (HasRelationshipWith(target)) {
+            IRelationshipData data = GetRelationshipDataWith(target);
+            return data.HasRelationship(RELATIONSHIP_TYPE.CHILD, RELATIONSHIP_TYPE.PARENT, RELATIONSHIP_TYPE.SIBLING);
+        }
+        return false;
+    }
     #endregion
 
     #region Getting
@@ -103,6 +111,5 @@ public class POIRelationshipContainer : IRelationshipContainer {
         }
         return RELATIONSHIP_TYPE.NONE;
     }
-
     #endregion
 }

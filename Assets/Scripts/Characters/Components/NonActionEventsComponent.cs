@@ -25,8 +25,8 @@ public class NonActionEventsComponent {
         if (target.isDead
             || !target.canWitness
             || !owner.canWitness
-            || Ruinarch.Utilities.IsRaceBeast(target.race)
-            || Ruinarch.Utilities.IsRaceBeast(owner.race)
+            || UtilityScripts.GameUtilities.IsRaceBeast(target.race)
+            || UtilityScripts.GameUtilities.IsRaceBeast(owner.race)
             //|| target.faction.isPlayerFaction
             //|| owner.faction.isPlayerFaction
             //|| target.characterClass.className == "Zombie"
@@ -325,7 +325,7 @@ public class NonActionEventsComponent {
             }
         }
         if(chance < 90) {
-            if(!RelationshipManager.Instance.IsSexuallyCompatibleOneSided(target, owner)) {
+            if(!RelationshipManager.IsSexuallyCompatibleOneSided(target.sexuality, owner.sexuality, target.gender, owner.gender)) {
                 owner.opinionComponent.AdjustOpinion(target, "Base", -4, "engaged in disastrous flirting");
                 target.opinionComponent.AdjustOpinion(owner, "Base", -2, "engaged in disastrous flirting");
                 return "incompatible";

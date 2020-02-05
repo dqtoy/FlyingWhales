@@ -1168,6 +1168,9 @@ public enum RELATIONSHIP_TYPE {
     SAVER = 8,
     SAVE_TARGET = 9,
     EX_LOVER = 10,
+    SIBLING = 11,
+    PARENT = 12,
+    CHILD = 13,
 }
 
 public enum POINT_OF_INTEREST_TYPE {
@@ -1974,7 +1977,7 @@ public static class Extensions {
             case SUMMON_TYPE.ThiefSummon:
                 return "Thief";
             default:
-                return Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(type.ToString());
+                return UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(type.ToString());
         }
     }
     public static bool CanBeSummoned(this SUMMON_TYPE type) {
@@ -2067,7 +2070,7 @@ public static class Extensions {
             case LANDMARK_TYPE.NONE:
                 return "Empty";
             default:
-                return Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(type.ToString());
+                return UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(type.ToString());
         }
     }
     #endregion

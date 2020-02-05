@@ -20,10 +20,10 @@ public class MapGenerator : MonoBehaviour {
         MapGenerationComponent[] mapGenerationComponents = {
             new WorldMapGridGeneration(), new WorldMapElevationGeneration(), new SupportingFactionGeneration(), 
             new WorldMapRegionGeneration(), new WorldMapBiomeGeneration(), new WorldMapOuterGridGeneration(),
-            new TileFeatureGeneration(), new PortalLandmarkGeneration(), new WorldMapLandmarkGeneration(), 
-            new RegionInnerMapGeneration(), new SettlementGeneration(), new LandmarkStructureGeneration(), 
-            new ElevationStructureGeneration(), new MonsterGeneration(), new MapGenerationFinalization(), 
-            new PlayerDataGeneration(),
+            new TileFeatureGeneration(), new PortalLandmarkGeneration(), new WorldMapLandmarkGeneration(),
+            new FamilyTreeGeneration(), new RegionInnerMapGeneration(), new SettlementGeneration(), 
+            new LandmarkStructureGeneration(), new ElevationStructureGeneration(), new MonsterGeneration(), 
+            new MapGenerationFinalization(), new PlayerDataGeneration(),
         };
         yield return StartCoroutine(InitializeWorldCoroutine(mapGenerationComponents));
     }

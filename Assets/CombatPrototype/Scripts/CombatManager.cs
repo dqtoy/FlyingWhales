@@ -31,7 +31,7 @@ public class CombatManager : MonoBehaviour {
         newCombat.Initialize();
     }
     private void ConstructBaseCharacters() {
-        string path = Ruinarch.Utilities.dataPath + "CharacterSetups/";
+        string path = UtilityScripts.Utilities.dataPath + "CharacterSetups/";
         string[] baseCharacterJsons = System.IO.Directory.GetFiles(path, "*.json");
         baseCharacters = new CharacterSetup[baseCharacterJsons.Length];
         for (int i = 0; i < baseCharacterJsons.Length; i++) {

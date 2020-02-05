@@ -511,7 +511,7 @@ public class PlayerUI : MonoBehaviour {
 
     }
     public PlayerJobActionButton GetPlayerJobActionButton(PlayerSpell action) {
-        PlayerJobActionButton[] buttons = Ruinarch.Utilities.GetComponentsInDirectChildren<PlayerJobActionButton>(activeMinionActionsParent.gameObject);
+        PlayerJobActionButton[] buttons = UtilityScripts.GameUtilities.GetComponentsInDirectChildren<PlayerJobActionButton>(activeMinionActionsParent.gameObject);
         for (int i = 0; i < buttons.Length; i++) {
             PlayerJobActionButton currButton = buttons[i];
             if (currButton.actionSlot.ability == action) {
@@ -780,7 +780,7 @@ public class PlayerUI : MonoBehaviour {
             if (currLog != null) {
                 currItem.gameObject.SetActive(true);
                 currItem.SetLog(currLog);
-                if (Ruinarch.Utilities.IsEven(i)) {
+                if (UtilityScripts.Utilities.IsEven(i)) {
                     currItem.SetLogColor(evenLogColor);
                 } else {
                     currItem.SetLogColor(oddLogColor);
@@ -896,7 +896,7 @@ public class PlayerUI : MonoBehaviour {
         //PlayerManager.Instance.player.StartResearchNewInterventionAbility();
     }
     private void ShowSelectMinionLeader() {
-        Ruinarch.Utilities.DestroyChildren(minionLeaderPickerParent.transform);
+        UtilityScripts.Utilities.DestroyChildren(minionLeaderPickerParent.transform);
         minionLeaderPickers.Clear();
         selectMinionLeaderText.gameObject.SetActive(true);
         tempCurrentMinionLeaderPicker = null;
@@ -937,7 +937,7 @@ public class PlayerUI : MonoBehaviour {
 
         for (int i = 0; i < startingAbilityIcons.Length; i++) {
             SPELL_TYPE randomAbility = chosenAbilities[i];
-            string abilityName = Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(randomAbility.ToString());
+            string abilityName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(randomAbility.ToString());
             startingAbilityIcons[i].sprite = PlayerManager.Instance.GetJobActionSprite(abilityName);
             startingAbilityLbls[i].text = abilityName;
             startingAbilities[i] = randomAbility;
@@ -945,15 +945,15 @@ public class PlayerUI : MonoBehaviour {
     }
     public void OnHoverStartingSpell(int index) {
         SPELL_TYPE spell = chosenAbilities[index];
-        UIManager.Instance.ShowSmallInfo(PlayerManager.Instance.allSpellsData[spell].description, Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(spell.ToString()));
+        UIManager.Instance.ShowSmallInfo(PlayerManager.Instance.allSpellsData[spell].description, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(spell.ToString()));
     }
     public void RerollAbilities() {
         RandomizeStartingAbilities();
     }
     public void RandomizeTwoStartingMinions(ref UnsummonedMinionData minion1Data, ref UnsummonedMinionData minion2Data) {
 
-        string minionName1 = RandomNameGenerator.Instance.GenerateMinionName();
-        string minionName2 = RandomNameGenerator.Instance.GenerateMinionName();
+        string minionName1 = RandomNameGenerator.GenerateMinionName();
+        string minionName2 = RandomNameGenerator.GenerateMinionName();
 
         COMBAT_ABILITY minionCombatAbilityType1 = PlayerManager.Instance.allCombatAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allCombatAbilities.Length)];
         COMBAT_ABILITY minionCombatAbilityType2 = PlayerManager.Instance.allCombatAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allCombatAbilities.Length)];
@@ -1195,7 +1195,7 @@ public class PlayerUI : MonoBehaviour {
                     message = "Summon a thief that will steal items from the settlements warehouse.";
                     break;
                 default:
-                    message = "Summon a " + Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(currentlySelectedSummonSlot.ToString());
+                    message = "Summon a " + UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(currentlySelectedSummonSlot.ToString());
                     break;
             }
             UIManager.Instance.ShowSmallInfo(message, summonTooltipPos, header);
@@ -1383,7 +1383,7 @@ public class PlayerUI : MonoBehaviour {
     }
     public void ShowArtifactTooltip() {
         if (currentlySelectedArtifactSlot.artifact != null) {
-            string header = Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(currentlySelectedArtifactSlot.artifact.type.ToString()) + " <i>(Click to place.)</i>";
+            string header = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(currentlySelectedArtifactSlot.artifact.type.ToString()) + " <i>(Click to place.)</i>";
             string message = PlayerManager.Instance.player.GetArtifactDescription(currentlySelectedArtifactSlot.artifact.type);
             UIManager.Instance.ShowSmallInfo(message, summonArtifactTooltipPos, header);
         }
@@ -1444,14 +1444,14 @@ public class PlayerUI : MonoBehaviour {
         LoadKillSummaryCharacterItems();
     }
     private void LoadKillSummaryCharacterItems() {
-        CharacterNameplateItem[] items = Ruinarch.Utilities.GetComponentsInDirectChildren<CharacterNameplateItem>(killCountScrollView.content.gameObject);
+        CharacterNameplateItem[] items = UtilityScripts.GameUtilities.GetComponentsInDirectChildren<CharacterNameplateItem>(killCountScrollView.content.gameObject);
         for (int i = 0; i < items.Length; i++) {
             CharacterNameplateItem item = items[i];
             item.transform.SetParent(killSummaryScrollView.content);
         }
     }
     public void BackToWorld() {
-        Ruinarch.Utilities.DestroyChildren(killSummaryScrollView.content);
+        UtilityScripts.Utilities.DestroyChildren(killSummaryScrollView.content);
         ILocation closedArea = InnerMapManager.Instance.HideAreaMap();
         SetCurrentlySelectedSummonSlot(PlayerManager.Instance.player.summonSlots.FirstOrDefault());
         SetCurrentlySelectedArtifactSlot(PlayerManager.Instance.player.artifactSlots.FirstOrDefault());
@@ -1474,7 +1474,7 @@ public class PlayerUI : MonoBehaviour {
     }
     private void PopulateCombatAbilities() {
         currentCombatAbilityButtons.Clear();
-        Ruinarch.Utilities.DestroyChildren(combatAbilityGO.transform);
+        UtilityScripts.Utilities.DestroyChildren(combatAbilityGO.transform);
         for (int i = 0; i < PlayerManager.Instance.player.minions.Count; i++) {
             Minion currMinion = PlayerManager.Instance.player.minions[i];
             // if (currMinion.assignedRegion != null && currMinion.assignedRegion.settlement != null && PlayerManager.Instance.player.currentSettlementBeingInvaded == currMinion.assignedRegion.settlement) {
@@ -1528,7 +1528,7 @@ public class PlayerUI : MonoBehaviour {
     }
     //This must only be called once during initialization
     private void InitialUpdateKillCountCharacterItems() {
-        //CharacterNameplateItem[] items = Utilities.GetComponentsInDirectChildren<CharacterNameplateItem>(killCountScrollView.content.gameObject);
+        //CharacterNameplateItem[] items = GameGameUtilities.GetComponentsInDirectChildren<CharacterNameplateItem>(killCountScrollView.content.gameObject);
         //for (int i = 0; i < items.Length; i++) {
         //    ObjectPoolManager.Instance.DestroyObject(items[i].gameObject);
         //}
@@ -1765,7 +1765,7 @@ public class PlayerUI : MonoBehaviour {
         }
     }
     //private void OrderKillSummaryItems() {
-    //    CharacterNameplateItem[] items = Utilities.GetComponentsInDirectChildren<CharacterNameplateItem>(killCountScrollView.content.gameObject);
+    //    CharacterNameplateItem[] items = GameGameUtilities.GetComponentsInDirectChildren<CharacterNameplateItem>(killCountScrollView.content.gameObject);
     //    List<CharacterNameplateItem> alive = new List<CharacterNameplateItem>();
     //    List<CharacterNameplateItem> dead = new List<CharacterNameplateItem>();
     //    for (int i = 0; i < items.Length; i++) {
@@ -1809,7 +1809,7 @@ public class PlayerUI : MonoBehaviour {
 
     #region Intervention Abilities
     private void LoadInterventionAbilitySlots() {
-        Ruinarch.Utilities.DestroyChildren(activeMinionActionsParent);
+        UtilityScripts.Utilities.DestroyChildren(activeMinionActionsParent);
         interventionAbilityBtns = new PlayerJobActionButton[PlayerManager.Instance.player.MAX_INTERVENTION_ABILITIES];
         for (int i = 0; i < PlayerManager.Instance.player.MAX_INTERVENTION_ABILITIES; i++) {
             GameObject jobGO = UIManager.Instance.InstantiateUIObject(actionBtnPrefab.name, activeMinionActionsParent);
@@ -1892,7 +1892,7 @@ public class PlayerUI : MonoBehaviour {
     [SerializeField] private UIHoverPosition minionListCardTooltipPos;
     [SerializeField] private Toggle minionListToggle;
     private void UpdateMinionList() {
-        Ruinarch.Utilities.DestroyChildren(minionListScrollView.content);
+        UtilityScripts.Utilities.DestroyChildren(minionListScrollView.content);
         for (int i = 0; i < PlayerManager.Instance.player.minions.Count; i++) {
             Minion currMinion = PlayerManager.Instance.player.minions[i];
             CreateNewMinionItem(currMinion);
@@ -1914,7 +1914,7 @@ public class PlayerUI : MonoBehaviour {
         }
     }
     private CharacterNameplateItem GetMinionItem(Minion minion) {
-        CharacterNameplateItem[] items = Ruinarch.Utilities.GetComponentsInDirectChildren<CharacterNameplateItem>(minionListScrollView.content.gameObject);
+        CharacterNameplateItem[] items = UtilityScripts.GameUtilities.GetComponentsInDirectChildren<CharacterNameplateItem>(minionListScrollView.content.gameObject);
         for (int i = 0; i < items.Length; i++) {
             CharacterNameplateItem item = items[i];
             if (item.character == minion.character) {

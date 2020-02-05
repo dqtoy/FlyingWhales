@@ -38,7 +38,7 @@ public class HaveAffair : GoapAction {
                 cost *= 0;
             }
         }
-        if (Ruinarch.Utilities.IsRaceBeast(otherCharacter.race)) {
+        if (UtilityScripts.GameUtilities.IsRaceBeast(otherCharacter.race)) {
             //- character is beast 0 out weight
             cost *= 0;
         }
@@ -66,7 +66,12 @@ public class HaveAffair : GoapAction {
                 return false;
             }
             Character targetCharacter = poiTarget as Character;
-            if (RelationshipManager.Instance.IsSexuallyCompatible(actor, targetCharacter) && RelationshipManager.Instance.GetValidator(actor).CanHaveRelationship(actor, targetCharacter, RELATIONSHIP_TYPE.AFFAIR)) {
+            SEXUALITY sexuality1 = actor.sexuality;
+            SEXUALITY sexuality2 = targetCharacter.sexuality;
+            GENDER gender1 = actor.gender;
+            GENDER gender2 = targetCharacter.gender;
+            if (RelationshipManager.IsSexuallyCompatible(sexuality1, sexuality2, gender1, gender2) 
+                && RelationshipManager.Instance.GetValidator(actor).CanHaveRelationship(actor, targetCharacter, RELATIONSHIP_TYPE.AFFAIR)) {
                 return true;
             }
         }
@@ -330,10 +335,10 @@ public class HaveAffairData : GoapActionData {
         if (actor == poiTarget) {
             return false;
         }
-        Character targetCharacter = poiTarget as Character;
-        if (RelationshipManager.Instance.IsSexuallyCompatible(actor, targetCharacter) && RelationshipManager.Instance.GetValidator(actor).CanHaveRelationship(actor, targetCharacter, RELATIONSHIP_TYPE.AFFAIR)) {
-            return true;
-        }
+        // Character targetCharacter = poiTarget as Character;
+        // if (RelationshipManager.Instance.IsSexuallyCompatible(actor, targetCharacter, TODO, TODO) && RelationshipManager.Instance.GetValidator(actor).CanHaveRelationship(actor, targetCharacter, RELATIONSHIP_TYPE.AFFAIR)) {
+        //     return true;
+        // }
         return false;
     }
 }

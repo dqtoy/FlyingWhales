@@ -23,7 +23,7 @@ public class TheAnvil : BaseLandmark {
     public string upgradeIdentifier { get; private set; }
     public int currentUpgradeTick {
         get {
-            return Ruinarch.Utilities.GetTicksInBetweenDates(upgradeStartDate, GameManager.Instance.Today());
+            return UtilityScripts.GameUtilities.GetTicksInBetweenDates(upgradeStartDate, GameManager.Instance.Today());
         }
     }
     private GameDate upgradeStartDate;
@@ -49,7 +49,7 @@ public class TheAnvil : BaseLandmark {
         PlayerManager.Instance.player.AdjustMana(-LandmarkManager.Instance.anvilResearchData[upgradeIdentifier].manaCost);
         upgradeStartDate = GameManager.Instance.Today();
         dueDate = GameManager.Instance.Today().AddTicks(upgradeDuration);
-        int tickDiff = Ruinarch.Utilities.GetTicksInBetweenDates(upgradeStartDate, dueDate);
+        int tickDiff = UtilityScripts.GameUtilities.GetTicksInBetweenDates(upgradeStartDate, dueDate);
         Debug.Log("Tick diff between " + upgradeStartDate.ConvertToContinuousDaysWithTime() + " and " + dueDate.ConvertToContinuousDaysWithTime() + " is " + tickDiff.ToString());
         SchedulingManager.Instance.AddEntry(dueDate, UpgradeDone, this);
         TimerHubUI.Instance.AddItem("Research " + upgradeIdentifier, upgradeDuration, () => UIManager.Instance.ShowRegionInfo(this.tileLocation.region));

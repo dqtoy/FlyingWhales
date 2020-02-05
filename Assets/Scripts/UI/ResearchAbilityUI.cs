@@ -47,7 +47,7 @@ public class ResearchAbilityUI : MonoBehaviour {
     }
     public void SetAbility1(SPELL_TYPE ability) {
         //ability1 = ability;
-        string name = Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(ability.ToString());
+        string name = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(ability.ToString());
         ability1Icon.sprite = PlayerManager.Instance.GetJobActionSprite(name);
         string text = name;
         text += "\n" + PlayerManager.Instance.allSpellsData[ability].description;
@@ -56,7 +56,7 @@ public class ResearchAbilityUI : MonoBehaviour {
     }
     public void SetAbility2(SPELL_TYPE ability) {
         //ability2 = ability;
-        string name = Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(ability.ToString());
+        string name = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(ability.ToString());
         ability2Icon.sprite = PlayerManager.Instance.GetJobActionSprite(name);
         string text = name;
         text += "\n" + PlayerManager.Instance.allSpellsData[ability].description;
@@ -65,7 +65,7 @@ public class ResearchAbilityUI : MonoBehaviour {
     }
     public void SetAbility3(SPELL_TYPE ability) {
         //ability3 = ability;
-        string name = Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(ability.ToString());
+        string name = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(ability.ToString());
         ability3Icon.sprite = PlayerManager.Instance.GetJobActionSprite(name);
         string text = name;
         text += "\n" + PlayerManager.Instance.allSpellsData[ability].description;

@@ -29,5 +29,7 @@ public class MapGenerationData {
 	public BaseLandmark portal;
 	public LocationStructure portalStructure;
 	
-	
+	//family trees
+	public Dictionary<RACE, List<FamilyTree>> familyTrees;
+
 }

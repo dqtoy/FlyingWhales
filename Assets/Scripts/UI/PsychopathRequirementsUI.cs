@@ -38,7 +38,7 @@ public class PsychopathRequirementsUI : MonoBehaviour {
     }
     private void PopulateRequirementsType() {
         reqTypeDropdown.ClearOptions();
-        reqTypeDropdown.AddOptions(Ruinarch.Utilities.GetEnumChoices<SERIAL_VICTIM_TYPE>(true));
+        reqTypeDropdown.AddOptions(UtilityScripts.Utilities.GetEnumChoices<SERIAL_VICTIM_TYPE>(true));
         reqTypeDropdown.value = 0;
     }
     private void PopulateRequirementsDescriptions() {
@@ -48,7 +48,7 @@ public class PsychopathRequirementsUI : MonoBehaviour {
             reqDescriptionDropdown.options.Add(new TMP_Dropdown.OptionData("NONE"));
             HideAddRemoveButtons();
         } else if (victimType == SERIAL_VICTIM_TYPE.GENDER) {
-            reqDescriptionDropdown.AddOptions(Ruinarch.Utilities.GetEnumChoices<GENDER>());
+            reqDescriptionDropdown.AddOptions(UtilityScripts.Utilities.GetEnumChoices<GENDER>());
             HideAddRemoveButtons();
         } else if (victimType == SERIAL_VICTIM_TYPE.RACE) {
             reqDescriptionDropdown.AddOptions(criteriaRaces);

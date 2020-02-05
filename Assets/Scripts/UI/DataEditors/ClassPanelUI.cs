@@ -94,7 +94,7 @@ public class ClassPanelUI : MonoBehaviour {
     #region Utilities
     private void UpdateClassList() {
         allClasses.Clear();
-        string path = Ruinarch.Utilities.dataPath + "CharacterClasses/";
+        string path = UtilityScripts.Utilities.dataPath + "CharacterClasses/";
         foreach (string file in Directory.GetFiles(path, "*.json")) {
             allClasses.Add(Path.GetFileNameWithoutExtension(file));
         }
@@ -199,10 +199,10 @@ public class ClassPanelUI : MonoBehaviour {
         _armorTiers.Clear();
         _accessoryTiers.Clear();
         _traitNames.Clear();
-        Ruinarch.Utilities.DestroyChildren(weaponsContentTransform);
-        Ruinarch.Utilities.DestroyChildren(armorsContentTransform);
-        Ruinarch.Utilities.DestroyChildren(accessoriesContentTransform);
-        Ruinarch.Utilities.DestroyChildren(traitsScrollRect.content);
+        UtilityScripts.Utilities.DestroyChildren(weaponsContentTransform);
+        UtilityScripts.Utilities.DestroyChildren(armorsContentTransform);
+        UtilityScripts.Utilities.DestroyChildren(accessoriesContentTransform);
+        UtilityScripts.Utilities.DestroyChildren(traitsScrollRect.content);
     }
     private void SaveClass() {
         if (string.IsNullOrEmpty(classNameInput.text)) {
@@ -217,8 +217,8 @@ public class ClassPanelUI : MonoBehaviour {
             return;
 #endif
         }
-        string path = Ruinarch.Utilities.dataPath + "CharacterClasses/" + classNameInput.text + ".json";
-        if (Ruinarch.Utilities.DoesFileExist(path)) {
+        string path = UtilityScripts.Utilities.dataPath + "CharacterClasses/" + classNameInput.text + ".json";
+        if (UtilityScripts.Utilities.DoesFileExist(path)) {
 #if UNITY_EDITOR
             if (EditorUtility.DisplayDialog("Overwrite Class", "A class with name " + classNameInput.text + " already exists. Replace with this class?", "Yes", "No")) {
                 File.Delete(path);
@@ -251,7 +251,7 @@ public class ClassPanelUI : MonoBehaviour {
 
     private void LoadClass() {
 #if UNITY_EDITOR
-        string filePath = EditorUtility.OpenFilePanel("Select Class", Ruinarch.Utilities.dataPath + "CharacterClasses/", "json");
+        string filePath = EditorUtility.OpenFilePanel("Select Class", UtilityScripts.Utilities.dataPath + "CharacterClasses/", "json");
 
         if (!string.IsNullOrEmpty(filePath)) {
             string dataAsJson = File.ReadAllText(filePath);

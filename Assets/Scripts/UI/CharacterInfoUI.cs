@@ -216,7 +216,7 @@ public class CharacterInfoUI : UIMenu {
         characterPortrait.GeneratePortrait(_activeCharacter);
     }
     public void UpdateBasicInfo() {
-        nameLbl.text = _activeCharacter.name;
+        nameLbl.text = _activeCharacter.fullname;
         lvlClassLbl.text = _activeCharacter.raceClassName;
         if(activeCharacter.isSettlementRuler || activeCharacter.isFactionLeader) {
             string additionalText = string.Empty;
@@ -579,16 +579,18 @@ public class CharacterInfoUI : UIMenu {
         Dictionary<Character, OpinionData> orderedOpinions = _activeCharacter.opinionComponent.opinions
             .OrderByDescending(k => k.Value.totalOpinion)
             .ToDictionary(k => k.Key, v => v.Value);
-        
+
+        List<Character> keys = _activeCharacter.opinionComponent.opinions.Keys.ToList();
         for (int i = 0; i < orderedOpinions.Keys.Count; i++) {
             Character target = orderedOpinions.Keys.ElementAt(i);
+            int actualIndex = keys.IndexOf(target);
             relationshipTypesLbl.text += $"{_activeCharacter.opinionComponent.GetRelationshipNameWith(target)}\n";
             int opinionOfOther = 0;
             if (target.opinionComponent.HasOpinion(activeCharacter)) {
                 opinionOfOther = target.opinionComponent.GetTotalOpinion(activeCharacter);
             }
-            relationshipNamesLbl.text += $"<link=\"{i}\">{target.name}</link>\n";
-            relationshipValuesLbl.text += $"<link=\"{i}\"><color=\"{ OpinionColor(activeCharacter.opinionComponent.GetTotalOpinion(target)) }\"> " +
+            relationshipNamesLbl.text += $"<link=\"{actualIndex.ToString()}\">{target.name}</link>\n";
+            relationshipValuesLbl.text += $"<link=\"{actualIndex.ToString()}\"><color=\"{ OpinionColor(activeCharacter.opinionComponent.GetTotalOpinion(target)) }\"> " +
                                           $"{GetOpinionText(activeCharacter.opinionComponent.GetTotalOpinion(target))}</color> " +
                                           $"<color=\"{OpinionColor(opinionOfOther)}\">({GetOpinionText(opinionOfOther)})</color></link>\n";
         }

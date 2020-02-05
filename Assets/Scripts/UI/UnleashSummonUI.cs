@@ -43,7 +43,7 @@ public class UnleashSummonUI : MonoBehaviour {
         gameObject.SetActive(true);
     }
     private void PopulateSummons() {
-        Ruinarch.Utilities.DestroyChildren(summonsScrollRect.content);
+        UtilityScripts.Utilities.DestroyChildren(summonsScrollRect.content);
         characterNameplateItems.Clear();
         //TODO:
         // List<Region> playerOwnedRegions = PlayerManager.Instance.player.playerFaction.ownedSettlements;

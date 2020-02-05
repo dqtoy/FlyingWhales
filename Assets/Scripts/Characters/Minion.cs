@@ -34,7 +34,7 @@ public class Minion {
         SetAssignedDeadlySinName(character.characterClass.className);
         character.ownParty.icon.SetVisualState(true);
         if (!keepData) {
-            character.SetName(RandomNameGenerator.Instance.GenerateMinionName());
+            character.SetName(RandomNameGenerator.GenerateMinionName());
         }
         RemoveInvalidPlayerActions();
         character.needsComponent.SetFullnessForcedTick(0);
@@ -155,7 +155,7 @@ public class Minion {
             } else {
                 deathLog = _deathLog;
             }
-            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Minion Died: " +  Ruinarch.Utilities.LogReplacer(deathLog), null);
+            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Minion Died: " +  UtilityScripts.Utilities.LogReplacer(deathLog), null);
             Unsummon();
         }
     }

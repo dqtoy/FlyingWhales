@@ -15,7 +15,7 @@ public class Summon : Character, IWorldObject {
     
     #region getters/setters
     public virtual string worldObjectName {
-        get { return name + " (" + Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(summonType.ToString()) + ")"; }
+        get { return name + " (" + UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(summonType.ToString()) + ")"; }
     }
     public WORLD_OBJECT_TYPE worldObjectType {
         get { return WORLD_OBJECT_TYPE.SUMMON; }
@@ -26,7 +26,7 @@ public class Summon : Character, IWorldObject {
     //     this.summonType = summonType;
     //     territorries = new List<HexTile>();
     // }
-    public Summon(SUMMON_TYPE summonType, CharacterRole role, string className, RACE race, GENDER gender) : base(role, className, race, gender) {
+    public Summon(SUMMON_TYPE summonType, CharacterRole role, string className, RACE race, GENDER gender) : base(className, race, gender) {
         this.summonType = summonType;
         territorries = new List<HexTile>();
     }

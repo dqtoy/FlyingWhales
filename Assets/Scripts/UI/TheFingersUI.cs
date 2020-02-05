@@ -58,7 +58,7 @@ public class TheFingersUI : MonoBehaviour {
     }
     public void OnClickCreateNewFaction() {
         if (CanCreateNewFaction()) {
-            Faction newFaction = FactionManager.Instance.CreateNewFaction(factionName: factionNameInput.text);
+            Faction newFaction = FactionManager.Instance.CreateNewFaction(RACE.NONE, factionName: factionNameInput.text);
             chosenLeader.ChangeFactionTo(newFaction);
             newFaction.SetLeader(chosenLeader, false);
 
@@ -171,7 +171,7 @@ public class TheFingersUI : MonoBehaviour {
         //exclusiveIdeologyHolder.SetActive(false);
     }
     private void PopulateCharactersToChooseFrom() {
-        Ruinarch.Utilities.DestroyChildren(characterScrollRect.content);
+        UtilityScripts.Utilities.DestroyChildren(characterScrollRect.content);
         characterNameplateItems.Clear();
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
             Character character = CharacterManager.Instance.allCharacters[i];

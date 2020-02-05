@@ -319,10 +319,14 @@ public class CameraMove : MonoBehaviour {
     private void OnMenuClosed(UIMenu openedMenu) { }
     private void OnInnerMapOpened(ILocation location) {
         // _mainCamera.cullingMask = 0;
+        _raycaster.enabled = false;
+        gameObject.SetActive(false);
         SetCameraControlState(false);
     }
     private void OnInnerMapClosed(ILocation location) {
         // _mainCamera.cullingMask = defaultMask;
+        _raycaster.enabled = true;
+        gameObject.SetActive(true);
         SetCameraControlState(true);
     }
     #endregion

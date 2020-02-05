@@ -81,7 +81,7 @@ public class QuestInfoUI : MonoBehaviour {
     private void UpdateQuestJobs() {
         UpdateJobText();
         if(jobScrollRect.content.childCount > 0) {
-            Ruinarch.Utilities.DestroyChildren(jobScrollRect.content);
+            UtilityScripts.Utilities.DestroyChildren(jobScrollRect.content);
         }
         for (int i = 0; i < quest.availableJobs.Count; i++) {
             GenerateQuestJobNameplate(quest, quest.availableJobs[i], false);

@@ -26,6 +26,7 @@ public class Initializer : MonoBehaviour {
         TokenManager.Instance.Initialize();
         JobManager.Instance.Initialize();
         PlayerUI.Instance.Initialize();
+        RandomNameGenerator.Initialize();
         yield return null;
     }
 

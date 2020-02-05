@@ -43,7 +43,7 @@
     public void PreAttackSuccess(ActualGoapNode goapNode) {
         goapNode.descriptionLog.AddToFillers(goapNode.poiTarget.gridTileLocation.structure.location, goapNode.poiTarget.gridTileLocation.structure.location.name, LOG_IDENTIFIER.LANDMARK_1);
         goapNode.descriptionLog.AddToFillers(goapNode.poiTarget.gridTileLocation.structure.location.coreTile.region, 
-            Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetterOnly(goapNode.poiTarget.gridTileLocation.structure.location.coreTile.region.mainLandmark.specificLandmarkType.ToString()),
+            UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(goapNode.poiTarget.gridTileLocation.structure.location.coreTile.region.mainLandmark.specificLandmarkType.ToString()),
             LOG_IDENTIFIER.STRING_1);
         goapNode.poiTarget.RemoveAdvertisedAction(INTERACTION_TYPE.ATTACK_REGION); //this is so that other characters cannot attack this region when another character is already attacking it.
     }

@@ -36,8 +36,12 @@ namespace Traits {
                         List<Character> choices = new List<Character>();
                         for (int i = 0; i < character.currentRegion.charactersAtLocation.Count; i++) {
                             Character choice = character.currentRegion.charactersAtLocation[i];
-                            if (RelationshipManager.Instance.IsSexuallyCompatible(character, choice) &&
-                                RelationshipManager.Instance.GetValidator(character).
+                            SEXUALITY sexuality1 = character.sexuality;
+                            SEXUALITY sexuality2 = choice.sexuality;
+                            GENDER gender1 = character.gender;
+                            GENDER gender2 = choice.gender;
+                            if (RelationshipManager.IsSexuallyCompatible(sexuality1, sexuality2, gender1, gender2) 
+                                && RelationshipManager.Instance.GetValidator(character).
                                     CanHaveRelationship(character, choice, RELATIONSHIP_TYPE.AFFAIR)) {
                                 choices.Add(choice);
                             }

@@ -63,9 +63,9 @@ public class SpecialToken : MapObject<SpecialToken>, IPointOfInterest, IPlayerAc
     #endregion
 
     public SpecialToken(SPECIAL_TOKEN specialTokenType, int appearanceRate) {
-        id = Ruinarch.Utilities.SetID(this);
+        id = UtilityScripts.Utilities.SetID(this);
         this.specialTokenType = specialTokenType;
-        this.name = Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(this.specialTokenType.ToString());
+        this.name = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(this.specialTokenType.ToString());
         weight = appearanceRate;
         advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.PICK_UP, INTERACTION_TYPE.STEAL, INTERACTION_TYPE.SCRAP, INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.DROP_ITEM};
         allJobsTargetingThis = new List<JobQueueItem>();
@@ -77,7 +77,7 @@ public class SpecialToken : MapObject<SpecialToken>, IPointOfInterest, IPlayerAc
         ConstructDefaultActions();
     }
     public void SetID(int id) {
-        this.id = Ruinarch.Utilities.SetID(this, id);
+        this.id = UtilityScripts.Utilities.SetID(this, id);
     }
 
     #region Virtuals
@@ -360,7 +360,7 @@ public class SpecialToken : MapObject<SpecialToken>, IPointOfInterest, IPlayerAc
         RemoveAllTraits();
     }
     public bool CanBePickedUpNormallyUponVisionBy(Character character) {
-        if (Ruinarch.Utilities.IsRaceBeast(character.race)) {
+        if (UtilityScripts.GameUtilities.IsRaceBeast(character.race)) {
             return false;
         }
         if (character.race == RACE.SKELETON) {

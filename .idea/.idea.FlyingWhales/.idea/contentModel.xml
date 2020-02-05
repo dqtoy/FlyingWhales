@@ -977,8 +977,10 @@
             <e p="CharacterAvatar.cs" t="Include" />
             <e p="SmoothMovement.cs" t="Include" />
           </e>
-          <e p="Biomes.cs" t="Include" />
-          <e p="CameraMove.cs" t="Include" />
+          <e p="Camera" t="Include">
+            <e p="CameraMove.cs" t="Include" />
+            <e p="InnerMapCameraMove.cs" t="Include" />
+          </e>
           <e p="Cellular Automata" t="Include">
             <e p="CellularAutomataGenerator.cs" t="Include" />
           </e>
@@ -1088,6 +1090,8 @@
               <e p="Shock.cs" t="Include" />
               <e p="Threatened.cs" t="Include" />
             </e>
+            <e p="FamilyTree.cs" t="Include" />
+            <e p="FamilyTreeGenerator.cs" t="Include" />
             <e p="Jobs" t="Include">
               <e p="Diplomat.cs" t="Include" />
               <e p="Dissuader.cs" t="Include" />
@@ -1103,9 +1107,10 @@
             <e p="Memories.cs" t="Include" />
             <e p="Memory.cs" t="Include" />
             <e p="Minion.cs" t="Include" />
+            <e p="PreCharacterData.cs" t="Include" />
+            <e p="PreCharacterRelationship.cs" t="Include" />
             <e p="RaceSetting.cs" t="Include" />
           </e>
-          <e p="CharacterStateJob.cs" t="Include" />
           <e p="Combat" t="Include">
             <e p="Combat.cs" t="Include" />
             <e p="CombatGrid.cs" t="Include" />
@@ -1134,7 +1139,6 @@
               <e p="NewResidentEvent.cs" t="Include" />
             </e>
           </e>
-          <e p="FactionRelationship.cs" t="Include" />
           <e p="Factions" t="Include">
             <e p="Faction Ideologies" t="Include">
               <e p="DemonWorship.cs" t="Include" />
@@ -1148,6 +1152,7 @@
             </e>
             <e p="Faction.cs" t="Include" />
             <e p="FactionIdeologyComponent.cs" t="Include" />
+            <e p="FactionRelationship.cs" t="Include" />
             <e p="Quests" t="Include">
               <e p="DivineInterventionQuest.cs" t="Include" />
               <e p="Quest.cs" t="Include" />
@@ -1155,6 +1160,30 @@
           </e>
           <e p="Generator" t="Include">
             <e p="EquatorGenerator.cs" t="Include" />
+            <e p="Map Generation" t="Include">
+              <e p="Components" t="Include">
+                <e p="ElevationStructureGeneration.cs" t="Include" />
+                <e p="FamilyTreeGeneration.cs" t="Include" />
+                <e p="LandmarkStructureGeneration.cs" t="Include" />
+                <e p="MapGenerationFinalization.cs" t="Include" />
+                <e p="MonsterGeneration.cs" t="Include" />
+                <e p="PlayerDataGeneration.cs" t="Include" />
+                <e p="PortalLandmarkGeneration.cs" t="Include" />
+                <e p="RegionDataGeneration.cs" t="Include" />
+                <e p="RegionInnerMapGeneration.cs" t="Include" />
+                <e p="SettlementGeneration.cs" t="Include" />
+                <e p="SupportingFactionGeneration.cs" t="Include" />
+                <e p="TileFeatureGeneration.cs" t="Include" />
+                <e p="WorldMapBiomeGeneration.cs" t="Include" />
+                <e p="WorldMapElevationGeneration.cs" t="Include" />
+                <e p="WorldMapGridGeneration.cs" t="Include" />
+                <e p="WorldMapLandmarkGeneration.cs" t="Include" />
+                <e p="WorldMapOuterGridGeneration.cs" t="Include" />
+                <e p="WorldMapRegionGeneration.cs" t="Include" />
+              </e>
+              <e p="MapGenerationComponent.cs" t="Include" />
+              <e p="MapGenerationData.cs" t="Include" />
+            </e>
             <e p="MapGenerator.cs" t="Include" />
             <e p="PathGenerator.cs" t="Include" />
           </e>
@@ -1292,10 +1321,7 @@
             <e p="JobCheckers.cs" t="Include" />
             <e p="Precondition.cs" t="Include" />
           </e>
-          <e p="GoapPlanJob.cs" t="Include" />
-          <e p="GridMap.cs" t="Include" />
           <e p="Initializer.cs" t="Include" />
-          <e p="InnerMapCameraMove.cs" t="Include" />
           <e p="Intel" t="Include">
             <e p="EventIntel.cs" t="Include" />
             <e p="Intel.cs" t="Include" />
@@ -1343,9 +1369,11 @@
             <e p="Watch.cs" t="Include" />
             <e p="ZombieDeath.cs" t="Include" />
           </e>
-          <e p="JobQueue.cs" t="Include" />
-          <e p="JobQueueItem.cs" t="Include" />
           <e p="Jobs" t="Include">
+            <e p="CharacterStateJob.cs" t="Include" />
+            <e p="GoapPlanJob.cs" t="Include" />
+            <e p="JobQueue.cs" t="Include" />
+            <e p="JobQueueItem.cs" t="Include" />
             <e p="JobTriggerComponent.cs" t="Include" />
             <e p="SettlementJobTriggerComponent.cs" t="Include" />
           </e>
@@ -1356,6 +1384,8 @@
             <e p="LogFillers.cs" t="Include" />
           </e>
           <e p="Locations" t="Include">
+            <e p="Biomes.cs" t="Include" />
+            <e p="GridMap.cs" t="Include" />
             <e p="HexTile" t="Include">
               <e p="HexTile.cs" t="Include" />
               <e p="TileFeatureComponent.cs" t="Include" />
@@ -1577,29 +1607,6 @@
             <e p="UIManager.cs" t="Include" />
             <e p="WorldConfigManager.cs" t="Include" />
           </e>
-          <e p="Map Generation" t="Include">
-            <e p="Components" t="Include">
-              <e p="ElevationStructureGeneration.cs" t="Include" />
-              <e p="LandmarkStructureGeneration.cs" t="Include" />
-              <e p="MapGenerationFinalization.cs" t="Include" />
-              <e p="MonsterGeneration.cs" t="Include" />
-              <e p="PlayerDataGeneration.cs" t="Include" />
-              <e p="PortalLandmarkGeneration.cs" t="Include" />
-              <e p="RegionDataGeneration.cs" t="Include" />
-              <e p="RegionInnerMapGeneration.cs" t="Include" />
-              <e p="SettlementGeneration.cs" t="Include" />
-              <e p="SupportingFactionGeneration.cs" t="Include" />
-              <e p="TileFeatureGeneration.cs" t="Include" />
-              <e p="WorldMapBiomeGeneration.cs" t="Include" />
-              <e p="WorldMapElevationGeneration.cs" t="Include" />
-              <e p="WorldMapGridGeneration.cs" t="Include" />
-              <e p="WorldMapLandmarkGeneration.cs" t="Include" />
-              <e p="WorldMapOuterGridGeneration.cs" t="Include" />
-              <e p="WorldMapRegionGeneration.cs" t="Include" />
-            </e>
-            <e p="MapGenerationComponent.cs" t="Include" />
-            <e p="MapGenerationData.cs" t="Include" />
-          </e>
           <e p="Models" t="Include">
             <e p="ICharacter.cs" t="Include" />
             <e p="ICharacterBase.cs" t="Include" />
@@ -1706,7 +1713,6 @@
               <e p="Wolf.cs" t="Include" />
             </e>
           </e>
-          <e p="RandomNameGenerator.cs" t="Include" />
           <e p="Relationships" t="Include">
             <e p="Containers" t="Include">
               <e p="IRelationshipContainer.cs" t="Include" />
@@ -2085,6 +2091,7 @@
             <e p="EnvelopContentUnityUI.cs" t="Include" />
             <e p="FollowerComponent.cs" t="Include" />
             <e p="FPSDisplay.cs" t="Include" />
+            <e p="GameUtilities.cs" t="Include" />
             <e p="HexTileComparer.cs" t="Include" />
             <e p="HoverHandler.cs" t="Include" />
             <e p="IMG2Sprite.cs" t="Include" />
@@ -2094,6 +2101,7 @@
             <e p="NewMinionDraggable.cs" t="Include" />
             <e p="ObjectCopier.cs" t="Include" />
             <e p="RandomizedStartFrameAnimation.cs" t="Include" />
+            <e p="RandomNameGenerator.cs" t="Include" />
             <e p="RectDrawer.cs" t="Include" />
             <e p="ReflectiveEnumerator.cs" t="Include" />
             <e p="Signals.cs" t="Include" />

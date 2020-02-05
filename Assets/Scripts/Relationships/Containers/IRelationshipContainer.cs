@@ -30,5 +30,6 @@ public interface IRelationshipContainer {
     //Returns the relationship where the choices are the relationships that are passed to the function
     //Example: If we want to know if the character is lover or affair of another character we will use this function because this will return if their relationship is lover or affair
     RELATIONSHIP_TYPE GetRelationshipFromParametersWith(Relatable alterEgo, params RELATIONSHIP_TYPE[] relType);
+    bool IsFamilyMember(Character target);
     #endregion
 }

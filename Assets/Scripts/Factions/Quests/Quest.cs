@@ -252,7 +252,7 @@ public class SaveDataQuest {
     }
 
     public virtual Quest Load() {
-        string noSpacesName = Ruinarch.Utilities.RemoveAllWhiteSpace(name);
+        string noSpacesName = UtilityScripts.Utilities.RemoveAllWhiteSpace(name);
         Quest quest = System.Activator.CreateInstance(System.Type.GetType(noSpacesName), this) as Quest;
         //for (int i = 0; i < jobs.Count; i++) {
         //    JobQueueItem job = jobs[i].Load();

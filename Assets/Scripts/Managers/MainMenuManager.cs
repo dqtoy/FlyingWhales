@@ -14,7 +14,7 @@ public class MainMenuManager : MonoBehaviour {
     [ContextMenu("Get Combinations")]
     public void GetCombinations() {
         List<int> sample = new List<int> { 1, 2 };
-        List<List<int>> result = Ruinarch.Utilities.ItemCombinations(sample, 3, 3);
+        List<List<int>> result = UtilityScripts.Utilities.ItemCombinations(sample, 3, 3);
         for (int i = 0; i < result.Count; i++) {
             string log = "\n{";
             for (int j = 0; j < result[i].Count(); j++) {

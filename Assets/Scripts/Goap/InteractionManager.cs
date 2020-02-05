@@ -52,7 +52,7 @@ public partial class InteractionManager : MonoBehaviour {
         INTERACTION_TYPE[] allGoapActions = CollectionUtilities.GetEnumValues<INTERACTION_TYPE>();
         for (int i = 0; i < allGoapActions.Length; i++) {
             INTERACTION_TYPE currType = allGoapActions[i];
-            var typeName = Ruinarch.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(currType.ToString());
+            var typeName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(currType.ToString());
             System.Type type = System.Type.GetType(typeName);
             if (type != null) {
                 GoapAction data = System.Activator.CreateInstance(type) as GoapAction;
@@ -67,7 +67,7 @@ public partial class InteractionManager : MonoBehaviour {
         INTERRUPT[] allInterrupts = CollectionUtilities.GetEnumValues<INTERRUPT>();
         for (int i = 0; i < allInterrupts.Length; i++) {
             INTERRUPT interrupt = allInterrupts[i];
-            var typeName = $"Interrupts.{ Ruinarch.Utilities.NotNormalizedConversionEnumToStringNoSpaces(interrupt.ToString()) }"; ;
+            var typeName = $"Interrupts.{ UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(interrupt.ToString()) }"; ;
             System.Type type = System.Type.GetType(typeName);
             if (type != null) {
                 Interrupt data = System.Activator.CreateInstance(type) as Interrupt;

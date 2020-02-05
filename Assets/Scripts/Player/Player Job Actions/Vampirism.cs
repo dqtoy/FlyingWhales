@@ -57,7 +57,7 @@ public class Vampirism : PlayerSpell {
         if (targetCharacter.isDead) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
             return false;
         }
-        if (Ruinarch.Utilities.IsRaceBeast(targetCharacter.race) || targetCharacter.race == RACE.SKELETON) {
+        if (UtilityScripts.GameUtilities.IsRaceBeast(targetCharacter.race) || targetCharacter.race == RACE.SKELETON) {
             return false;
         }
         if (targetCharacter.traitContainer.HasTrait("Vampiric", "Cannibal")) {
@@ -91,7 +91,7 @@ public class Vampirism : PlayerSpell {
         if (targetCharacter.isDead) { //|| (!targetCharacter.isTracked && !GameManager.Instance.inspectAll)
             return false;
         }
-        if (Ruinarch.Utilities.IsRaceBeast(targetCharacter.race) || targetCharacter.race == RACE.SKELETON) {
+        if (UtilityScripts.GameUtilities.IsRaceBeast(targetCharacter.race) || targetCharacter.race == RACE.SKELETON) {
             return false;
         }
         if (targetCharacter.traitContainer.HasTrait("Vampiric", "Cannibal")) {

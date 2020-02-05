@@ -105,9 +105,9 @@ public class RacePanelUI : MonoBehaviour {
         _traitNames.Clear();
         _hpPerLevel.Clear();
         _attackPerLevel.Clear();
-        Ruinarch.Utilities.DestroyChildren(traitsScrollRect.content);
-        Ruinarch.Utilities.DestroyChildren(hpPerLevelScrollRect.content);
-        Ruinarch.Utilities.DestroyChildren(attackPerLevelScrollRect.content);
+        UtilityScripts.Utilities.DestroyChildren(traitsScrollRect.content);
+        UtilityScripts.Utilities.DestroyChildren(hpPerLevelScrollRect.content);
+        UtilityScripts.Utilities.DestroyChildren(attackPerLevelScrollRect.content);
     }
     private void SaveRace() {
         if (raceOptions.value == 0) {
@@ -116,8 +116,8 @@ public class RacePanelUI : MonoBehaviour {
             return;
 #endif
         }
-        string path = Ruinarch.Utilities.dataPath + "RaceSettings/" + raceOptions.options[raceOptions.value].text + ".json";
-        if (Ruinarch.Utilities.DoesFileExist(path)) {
+        string path = UtilityScripts.Utilities.dataPath + "RaceSettings/" + raceOptions.options[raceOptions.value].text + ".json";
+        if (UtilityScripts.Utilities.DoesFileExist(path)) {
 #if UNITY_EDITOR
             if (EditorUtility.DisplayDialog("Overwrite Race", "A race with name " + raceOptions.options[raceOptions.value].text + " already exists. Replace with this race?", "Yes", "No")) {
                 File.Delete(path);
@@ -148,7 +148,7 @@ public class RacePanelUI : MonoBehaviour {
 
     private void LoadRace() {
 #if UNITY_EDITOR
-        string filePath = EditorUtility.OpenFilePanel("Select Race", Ruinarch.Utilities.dataPath + "RaceSettings/", "json");
+        string filePath = EditorUtility.OpenFilePanel("Select Race", UtilityScripts.Utilities.dataPath + "RaceSettings/", "json");
 
         if (!string.IsNullOrEmpty(filePath)) {
             string dataAsJson = File.ReadAllText(filePath);

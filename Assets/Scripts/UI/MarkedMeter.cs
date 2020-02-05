@@ -11,7 +11,7 @@ public class MarkedMeter : MonoBehaviour {
 	[SerializeField] private Transform meterMarksParent;
 	
 	public void ResetMarks() {
-		Ruinarch.Utilities.DestroyChildren(meterMarksParent);
+		UtilityScripts.Utilities.DestroyChildren(meterMarksParent);
 	}
 
 	public void AddMark(float percent, Color color) {

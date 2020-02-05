@@ -70,9 +70,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     #endregion
 
     protected void Initialize(TILE_OBJECT_TYPE tileObjectType) {
-        id = Ruinarch.Utilities.SetID(this);
+        id = UtilityScripts.Utilities.SetID(this);
         this.tileObjectType = tileObjectType;
-        name = Ruinarch.Utilities.NormalizeStringUpperCaseFirstLetters(tileObjectType.ToString());
+        name = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(tileObjectType.ToString());
         actionHistory = new List<string>();
         allJobsTargetingThis = new List<JobQueueItem>();
         owners = new List<Character>();
@@ -88,7 +88,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         SubscribeListeners();
     }
     protected void Initialize(SaveDataTileObject data) {
-        id = Ruinarch.Utilities.SetID(this, data.id);
+        id = UtilityScripts.Utilities.SetID(this, data.id);
         tileObjectType = data.tileObjectType;
         actionHistory = new List<string>();
         allJobsTargetingThis = new List<JobQueueItem>();
@@ -883,7 +883,7 @@ public class SaveDataTileObject {
     }
 
     public virtual TileObject Load() {
-        string tileObjectName = Ruinarch.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(tileObjectType.ToString());
+        string tileObjectName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(tileObjectType.ToString());
         TileObject tileObject = System.Activator.CreateInstance(System.Type.GetType(tileObjectName), this) as TileObject;
 
         //if(structureLocationID != -1 && structureLocationAreaID != -1) {

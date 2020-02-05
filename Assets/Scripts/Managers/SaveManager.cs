@@ -39,11 +39,11 @@ public class SaveManager : MonoBehaviour {
         save.SaveCurrentDate();
         save.SaveNotifications();
 
-        SaveGame.Save<Save>(Ruinarch.Utilities.gameSavePath + saveFileName, save);
+        SaveGame.Save<Save>(UtilityScripts.Utilities.gameSavePath + saveFileName, save);
     }
     public void LoadSaveData() {
-        if(Ruinarch.Utilities.DoesFileExist(Ruinarch.Utilities.gameSavePath + saveFileName)) {
-            SetCurrentSave(SaveGame.Load<Save>(Ruinarch.Utilities.gameSavePath + saveFileName));
+        if(UtilityScripts.Utilities.DoesFileExist(UtilityScripts.Utilities.gameSavePath + saveFileName)) {
+            SetCurrentSave(SaveGame.Load<Save>(UtilityScripts.Utilities.gameSavePath + saveFileName));
         }
     }
 

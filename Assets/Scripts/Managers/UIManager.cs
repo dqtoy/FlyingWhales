@@ -497,7 +497,7 @@ public class UIManager : MonoBehaviour {
 
         Vector2 anchorMin = Vector2.zero;
         Vector2 anchorMax = Vector2.zero;
-        Ruinarch.Utilities.GetAnchorMinMax(position.anchor, ref anchorMin, ref anchorMax);
+        UtilityScripts.Utilities.GetAnchorMinMax(position.anchor, ref anchorMin, ref anchorMax);
         tooltipParentRT.anchorMin = anchorMin;
         tooltipParentRT.anchorMax = anchorMax;
         tooltipParentRT.anchoredPosition = Vector2.zero;
@@ -1081,7 +1081,7 @@ public class UIManager : MonoBehaviour {
         }
     }
     public void ShowPlayerNotificationArea() {
-        Ruinarch.Utilities.DestroyChildren(playerNotifScrollRect.content);
+        UtilityScripts.Utilities.DestroyChildren(playerNotifScrollRect.content);
         playerNotifGO.SetActive(true);
     }
     public void HidePlayerNotificationArea() {
@@ -1308,7 +1308,7 @@ public class UIManager : MonoBehaviour {
 
         Vector2 anchorMin = Vector2.zero;
         Vector2 anchorMax = Vector2.zero;
-        Ruinarch.Utilities.GetAnchorMinMax(position.anchor, ref anchorMin, ref anchorMax);
+        UtilityScripts.Utilities.GetAnchorMinMax(position.anchor, ref anchorMin, ref anchorMax);
         tooltipParentRT.anchorMin = anchorMin;
         tooltipParentRT.anchorMax = anchorMax;
         tooltipParentRT.anchoredPosition = Vector2.zero;

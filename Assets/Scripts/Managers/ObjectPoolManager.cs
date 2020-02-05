@@ -22,34 +22,16 @@ public class ObjectPoolManager : MonoBehaviour {
         Instance = this;
         allObjectPools = new Dictionary<string, EZObjectPool>();
     }
-    //public void StartInitializeObjectPoolsCoroutine() {
-    //    StartCoroutine(InitializeObjectPoolsCoroutine());
-    //}
-    public IEnumerator InitializeObjectPoolsCoroutine() {
-        for (int i = 0; i < UIPrefabs.Length; i++) {
-            GameObject currPrefab = UIPrefabs[i];
-            EZObjectPool newUIPool = CreateNewPool(currPrefab, currPrefab.name, 300, true, true, false);
-            newUIPool.transform.SetParent(UIObjectPoolParent.transform, false);
-            yield return null;
-        }
-        for (int i = 0; i < otherPrefabs.Length; i++) {
-            GameObject currPrefab = otherPrefabs[i];
-            CreateNewPool(currPrefab, currPrefab.name, 80, true, true, false);
-            yield return null;
-        }
-        ConstructGoapNodes();
-        MapGenerator.Instance.SetIsCoroutineRunning(false);
-    }
     public void InitializeObjectPools() {
         for (int i = 0; i < UIPrefabs.Length; i++) {
             GameObject currPrefab = UIPrefabs[i];
-            EZObjectPool newUIPool = CreateNewPool(currPrefab, currPrefab.name, 300, true, true, false);
+            EZObjectPool newUIPool = CreateNewPool(currPrefab, currPrefab.name, 150, true, true, false);
             newUIPool.transform.SetParent(UIObjectPoolParent.transform, false);
         }
 
         for (int i = 0; i < otherPrefabs.Length; i++) {
             GameObject currPrefab = otherPrefabs[i];
-            CreateNewPool(currPrefab, currPrefab.name, 80, true, true, false);
+            CreateNewPool(currPrefab, currPrefab.name, 50, true, true, false);
         }
 
         ConstructGoapNodes();
