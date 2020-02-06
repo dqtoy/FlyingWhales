@@ -7,20 +7,17 @@ using UtilityScripts;
 public class FamilyTreeGeneration : MapGenerationComponent {
 
     public override IEnumerator Execute(MapGenerationData data) {
-        data.familyTrees = new Dictionary<RACE, List<FamilyTree>>();
-
-        data.familyTrees.Add(RACE.HUMANS, new List<FamilyTree>());
-        data.familyTrees.Add(RACE.ELVES, new List<FamilyTree>());
+        data.InitializeFamilyTrees();
         
         //human family trees
         for (int i = 0; i < 15; i++) {
             FamilyTree familyTree = FamilyTreeGenerator.GenerateFamilyTree(RACE.HUMANS);
-            data.familyTrees[RACE.HUMANS].Add(familyTree);    
+            data.familyTreeDatabase.AddFamilyTree(familyTree);    
         }
         //elven family trees
         for (int i = 0; i < 15; i++) {
             FamilyTree familyTree = FamilyTreeGenerator.GenerateFamilyTree(RACE.ELVES);
-            data.familyTrees[RACE.ELVES].Add(familyTree);    
+            data.familyTreeDatabase.AddFamilyTree(familyTree);    
         }
 
         GenerateAdditionalCouples(RACE.HUMANS, data);
@@ -29,7 +26,7 @@ public class FamilyTreeGeneration : MapGenerationComponent {
     }
     
     private void GenerateAdditionalCouples(RACE race, MapGenerationData data) {
-        List<FamilyTree> families = data.familyTrees[race];
+        List<FamilyTree> families = data.familyTreesDictionary[race];
         int pairCount = families.Count / 2;
 
         for (int i = 0; i < pairCount; i++) {
@@ -42,7 +39,7 @@ public class FamilyTreeGeneration : MapGenerationComponent {
             }
             PreCharacterData randomChildFromFirst = CollectionUtilities.GetRandomElement(firstFamily.children);
             PreCharacterData compatibleChildFromSecond =
-                GetCompatibleChildFromFamily(randomChildFromFirst, secondFamily);
+                GetCompatibleChildFromFamily(randomChildFromFirst, secondFamily, data.familyTreeDatabase);
 
             if (compatibleChildFromSecond != null) {
                 randomChildFromFirst.AddRelationship(RELATIONSHIP_TYPE.LOVER, compatibleChildFromSecond);
@@ -57,12 +54,12 @@ public class FamilyTreeGeneration : MapGenerationComponent {
         }
     }
 
-    private PreCharacterData GetCompatibleChildFromFamily(PreCharacterData target, FamilyTree familyTree) {
+    private PreCharacterData GetCompatibleChildFromFamily(PreCharacterData target, FamilyTree familyTree, FamilyTreeDatabase database) {
         for (int i = 0; i < familyTree.children.Count; i++) {
             PreCharacterData child = familyTree.children[i];
             if (RelationshipManager.IsSexuallyCompatible(target.sexuality, child.sexuality, 
                 target.gender, child.gender) 
-                && child.GetCharacterWithRelationship(RELATIONSHIP_TYPE.LOVER) == null) {
+                && child.GetCharacterWithRelationship(RELATIONSHIP_TYPE.LOVER, database) == null) {
                 return child;
             }
         }

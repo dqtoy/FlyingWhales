@@ -34,17 +34,18 @@ public class OpinionComponent {
             return;
         }
         if (!HasOpinion(target)) {
-            opinions.Add(target, ObjectPoolManager.Instance.CreateNewOpinionData());
-            opinions[target].AdjustOpinion("Base", 0);
+            OpinionData opinionData = ObjectPoolManager.Instance.CreateNewOpinionData(); 
+            opinions.Add(target, opinionData);
+            opinionData.OnInitiallyAdded();
             charactersWithOpinion.Add(target);
 
-            //Note: I did this because compatibility value between two characters must only be 1 instance, but since we have compatibilityValue variable per opinion, it now has 2 instances
-            //In order for us to be sure that only 1 compatibility value is set, we check if the newly added target to the opinion already has opinion towards the owner, then it must mean that there is already a compatibility value, that's why we set it to 0
-            if (!target.opinionComponent.HasOpinion(owner)) {
-                opinions[target].SetRandomCompatibilityValue();
-            } else {
-                opinions[target].SetCompatibilityValue(0);
-            }
+            // //Note: I did this because compatibility value between two characters must only be 1 instance, but since we have compatibilityValue variable per opinion, it now has 2 instances
+            // //In order for us to be sure that only 1 compatibility value is set, we check if the newly added target to the opinion already has opinion towards the owner, then it must mean that there is already a compatibility value, that's why we set it to 0
+            // if (!target.opinionComponent.HasOpinion(owner)) {
+            //     opinions[target].OnInitiallyAdded();
+            // } else {
+            //     opinions[target].SetCompatibilityValue(0);
+            // }
             Messenger.Broadcast(Signals.OPINION_ADDED, owner, target);
         }
         if (owner.traitContainer.HasTrait("Serial Killer")) {
@@ -70,17 +71,18 @@ public class OpinionComponent {
             return;
         }
         if (!HasOpinion(target)) {
-            opinions.Add(target, ObjectPoolManager.Instance.CreateNewOpinionData());
-            opinions[target].AdjustOpinion("Base", 0);
+            OpinionData opinionData = ObjectPoolManager.Instance.CreateNewOpinionData(); 
+            opinions.Add(target, opinionData);
+            opinionData.OnInitiallyAdded();
             charactersWithOpinion.Add(target);
 
-            //Note: I did this because compatibility value between two characters must only be 1 instance, but since we have compatibilityValue variable per opinion, it now has 2 instances
-            //In order for us to be sure that only 1 compatibility value is set, we check if the newly added target to the opinion already has opinion towards the owner, then it must mean that there is already a compatibility value, that's why we set it to 0
-            if (!target.opinionComponent.HasOpinion(owner)) {
-                opinions[target].SetRandomCompatibilityValue();
-            } else {
-                opinions[target].SetCompatibilityValue(0);
-            }
+            // //Note: I did this because compatibility value between two characters must only be 1 instance, but since we have compatibilityValue variable per opinion, it now has 2 instances
+            // //In order for us to be sure that only 1 compatibility value is set, we check if the newly added target to the opinion already has opinion towards the owner, then it must mean that there is already a compatibility value, that's why we set it to 0
+            // if (!target.opinionComponent.HasOpinion(owner)) {
+            //     opinions[target].OnInitiallyAdded();
+            // } else {
+            //     opinions[target].SetCompatibilityValue(0);
+            // }
             Messenger.Broadcast(Signals.OPINION_ADDED, owner, target);
         }
         if (owner.traitContainer.HasTrait("Serial Killer")) {
@@ -324,64 +326,6 @@ public class OpinionComponent {
             return GetOpinionLabel(target);
         }
         return Acquaintance;
-    }
-    #endregion
-}
-
-//TODO: Object pool this
-public class OpinionData {
-    public Dictionary<string, int> allOpinions;
-    public int compatibilityValue; //NOTE: Getting compatibility value must be gotten from RelationshipManager, DO NOT CALL THIS DIRECTLY!
-
-    #region getters
-    public int totalOpinion => allOpinions.Sum(x => x.Value);
-    #endregion
-
-    public OpinionData() {
-        allOpinions = new Dictionary<string, int>();
-    }
-
-    public void AdjustOpinion(string text, int value) {
-        if (allOpinions.ContainsKey(text)) {
-            allOpinions[text] += value;
-        } else {
-            allOpinions.Add(text, value);
-        }
-    }
-    public void SetOpinion(string text, int value) {
-        if (allOpinions.ContainsKey(text)) {
-            allOpinions[text] = value;
-        } else {
-            allOpinions.Add(text, value);
-        }
-    }
-    public bool RemoveOpinion(string text) {
-        if (allOpinions.ContainsKey(text)) {
-            return allOpinions.Remove(text);
-        }
-        return false;
-    }
-    public bool HasOpinion(string text) {
-        return allOpinions.ContainsKey(text);
-    }
-    public void SetRandomCompatibilityValue() {
-        compatibilityValue = UnityEngine.Random.Range(0, 6); //0 - 5 compatibility value
-        Assert.IsTrue(compatibilityValue >= OpinionComponent.MinCompatibility 
-                      && compatibilityValue <= OpinionComponent.MaxCompatibility, 
-            $"Compatibility value exceeds the min/max compatibility. Set Value is {compatibilityValue.ToString()}");
-    }
-    public void SetCompatibilityValue(int value) {
-        compatibilityValue = value;
-        Assert.IsTrue(compatibilityValue >= OpinionComponent.MinCompatibility 
-                      && compatibilityValue <= OpinionComponent.MaxCompatibility, 
-            $"Compatibility value exceeds the min/max compatibility. Set Value is {compatibilityValue.ToString()}");
-    }
-
-    #region Object Pool
-    public void Initialize() { }
-    public void Reset() {
-        allOpinions.Clear();
-        compatibilityValue = 0;
     }
     #endregion
 }

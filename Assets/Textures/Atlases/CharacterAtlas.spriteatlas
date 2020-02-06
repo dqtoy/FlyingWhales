@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: da1d92a130b3f8f4bb0110cd352dca08, type: 3}
-    totalSpriteSurfaceArea: 12728428
+    totalSpriteSurfaceArea: 12719964
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -1845,7 +1845,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 89879f7df333a4c44900024d8edf0161, type: 3}
   - {fileID: 21300000, guid: 285d9f7d2db99e74b8e4d380a01fc338, type: 3}
   - {fileID: 21300000, guid: 7889318d872b6444aba72f8cc9fad2f3, type: 3}
-  - {fileID: 21300000, guid: 90c4028d9f8e36147a98c18f26ea03fa, type: 3}
   - {fileID: 21300000, guid: e458468d049987342a7292b1f93d7a67, type: 3}
   - {fileID: 21300000, guid: c566478d03d6acb49bfb667d97841ea7, type: 3}
   - {fileID: 21300000, guid: 4e93d78d9e0c112428c5fc9f3cc35a15, type: 3}
@@ -3979,7 +3978,6 @@ SpriteAtlas:
   - idle_2
   - attack_3
   - interact_2
-  - interact_1
   - walk_2
   - walk_3
   - Raise up_00006

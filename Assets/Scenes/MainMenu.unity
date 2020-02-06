@@ -99,7 +99,7 @@ LightmapSettings:
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 112000002, guid: 9252122cd68805a4891073545c6d21fc,
     type: 2}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -2275,7 +2275,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 77be54e4035ed324f81d4fab323806b8, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 0d27b44bc2ff49a498e13985e2ca0dd8, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2638,7 +2638,7 @@ AudioSource:
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 1999972128491324, guid: 92d03677d05ecec4ba3a597bfa1ae2ad,
-    type: 2}
+    type: 3}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
@@ -2657,7 +2657,7 @@ GameObject:
 RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 224976815688809406, guid: 92d03677d05ecec4ba3a597bfa1ae2ad,
-    type: 2}
+    type: 3}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 512781128}
@@ -2678,7 +2678,7 @@ RectTransform:
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 114036181928794364, guid: 92d03677d05ecec4ba3a597bfa1ae2ad,
-    type: 2}
+    type: 3}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 512781128}
@@ -2790,7 +2790,7 @@ MonoBehaviour:
 CanvasRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 222183351736059192, guid: 92d03677d05ecec4ba3a597bfa1ae2ad,
-    type: 2}
+    type: 3}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 512781128}
@@ -3199,7 +3199,7 @@ CanvasRenderer:
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 1999972128491324, guid: 92d03677d05ecec4ba3a597bfa1ae2ad,
-    type: 2}
+    type: 3}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
@@ -3218,7 +3218,7 @@ GameObject:
 RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 224976815688809406, guid: 92d03677d05ecec4ba3a597bfa1ae2ad,
-    type: 2}
+    type: 3}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 527174279}
@@ -3239,7 +3239,7 @@ RectTransform:
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 114036181928794364, guid: 92d03677d05ecec4ba3a597bfa1ae2ad,
-    type: 2}
+    type: 3}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 527174279}
@@ -3351,7 +3351,7 @@ MonoBehaviour:
 CanvasRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 222183351736059192, guid: 92d03677d05ecec4ba3a597bfa1ae2ad,
-    type: 2}
+    type: 3}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 527174279}
@@ -3602,7 +3602,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 546f7f0e709a05b4f84217f080f5f197, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 9850dc54e898e064ab7e75bee561e3c3, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -8504,7 +8504,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: b8c7e4a80395a9d42bb7eec856407109, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 4cc45156d0c089044a67884876e8a398, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -15902,7 +15902,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: ca00bdda2aa400f4a813999843e76101, type: 3}
+  m_Sprite: {fileID: 21300000, guid: dd6955e70bdda84488f0c70fa9ebe956, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -16085,7 +16085,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5596aefd107edb742ac964f300c3f01c, type: 3}
+  m_Sprite: {fileID: 21300000, guid: c9992677622a51f44bf9b258f1742819, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -24959,7 +24959,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: fcd02a570f0b89a43861c34329643b57, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 031201009e100000052201009e100000, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

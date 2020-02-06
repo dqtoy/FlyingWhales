@@ -12,6 +12,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 			GridMap.Instance.allRegions[i].GenerateOuterBorders();
 			GridMap.Instance.allRegions[i].HideBorders();
 		}
+		data.familyTreeDatabase.Save();
 	}
 
 	private IEnumerator FinalizeInnerMaps() {

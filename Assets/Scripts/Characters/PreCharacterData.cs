@@ -2,25 +2,30 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class PreCharacterData {
     
-    public int id { get; }
-    public RACE race { get; }
-    public GENDER gender { get; }
+    public int id { get; set; }
+    public RACE race { get; set; }
+    public GENDER gender { get; set; }
+    public string firstName { get; set; }
+    public string surName { get; set; }
+    public SEXUALITY sexuality { get; set; }
+    public UtilityScripts.SerializableDictionary<int, PreCharacterRelationship> relationships { get; set; }
+    public bool hasBeenSpawned { get; set; }
+
     public string name => $"{firstName} {surName}";
-    public string firstName { get; private set; }
-    public string surName { get; private set; }
-    public SEXUALITY sexuality { get; }
-    public Dictionary<PreCharacterData, PreCharacterRelationship> relationships { get; }
-    public bool hasBeenSpawned { get; private set; }
     
-    public PreCharacterData(RACE _race, GENDER _gender, WeightedDictionary<SEXUALITY> _sexualityWeights) {
+    public PreCharacterData() {
+        relationships = new UtilityScripts.SerializableDictionary<int, PreCharacterRelationship>();
+    }
+    
+    public PreCharacterData(RACE _race, GENDER _gender, WeightedDictionary<SEXUALITY> _sexualityWeights) : this() {
         id = UtilityScripts.Utilities.SetID(this);
         race = _race;
         gender = _gender;
         SetName(RandomNameGenerator.GenerateRandomName(_race, _gender));
         sexuality = _sexualityWeights.PickRandomElementGivenWeights();
-        relationships = new Dictionary<PreCharacterData, PreCharacterRelationship>();
     }
     private void SetName(string name) {
         firstName = name.Split(' ')[0];
@@ -61,22 +66,23 @@ public class PreCharacterData {
     }
     
     private PreCharacterRelationship GetOrInitializeRelationshipWith(PreCharacterData characterData) {
-        if (relationships.ContainsKey(characterData) == false) {
-            relationships.Add(characterData, new PreCharacterRelationship());
+        if (relationships.ContainsKey(characterData.id) == false) {
+            relationships.Add(characterData.id, new PreCharacterRelationship());
         }
-        return relationships[characterData];
+        return relationships[characterData.id];
     }
-    public PreCharacterData GetCharacterWithRelationship(RELATIONSHIP_TYPE relationshipType) {
+    public PreCharacterData GetCharacterWithRelationship(RELATIONSHIP_TYPE relationshipType, FamilyTreeDatabase database) {
         foreach (var relationship in relationships) {
             if (relationship.Value.relationships.Contains(relationshipType)) {
-                return relationship.Key;
+                int id = relationship.Key;
+                return database.GetCharacterWithID(id);
             }
         }
         return null;
     }
 
     public int GetCompatibilityWith(PreCharacterData character) {
-        return relationships[character].compatibility;
+        return relationships[character.id].compatibility;
     }
 
     public void SetHasBeenSpawned() {

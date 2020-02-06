@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UtilityScripts;
 using Random = UnityEngine.Random;
 
@@ -141,7 +142,14 @@ public class SettlementGeneration : MapGenerationComponent {
 							citizenCount += 1;
 						} else {
 							//no more characters to spawn
-							Debug.LogWarning("Could not find any more characters to spawn");
+							Debug.LogWarning("Could not find any more characters to spawn. Generating a new family tree.");
+							FamilyTree newFamily = FamilyTreeGenerator.GenerateFamilyTree(faction.race);
+							data.familyTreeDatabase.AddFamilyTree(newFamily);
+							singleCharacter = GetAvailableSingleCharacterForSettlement(faction.race, data, settlement);
+							Assert.IsNotNull(singleCharacter, $"Generation tried to generate a new family for spawning a needed citizen. But still could not find a single character!");
+							SpawnCharacter(singleCharacter, settlement.classManager.GetCurrentClassToCreate(), 
+								dwelling, faction, settlement);
+							citizenCount += 1;
 						}
 					}
 				}
@@ -156,6 +164,13 @@ public class SettlementGeneration : MapGenerationComponent {
 				} else {
 					//no more characters to spawn
 					Debug.LogWarning("Could not find any more characters to spawn");
+					FamilyTree newFamily = FamilyTreeGenerator.GenerateFamilyTree(faction.race);
+					data.familyTreeDatabase.AddFamilyTree(newFamily);
+					singleCharacter = GetAvailableSingleCharacterForSettlement(faction.race, data, settlement);
+					Assert.IsNotNull(singleCharacter, $"Generation tried to generate a new family for spawning a needed citizen. But still could not find a single character!");
+					SpawnCharacter(singleCharacter, settlement.classManager.GetCurrentClassToCreate(), 
+						dwelling, faction, settlement);
+					citizenCount += 1;
 				}
 			}
 		}
@@ -163,13 +178,13 @@ public class SettlementGeneration : MapGenerationComponent {
 	}
 	private List<Couple> GetAvailableCouplesToBeSpawned(RACE race, MapGenerationData data) {
 		List<Couple> couples = new List<Couple>();
-		List<FamilyTree> familyTrees = data.familyTrees[race];
+		List<FamilyTree> familyTrees = data.familyTreesDictionary[race];
 		for (int i = 0; i < familyTrees.Count; i++) {
 			FamilyTree familyTree = familyTrees[i];
 			for (int j = 0; j < familyTree.allFamilyMembers.Count; j++) {
 				PreCharacterData familyMember = familyTree.allFamilyMembers[j];
 				if (familyMember.hasBeenSpawned == false) {
-					PreCharacterData lover = familyMember.GetCharacterWithRelationship(RELATIONSHIP_TYPE.LOVER);
+					PreCharacterData lover = familyMember.GetCharacterWithRelationship(RELATIONSHIP_TYPE.LOVER, data.familyTreeDatabase);
 					if (lover != null && lover.hasBeenSpawned == false) {
 						Couple couple = new Couple(familyMember, lover);
 						if (couples.Contains(couple) == false) {
@@ -183,7 +198,7 @@ public class SettlementGeneration : MapGenerationComponent {
 	}
 	private List<Couple> GetAvailableSiblingCouplesToBeSpawned(RACE race, MapGenerationData data) {
 		List<Couple> couples = new List<Couple>();
-		List<FamilyTree> familyTrees = data.familyTrees[race];
+		List<FamilyTree> familyTrees = data.familyTreesDictionary[race];
 		for (int i = 0; i < familyTrees.Count; i++) {
 			FamilyTree familyTree = familyTrees[i];
 			if (familyTree.children != null && familyTree.children.Count >= 2) {
@@ -203,13 +218,13 @@ public class SettlementGeneration : MapGenerationComponent {
 	}
 	private PreCharacterData GetAvailableSingleCharacterForSettlement(RACE race, MapGenerationData data, Settlement settlement) {
 		List<PreCharacterData> availableCharacters = new List<PreCharacterData>();
-		List<FamilyTree> familyTrees = data.familyTrees[race];
+		List<FamilyTree> familyTrees = data.familyTreesDictionary[race];
 		for (int i = 0; i < familyTrees.Count; i++) {
 			FamilyTree familyTree = familyTrees[i];
 			for (int j = 0; j < familyTree.allFamilyMembers.Count; j++) {
 				PreCharacterData familyMember = familyTree.allFamilyMembers[j];
 				if (familyMember.hasBeenSpawned == false) {
-					PreCharacterData lover = familyMember.GetCharacterWithRelationship(RELATIONSHIP_TYPE.LOVER);
+					PreCharacterData lover = familyMember.GetCharacterWithRelationship(RELATIONSHIP_TYPE.LOVER, data.familyTreeDatabase);
 					//check if the character has a lover, if it does, check if its lover has been spawned, if it has, check that the lover was spawned in a different settlement
 					if (lover == null || lover.hasBeenSpawned == false || 
 					    CharacterManager.Instance.GetCharacterByID(lover.id).homeSettlement != settlement) {
@@ -249,7 +264,7 @@ public class SettlementGeneration : MapGenerationComponent {
 
 	#region Relationships
 	private void ApplyPreGeneratedRelationships(MapGenerationData data) {
-		foreach (var pair in data.familyTrees) {
+		foreach (var pair in data.familyTreesDictionary) {
 			for (int i = 0; i < pair.Value.Count; i++) {
 				FamilyTree familyTree = pair.Value[i];
 				for (int j = 0; j < familyTree.allFamilyMembers.Count; j++) {
@@ -257,8 +272,9 @@ public class SettlementGeneration : MapGenerationComponent {
 					if (characterData.hasBeenSpawned) {
 						Character character = CharacterManager.Instance.GetCharacterByID(characterData.id);
 						foreach (var kvp in characterData.relationships) {
-							if (kvp.Key.hasBeenSpawned) {
-								Character target = CharacterManager.Instance.GetCharacterByID(kvp.Key.id);
+							PreCharacterData targetCharacterData = data.familyTreeDatabase.GetCharacterWithID(kvp.Key);
+							if (targetCharacterData.hasBeenSpawned) {
+								Character target = CharacterManager.Instance.GetCharacterByID(targetCharacterData.id);
 								character.opinionComponent.SetOpinion(target, "Base", kvp.Value.baseOpinion);
 								character.opinionComponent.GetOpinionData(target).SetCompatibilityValue(kvp.Value.compatibility);
 								for (int k = 0; k < kvp.Value.relationships.Count; k++) {

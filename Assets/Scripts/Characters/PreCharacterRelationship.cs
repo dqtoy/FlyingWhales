@@ -5,9 +5,9 @@ using UnityEngine.Assertions;
 
 public class PreCharacterRelationship {
     
-    public int compatibility { get; private set; }
-    public List<RELATIONSHIP_TYPE> relationships { get; }
-    public int baseOpinion { get; private set; }
+    public int compatibility { get; set; }
+    public List<RELATIONSHIP_TYPE> relationships { get; set; }
+    public int baseOpinion { get; set; }
 
     public PreCharacterRelationship() {
         relationships = new List<RELATIONSHIP_TYPE>();

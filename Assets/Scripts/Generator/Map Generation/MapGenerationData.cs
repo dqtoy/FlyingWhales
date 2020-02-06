@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Xml.Serialization;
 using UnityEngine;
 
 /// <summary>
@@ -30,6 +32,12 @@ public class MapGenerationData {
 	public LocationStructure portalStructure;
 	
 	//family trees
-	public Dictionary<RACE, List<FamilyTree>> familyTrees;
-
+	public FamilyTreeDatabase familyTreeDatabase;
+	public Dictionary<RACE, List<FamilyTree>> familyTreesDictionary => familyTreeDatabase.allFamilyTreesDictionary;
+	
+	#region Family Trees
+	public void InitializeFamilyTrees() {
+		familyTreeDatabase = new FamilyTreeDatabase();
+	}
+	#endregion
 }
