@@ -20,9 +20,9 @@ public class MoodComponent {
 	private bool _executeMoodChangeEffects;
 	private bool _isInMajorMentalBreak;
 	private bool _isInMinorMentalBreak;
-
+	
 	public Dictionary<string, int> moodModificationsSummary { get; }
-
+	public string mentalBreakName { get; private set; }
 	public MOOD_STATE moodState {
 		get {
 			if (_isInNormalMood) {
@@ -65,24 +65,21 @@ public class MoodComponent {
 	}
 	public void SetMoodValue(int amount) {
 		moodValue = amount;
-		// moodValue = Mathf.Clamp(moodValue, 1, 100);
 		OnMoodChanged();	
 	}
-	public void AddMoodEffect(int amount, IMoodModifier modifier, ActualGoapNode triggerAction = null) {
+	public void AddMoodEffect(int amount, IMoodModifier modifier) {
 		if (amount == 0) {
 			return; //ignore
 		}
 		moodValue += amount;
-		// moodValue = Mathf.Clamp(moodValue, 1, 100);
 		AddModificationToSummary(modifier.moodModificationDescription, amount);
 		OnMoodChanged();	
 	}
-	public void RemoveMoodEffect(int amount, IMoodModifier modifier, ActualGoapNode triggerAction = null) {
+	public void RemoveMoodEffect(int amount, IMoodModifier modifier) {
 		if (amount == 0) {
 			return; //ignore
 		}
 		moodValue += amount;
-		// moodValue = Mathf.Clamp(moodValue, 1, 100);
 		RemoveModificationFromSummary(modifier.moodModificationDescription, amount);
 		OnMoodChanged();	
 	}
@@ -158,51 +155,6 @@ public class MoodComponent {
 	private void StopCheckingForMinorMentalBreak() {
 		Debug.Log($"<color=red>{GameManager.Instance.TodayLogString()}{_owner.name} has stopped checking for minor mental break.</color>");
 		Messenger.RemoveListener(Signals.HOUR_STARTED, CheckForMinorMentalBreak);
-	}
-	#endregion
-
-	#region Minor Mental Break
-	private void CheckForMinorMentalBreak() {
-		IncreaseMinorMentalBreakChance();
-		if (_owner.canPerform && _isInMinorMentalBreak == false && _isInMajorMentalBreak == false) {
-			float roll = Random.Range(0f, 100f);
-			Debug.Log($"<color=green>{GameManager.Instance.TodayLogString()}{_owner.name} is checking for <b>MINOR</b> mental break. " +
-			          $"Roll is <b>{roll.ToString(CultureInfo.InvariantCulture)}</b>. Chance is <b>{currentLowMoodEffectChance.ToString(CultureInfo.InvariantCulture)}</b></color>");
-			if (roll <= currentLowMoodEffectChance) {
-				//Trigger Minor Mental Break.
-				TriggerMinorMentalBreak();
-			}	
-		}
-	}
-	private void AdjustMinorMentalBreakChance(float amount) {
-		_currentLowMoodEffectChance = currentLowMoodEffectChance + amount;
-		_currentLowMoodEffectChance = Mathf.Clamp(currentLowMoodEffectChance, 0, 100f);
-		if (currentLowMoodEffectChance <= 0f) {
-			Messenger.RemoveListener(Signals.HOUR_STARTED, DecreaseMinorMentalBreakChance);
-		}
-	}
-	private void SetMinorMentalBreakChance(float amount) {
-		_currentLowMoodEffectChance = amount;
-		_currentLowMoodEffectChance = Mathf.Clamp(currentLowMoodEffectChance, 0, 100f);
-		if (currentLowMoodEffectChance <= 0f) {
-			Messenger.RemoveListener(Signals.HOUR_STARTED, DecreaseMinorMentalBreakChance);
-		}
-	}
-	private void IncreaseMinorMentalBreakChance() {
-		AdjustMinorMentalBreakChance(GetMinorMentalBreakChanceIncrease());
-	}
-	private void DecreaseMinorMentalBreakChance() {
-		AdjustMinorMentalBreakChance(GetMinorMentalBreakChanceDecrease());
-	}
-	private float GetMinorMentalBreakChanceIncrease() {
-		return 100f / (EditableValuesManager.Instance.minorMentalBreakDayThreshold * 24f); //because there are 24 hours in a day
-	}
-	private float GetMinorMentalBreakChanceDecrease() {
-		return (100f / (EditableValuesManager.Instance.minorMentalBreakDayThreshold * 24f)) * -1f; //because there are 24 hours in a day
-	}
-	private void ResetMinorMentalBreakChance() {
-		Debug.Log($"<color=blue>{GameManager.Instance.TodayLogString()}{_owner.name} reset minor mental break chance.</color>");
-		SetMinorMentalBreakChance(0f);
 	}
 	#endregion
 
@@ -297,7 +249,6 @@ public class MoodComponent {
 		int roll = Random.Range(0, 3);
 		string summary = $"{GameManager.Instance.TodayLogString()}{_owner.name} triggered major mental break.";
 		_isInMajorMentalBreak = true;
-		_owner.interruptComponent.TriggerInterrupt(INTERRUPT.Major_Mental_Break, _owner);
 		if (roll == 0) {
 			//Berserk
 			summary += "Chosen break is <b>berserk</b>";
@@ -311,11 +262,13 @@ public class MoodComponent {
 			summary += "Chosen break is <b>suicidal</b>";
 			TriggerSuicidal();
 		}
+		_owner.interruptComponent.TriggerInterrupt(INTERRUPT.Mental_Break, _owner);
 		Debug.Log($"<color=red>{summary}</color>");
 		StopCheckingForMajorMentalBreak();
 	}
 	private void TriggerBerserk() {
 		if (_owner.traitContainer.AddTrait(_owner, "Berserked")) {
+			mentalBreakName = "Berserked";
 			Messenger.AddListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, CheckIfBerserkLost);	
 		} else {
 			Debug.LogWarning($"{_owner.name} triggered berserk mental break but could not add berserk trait to its traits!");
@@ -331,6 +284,7 @@ public class MoodComponent {
 	}
 	private void TriggerCatatonic() {
 		if (_owner.traitContainer.AddTrait(_owner, "Catatonic")) {
+			mentalBreakName = "Catatonia";
 			Messenger.AddListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, CheckIfCatatonicLost);
 		} else {
 			Debug.LogWarning($"{_owner.name} triggered catatonic mental break but could not add catatonic trait to its traits!");
@@ -346,6 +300,7 @@ public class MoodComponent {
 	}
 	private void TriggerSuicidal() {
 		if (_owner.traitContainer.AddTrait(_owner, "Suicidal")) {
+			mentalBreakName = "Suicidal";
 			Messenger.AddListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, CheckIfSuicidalLost);
 		} else {
 			Debug.LogWarning($"{_owner.name} triggered suicidal mental break but could not add suicidal trait to its traits!");
@@ -362,6 +317,48 @@ public class MoodComponent {
 	#endregion
 
 	#region Minor Mental Break
+	private void CheckForMinorMentalBreak() {
+		IncreaseMinorMentalBreakChance();
+		if (_owner.canPerform && _isInMinorMentalBreak == false && _isInMajorMentalBreak == false) {
+			float roll = Random.Range(0f, 100f);
+			Debug.Log($"<color=green>{GameManager.Instance.TodayLogString()}{_owner.name} is checking for <b>MINOR</b> mental break. " +
+			          $"Roll is <b>{roll.ToString(CultureInfo.InvariantCulture)}</b>. Chance is <b>{currentLowMoodEffectChance.ToString(CultureInfo.InvariantCulture)}</b></color>");
+			if (roll <= currentLowMoodEffectChance) {
+				//Trigger Minor Mental Break.
+				TriggerMinorMentalBreak();
+			}	
+		}
+	}
+	private void AdjustMinorMentalBreakChance(float amount) {
+		_currentLowMoodEffectChance = currentLowMoodEffectChance + amount;
+		_currentLowMoodEffectChance = Mathf.Clamp(currentLowMoodEffectChance, 0, 100f);
+		if (currentLowMoodEffectChance <= 0f) {
+			Messenger.RemoveListener(Signals.HOUR_STARTED, DecreaseMinorMentalBreakChance);
+		}
+	}
+	private void SetMinorMentalBreakChance(float amount) {
+		_currentLowMoodEffectChance = amount;
+		_currentLowMoodEffectChance = Mathf.Clamp(currentLowMoodEffectChance, 0, 100f);
+		if (currentLowMoodEffectChance <= 0f) {
+			Messenger.RemoveListener(Signals.HOUR_STARTED, DecreaseMinorMentalBreakChance);
+		}
+	}
+	private void IncreaseMinorMentalBreakChance() {
+		AdjustMinorMentalBreakChance(GetMinorMentalBreakChanceIncrease());
+	}
+	private void DecreaseMinorMentalBreakChance() {
+		AdjustMinorMentalBreakChance(GetMinorMentalBreakChanceDecrease());
+	}
+	private float GetMinorMentalBreakChanceIncrease() {
+		return 100f / (EditableValuesManager.Instance.minorMentalBreakDayThreshold * 24f); //because there are 24 hours in a day
+	}
+	private float GetMinorMentalBreakChanceDecrease() {
+		return (100f / (EditableValuesManager.Instance.minorMentalBreakDayThreshold * 24f)) * -1f; //because there are 24 hours in a day
+	}
+	private void ResetMinorMentalBreakChance() {
+		Debug.Log($"<color=blue>{GameManager.Instance.TodayLogString()}{_owner.name} reset minor mental break chance.</color>");
+		SetMinorMentalBreakChance(0f);
+	}
 	private void TriggerMinorMentalBreak() {
 		if (_isInMinorMentalBreak) {
 			throw new Exception($"{GameManager.Instance.TodayLogString()}{_owner.name} is already in a minor mental break, but is trying to trigger another one!");
@@ -369,7 +366,6 @@ public class MoodComponent {
 		int roll = Random.Range(0, 2);
 		string summary = $"{GameManager.Instance.TodayLogString()}{_owner.name} triggered minor mental break.";
 		_isInMinorMentalBreak = true;
-		_owner.interruptComponent.TriggerInterrupt(INTERRUPT.Minor_Mental_Break, _owner);
 		if (roll == 0) {
 			summary += "Chosen break is <b>Hide at Home</b>";
 			TriggerHideAtHome();	
@@ -377,11 +373,13 @@ public class MoodComponent {
 			summary += "Chosen break is <b>dazed</b>";
 			TriggerDazed();
 		}
+		_owner.interruptComponent.TriggerInterrupt(INTERRUPT.Mental_Break, _owner);
 		Debug.Log($"<color=red>{summary}</color>");
 		StopCheckingForMinorMentalBreak();
 	}
 	private void TriggerHideAtHome() {
 		if (_owner.traitContainer.AddTrait(_owner, "Hiding")) {
+			mentalBreakName = "Desires Isolation";
 			Messenger.AddListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, CheckIfHidingLost);	
 		} else {
 			Debug.LogWarning($"{_owner.name} triggered hide at home mental break but could not add hiding trait to its traits!");
@@ -397,6 +395,7 @@ public class MoodComponent {
 	}
 	private void TriggerDazed() {
 		if (_owner.traitContainer.AddTrait(_owner, "Dazed")) {
+			mentalBreakName = "Dazed";
 			Messenger.AddListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, CheckIfDazedLost);	
 		} else {
 			Debug.LogWarning($"{_owner.name} triggered berserk mental break but could not add berserk trait to its traits!");
@@ -463,39 +462,3 @@ public class MoodComponent {
 	}
 	#endregion
 }
-
-// if(amount < 0 && _owner.currentMoodType == CHARACTER_MOOD.DARK) {
-// if (_owner.doNotDisturb) {
-// 	return;
-// }
-// if(_owner.currentActionNode != null && _owner.currentActionNode.action.goapType == INTERACTION_TYPE.TANTRUM) {
-// 	return;
-// }
-// string tantrumReason = "Became " + fromTrait.GetNameInUI(_owner);
-// 	if (triggerAction != null) {
-// 	tantrumReason = Utilities.LogReplacer(triggerAction.currentState.descriptionLog);
-// }
-//
-// //string tantrumLog = this.name + "'s mood was adjusted by " + amount.ToString() + " and current mood is " + currentMoodType.ToString() + ".";
-// //tantrumLog += "Reason: " + tantrumReason;
-// //tantrumLog += "\nRolling for Tantrum..."; 
-//
-// int chance = UnityEngine.Random.Range(0, 100);
-//
-// 	//tantrumLog += "\nRolled: " + chance.ToString();
-//
-// 	if (chance < 10) { 
-// 	//Note: Do not cancel jobs and plans anymore, let the job priority decide if the character will do tantrum already
-// 	//CancelAllJobsAndPlans();
-// 	//Create Tantrum action
-// 	GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob((JOB_TYPE) JOB_TYPE.TANTRUM, (INTERACTION_TYPE) INTERACTION_TYPE.TANTRUM, (IPointOfInterest) this, (IJobOwner) this);
-// 	job.AddOtherData(INTERACTION_TYPE.TANTRUM, new object[] { tantrumReason });
-//
-// 	//tantrum.SetCannotOverrideJob(true);
-// 	//tantrum.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
-// 	_owner.jobQueue.AddJobInQueue(job);
-// 	//jobQueue.ProcessFirstJobInQueue(this);
-// 	//tantrumLog += "\n" + this.name + " started having a tantrum!";
-// }
-// //Debug.Log(tantrumLog);
-// }

@@ -1008,8 +1008,7 @@ public enum INTERRUPT {
     Invite_To_Make_Love,
     Plagued,
     Poisoned,
-    Major_Mental_Break,
-    Minor_Mental_Break
+    Mental_Break,
 }
 
 public enum TRAIT_TYPE {

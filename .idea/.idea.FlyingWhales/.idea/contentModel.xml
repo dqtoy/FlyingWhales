@@ -1353,8 +1353,7 @@
             <e p="JoinFaction.cs" t="Include" />
             <e p="LaughAt.cs" t="Include" />
             <e p="LeaveFaction.cs" t="Include" />
-            <e p="MajorMentalBreak.cs" t="Include" />
-            <e p="MinorMentalBreak.cs" t="Include" />
+            <e p="MentalBreak.cs" t="Include" />
             <e p="Mock.cs" t="Include" />
             <e p="NarcolepticAttack.cs" t="Include" />
             <e p="Plagued.cs" t="Include" />
