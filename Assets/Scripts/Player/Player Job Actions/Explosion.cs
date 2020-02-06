@@ -57,6 +57,7 @@ public class Explosion : PlayerSpell {
             }
         }
         InnerMapCameraMove.Instance.ShakeCamera();
+        CreateMeteorStrikeAt(targetTile);
     }
     protected override void OnLevelUp() {
         base.OnLevelUp();
@@ -73,6 +74,17 @@ public class Explosion : PlayerSpell {
         InnerMapManager.Instance.UnhighlightTiles(tiles);
     }
     #endregion
+
+    private void CreateMeteorStrikeAt(LocationGridTile tile) {
+        GameObject meteorGO = InnerMapManager.Instance.mapObjectFactory.CreateNewMeteorObject();
+        meteorGO.transform.SetParent(tile.parentMap.structureParent);
+        meteorGO.transform.position = tile.centeredWorldLocation;
+        GameManager.Instance.StartCoroutine(ExpireCoroutine(meteorGO));
+    }
+    private IEnumerator ExpireCoroutine(GameObject go) {
+        yield return new WaitForSeconds(2f);
+        ObjectPoolManager.Instance.DestroyObject(go);
+    }
 }
 
 public class ExplosionData : SpellData {
@@ -123,6 +135,7 @@ public class ExplosionData : SpellData {
             }
         }
         InnerMapCameraMove.Instance.ShakeCamera();
+
     }
     public override void ShowRange(LocationGridTile targetTile) {
         base.ShowRange(targetTile);

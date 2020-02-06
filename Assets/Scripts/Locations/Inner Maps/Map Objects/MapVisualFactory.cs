@@ -11,6 +11,10 @@ public class MapVisualFactory {
         GameObject obj = ObjectPoolManager.Instance.InstantiateObjectFromPool(Item_Object_Prefab_Name, Vector3.zero, Quaternion.identity, null);
         return obj;
     }
+    public GameObject CreateNewMeteorObject() {
+        GameObject obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("MeteorVisualObject", Vector3.zero, Quaternion.identity, null);
+        return obj;
+    }
 
     public GameObject CreateNewTileObjectAreaMapObject(TILE_OBJECT_TYPE objType) {
         GameObject obj = null;
