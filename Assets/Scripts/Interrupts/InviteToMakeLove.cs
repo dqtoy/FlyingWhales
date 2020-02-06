@@ -24,8 +24,8 @@ namespace Interrupts {
 
 
                 int targetOpinionToActor = 0;
-                if (targetCharacter.opinionComponent.HasOpinion(actor)) {
-                    targetOpinionToActor = targetCharacter.opinionComponent.GetTotalOpinion(actor);
+                if (targetCharacter.relationshipContainer.HasRelationshipWith(actor)) {
+                    targetOpinionToActor = targetCharacter.relationshipContainer.GetTotalOpinion(actor);
                 }
                 acceptWeight += (3 * targetOpinionToActor);
                 debugLog += "\n-Target opinion towards Actor: +(3 x " + targetOpinionToActor + ") to Accept Weight";
@@ -65,7 +65,7 @@ namespace Interrupts {
                 actor.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
 
                 if (chosen == "Reject") {
-                    actor.opinionComponent.AdjustOpinion(targetCharacter, "Base", -3, "rejected sexual advances");
+                    actor.relationshipContainer.AdjustOpinion(actor, targetCharacter, "Base", -3, "rejected sexual advances");
                     actor.traitContainer.AddTrait(actor, "Annoyed");
                     actor.currentJob.CancelJob(false);
                     if(actor.faction == FactionManager.Instance.disguisedFaction) {

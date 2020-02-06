@@ -272,7 +272,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 				//if special illness, check if character is healer
 				if (specialIllnessTraits.Contains(nameof(trait))) {
 					return isHostile == false &&
-					       character.opinionComponent.HasOpinionLabelWithCharacter(targetCharacter,
+					       character.relationshipContainer.HasOpinionLabelWithCharacter(targetCharacter,
 						       OpinionComponent.Rival, OpinionComponent.Enemy) == false 
 					       && isResponsibleForTrait == false
                            && !character.traitContainer.HasTrait("Serial Killer")
@@ -280,7 +280,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 				}
 				
 				return isHostile == false &&
-				       character.opinionComponent.HasOpinionLabelWithCharacter(targetCharacter,
+				       character.relationshipContainer.HasOpinionLabelWithCharacter(targetCharacter,
 					       OpinionComponent.Rival, OpinionComponent.Enemy) == false 
 				       && isResponsibleForTrait == false
                        && !character.traitContainer.HasTrait("Serial Killer");

@@ -39,7 +39,7 @@ public class Steal : GoapAction {
                 item = target as SpecialToken;
             }
             if(item != null && item.characterOwner != null) {
-                string opinionLabel = actor.opinionComponent.GetOpinionLabel(item.characterOwner);
+                string opinionLabel = actor.relationshipContainer.GetOpinionLabel(item.characterOwner);
                 if(opinionLabel == OpinionComponent.Acquaintance || opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
                     cost += 2000;
                     costLog += " +2000(not Kleptomaniac, Friend/Close/Acquaintance)";
@@ -83,7 +83,7 @@ public class Steal : GoapAction {
         IPointOfInterest target = node.poiTarget;
 
         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor);
-        if (witness.opinionComponent.IsFriendsWith(actor)) {
+        if (witness.relationshipContainer.IsFriendsWith(actor)) {
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor);
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor);
         }

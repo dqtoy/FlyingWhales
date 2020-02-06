@@ -1,53 +1,147 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using Traits;
 using UnityEngine;
-using UnityEngine.Assertions;
 
-public class OpinionComponent {
+public class BaseRelationshipContainer : IRelationshipContainer {
     public const string Close_Friend = "Close Friend";
     public const string Friend = "Friend";
     public const string Acquaintance = "Acquaintance";
     public const string Enemy = "Enemy";
     public const string Rival = "Rival";
-
+    
     private const int Friend_Requirement = 1; //opinion requirement to consider someone a friend
     private const int Enemy_Requirement = -1; //opinion requirement to consider someone an enemy
-
-    public const int MaxCompatibility = 5;
-    public const int MinCompatibility = 0;
     
-    public Character owner { get; }
-    public Dictionary<Character, OpinionData> opinions { get; }
-    public List<Character> charactersWithOpinion { get; } //Made a list of all characters with opinion to lessen CPU load
-
-    public OpinionComponent(Character owner) {
-        this.owner = owner;
-        opinions = new Dictionary<Character, OpinionData>();
+    public Dictionary<int, IRelationshipData> relationships { get; }
+    public List<Character> charactersWithOpinion { get; }
+    
+    public BaseRelationshipContainer() {
+        relationships = new Dictionary<int, IRelationshipData>();
         charactersWithOpinion = new List<Character>();
     }
 
-    public void AdjustOpinion(Character target, string opinionText, int opinionValue, string lastStrawReason = "") {
+    #region Adding
+    public void AddRelationship(Relatable owner, Relatable relatable, RELATIONSHIP_TYPE relType) {
+        if (HasRelationshipWith(relatable) == false) {
+            CreateNewRelationship(owner, relatable);
+        }
+        relationships[relatable.id].AddRelationship(relType);
+    }
+    public void CreateNewRelationship(Relatable owner, Relatable relatable) {
+        relationships.Add(relatable.id, new BaseRelationshipData());
+        if (relatable is Character) {
+            charactersWithOpinion.Add(relatable as Character);
+        }
+        Messenger.Broadcast(Signals.RELATIONSHIP_ADDED, owner, relatable);
+    }
+    public void CreateNewRelationship(Relatable owner, int id) {
+        relationships.Add(id, new BaseRelationshipData());
+        Messenger.Broadcast<Relatable, Relatable>(Signals.RELATIONSHIP_ADDED, owner, null);
+    }
+    private IRelationshipData GetOrCreateRelationshipDataWith(Relatable owner, Relatable relatable) {
+        if (HasRelationshipWith(relatable) == false) {
+            CreateNewRelationship(owner, relatable);
+        }
+        return relationships[relatable.id];
+    }
+    private bool TryGetRelationshipDataWith(Relatable relatable, out IRelationshipData data) {
+        return relationships.TryGetValue(relatable.id, out data);
+    }
+    #endregion
+
+    #region Removing
+    public void RemoveRelationship(Relatable relatable, RELATIONSHIP_TYPE rel) {
+        relationships[relatable.id].RemoveRelationship(rel);
+    }
+    #endregion
+
+    #region Inquiry
+    public bool HasRelationshipWith(Relatable relatable) {
+        return relationships.ContainsKey(relatable.id);
+    }
+    public bool HasRelationshipWith(Relatable relatable, RELATIONSHIP_TYPE relType) {
+        if (HasRelationshipWith(relatable)) {
+            IRelationshipData data = relationships[relatable.id];
+            return data.relationships.Contains(relType);
+        }
+        return false;
+    }
+    public bool HasRelationshipWith(Relatable relatable, params RELATIONSHIP_TYPE[] relType) {
+        if (HasRelationshipWith(relatable)) {
+            IRelationshipData data = relationships[relatable.id];
+            for (int i = 0; i < relType.Length; i++) {
+                RELATIONSHIP_TYPE rel = relType[i];
+                for (int j = 0; j < data.relationships.Count; j++) {
+                    RELATIONSHIP_TYPE dataRel = data.relationships[j];
+                    if(rel == dataRel) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        return false;
+    }
+    public bool IsFamilyMember(Character target) {
+        if (HasRelationshipWith(target)) {
+            IRelationshipData data = GetRelationshipDataWith(target);
+            return data.HasRelationship(RELATIONSHIP_TYPE.CHILD, RELATIONSHIP_TYPE.PARENT, RELATIONSHIP_TYPE.SIBLING);
+        }
+        return false;
+    }
+    #endregion
+
+    #region Getting
+    public int GetFirstRelatableIDWithRelationship(params RELATIONSHIP_TYPE[] type) {
+        foreach (KeyValuePair<int, IRelationshipData> kvp in relationships) {
+            if (kvp.Value.HasRelationship(type)) {
+                return kvp.Key;
+            }
+        }
+        return -1;
+    }
+    public int GetRelatablesWithRelationshipCount(params RELATIONSHIP_TYPE[] type) {
+        int count = 0;
+        foreach (KeyValuePair<int, IRelationshipData> kvp in relationships) {
+            if (kvp.Value.HasRelationship(type)) {
+                count++;
+            }
+        }
+        return count;
+    }
+    public IRelationshipData GetRelationshipDataWith(Relatable relatable) {
+        if (HasRelationshipWith(relatable)) {
+            return relationships[relatable.id];
+        }
+        return null;
+    }
+    public RELATIONSHIP_TYPE GetRelationshipFromParametersWith(Relatable relatable, params RELATIONSHIP_TYPE[] relType) {
+        if (HasRelationshipWith(relatable)) {
+            IRelationshipData data = relationships[relatable.id];
+            for (int i = 0; i < relType.Length; i++) {
+                RELATIONSHIP_TYPE rel = relType[i];
+                for (int j = 0; j < data.relationships.Count; j++) {
+                    RELATIONSHIP_TYPE dataRel = data.relationships[j];
+                    if (rel == dataRel) {
+                        return rel;
+                    }
+                }
+            }
+            return RELATIONSHIP_TYPE.NONE;
+        }
+        return RELATIONSHIP_TYPE.NONE;
+    }
+    #endregion
+
+    #region Opinions
+    public void AdjustOpinion(Character owner, Character target, string opinionText, int opinionValue, string lastStrawReason = "") {
         if (owner.minion != null || owner is Summon) {
             //Minions or Summons cannot have opinions
             return;
         }
-        if (!HasOpinion(target)) {
-            OpinionData opinionData = ObjectPoolManager.Instance.CreateNewOpinionData(); 
-            opinions.Add(target, opinionData);
-            opinionData.OnInitiallyAdded();
-            charactersWithOpinion.Add(target);
-
-            // //Note: I did this because compatibility value between two characters must only be 1 instance, but since we have compatibilityValue variable per opinion, it now has 2 instances
-            // //In order for us to be sure that only 1 compatibility value is set, we check if the newly added target to the opinion already has opinion towards the owner, then it must mean that there is already a compatibility value, that's why we set it to 0
-            // if (!target.opinionComponent.HasOpinion(owner)) {
-            //     opinions[target].OnInitiallyAdded();
-            // } else {
-            //     opinions[target].SetCompatibilityValue(0);
-            // }
-            Messenger.Broadcast(Signals.OPINION_ADDED, owner, target);
-        }
+        IRelationshipData relationshipData = GetOrCreateRelationshipDataWith(owner, target);
         if (owner.traitContainer.HasTrait("Serial Killer")) {
             SerialKiller serialKiller = owner.traitContainer.GetNormalTrait<SerialKiller>("Serial Killer");
             serialKiller.AdjustOpinion(target, opinionText, opinionValue);
@@ -55,79 +149,56 @@ public class OpinionComponent {
             owner.logComponent.PrintLogIfActive(owner.name + " wants to adjust " + opinionText + " opinion towards " + target.name + " by " + opinionValue + " but " + owner.name + " is a Serial Killer");
             opinionValue = 0;
         }
-        opinions[target].AdjustOpinion(opinionText, opinionValue);
+        relationshipData.opinions.AdjustOpinion(opinionText, opinionValue);
         if (opinionValue > 0) {
             Messenger.Broadcast(Signals.OPINION_INCREASED, owner, target, lastStrawReason);
         } else if (opinionValue < 0) {
             Messenger.Broadcast(Signals.OPINION_DECREASED, owner, target, lastStrawReason);
         }
-        if (!target.relationshipContainer.HasRelationshipWith(owner)) {
-            target.relationshipContainer.AdjustOpinion(target, owner, "Base", 0);
+        if (target.relationshipContainer.HasRelationshipWith(owner) == false) {
+            target.relationshipContainer.CreateNewRelationship(target, owner);
         }
     }
-    public void SetOpinion(Character target, string opinionText, int opinionValue, string lastStrawReason = "") {
+    public void SetOpinion(Character owner, Character target, string opinionText, int opinionValue, string lastStrawReason = "") {
         if (owner.minion != null || owner is Summon) {
             //Minions or Summons cannot have opinions
             return;
         }
-        if (!HasOpinion(target)) {
-            OpinionData opinionData = ObjectPoolManager.Instance.CreateNewOpinionData(); 
-            opinions.Add(target, opinionData);
-            opinionData.OnInitiallyAdded();
-            charactersWithOpinion.Add(target);
-
-            // //Note: I did this because compatibility value between two characters must only be 1 instance, but since we have compatibilityValue variable per opinion, it now has 2 instances
-            // //In order for us to be sure that only 1 compatibility value is set, we check if the newly added target to the opinion already has opinion towards the owner, then it must mean that there is already a compatibility value, that's why we set it to 0
-            // if (!target.opinionComponent.HasOpinion(owner)) {
-            //     opinions[target].OnInitiallyAdded();
-            // } else {
-            //     opinions[target].SetCompatibilityValue(0);
-            // }
-            Messenger.Broadcast(Signals.OPINION_ADDED, owner, target);
-        }
+        IRelationshipData relationshipData = GetOrCreateRelationshipDataWith(owner, target);
         if (owner.traitContainer.HasTrait("Serial Killer")) {
             //Psychopaths do not gain or lose Opinion towards other characters (ensure that logs related to Opinion changes also do not show up)
             owner.logComponent.PrintLogIfActive(owner.name + " wants to adjust " + opinionText + " opinion towards " + target.name + " by " + opinionValue + " but " + owner.name + " is a Serial Killer, setting the value to zero...");
             opinionValue = 0;
         }
-        opinions[target].SetOpinion(opinionText, opinionValue);
+        relationshipData.opinions.SetOpinion(opinionText, opinionValue);
         if (opinionValue > 0) {
             Messenger.Broadcast(Signals.OPINION_INCREASED, owner, target, lastStrawReason);
         } else if (opinionValue < 0) {
             Messenger.Broadcast(Signals.OPINION_DECREASED, owner, target, lastStrawReason);
         }
-        if (!target.relationshipContainer.HasRelationshipWith(owner)) {
-            target.relationshipContainer.SetOpinion(target, owner, "Base", 0);
+        if (target.relationshipContainer.HasRelationshipWith(owner) == false) {
+            target.relationshipContainer.CreateNewRelationship(target, owner);
         }
     }
     public void RemoveOpinion(Character target, string opinionText) {
-        if (HasOpinion(target)) {
-            opinions[target].RemoveOpinion(opinionText);
+        if (TryGetRelationshipDataWith(target, out var relationshipData)) {
+            relationshipData.opinions.RemoveOpinion(opinionText);
         }
-    }
-    public void RemoveOpinion(Character target) {
-        if (HasOpinion(target)) {
-            OpinionData data = opinions[target];
-            opinions.Remove(target);
-            charactersWithOpinion.Remove(target);
-            Messenger.Broadcast(Signals.OPINION_REMOVED, owner, target);
-            ObjectPoolManager.Instance.ReturnOpinionDataToPool(data);
-        }
-    }
-    public bool HasOpinion(Character target) {
-        return opinions.ContainsKey(target);
     }
     public bool HasOpinion(Character target, string opinionText) {
-        return opinions.ContainsKey(target) && opinions[target].HasOpinion(opinionText);
+        if (TryGetRelationshipDataWith(target, out var relationshipData)) {
+            return relationshipData.opinions.HasOpinion(opinionText);
+        }
+        return false;
     }
     public int GetTotalOpinion(Character target) {
-        return opinions[target].totalOpinion;
+        return relationships[target.id].opinions.totalOpinion;
     }
     public OpinionData GetOpinionData(Character target) {
-        return opinions[target];
+        return relationships[target.id].opinions;
     }
     public string GetOpinionLabel(Character target) {
-        if (HasOpinion(target)) {
+        if (HasRelationshipWith(target)) {
             int totalOpinion = GetTotalOpinion(target);
             if (totalOpinion > 70) {
                 return Close_Friend;
@@ -143,30 +214,16 @@ public class OpinionComponent {
         }
         return string.Empty;
     }
-
-    #region Inquiry
     public bool IsFriendsWith(Character character) {
         string opinionLabel = GetOpinionLabel(character);
         return opinionLabel == Friend || opinionLabel == Close_Friend;
-        //if (HasOpinion(character)) {
-        //    return GetTotalOpinion(character) >= Friend_Requirement;
-        //}
-        //return false;
     }
     public bool IsEnemiesWith(Character character) {
         string opinionLabel = GetOpinionLabel(character);
         return opinionLabel == Enemy || opinionLabel == Rival;
-        //if (HasOpinion(character)) {
-        //    return GetTotalOpinion(character) <= Enemy_Requirement;
-        //}
-        //return false;
     }
-    #endregion
-
-    #region Data Getting
     public List<Character> GetCharactersWithPositiveOpinion() {
         List<Character> characters = new List<Character>();
-        //List<Character> charactersWithOpinion = opinions.Keys.ToList();
         for (int i = 0; i < charactersWithOpinion.Count; i++) {
             Character otherCharacter = charactersWithOpinion[i];
             if (GetTotalOpinion(otherCharacter) > 0) {
@@ -177,7 +234,6 @@ public class OpinionComponent {
     }
     public List<Character> GetCharactersWithNeutralOpinion() {
         List<Character> characters = new List<Character>();
-        //List<Character> charactersWithOpinion = opinions.Keys.ToList();
         for (int i = 0; i < charactersWithOpinion.Count; i++) {
             Character otherCharacter = charactersWithOpinion[i];
             int opinion = GetTotalOpinion(otherCharacter); 
@@ -189,7 +245,6 @@ public class OpinionComponent {
     }
     public List<Character> GetCharactersWithNegativeOpinion() {
         List<Character> characters = new List<Character>();
-        //List<Character> charactersWithOpinion = opinions.Keys.ToList();
         for (int i = 0; i < charactersWithOpinion.Count; i++) {
             Character otherCharacter = charactersWithOpinion[i];
             if (GetTotalOpinion(otherCharacter) < 0) {
@@ -200,7 +255,6 @@ public class OpinionComponent {
     }
     public List<Character> GetEnemyCharacters() {
         List<Character> characters = new List<Character>();
-        //List<Character> charactersWithOpinion = opinions.Keys.ToList();
         for (int i = 0; i < charactersWithOpinion.Count; i++) {
             Character otherCharacter = charactersWithOpinion[i];
             if (IsEnemiesWith(otherCharacter)) {
@@ -211,7 +265,6 @@ public class OpinionComponent {
     }
     public List<Character> GetFriendCharacters() {
         List<Character> characters = new List<Character>();
-        //List<Character> charactersWithOpinion = opinions.Keys.ToList();
         for (int i = 0; i < charactersWithOpinion.Count; i++) {
             Character otherCharacter = charactersWithOpinion[i];
             if (IsFriendsWith(otherCharacter)) {
@@ -246,7 +299,7 @@ public class OpinionComponent {
         return false;
     }
     public bool HasOpinionLabelWithCharacter(Character character, params string[] labels) {
-        if (HasOpinion(character)) {
+        if (HasRelationshipWith(character)) {
             string opinionLabel = GetOpinionLabel(character);
             for (int j = 0; j < labels.Length; j++) {
                 if (labels[j] == opinionLabel) {
@@ -276,7 +329,7 @@ public class OpinionComponent {
         return count;
     }
     public RELATIONSHIP_EFFECT GetRelationshipEffectWith(Character character) {
-        if (HasOpinion(character)) {
+        if (HasRelationshipWith(character)) {
             int totalOpinion = GetTotalOpinion(character);
             if (totalOpinion > 0) {
                 return RELATIONSHIP_EFFECT.POSITIVE;
@@ -287,43 +340,29 @@ public class OpinionComponent {
         return RELATIONSHIP_EFFECT.NONE;
     }
     public int GetCompatibility(Character target) {
-        if (HasOpinion(target)) {
-            return opinions[target].compatibilityValue;
+        if (TryGetRelationshipDataWith(target, out var relationshipData)) {
+            return relationshipData.opinions.compatibilityValue;
         }
         return -1;
     }
     public string GetRelationshipNameWith(Character target) {
-        if (owner.relationshipContainer.HasRelationshipWith(target)) {
-            IRelationshipData data = owner.relationshipContainer.GetRelationshipDataWith(target);
+        if (TryGetRelationshipDataWith(target, out var data)) {
             RELATIONSHIP_TYPE relType = data.GetFirstMajorRelationship();
-            if (relType == RELATIONSHIP_TYPE.CHILD) {
-                if (target.gender == GENDER.MALE) {
-                    return "Son";
-                } else {
-                    return "Daughter";
-                }
-            } else if (relType == RELATIONSHIP_TYPE.PARENT) {
-                if (target.gender == GENDER.MALE) {
-                    return "Father";
-                } else {
-                    return "Mother";
-                }
-            } else if (relType == RELATIONSHIP_TYPE.SIBLING) {
-                if (target.gender == GENDER.MALE) {
-                    return "Brother";
-                } else {
-                    return "Sister";
-                }
-            } else if (relType == RELATIONSHIP_TYPE.LOVER) {
-                if (target.gender == GENDER.MALE) {
-                    return "Husband";
-                } else {
-                    return "Wife";
-                }
+            switch (relType) {
+                case RELATIONSHIP_TYPE.CHILD:
+                    return target.gender == GENDER.MALE ? "Son" : "Daughter";
+                case RELATIONSHIP_TYPE.PARENT:
+                    return target.gender == GENDER.MALE ? "Father" : "Mother";
+                case RELATIONSHIP_TYPE.SIBLING:
+                    return target.gender == GENDER.MALE ? "Brother" : "Sister";
+                case RELATIONSHIP_TYPE.LOVER:
+                    return target.gender == GENDER.MALE ? "Husband" : "Wife";
+                case RELATIONSHIP_TYPE.NONE:
+                    string opinionLabel = GetOpinionLabel(target);
+                    return string.IsNullOrEmpty(opinionLabel) == false ? opinionLabel : Acquaintance;
+                default:
+                    return UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(relType.ToString());
             }
-            return UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(relType.ToString());    
-        } else if (HasOpinion(target)) {
-            return GetOpinionLabel(target);
         }
         return Acquaintance;
     }

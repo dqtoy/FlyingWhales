@@ -36,7 +36,7 @@ public class Butcher : GoapAction {
                 costLog += " +2000(Actor/Target Same)";
             } else {
                 if (actor.traitContainer.HasTrait("Cannibal")) {
-                    if (actor.opinionComponent.IsFriendsWith(deadCharacter)) {
+                    if (actor.relationshipContainer.IsFriendsWith(deadCharacter)) {
                         cost += 2000;
                         costLog += " +2000(Cannibal, Friend/Close)";
                     } else if ((deadCharacter.race == RACE.HUMANS || deadCharacter.race == RACE.ELVES) &&
@@ -103,7 +103,7 @@ public class Butcher : GoapAction {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor);
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disgust, witness, actor);
             
-                string opinionLabel = witness.opinionComponent.GetOpinionLabel(actor);
+                string opinionLabel = witness.relationshipContainer.GetOpinionLabel(actor);
                 if (opinionLabel == OpinionComponent.Acquaintance || opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor);
                 }
@@ -111,7 +111,7 @@ public class Butcher : GoapAction {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor);
                 }
             }
-            string witnessOpinionToTarget = witness.opinionComponent.GetOpinionLabel(targetCharacter);
+            string witnessOpinionToTarget = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
             if (witnessOpinionToTarget == OpinionComponent.Friend || witnessOpinionToTarget == OpinionComponent.Close_Friend || witnessOpinionToTarget == OpinionComponent.Acquaintance 
                 || witness.faction == targetCharacter.faction || witness.homeSettlement == targetCharacter.homeSettlement) {
                 if (!witness.traitContainer.HasTrait("Serial Killer")) {

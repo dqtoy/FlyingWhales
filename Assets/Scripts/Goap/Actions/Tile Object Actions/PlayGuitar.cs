@@ -45,10 +45,10 @@ public class PlayGuitar : GoapAction {
             Dwelling structureLocation = target.gridTileLocation.structure as Dwelling;
             if (structureLocation.residents.Count > 0) {
                 Character dwellingOwner = structureLocation.residents[0];
-                if (actor.opinionComponent.IsFriendsWith(dwellingOwner)) {
+                if (actor.relationshipContainer.IsFriendsWith(dwellingOwner)) {
                     cost += 20; 
                     costLog += " +20 Guitar is in friend/close friends home";
-                } else if (actor.opinionComponent.IsEnemiesWith(dwellingOwner)) {
+                } else if (actor.relationshipContainer.IsEnemiesWith(dwellingOwner)) {
                     cost += 100; 
                     costLog += " +100 Guitar is in enemy/rivals home";
                 }
@@ -236,7 +236,7 @@ public class PlayGuitarData : GoapActionData {
                 if (dwelling.IsOccupied()) {
                     for (int i = 0; i < dwelling.residents.Count; i++) {
                         Character currResident = dwelling.residents[i];
-                        if (currResident.opinionComponent.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.POSITIVE) {
+                        if (currResident.relationshipContainer.GetRelationshipEffectWith(actor) == RELATIONSHIP_EFFECT.POSITIVE) {
                             return true;
                         }
                     }

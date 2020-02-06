@@ -12,7 +12,7 @@ public class Gratefulness : Emotion {
     public override string ProcessEmotion(Character witness, IPointOfInterest target) {
         if (target is Character) {
             Character targetCharacter = target as Character;
-            witness.opinionComponent.AdjustOpinion(targetCharacter, "Gratefulness", 7);
+            witness.relationshipContainer.AdjustOpinion(witness, targetCharacter, "Gratefulness", 7);
         }
         return base.ProcessEmotion(witness, target);
     }

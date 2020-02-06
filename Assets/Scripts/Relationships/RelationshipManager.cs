@@ -24,8 +24,8 @@ public class RelationshipManager : MonoBehaviour {
 
     #region Containers
     public IRelationshipContainer CreateRelationshipContainer(Relatable relatable) {
-        if (relatable is IPointOfInterest || relatable is AlterEgoData) {
-            return new POIRelationshipContainer();
+        if (relatable is IPointOfInterest) {
+            return new BaseRelationshipContainer();
         }
         return null;
     }
@@ -265,54 +265,34 @@ public class RelationshipManager : MonoBehaviour {
     #region Adding
     public IRelationshipData CreateNewOneWayRelationship(Relatable rel1, Relatable rel2, RELATIONSHIP_TYPE rel) {
         if (!rel1.relationshipContainer.HasRelationshipWith(rel2, rel)) {
-            //TODO: Move this somewhere else
-            //if (rel == RELATIONSHIP_TRAIT.ENEMY && currCharacter.traitContainer.GetNormalTrait<Trait>("Diplomatic") != null) {
-            //    return currCharacter.relationshipContainer.GetRelationshipDataWith(alterEgo.owner);
-            //}
-            //if (rel == RELATIONSHIP_TRAIT.FRIEND && currCharacter.traitContainer.GetNormalTrait<Trait>("Serial Killer") != null) {
-            //    return currCharacter.relationshipContainer.GetRelationshipDataWith(alterEgo.owner);
-            //}
-            rel1.relationshipContainer.AddRelationship(rel2, rel);
+            rel1.relationshipContainer.AddRelationship(rel1, rel2, rel);
             rel1.relationshipProcessor?.OnRelationshipAdded(rel1, rel2, rel);
-            Messenger.Broadcast(Signals.RELATIONSHIP_ADDED, rel1, rel2);
         }
         return rel1.relationshipContainer.GetRelationshipDataWith(rel2);
     }
     public IRelationshipData CreateNewRelationshipBetween(Relatable rel1, Relatable rel2, RELATIONSHIP_TYPE rel) {
         RELATIONSHIP_TYPE pair = GetPairedRelationship(rel);
-        //TODO: Move this somewhere else
-        //!(rel == RELATIONSHIP_TRAIT.ENEMY && currCharacter.traitContainer.GetNormalTrait<Trait>("Diplomatic") != null)
-        //&& !(rel == RELATIONSHIP_TRAIT.FRIEND && currCharacter.traitContainer.GetNormalTrait<Trait>("Serial Killer") != null)
         if (CanHaveRelationship(rel1, rel2, rel)) {
-            rel1.relationshipContainer.AddRelationship(rel2, rel);
+            rel1.relationshipContainer.AddRelationship(rel1,rel2, rel);
             rel1.relationshipProcessor?.OnRelationshipAdded(rel1, rel2, rel);
         }
-        //TODO:Move this somewhere else
-        //!(rel == RELATIONSHIP_TRAIT.ENEMY && targetCharacter.traitContainer.GetNormalTrait<Trait>("Diplomatic") != null)
-        //&& !(rel == RELATIONSHIP_TRAIT.FRIEND && targetCharacter.traitContainer.GetNormalTrait<Trait>("Serial Killer") != null)
         if (CanHaveRelationship(rel2, rel1, rel)) {
-            rel2.relationshipContainer.AddRelationship(rel1, pair);
+            rel2.relationshipContainer.AddRelationship(rel2, rel1, pair);
             rel2.relationshipProcessor?.OnRelationshipAdded(rel2, rel1, pair);
         }
-        Messenger.Broadcast(Signals.RELATIONSHIP_ADDED, rel1, rel2);
         return rel1.relationshipContainer.GetRelationshipDataWith(rel2);
     }
     #endregion
 
     #region Removing
-    public void RemoveOneWayRelationship(Relatable rel1, Relatable rel2, RELATIONSHIP_TYPE rel) {
-        rel1.relationshipContainer.RemoveRelationship(rel2, rel);
-        rel1.relationshipProcessor?.OnRelationshipRemoved(rel1, rel2, rel);
-        Messenger.Broadcast(Signals.RELATIONSHIP_REMOVED, rel1, rel, rel2);
-    }
     public void RemoveRelationshipBetween(Relatable rel1, Relatable rel2, RELATIONSHIP_TYPE rel) {
-        if (!rel1.relationshipContainer.relationships.ContainsKey(rel2)
-            || !rel2.relationshipContainer.relationships.ContainsKey(rel1)) {
+        if (!rel1.relationshipContainer.relationships.ContainsKey(rel2.id)
+            || !rel2.relationshipContainer.relationships.ContainsKey(rel1.id)) {
             return;
         }
         RELATIONSHIP_TYPE pair = GetPairedRelationship(rel);
-        if (rel1.relationshipContainer.relationships[rel2].HasRelationship(rel)
-            && rel2.relationshipContainer.relationships[rel1].HasRelationship(pair)) {
+        if (rel1.relationshipContainer.relationships[rel2.id].HasRelationship(rel)
+            && rel2.relationshipContainer.relationships[rel1.id].HasRelationship(pair)) {
 
             rel1.relationshipContainer.RemoveRelationship(rel2, rel);
             rel1.relationshipProcessor?.OnRelationshipRemoved(rel1, rel2, rel);
@@ -408,8 +388,8 @@ public class RelationshipManager : MonoBehaviour {
             opinionText = cause.goapName;
         }
         
-        actor.opinionComponent.AdjustOpinion(target, opinionText, -10);
-        target.opinionComponent.AdjustOpinion(actor, opinionText, -10);
+        actor.relationshipContainer.AdjustOpinion(actor, target, opinionText, -10);
+        target.relationshipContainer.AdjustOpinion(target, actor, opinionText, -10);
         
         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "rel_degrade");
         log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -510,8 +490,8 @@ public class RelationshipManager : MonoBehaviour {
 
     #region Compatibility
     public int GetCompatibilityBetween(Character character1, Character character2) {
-        int char1Compatibility = character1.opinionComponent.GetCompatibility(character2);
-        int char2Compatibility = character2.opinionComponent.GetCompatibility(character1);
+        int char1Compatibility = character1.relationshipContainer.GetCompatibility(character2);
+        int char2Compatibility = character2.relationshipContainer.GetCompatibility(character1);
         if (char1Compatibility != -1 && char2Compatibility != -1) {
             return char1Compatibility + char2Compatibility;
         }

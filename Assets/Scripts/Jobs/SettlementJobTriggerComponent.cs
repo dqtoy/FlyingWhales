@@ -517,7 +517,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 				return true;
 			} else {
 				//if burning character is other character, make sure that the character that will do the job is not burning.
-				return !character.traitContainer.HasTrait("Burning", "Pyrophobic") && !character.opinionComponent.IsEnemiesWith(targetCharacter);
+				return !character.traitContainer.HasTrait("Burning", "Pyrophobic") && !character.relationshipContainer.IsEnemiesWith(targetCharacter);
 			}
 		} else {
 			//make sure that the character that will do the job is not burning.

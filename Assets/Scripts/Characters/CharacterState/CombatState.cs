@@ -478,7 +478,7 @@ public class CombatState : CharacterState {
                 //if the character that attacked is not in the hostile/avoid list of the character that was hit, this means that it is not a retaliation, so the character that was hit must reduce its opinion of the character that attacked
                 if(!hitCharacter.combatComponent.hostilesInRange.Contains(stateComponent.character) && !hitCharacter.combatComponent.avoidInRange.Contains(stateComponent.character)) {
                     if (!allCharactersThatDegradedRel.Contains(hitCharacter)) {
-                        hitCharacter.opinionComponent.AdjustOpinion(stateComponent.character, "Base", -15);
+                        hitCharacter.relationshipContainer.AdjustOpinion(hitCharacter, stateComponent.character, "Base", -15);
                         AddCharacterThatDegradedRel(hitCharacter);
                     }
                 }

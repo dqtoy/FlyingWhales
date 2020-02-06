@@ -53,7 +53,7 @@ public class Spit : GoapAction {
         IPointOfInterest target = node.poiTarget;
         if (target is Tombstone) {
             Character targetCharacter = (target as Tombstone).character;
-            string witnessOpinionLabelToDead = witness.opinionComponent.GetOpinionLabel(targetCharacter);
+            string witnessOpinionLabelToDead = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
             if (witnessOpinionLabelToDead == OpinionComponent.Friend || witnessOpinionLabelToDead == OpinionComponent.Close_Friend) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor);
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor);
@@ -80,7 +80,7 @@ public class Spit : GoapAction {
             if (poiTarget is Tombstone) {
                 Tombstone tombstone = poiTarget as Tombstone;
                 Character target = tombstone.character;
-                return actor.opinionComponent.GetRelationshipEffectWith(target) == RELATIONSHIP_EFFECT.NEGATIVE;
+                return actor.relationshipContainer.GetRelationshipEffectWith(target) == RELATIONSHIP_EFFECT.NEGATIVE;
             }
             return false;
         }
@@ -167,7 +167,7 @@ public class SpitData : GoapActionData {
         if (poiTarget is Tombstone) {
             Tombstone tombstone = poiTarget as Tombstone;
             Character target = tombstone.character;
-            return actor.opinionComponent.GetRelationshipEffectWith(target) == RELATIONSHIP_EFFECT.NEGATIVE;
+            return actor.relationshipContainer.GetRelationshipEffectWith(target) == RELATIONSHIP_EFFECT.NEGATIVE;
         }
         return false;
     }

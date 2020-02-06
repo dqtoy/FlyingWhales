@@ -289,7 +289,7 @@ namespace Traits {
         }
 
         private void CreateLycanthropeForm() {
-            lycanthropeForm = CharacterManager.Instance.CreateNewLimboCharacter(CharacterRole.BEAST, RACE.WOLF, "Ravager", originalForm.gender, FactionManager.Instance.neutralFaction);
+            lycanthropeForm = CharacterManager.Instance.CreateNewLimboCharacter(RACE.WOLF, "Ravager", originalForm.gender, FactionManager.Instance.neutralFaction);
             lycanthropeForm.ConstructInitialGoapAdvertisementActions();
             lycanthropeForm.SetName(originalForm.name);
         }

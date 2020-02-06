@@ -23,7 +23,7 @@ namespace Interrupts {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, originalForm);
                 // response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, originalForm);
 
-                string opinionLabel = witness.opinionComponent.GetOpinionLabel(originalForm);
+                string opinionLabel = witness.relationshipContainer.GetOpinionLabel(originalForm);
                 if (opinionLabel == OpinionComponent.Acquaintance || opinionLabel == OpinionComponent.Friend ||
                     opinionLabel == OpinionComponent.Close_Friend) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Despair, witness, originalForm);

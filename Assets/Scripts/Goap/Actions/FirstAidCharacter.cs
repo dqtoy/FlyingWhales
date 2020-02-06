@@ -46,7 +46,7 @@ public class FirstAidCharacter : GoapAction {
         IPointOfInterest target = node.poiTarget;
         if (target is Character) {
             Character targetCharacter = target as Character;
-            string opinionLabel = witness.opinionComponent.GetOpinionLabel(targetCharacter);
+            string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
             if (opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
                 if (!witness.traitContainer.HasTrait("Serial Killer")) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Gratefulness, witness, actor);
@@ -64,7 +64,7 @@ public class FirstAidCharacter : GoapAction {
         if (target is Character) {
             Character targetCharacter = target as Character;
             if (!targetCharacter.traitContainer.HasTrait("Serial Killer")) {
-                if (targetCharacter.opinionComponent.IsEnemiesWith(actor)) {
+                if (targetCharacter.relationshipContainer.IsEnemiesWith(actor)) {
                     if(UnityEngine.Random.Range(0, 100) < 30) {
                         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Gratefulness, targetCharacter, actor);
                     }
@@ -83,7 +83,7 @@ public class FirstAidCharacter : GoapAction {
     #region State Effects
     public void AfterFirstAidSuccess(ActualGoapNode goapNode) {
         Character targetCharacter = goapNode.poiTarget as Character;
-        targetCharacter.opinionComponent.AdjustOpinion(goapNode.actor, "Base", 3);
+        targetCharacter.relationshipContainer.AdjustOpinion(targetCharacter, goapNode.actor, "Base", 3);
         goapNode.poiTarget.traitContainer.RemoveTraitAndStacks(goapNode.poiTarget, "Injured", goapNode.actor);
         goapNode.poiTarget.traitContainer.RemoveTraitAndStacks(goapNode.poiTarget, "Unconscious", goapNode.actor);
         if (goapNode.actor.HasTokenInInventory(SPECIAL_TOKEN.HEALING_POTION)) {

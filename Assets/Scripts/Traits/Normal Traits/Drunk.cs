@@ -32,7 +32,7 @@ namespace Traits {
         public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
             if (targetPOI is Character) {
                 Character targetCharacter = targetPOI as Character;
-                if (!targetCharacter.isDead && characterThatWillDoJob.opinionComponent.IsEnemiesWith(targetCharacter)) {
+                if (!targetCharacter.isDead && characterThatWillDoJob.relationshipContainer.IsEnemiesWith(targetCharacter)) {
                     // int value = 1;
                     // RELATIONSHIP_EFFECT relEffect = characterThatWillDoJob.opinionComponent.GetRelationshipEffectWith(targetCharacter);
                     // if (relEffect == RELATIONSHIP_EFFECT.NEGATIVE) {

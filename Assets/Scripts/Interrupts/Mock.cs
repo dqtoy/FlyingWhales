@@ -12,7 +12,7 @@ namespace Interrupts {
         #region Overrides
         public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target) {
             Character targetCharacter = target as Character;
-            targetCharacter.opinionComponent.AdjustOpinion(actor, "Base", -3);
+            targetCharacter.relationshipContainer.AdjustOpinion(targetCharacter, actor, "Base", -3);
             return true;
         }
         #endregion

@@ -384,12 +384,6 @@ public class CharacterAvatar : MonoBehaviour {
     public void SetPosition(Vector3 position) {
         this.transform.position = position;
     }
-    public void SetSprite(CHARACTER_ROLE role){
-		Sprite sprite = CharacterManager.Instance.GetSpriteByRole (role);
-		if(sprite != null){
-			_avatarSpriteRenderer.sprite = sprite;
-		}
-	}
     public void SetFrameOrderLayer(int layer) {
         _frameSpriteRenderer.sortingOrder = layer;
     }

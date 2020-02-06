@@ -185,7 +185,7 @@ public class Player : ILeader {
     //     return minion;
     // }
     public Minion CreateNewMinion(string className, RACE race, bool initialize = true) {
-        Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter(CharacterRole.MINION, className, race, GENDER.MALE, playerFaction, playerSettlement), false);
+        Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter(className, race, GENDER.MALE, playerFaction, playerSettlement), false);
         if (initialize) {
             InitializeMinion(minion);
         }
@@ -193,7 +193,7 @@ public class Player : ILeader {
     }
     public Minion CreateNewMinionRandomClass() {
         string className = CharacterManager.sevenDeadlySinsClassNames[UnityEngine.Random.Range(0, CharacterManager.sevenDeadlySinsClassNames.Length)];
-        Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter(CharacterRole.MINION, className, RACE.DEMON, GENDER.MALE, playerFaction, playerSettlement), false);
+        Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter(className, RACE.DEMON, GENDER.MALE, playerFaction, playerSettlement), false);
         InitializeMinion(minion);
         return minion;
     }

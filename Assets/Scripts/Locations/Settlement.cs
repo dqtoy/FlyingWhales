@@ -231,7 +231,8 @@ public class Settlement : IJobOwner {
             if (PlayerManager.Instance != null && PlayerManager.Instance.player != null && this.id == PlayerManager.Instance.player.playerSettlement.id) {
                 chosenDwelling = structures[STRUCTURE_TYPE.DWELLING][0] as Dwelling; //to avoid errors, residents in player settlement will all share the same dwelling
             } else {
-                Character lover = (character.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.LOVER) as Character) ?? null;
+                Character lover = CharacterManager.Instance.GetCharacterByID(character.relationshipContainer
+                    .GetFirstRelatableIDWithRelationship(RELATIONSHIP_TYPE.LOVER));
                 if (lover != null && lover.faction.id == character.faction.id && residents.Contains(lover)) { //check if the character has a lover that lives in the settlement
                     chosenDwelling = lover.homeStructure;
                 }
@@ -295,7 +296,7 @@ public class Settlement : IJobOwner {
     }
     public Character AddNewResident(RACE race, Faction faction) {
         string className = classManager.GetCurrentClassToCreate();
-        Character citizen = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, className, race, UtilityScripts.Utilities.GetRandomGender(), faction, this);
+        Character citizen = CharacterManager.Instance.CreateNewCharacter(className, race, UtilityScripts.Utilities.GetRandomGender(), faction, this);
         PlaceNewResidentInInnerMap(citizen);
         //citizen.CenterOnCharacter();
         return citizen;
@@ -309,20 +310,20 @@ public class Settlement : IJobOwner {
     }
     public Character AddNewResident(RACE race, GENDER gender, Faction faction) {
         string className = classManager.GetCurrentClassToCreate();
-        Character citizen = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, className, race, gender, faction, this);
+        Character citizen = CharacterManager.Instance.CreateNewCharacter(className, race, gender, faction, this);
         PlaceNewResidentInInnerMap(citizen);
         //citizen.CenterOnCharacter();
         return citizen;
     }
     public Character AddNewResident(RACE race, GENDER gender, SEXUALITY sexuality, Faction faction) {
         string className = classManager.GetCurrentClassToCreate();
-        Character citizen = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, className, race, gender, sexuality, faction, this);
+        Character citizen = CharacterManager.Instance.CreateNewCharacter(className, race, gender, sexuality, faction, this);
         PlaceNewResidentInInnerMap(citizen);
         //citizen.CenterOnCharacter();
         return citizen;
     }
     public Character CreateNewResidentNoLocation(RACE race, string className, Faction faction) {
-        Character citizen = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, className, race, UtilityScripts.Utilities.GetRandomGender(), faction);
+        Character citizen = CharacterManager.Instance.CreateNewCharacter(className, race, UtilityScripts.Utilities.GetRandomGender(), faction);
         return citizen;
     }
     public void PlaceNewResidentInInnerMap(Character newResident) {
@@ -436,12 +437,12 @@ public class Settlement : IJobOwner {
             }
             int numberOfFriends = 0;
             int numberOfEnemies = 0;
-            for (int j = 0; j < resident.opinionComponent.charactersWithOpinion.Count; j++) {
-                Character otherCharacter = resident.opinionComponent.charactersWithOpinion[j];
+            for (int j = 0; j < resident.relationshipContainer.charactersWithOpinion.Count; j++) {
+                Character otherCharacter = resident.relationshipContainer.charactersWithOpinion[j];
                 if (otherCharacter.homeSettlement == this) {
-                    if (otherCharacter.opinionComponent.IsFriendsWith(resident)) {
+                    if (otherCharacter.relationshipContainer.IsFriendsWith(resident)) {
                         numberOfFriends++;
-                    }else if (otherCharacter.opinionComponent.IsEnemiesWith(resident)) {
+                    }else if (otherCharacter.relationshipContainer.IsEnemiesWith(resident)) {
                         numberOfEnemies++;
                     }
                 }
@@ -533,9 +534,11 @@ public class Settlement : IJobOwner {
     }
     public void GenerateInitialOpinionBetweenResidents() {
         for (int i = 0; i < residents.Count; i++) {
+            Character resident1 = residents[i];
             for (int j = 0; j < residents.Count; j++) {
-                if (residents[i] != residents[j]) {
-                    residents[i].opinionComponent.AdjustOpinion(residents[j], "Base", 0);
+                Character resident2 = residents[j];
+                if (resident1 != resident2) {
+                    resident1.relationshipContainer.AdjustOpinion(resident1, resident2, "Base", 0);
                 }
             }
         }

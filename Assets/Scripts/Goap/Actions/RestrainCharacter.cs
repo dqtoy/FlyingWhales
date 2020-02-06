@@ -48,15 +48,15 @@ public class RestrainCharacter : GoapAction {
         if(target is Character) {
             Character targetCharacter = target as Character;
             if (targetCharacter.traitContainer.HasTrait("Criminal")) {
-                if (witness.opinionComponent.IsFriendsWith(targetCharacter)) {
+                if (witness.relationshipContainer.IsFriendsWith(targetCharacter)) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Sadness, witness, actor);
                 } else {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor);
                 }
             } else {
-                if (!witness.opinionComponent.IsEnemiesWith(targetCharacter) && !witness.IsHostileWith(targetCharacter)) {
+                if (!witness.relationshipContainer.IsEnemiesWith(targetCharacter) && !witness.IsHostileWith(targetCharacter)) {
                     CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.MISDEMEANOR);
-                    if (!witness.traitContainer.HasTrait("Serial Killer") && witness.opinionComponent.IsFriendsWith(targetCharacter)) {
+                    if (!witness.traitContainer.HasTrait("Serial Killer") && witness.relationshipContainer.IsFriendsWith(targetCharacter)) {
                         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, actor);
                         if(UnityEngine.Random.Range(0, 100) < 20) {
                             if (!witness.traitContainer.HasTrait("Diplomatic")) {
@@ -76,13 +76,13 @@ public class RestrainCharacter : GoapAction {
         if (target is Character) {
             Character targetCharacter = target as Character;
             if (targetCharacter.traitContainer.HasTrait("Criminal")) {
-                if (!witness.traitContainer.HasTrait("Serial Killer") && witness.opinionComponent.IsFriendsWith(targetCharacter)) {
+                if (!witness.traitContainer.HasTrait("Serial Killer") && witness.relationshipContainer.IsFriendsWith(targetCharacter)) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, targetCharacter);
                 } else if (UnityEngine.Random.Range(0, 100) < 30 && !witness.traitContainer.HasTrait("Diplomatic")) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, targetCharacter);
                 }
             } else {
-                string opinionLabel = witness.opinionComponent.GetOpinionLabel(targetCharacter);
+                string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
                 if(opinionLabel == OpinionComponent.Acquaintance) {
                     if (!witness.traitContainer.HasTrait("Serial Killer") && UnityEngine.Random.Range(0, 2) == 0) {
                         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, targetCharacter);

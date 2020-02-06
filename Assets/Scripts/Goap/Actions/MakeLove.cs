@@ -117,12 +117,16 @@ public class MakeLove : GoapAction {
 
         if (target is Character) {
             Character targetCharacter = target as Character;
-            Character actorLover = actor.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.LOVER) as Character;
+            Character actorLover = CharacterManager.Instance.GetCharacterByID(actor.relationshipContainer
+                .GetFirstRelatableIDWithRelationship(RELATIONSHIP_TYPE.LOVER));
 
             if (actorLover != targetCharacter) {
-                CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.INFRACTION);
+                CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, 
+                    CRIME_TYPE.INFRACTION);
 
-                Character targetLover = targetCharacter.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.LOVER) as Character;
+                Character targetLover = CharacterManager.Instance.GetCharacterByID(targetCharacter.relationshipContainer
+                    .GetFirstRelatableIDWithRelationship(RELATIONSHIP_TYPE.LOVER));
+                
                 if (actorLover == witness) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor);
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor);
@@ -130,7 +134,7 @@ public class MakeLove : GoapAction {
                 }
                 if (targetLover == witness) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor);
-                    if (witness.opinionComponent.IsFriendsWith(actor) || witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.RELATIVE)) {
+                    if (witness.relationshipContainer.IsFriendsWith(actor) || witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.RELATIVE)) {
                         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor);
                     } else {
                         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, actor);
@@ -155,12 +159,14 @@ public class MakeLove : GoapAction {
 
         if (target is Character) {
             Character targetCharacter = target as Character;
-            Character actorLover = actor.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.LOVER) as Character;
+            Character actorLover = CharacterManager.Instance.GetCharacterByID(actor.relationshipContainer
+                .GetFirstRelatableIDWithRelationship(RELATIONSHIP_TYPE.LOVER));
 
             if (actorLover != targetCharacter) {
                 CrimeManager.Instance.ReactToCrime(witness, targetCharacter, node, node.associatedJobType, CRIME_TYPE.INFRACTION);
 
-                Character targetLover = targetCharacter.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.LOVER) as Character;
+                Character targetLover = CharacterManager.Instance.GetCharacterByID(targetCharacter.relationshipContainer
+                    .GetFirstRelatableIDWithRelationship(RELATIONSHIP_TYPE.LOVER));
                 if (targetLover == witness) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, targetCharacter);
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, targetCharacter);
@@ -169,7 +175,7 @@ public class MakeLove : GoapAction {
                 }
                 if (actorLover == witness) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, targetCharacter);
-                    if (witness.opinionComponent.IsFriendsWith(actor) || witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.RELATIVE)) {
+                    if (witness.relationshipContainer.IsFriendsWith(actor) || witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.RELATIVE)) {
                         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, targetCharacter);
                     } else {
                         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, targetCharacter);

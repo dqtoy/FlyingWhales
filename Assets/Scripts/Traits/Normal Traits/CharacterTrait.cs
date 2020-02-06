@@ -106,7 +106,7 @@ namespace Traits {
                     //     }
                     // }
                     if (targetCharacter.race == RACE.SKELETON || targetCharacter.characterClass.className == "Zombie") {
-                        string opinionLabel = characterThatWillDoJob.opinionComponent.GetOpinionLabel(targetCharacter);
+                        string opinionLabel = characterThatWillDoJob.relationshipContainer.GetOpinionLabel(targetCharacter);
                         if (opinionLabel == OpinionComponent.Friend) {
                             if (!charactersAlreadySawForHope.Contains(targetCharacter)) {
                                 charactersAlreadySawForHope.Add(targetCharacter);

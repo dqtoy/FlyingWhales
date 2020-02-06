@@ -9,7 +9,7 @@ public class CharacterRelationshipProcessor : IRelationshipProcessor {
         Character character2 = rel2 as Character;
         string relString = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(relType.ToString());
 
-        character1.opinionComponent.AdjustOpinion(character2, relString, 0);
+        character1.relationshipContainer.AdjustOpinion(character1, character2, relString, 0);
         //character2.opinionComponent.AdjustOpinion(character1, relString, 0);
 
         switch (relType) {
@@ -49,7 +49,7 @@ public class CharacterRelationshipProcessor : IRelationshipProcessor {
         Character character1 = rel1 as Character;
         Character character2 = rel2 as Character;
         string relString = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(relType.ToString());
-        character1.opinionComponent.RemoveOpinion(character2, relString);
+        character1.relationshipContainer.RemoveOpinion(character2, relString);
         //character2.opinionComponent.RemoveOpinion(character1, relString);
         //switch (relType) {
         //    case RELATIONSHIP_TYPE.EX_LOVER:

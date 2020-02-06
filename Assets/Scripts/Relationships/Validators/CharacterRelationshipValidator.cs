@@ -19,11 +19,11 @@ public class CharacterRelationshipValidator : IRelationshipValidator {
             case RELATIONSHIP_TYPE.LOVER:
                 //- **Lover:** Positive, Permanent (Can only have 1)
                 //check if this character already has a lover and that the target character is not his/her affair
-                if (character.relationshipContainer.GetRelatablesWithRelationship(type).Count > 0) {
+                if (character.relationshipContainer.GetRelatablesWithRelationshipCount(type) > 0) {
                     return false;
                 }
                 if (relationshipsWithTarget != null &&
-                    (relationshipsWithTarget.Contains(RELATIONSHIP_TYPE.AFFAIR)) || sourceCharacter.opinionComponent.IsEnemiesWith(targetCharacter)) {
+                    (relationshipsWithTarget.Contains(RELATIONSHIP_TYPE.AFFAIR)) || sourceCharacter.relationshipContainer.IsEnemiesWith(targetCharacter)) {
                     return false;
                 }
                 return true;
@@ -39,8 +39,8 @@ public class CharacterRelationshipValidator : IRelationshipValidator {
                     return false;
                 }
                 //one of the characters must have a lover
-                if (target.relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TYPE.LOVER).Count == 0  &&
-                    character.relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TYPE.LOVER).Count == 0) {
+                if (target.relationshipContainer.GetRelatablesWithRelationshipCount(RELATIONSHIP_TYPE.LOVER) == 0  &&
+                    character.relationshipContainer.GetRelatablesWithRelationshipCount(RELATIONSHIP_TYPE.LOVER) == 0) {
                     return false;
                 }
 

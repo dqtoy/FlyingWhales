@@ -46,7 +46,6 @@ public class ConsoleMenu : UIMenu {
             //{"/lfli", LogFactionLandmarkInfo},
             {"/center_character", CenterOnCharacter},
             {"/center_landmark", CenterOnLandmark },
-            {"/show_logs", ShowLogs },
             {"/log_location_history", LogLocationHistory  },
             {"/log_area_characters_history", LogAreaCharactersHistory  },
             {"/get_characters_with_item", GetCharactersWithItem },
@@ -524,35 +523,6 @@ public class ConsoleMenu : UIMenu {
         UIManager.Instance.ShowCharacterInfo(character, true);
         //character.CenterOnCharacter();
     }
-    private void ShowLogs(string[] parameters) {
-        if (parameters.Length != 1) {
-            AddCommandHistory(consoleLbl.text);
-            AddErrorMessage("There was an error in the command format of ShowLogs");
-            return;
-        }
-        string characterParameterString = parameters[0];
-        int characterID;
-
-        bool isCharacterParameterNumeric = int.TryParse(characterParameterString, out characterID);
-        Character character = null;
-        if (isCharacterParameterNumeric) {
-            character = CharacterManager.Instance.GetCharacterByID(characterID);
-        } else {
-            character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
-        }
-
-        if (character == null) {
-            AddErrorMessage("There was an error in the command format of ShowLogs");
-            return;
-        }
-
-        string logSummary = character.name + "'s logs: ";
-        List<string> logs = CharacterManager.Instance.GetCharacterLogs(character);
-        for (int i = 0; i < logs.Count; i++) {
-            logSummary += "\n" + logs[i];
-        }
-        AddSuccessMessage(logSummary);
-    }
     private void LogLocationHistory(string[] parameters) {
         if (parameters.Length != 1) {
             AddCommandHistory(consoleLbl.text);
@@ -1013,7 +983,7 @@ public class ConsoleMenu : UIMenu {
             AddErrorMessage("Opinion parameter is not an integer: " + opinionParameterString);
             return;
         }
-        character1.opinionComponent.AdjustOpinion(character2, "Base", value);
+        character1.relationshipContainer.AdjustOpinion(character1, character2, "Base", value);
         AddSuccessMessage("Adjusted Opinion of " + character1.name + " towards " + character2.name + " by " + value);
     }
     private void JoinFaction(string[] parameters) {

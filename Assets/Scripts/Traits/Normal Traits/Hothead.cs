@@ -28,7 +28,7 @@ namespace Traits {
                 debugLog += "\n-Roll: " + chance;
                 if (chance < 20) {
                     Character targetCharacter = targetPOI as Character;
-                    if (characterThatWillDoJob.opinionComponent.IsEnemiesWith(targetCharacter)) {
+                    if (characterThatWillDoJob.relationshipContainer.IsEnemiesWith(targetCharacter)) {
                         debugLog += "\n-Character considers Target as Enemy or Rival, will trigger Angered interrupt";
                         characterThatWillDoJob.logComponent.PrintLogIfActive(debugLog);
                         characterThatWillDoJob.interruptComponent.TriggerInterrupt(INTERRUPT.Angered, targetCharacter);

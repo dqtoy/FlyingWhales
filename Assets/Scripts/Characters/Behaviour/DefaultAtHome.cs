@@ -116,7 +116,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                     int chance = UnityEngine.Random.Range(0, 100);
                     log += "\n  -RNG roll: " + chance;
                     if (chance < 25) {
-                        List<Character> positiveRelatables = character.opinionComponent.GetFriendCharacters();
+                        List<Character> positiveRelatables = character.relationshipContainer.GetFriendCharacters();
                         if (positiveRelatables.Count > 0) {
                             LocationStructure targetStructure = null;
                             while (positiveRelatables.Count > 0 && targetStructure == null) {

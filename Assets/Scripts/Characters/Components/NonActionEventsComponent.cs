@@ -78,8 +78,8 @@ public class NonActionEventsComponent {
 
         MOOD_STATE actorMood = owner.moodComponent.moodState;
         MOOD_STATE targetMood = target.moodComponent.moodState;
-        string actorOpinionLabel = owner.opinionComponent.GetOpinionLabel(target);
-        string targetOpinionLabel = target.opinionComponent.GetOpinionLabel(owner);
+        string actorOpinionLabel = owner.relationshipContainer.GetOpinionLabel(target);
+        string targetOpinionLabel = target.relationshipContainer.GetOpinionLabel(owner);
         int compatibility = RelationshipManager.Instance.GetCompatibilityBetween(owner, target);
 
         if (actorMood == MOOD_STATE.LOW) {
@@ -219,11 +219,11 @@ public class NonActionEventsComponent {
         }
 
         if (adjustOpinionBothSides) {
-            owner.opinionComponent.AdjustOpinion(target, result, opinionValue, "engaged in disastrous conversation");
-            target.opinionComponent.AdjustOpinion(owner, result, opinionValue, "engaged in disastrous conversation");
+            owner.relationshipContainer.AdjustOpinion(owner, target, result, opinionValue, "engaged in disastrous conversation");
+            target.relationshipContainer.AdjustOpinion(target, owner, result, opinionValue, "engaged in disastrous conversation");
         } else {
             //If adjustment of opinion is not on both sides, this must mean that the result is either Insult or Praise, so adjust opinion of target to actor
-            target.opinionComponent.AdjustOpinion(owner, result, opinionValue);
+            target.relationshipContainer.AdjustOpinion(target, owner, result, opinionValue);
         }
 
         GameDate dueDate = GameManager.Instance.Today();
@@ -246,7 +246,7 @@ public class NonActionEventsComponent {
     private void OnOpinionDecreased(Character char1, Character char2, string reason) {
         if(char1 == owner) {
             if (UnityEngine.Random.Range(0, 100) < 30) {
-                if (owner.opinionComponent.GetTotalOpinion(char2) < -25) {
+                if (owner.relationshipContainer.GetTotalOpinion(char2) < -25) {
                     if (owner.relationshipContainer.HasRelationshipWith(char2, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR)) {
                         char1.interruptComponent.TriggerInterrupt(INTERRUPT.Break_Up, char2, reason);
                     }
@@ -319,23 +319,23 @@ public class NonActionEventsComponent {
         int chance = UnityEngine.Random.Range(0, 100);
         if(chance < 50) {
             if (owner.traitContainer.HasTrait("Ugly")) {
-                owner.opinionComponent.AdjustOpinion(target, "Base", -4, "engaged in disastrous flirting");
-                target.opinionComponent.AdjustOpinion(owner, "Base", -2, "engaged in disastrous flirting");
+                owner.relationshipContainer.AdjustOpinion(owner, target, "Base", -4, "engaged in disastrous flirting");
+                target.relationshipContainer.AdjustOpinion(target, owner, "Base", -2, "engaged in disastrous flirting");
                 return "ugly";
             }
         }
         if(chance < 90) {
             if(!RelationshipManager.IsSexuallyCompatibleOneSided(target.sexuality, owner.sexuality, target.gender, owner.gender)) {
-                owner.opinionComponent.AdjustOpinion(target, "Base", -4, "engaged in disastrous flirting");
-                target.opinionComponent.AdjustOpinion(owner, "Base", -2, "engaged in disastrous flirting");
+                owner.relationshipContainer.AdjustOpinion(owner, target, "Base", -4, "engaged in disastrous flirting");
+                target.relationshipContainer.AdjustOpinion(target, owner, "Base", -2, "engaged in disastrous flirting");
                 return "incompatible";
             }
         }
-        owner.opinionComponent.AdjustOpinion(target, "Base", 2);
-        target.opinionComponent.AdjustOpinion(owner, "Base", 4);
+        owner.relationshipContainer.AdjustOpinion(owner, target, "Base", 2);
+        target.relationshipContainer.AdjustOpinion(target, owner, "Base", 4);
 
         int value = 0;
-        string opinionLabel = owner.opinionComponent.GetOpinionLabel(target);
+        string opinionLabel = owner.relationshipContainer.GetOpinionLabel(target);
         if(opinionLabel == OpinionComponent.Acquaintance) {
             value = 1;
         }else if (opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {

@@ -25,8 +25,8 @@ public class CrimeManager : MonoBehaviour {
         if(actionType == INTERACTION_TYPE.MAKE_LOVE) {
             if (target is Character) {
                 Character targetCharacter = target as Character;
-                Character lover = actor.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.LOVER) as Character;
-                if (lover != null && lover != targetCharacter) {
+                int loverID = actor.relationshipContainer.GetFirstRelatableIDWithRelationship(RELATIONSHIP_TYPE.LOVER);
+                if (loverID != -1 && loverID != targetCharacter.id) {
                     return CRIME_TYPE.INFRACTION;
                 }
             }
@@ -100,7 +100,7 @@ public class CrimeManager : MonoBehaviour {
         } else if (crimeJobType == JOB_TYPE.DESTROY) {
             lastStrawReason = "has destructive behaviour";
         }
-        reactor.opinionComponent.AdjustOpinion(crimeCommitter, "Infraction", -2, lastStrawReason);
+        reactor.relationshipContainer.AdjustOpinion(reactor, crimeCommitter, "Infraction", -2, lastStrawReason);
     }
     private void ReactToMisdemeanor(Character reactor, Character crimeCommitter, ActualGoapNode committedCrime, JOB_TYPE crimeJobType) {
         string lastStrawReason = string.Empty;
@@ -111,7 +111,7 @@ public class CrimeManager : MonoBehaviour {
         } else if (committedCrime.action.goapType == INTERACTION_TYPE.POISON) {
             lastStrawReason = "attacked someone";
         }
-        reactor.opinionComponent.AdjustOpinion(crimeCommitter, "Misdemeanor", -4, lastStrawReason);
+        reactor.relationshipContainer.AdjustOpinion(reactor, crimeCommitter, "Misdemeanor", -4, lastStrawReason);
         MakeCharacterACriminal(crimeCommitter, CRIME_TYPE.MISDEMEANOR, committedCrime.action);
     }
     private void ReactToSeriousCrime(Character reactor, Character crimeCommitter, ActualGoapNode committedCrime, JOB_TYPE crimeJobType) {
@@ -121,7 +121,7 @@ public class CrimeManager : MonoBehaviour {
         } else if (committedCrime.action.goapType == INTERACTION_TYPE.RITUAL_KILLING) {
             lastStrawReason = "is a Psychopath killer";
         }
-        reactor.opinionComponent.AdjustOpinion(crimeCommitter, "Serious Crime", -10);
+        reactor.relationshipContainer.AdjustOpinion(reactor, crimeCommitter, "Serious Crime", -10);
         MakeCharacterACriminal(crimeCommitter, CRIME_TYPE.SERIOUS, committedCrime.action);
     }
     private void ReactToHeinousCrime(Character reactor, Character crimeCommitter, ActualGoapNode committedCrime, JOB_TYPE crimeJobType) {
@@ -131,7 +131,7 @@ public class CrimeManager : MonoBehaviour {
         } else if (committedCrime.action.goapType == INTERACTION_TYPE.DRINK_BLOOD) {
             lastStrawReason = "is a vampire";
         }
-        reactor.opinionComponent.AdjustOpinion(crimeCommitter, "Heinous Crime", -20);
+        reactor.relationshipContainer.AdjustOpinion(reactor, crimeCommitter, "Heinous Crime", -20);
         MakeCharacterACriminal(crimeCommitter, CRIME_TYPE.HEINOUS, committedCrime.action);
     }
     private void ReactToHeinousCrime(Character reactor, Character actor, Interrupt interrupt) {
@@ -139,7 +139,7 @@ public class CrimeManager : MonoBehaviour {
         if (interrupt.interrupt == INTERRUPT.Transform_To_Wolf || interrupt.interrupt == INTERRUPT.Revert_To_Normal) {
             lastStrawReason = "is a werewolf";
         }
-        reactor.opinionComponent.AdjustOpinion(actor, "Heinous Crime", -20);
+        reactor.relationshipContainer.AdjustOpinion(reactor, actor, "Heinous Crime", -20);
         MakeCharacterACriminal(actor, CRIME_TYPE.HEINOUS, interrupt);
     }
     #endregion

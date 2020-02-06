@@ -99,7 +99,7 @@ public class CharacterInfoUI : UIMenu {
         Messenger.AddListener<SpecialToken, Character>(Signals.CHARACTER_OBTAINED_ITEM, UpdateInventoryInfoFromSignal);
         Messenger.AddListener<SpecialToken, Character>(Signals.CHARACTER_LOST_ITEM, UpdateInventoryInfoFromSignal);
         Messenger.AddListener<Character>(Signals.CHARACTER_SWITCHED_ALTER_EGO, OnCharacterChangedAlterEgo);
-        //Messenger.AddListener<Relatable, Relatable>(Signals.RELATIONSHIP_ADDED, OnRelationshipAdded);
+        Messenger.AddListener<Relatable, Relatable>(Signals.RELATIONSHIP_ADDED, OnRelationshipAdded);
         //Messenger.AddListener<Relatable, RELATIONSHIP_TRAIT, Relatable>(Signals.RELATIONSHIP_REMOVED, OnRelationshipRemoved);
         Messenger.AddListener<Character, Character>(Signals.OPINION_ADDED, OnOpinionChanged);
         Messenger.AddListener<Character, Character>(Signals.OPINION_REMOVED, OnOpinionChanged);
@@ -576,22 +576,22 @@ public class CharacterInfoUI : UIMenu {
         relationshipTypesLbl.text = string.Empty;
         relationshipNamesLbl.text = string.Empty;
         relationshipValuesLbl.text = string.Empty;
-        Dictionary<Character, OpinionData> orderedOpinions = _activeCharacter.opinionComponent.opinions
-            .OrderByDescending(k => k.Value.totalOpinion)
+        Dictionary<int, IRelationshipData> orderedRels = _activeCharacter.relationshipContainer.relationships
+            .OrderByDescending(k => k.Value.opinions.totalOpinion)
             .ToDictionary(k => k.Key, v => v.Value);
 
-        List<Character> keys = _activeCharacter.opinionComponent.opinions.Keys.ToList();
-        for (int i = 0; i < orderedOpinions.Keys.Count; i++) {
-            Character target = orderedOpinions.Keys.ElementAt(i);
-            int actualIndex = keys.IndexOf(target);
-            relationshipTypesLbl.text += $"{_activeCharacter.opinionComponent.GetRelationshipNameWith(target)}\n";
+        List<int> keys = _activeCharacter.relationshipContainer.relationships.Keys.ToList();
+        for (int i = 0; i < orderedRels.Keys.Count; i++) {
+            Character target = CharacterManager.Instance.GetCharacterByID(orderedRels.Keys.ElementAt(i));
+            int actualIndex = keys.IndexOf(target.id);
+            relationshipTypesLbl.text += $"{_activeCharacter.relationshipContainer.GetRelationshipNameWith(target)}\n";
             int opinionOfOther = 0;
-            if (target.opinionComponent.HasOpinion(activeCharacter)) {
-                opinionOfOther = target.opinionComponent.GetTotalOpinion(activeCharacter);
+            if (target.relationshipContainer.HasRelationshipWith(activeCharacter)) {
+                opinionOfOther = target.relationshipContainer.GetTotalOpinion(activeCharacter);
             }
             relationshipNamesLbl.text += $"<link=\"{actualIndex.ToString()}\">{target.name}</link>\n";
-            relationshipValuesLbl.text += $"<link=\"{actualIndex.ToString()}\"><color=\"{ OpinionColor(activeCharacter.opinionComponent.GetTotalOpinion(target)) }\"> " +
-                                          $"{GetOpinionText(activeCharacter.opinionComponent.GetTotalOpinion(target))}</color> " +
+            relationshipValuesLbl.text += $"<link=\"{actualIndex.ToString()}\"><color=\"{ OpinionColor(activeCharacter.relationshipContainer.GetTotalOpinion(target)) }\"> " +
+                                          $"{GetOpinionText(activeCharacter.relationshipContainer.GetTotalOpinion(target))}</color> " +
                                           $"<color=\"{OpinionColor(opinionOfOther)}\">({GetOpinionText(opinionOfOther)})</color></link>\n";
         }
     }
@@ -599,7 +599,8 @@ public class CharacterInfoUI : UIMenu {
         if (obj is string) {
             string text = (string)obj;
             int index = int.Parse(text);
-            Character target = _activeCharacter.opinionComponent.opinions.Keys.ElementAtOrDefault(index);
+            Character target = CharacterManager.Instance.GetCharacterByID(_activeCharacter.relationshipContainer
+                .relationships.Keys.ElementAtOrDefault(index));
             if (target != null) {
                 ShowOpinionData(target);
             }
@@ -615,16 +616,21 @@ public class CharacterInfoUI : UIMenu {
             UpdateRelationships();
         }
     }
+    private void OnRelationshipAdded(Relatable owner, Relatable target) {
+        if (isShowing && (owner == activeCharacter || target == activeCharacter)) {
+            UpdateRelationships();
+        }
+    }
     private void ShowOpinionData(Character target) {
-        int opinionOfOther = target.opinionComponent.GetTotalOpinion(activeCharacter);
+        int opinionOfOther = target.relationshipContainer.GetTotalOpinion(activeCharacter);
         string summary = activeCharacter.name + "'s opinion of " + target.name;
         summary += "\n---------------------";
-        Dictionary<string, int> opinions = activeCharacter.opinionComponent.GetOpinionData(target).allOpinions;
+        Dictionary<string, int> opinions = activeCharacter.relationshipContainer.GetOpinionData(target).allOpinions;
         foreach (KeyValuePair<string, int> kvp in opinions) {
             summary += "\n" + kvp.Key + ": " + "<color=" + OpinionColor(kvp.Value) + ">" + GetOpinionText(kvp.Value) + "</color>";
         }
         summary += "\n---------------------";
-        summary += "\nTotal: <color=" + OpinionColor(opinionOfOther) + ">" + GetOpinionText(activeCharacter.opinionComponent.GetTotalOpinion(target)) + "</color>";
+        summary += "\nTotal: <color=" + OpinionColor(opinionOfOther) + ">" + GetOpinionText(activeCharacter.relationshipContainer.GetTotalOpinion(target)) + "</color>";
         summary += "\n" + target.name + "'s opinion of " + activeCharacter.name + ": <color=" + OpinionColor(opinionOfOther) + ">" + GetOpinionText(opinionOfOther) + "</color>";
         summary += "\n\nCompatibility: " + RelationshipManager.Instance.GetCompatibilityBetween(activeCharacter, target);
         UIManager.Instance.ShowSmallInfo(summary);
@@ -648,7 +654,8 @@ public class CharacterInfoUI : UIMenu {
         if (obj is string) {
             string text = (string)obj;
             int index = int.Parse(text);
-            Character target = _activeCharacter.opinionComponent.opinions.Keys.ElementAtOrDefault(index);
+            Character target = CharacterManager.Instance.GetCharacterByID(_activeCharacter.relationshipContainer
+                .relationships.Keys.ElementAtOrDefault(index));
             if (target != null) {
                 UIManager.Instance.ShowCharacterInfo(target,true);    
             }

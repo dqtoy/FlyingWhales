@@ -193,21 +193,6 @@ public class FactionManager : MonoBehaviour {
         }
         return null;
     }
-    public List<Character> GetViableRulers(Character previousRuler, GENDER gender, params RELATIONSHIP_TYPE[] type) {
-        List<Character> characters = new List<Character>();
-        List<Relatable> relatables = previousRuler.relationshipContainer.GetRelatablesWithRelationship(type);
-        for (int i = 0; i < relatables.Count; i++) {
-            Relatable r = relatables[i];
-            if (r is Character) {
-                Character character = r as Character;
-                if (character.isDead || character.gender != gender || character.faction.IsHostileWith(previousRuler.faction) || character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE) || character.traitContainer.HasTrait("Criminal") || characters.Contains(character)) {
-                    continue;
-                }
-                characters.Add(character);
-            }
-        }
-        return characters;
-    }
     #endregion
 
     #region Relationships

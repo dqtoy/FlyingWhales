@@ -76,10 +76,10 @@ public class Nap : GoapAction {
                     if (tableOwners != null) {
                         for (int i = 0; i < tableOwners.Count; i++) {
                             Character objectOwner = tableOwners[i];
-                            if (actor.opinionComponent.IsFriendsWith(objectOwner)) {
+                            if (actor.relationshipContainer.IsFriendsWith(objectOwner)) {
                                 isTargetObjectOwnedByFriend = true;
                                 break;
-                            } else if (actor.opinionComponent.IsEnemiesWith(objectOwner)) {
+                            } else if (actor.relationshipContainer.IsEnemiesWith(objectOwner)) {
                                 isTargetObjectOwnedByEnemy = true;
                             }
                         }
@@ -105,7 +105,7 @@ public class Nap : GoapAction {
                 }
 
                 if(alreadySleepingCharacter != null) {
-                    string opinionLabel = actor.opinionComponent.GetOpinionLabel(alreadySleepingCharacter);
+                    string opinionLabel = actor.relationshipContainer.GetOpinionLabel(alreadySleepingCharacter);
                     if(opinionLabel == OpinionComponent.Friend) {
                         cost += 20;
                         costLog += " +20(Friend Occupies)";

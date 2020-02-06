@@ -20,7 +20,7 @@ namespace Interrupts {
         }
         public override string ReactionToActor(Character witness, Character actor, IPointOfInterest target, Interrupt interrupt) {
             string response = base.ReactionToActor(witness, actor, target, interrupt);
-            string opinionLabel = witness.opinionComponent.GetOpinionLabel(actor);
+            string opinionLabel = witness.relationshipContainer.GetOpinionLabel(actor);
             if (opinionLabel == OpinionComponent.Acquaintance) {
                 if(UnityEngine.Random.Range(0, 2) == 0) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor);

@@ -132,6 +132,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public BuildStructureComponent buildStructureComponent { get; private set; }
     public CharacterStateComponent stateComponent { get; private set; }
     public NonActionEventsComponent nonActionEventsComponent { get; private set; }
+    [Obsolete("opinionComponent is obsolete and has been moved to the BaseRelationshipContainer")]
     public OpinionComponent opinionComponent { get; private set; }
     public InterruptComponent interruptComponent { get; private set; }
     public BehaviourComponent behaviourComponent { get; private set; }
@@ -142,6 +143,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public CombatComponent combatComponent { get; private set; }
 
     #region getters / setters
+    public override string relatableName => _firstName;
     public virtual string name => _firstName;
     public string fullname => $"{_firstName} {_surName}";
     public string nameWithID => name;
@@ -156,7 +158,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //return Utilities.GetNormalizedRaceAdjective(race) + " " + role.name + " " + characterClass.className;
         }
     }
-    public int id => _id;
+    public override int id => _id;
     public bool isDead => this._isDead;
     public bool isFactionless { //is the character part of the neutral faction? or no faction?
         get {
@@ -937,9 +939,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
     }
-    public void AssignClassByRole(CharacterRole role, bool isInitial = false) {
-        AssignClass(GetClassForRole(role), isInitial);
-    }
     public void RemoveClass() {
         if (_characterClass == null) { return; }
         traitContainer.RemoveTrait(this, traitContainer.GetNormalTrait<Trait>(_characterClass.traitNames)); //Remove traits from class
@@ -1155,24 +1154,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 log += ": did not create a job!";
             }
         }
-
-        POIRelationshipData relData = relationshipContainer.GetRelationshipDataWith(targetCharacter) as POIRelationshipData;
-        if (relData != null) {
-            relData.OnSeeCharacter(targetCharacter, this);
-        }
-
-        //log += "\nChecking relationship traits...";
-        //for (int i = 0; i < relationshipTraits.Count; i++) {
-        //    if (relationshipTraits[i].targetCharacter == targetCharacter) {
-        //        log += "\n- " + relationshipTraits[i].name;
-        //        if (relationshipTraits[i].CreateJobsOnEnterVisionBasedOnTrait(this, this)) {
-        //            hasCreatedJob = true;
-        //            log += ": created a job!";
-        //        } else {
-        //            log += ": did not create a job!";
-        //        }
-        //    }
-        //}
         logComponent.PrintLogIfActive(log);
         return hasCreatedJob;
     }
@@ -1499,12 +1480,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (troubledCharacter != null) {
             this.troubledCharacter = troubledCharacter;
             Character targetCharacter = null;
-            List<Character> positiveCharacters = opinionComponent.GetCharactersWithPositiveOpinion();
+            List<Character> positiveCharacters = relationshipContainer.GetCharactersWithPositiveOpinion();
             positiveCharacters.Remove(troubledCharacter);
             if (positiveCharacters.Count > 0) {
                 targetCharacter = positiveCharacters[UnityEngine.Random.Range(0, positiveCharacters.Count)];
             } else {
-                List<Character> nonEnemyCharacters = opinionComponent.GetCharactersWithNeutralOpinion();
+                List<Character> nonEnemyCharacters = relationshipContainer.GetCharactersWithNeutralOpinion();
                 nonEnemyCharacters.Remove(troubledCharacter);
                 if (nonEnemyCharacters.Count > 0) {
                     targetCharacter = nonEnemyCharacters[UnityEngine.Random.Range(0, nonEnemyCharacters.Count)];
@@ -1531,12 +1512,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (troubledCharacter != null && troubledCharacter != this) {
             this.troubledCharacter = troubledCharacter;
             Character targetCharacter = null;
-            List<Character> positiveCharacters = opinionComponent.GetCharactersWithPositiveOpinion();
+            List<Character> positiveCharacters = relationshipContainer.GetCharactersWithPositiveOpinion();
             positiveCharacters.Remove(troubledCharacter);
             if (positiveCharacters.Count > 0) {
                 targetCharacter = positiveCharacters[UnityEngine.Random.Range(0, positiveCharacters.Count)];
             } else {
-                List<Character> nonEnemyCharacters = opinionComponent.GetCharactersWithNeutralOpinion();
+                List<Character> nonEnemyCharacters = relationshipContainer.GetCharactersWithNeutralOpinion();
                 nonEnemyCharacters.Remove(troubledCharacter);
                 if (nonEnemyCharacters.Count > 0) {
                     targetCharacter = nonEnemyCharacters[UnityEngine.Random.Range(0, nonEnemyCharacters.Count)];
@@ -2202,7 +2183,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     public void OnOtherCharacterDied(Character characterThatDied) {
         if (characterThatDied.id != this.id) {
-            string opinionLabel = opinionComponent.GetOpinionLabel(characterThatDied);
+            string opinionLabel = relationshipContainer.GetOpinionLabel(characterThatDied);
             if (opinionLabel == OpinionComponent.Friend) {
                 needsComponent.AdjustHope(-5f);
             } else if (opinionLabel == OpinionComponent.Close_Friend) {
@@ -2699,10 +2680,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 if (targetCombatState.currentClosestHostile != null && targetCombatState.currentClosestHostile != this) {
                     if (targetCombatState.currentClosestHostile is Character) {
                         Character currentHostileOfTargetCharacter = targetCombatState.currentClosestHostile as Character;
-                        RELATIONSHIP_EFFECT relEffectTowardsTargetOfCombat = opinionComponent.GetRelationshipEffectWith(currentHostileOfTargetCharacter);
+                        RELATIONSHIP_EFFECT relEffectTowardsTargetOfCombat = relationshipContainer.GetRelationshipEffectWith(currentHostileOfTargetCharacter);
                         if (relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.POSITIVE) {
                             if (!targetCombatState.allCharactersThatDegradedRel.Contains(this)) {
-                                opinionComponent.AdjustOpinion(targetCharacter, "Base", -10);
+                                relationshipContainer.AdjustOpinion(this, targetCharacter, "Base", -10);
                                 targetCombatState.AddCharacterThatDegradedRel(this);
                             }
                         }
@@ -2720,7 +2701,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                                 }
                             }
                             if (currentHostileOfTargetCharacter.faction == faction) {
-                                RELATIONSHIP_EFFECT relEffectTowardsTarget = opinionComponent.GetRelationshipEffectWith(targetCharacter);
+                                RELATIONSHIP_EFFECT relEffectTowardsTarget = relationshipContainer.GetRelationshipEffectWith(targetCharacter);
 
                                 if (relEffectTowardsTarget == RELATIONSHIP_EFFECT.POSITIVE) {
                                     if (relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.POSITIVE) {
@@ -2737,7 +2718,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                                                 joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                                                 joinLog.AddToFillers(targetCombatState.currentClosestHostile, targetCombatState.currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                                                 joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.CHARACTER_3);
-                                                joinLog.AddToFillers(null, this.opinionComponent.GetRelationshipNameWith(targetCharacter), LOG_IDENTIFIER.STRING_1);
+                                                joinLog.AddToFillers(null, this.relationshipContainer.GetRelationshipNameWith(targetCharacter), LOG_IDENTIFIER.STRING_1);
                                                 joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
                                                 PlayerManager.Instance.player.ShowNotificationFrom(this, joinLog);
                                             //}
@@ -3883,7 +3864,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public Character GetDisabledCharacterToCheckOut() {
         //List<Character> charactersWithRel = relationshipContainer.relationships.Keys.Where(x => x is AlterEgoData).Select(x => (x as AlterEgoData).owner).ToList();
-        List<Character> charactersWithRel = opinionComponent.charactersWithOpinion;
+        List<Character> charactersWithRel = relationshipContainer.charactersWithOpinion;
         if (charactersWithRel.Count > 0) {
             List<Character> positiveCharacters = new List<Character>();
             for (int i = 0; i < charactersWithRel.Count; i++) {
@@ -3891,7 +3872,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 if(character.isDead || character.isMissing || homeStructure == character.homeStructure) {
                     continue;
                 }
-                if (opinionComponent.HasOpinionLabelWithCharacter(character, OpinionComponent.Acquaintance, 
+                if (relationshipContainer.HasOpinionLabelWithCharacter(character, OpinionComponent.Acquaintance, 
                     OpinionComponent.Friend, OpinionComponent.Close_Friend)) {
                     if (character.traitContainer.HasTrait("Paralyzed", "Catatonic")) {
                         positiveCharacters.Add(character);
@@ -5973,7 +5954,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     private void OnCharacterMissing(Character missingCharacter) {
         if(missingCharacter != this) {
-            string opinionLabel = opinionComponent.GetOpinionLabel(missingCharacter);
+            string opinionLabel = relationshipContainer.GetOpinionLabel(missingCharacter);
             if(opinionLabel == OpinionComponent.Friend) {
                 needsComponent.AdjustHope(-5f);
             }else if (opinionLabel == OpinionComponent.Close_Friend) {
@@ -5983,7 +5964,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     private void OnCharacterNoLongerMissing(Character missingCharacter) {
         if (missingCharacter != this) {
-            string opinionLabel = opinionComponent.GetOpinionLabel(missingCharacter);
+            string opinionLabel = relationshipContainer.GetOpinionLabel(missingCharacter);
             if (opinionLabel == OpinionComponent.Friend) {
                 needsComponent.AdjustHope(5f);
             } else if (opinionLabel == OpinionComponent.Close_Friend) {

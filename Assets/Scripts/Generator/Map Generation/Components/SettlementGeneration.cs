@@ -97,7 +97,8 @@ public class SettlementGeneration : MapGenerationComponent {
 
 		while (listOfCharacters.Count != 0) {
 			Character currCharacter = listOfCharacters[0];
-			Character lover = (currCharacter.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.LOVER) as Character) ?? null;
+			Character lover = CharacterManager.Instance.GetCharacterByID(currCharacter.relationshipContainer
+				.GetFirstRelatableIDWithRelationship(RELATIONSHIP_TYPE.LOVER));
 			if (lover != null) {
 				listOfCharacters.Remove(lover);
 			}
@@ -275,8 +276,8 @@ public class SettlementGeneration : MapGenerationComponent {
 							PreCharacterData targetCharacterData = data.familyTreeDatabase.GetCharacterWithID(kvp.Key);
 							if (targetCharacterData.hasBeenSpawned) {
 								Character target = CharacterManager.Instance.GetCharacterByID(targetCharacterData.id);
-								character.opinionComponent.SetOpinion(target, "Base", kvp.Value.baseOpinion);
-								character.opinionComponent.GetOpinionData(target).SetCompatibilityValue(kvp.Value.compatibility);
+								character.relationshipContainer.SetOpinion(character, target, "Base", kvp.Value.baseOpinion);
+								character.relationshipContainer.GetOpinionData(target).SetCompatibilityValue(kvp.Value.compatibility);
 								for (int k = 0; k < kvp.Value.relationships.Count; k++) {
 									RELATIONSHIP_TYPE relationshipType = kvp.Value.relationships[k];
 									RelationshipManager.Instance.CreateNewOneWayRelationship(character, target,

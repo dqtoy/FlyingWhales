@@ -64,7 +64,7 @@ public class DispelMagic : GoapAction {
         goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Cursed");
         if(goapNode.poiTarget is Character) {
             Character target = goapNode.poiTarget as Character;
-            target.opinionComponent.AdjustOpinion(goapNode.actor, "Base", 3);
+            target.relationshipContainer.AdjustOpinion(target, goapNode.actor, "Base", 3);
         }
     }
     #endregion

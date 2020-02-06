@@ -112,9 +112,9 @@ public partial class InteractionManager {
             //}
             if (character.isFactionless) {
                 return character.race == targetCharacter.race && character.homeRegion == targetCharacter.homeRegion &&
-                       !targetCharacter.opinionComponent.IsEnemiesWith(character);
+                       !targetCharacter.relationshipContainer.IsEnemiesWith(character);
             }
-            return !character.opinionComponent.IsEnemiesWith(targetCharacter);
+            return !character.relationshipContainer.IsEnemiesWith(targetCharacter);
         }
         return false;
     }
@@ -124,7 +124,7 @@ public partial class InteractionManager {
             Restrained restrainedTrait = targetCharacter.traitContainer.GetNormalTrait<Restrained>("Restrained");
             if (restrainedTrait == null || !restrainedTrait.isPrisoner) {
                 return character.traitContainer.HasTrait("Combatant") /*character.role.roleType == CHARACTER_ROLE.SOLDIER*/ &&
-                   character.opinionComponent.GetRelationshipEffectWith(targetCharacter) !=
+                   character.relationshipContainer.GetRelationshipEffectWith(targetCharacter) !=
                    RELATIONSHIP_EFFECT.POSITIVE;
             }
         }
@@ -141,7 +141,7 @@ public partial class InteractionManager {
             //character.role.roleType == CHARACTER_ROLE.CIVILIAN ||
             //character.role.roleType == CHARACTER_ROLE.ADVENTURER)
             && character.traitContainer.HasTrait("Worker", "Combatant")
-            && character.opinionComponent.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.POSITIVE 
+            && character.relationshipContainer.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.POSITIVE 
             && !character.traitContainer.HasTrait("Criminal")
             && !targetCharacter.traitContainer.HasTrait("Restrained");
     }
@@ -162,7 +162,7 @@ public partial class InteractionManager {
     }
     public bool CanCharacterTakeParalyzedFeedJob(Character sourceCharacter, Character character) {
         return sourceCharacter != character && sourceCharacter.faction == character.faction &&
-               sourceCharacter.opinionComponent.GetRelationshipEffectWith(character) !=
+               sourceCharacter.relationshipContainer.GetRelationshipEffectWith(character) !=
                RELATIONSHIP_EFFECT.NEGATIVE;
     }
     public bool CanCharacterTakeRestrainedFeedJob(Character sourceCharacter, Character character) {
@@ -181,7 +181,7 @@ public partial class InteractionManager {
     }
     public bool CanCharacterTakeDropJob(Character sourceCharacter, Character character) {
         return sourceCharacter != character && sourceCharacter.faction == character.faction &&
-               character.opinionComponent.GetRelationshipEffectWith(sourceCharacter) !=
+               character.relationshipContainer.GetRelationshipEffectWith(sourceCharacter) !=
                RELATIONSHIP_EFFECT.NEGATIVE;
     }
     public bool CanCharacterTakeKnockoutJob(Character character, Character targetCharacter) {

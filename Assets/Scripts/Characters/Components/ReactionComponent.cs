@@ -239,7 +239,7 @@ public class ReactionComponent {
                             if (RelationshipManager.IsSexuallyCompatibleOneSided(owner.sexuality, targetCharacter.sexuality, owner.gender, targetCharacter.gender)
                                 && owner.relationshipContainer.IsFamilyMember(targetCharacter) == false) {
                                 if (owner.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR)
-                                    || owner.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.LOVER) == null
+                                    || owner.relationshipContainer.GetFirstRelatableIDWithRelationship(RELATIONSHIP_TYPE.LOVER) == -1
                                     || owner.traitContainer.HasTrait("Unfaithful")) {
                                     debugLog += "\n-Flirt has 1% (multiplied by Compatibility value) chance to trigger";
                                     int compatibility = RelationshipManager.Instance.GetCompatibilityBetween(owner, targetCharacter);
@@ -266,7 +266,7 @@ public class ReactionComponent {
 
                     if (owner.faction == targetCharacter.faction || owner.homeSettlement == targetCharacter.homeSettlement) {
                         debugLog += "\n-Character and Target are with the same faction or settlement";
-                        if (owner.opinionComponent.IsEnemiesWith(targetCharacter)) {
+                        if (owner.relationshipContainer.IsEnemiesWith(targetCharacter)) {
                             debugLog += "\n-Character considers Target as Enemy or Rival";
                             if (!targetCharacter.canMove || !targetCharacter.canPerform) {
                                 debugLog += "\n-Target can neither move or perform, will trigger Mock or Laugh At interrupt";
@@ -322,7 +322,7 @@ public class ReactionComponent {
                         }
                     } else {
                         debugLog += "\n-Character and Target are not with the same faction and settlement";
-                        if (owner.opinionComponent.IsEnemiesWith(targetCharacter)) {
+                        if (owner.relationshipContainer.IsEnemiesWith(targetCharacter)) {
                             debugLog += "\n-Character considers Target as Enemy or Rival, will trigger Fight or Flight response";
                             //Fight or Flight
                             owner.combatComponent.FightOrFlight(targetCharacter);

@@ -30,7 +30,7 @@ public class JudgeCharacter : GoapAction {
         Character actor = goapNode.actor;
         Criminal criminalTrait = targetCharacter.traitContainer.GetNormalTrait<Criminal>("Criminal");
         FactionRelationship factionRelationship = actor.faction.GetRelationshipWith(targetCharacter.faction); //Will only be null if target and actor HAVE THE SAME FACTION
-        string opinionLabel = actor.opinionComponent.GetOpinionLabel(targetCharacter);
+        string opinionLabel = actor.relationshipContainer.GetOpinionLabel(targetCharacter);
 
         CrimeData crimeData = null;
         if(criminalTrait != null) {

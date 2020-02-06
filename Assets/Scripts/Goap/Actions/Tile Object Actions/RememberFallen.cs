@@ -72,13 +72,13 @@ public class RememberFallen : GoapAction {
         IPointOfInterest target = node.poiTarget;
         if (target is Tombstone) {
             Character targetCharacter = (target as Tombstone).character;
-            string witnessOpinionLabelToDead = witness.opinionComponent.GetOpinionLabel(targetCharacter);
+            string witnessOpinionLabelToDead = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
             if ((witnessOpinionLabelToDead == OpinionComponent.Friend || witnessOpinionLabelToDead == OpinionComponent.Close_Friend)
                 && !witness.traitContainer.HasTrait("Serial Killer")) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor);
             } else if (witnessOpinionLabelToDead == OpinionComponent.Rival) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, actor);
-                if (witness.opinionComponent.IsFriendsWith(actor)) {
+                if (witness.relationshipContainer.IsFriendsWith(actor)) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor);
                 }
             }
@@ -100,7 +100,7 @@ public class RememberFallen : GoapAction {
             if (poiTarget is Tombstone) {
                 Tombstone tombstone = poiTarget as Tombstone;
                 Character target = tombstone.character;
-                return actor.opinionComponent.GetRelationshipEffectWith(target) == RELATIONSHIP_EFFECT.POSITIVE;
+                return actor.relationshipContainer.GetRelationshipEffectWith(target) == RELATIONSHIP_EFFECT.POSITIVE;
             }
             return false;
         }
@@ -146,7 +146,7 @@ public class RememberFallenData : GoapActionData {
         if (poiTarget is Tombstone) {
             Tombstone tombstone = poiTarget as Tombstone;
             Character target = tombstone.character;
-            return actor.opinionComponent.GetRelationshipEffectWith(target) == RELATIONSHIP_EFFECT.POSITIVE;
+            return actor.relationshipContainer.GetRelationshipEffectWith(target) == RELATIONSHIP_EFFECT.POSITIVE;
         }
         return false;
     }

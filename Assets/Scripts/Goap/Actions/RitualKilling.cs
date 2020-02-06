@@ -74,10 +74,10 @@ public class RitualKilling : GoapAction {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor);
 
                 Character targetCharacter = target as Character;
-                if (witness.opinionComponent.IsFriendsWith(actor) && !witness.traitContainer.HasTrait("Serial Killer")) {
+                if (witness.relationshipContainer.IsFriendsWith(actor) && !witness.traitContainer.HasTrait("Serial Killer")) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor);
                 }
-                if (witness.opinionComponent.IsFriendsWith(targetCharacter)) {
+                if (witness.relationshipContainer.IsFriendsWith(targetCharacter)) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor);
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor);
                 }
@@ -93,7 +93,7 @@ public class RitualKilling : GoapAction {
         if (target is Character) {
             Character targetCharacter = target as Character;
             if (!witness.traitContainer.HasTrait("Serial Killer")) {
-                string opinionLabel = witness.opinionComponent.GetOpinionLabel(targetCharacter);
+                string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
                 if (opinionLabel == OpinionComponent.Acquaintance || opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, target);
                 }
@@ -113,7 +113,7 @@ public class RitualKilling : GoapAction {
             } else {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, targetCharacter, actor);
 
-                if (targetCharacter.opinionComponent.IsFriendsWith(actor) && !targetCharacter.traitContainer.HasTrait("Serial Killer")) {
+                if (targetCharacter.relationshipContainer.IsFriendsWith(actor) && !targetCharacter.traitContainer.HasTrait("Serial Killer")) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, targetCharacter, actor);
                 }
             }

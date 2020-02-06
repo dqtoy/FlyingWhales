@@ -1,4 +1,5 @@
-﻿using Inner_Maps;
+﻿using System;
+using Inner_Maps;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,26 +8,18 @@ using UtilityScripts;
 
 public class CharacterManager : MonoBehaviour {
 
-    public static CharacterManager Instance = null;
+    public static CharacterManager Instance;
 
     [Header("Sub Managers")]
     [SerializeField] private CharacterClassManager classManager;
 
     public static readonly string[] sevenDeadlySinsClassNames = { "Lust", "Gluttony", "Greed", "Sloth", "Wrath", "Envy", "Pride" };
     public const int MAX_HISTORY_LOGS = 300;
-    public const int CHARACTER_MAX_MEMORY = 20;
-    public const string Original_Alter_Ego = "Original";
-
     public GameObject characterIconPrefab;
     public Transform characterIconsParent;
 
     public int maxLevel;
-    private List<Character> _allCharacters;
     private List<CharacterAvatar> _allCharacterAvatars;
-    public List<Character> limboCharacters { get; private set; }
-
-    public Sprite heroSprite;
-
     [Header("Character Portrait Assets")]
     [SerializeField] private GameObject _characterPortraitPrefab;
     [SerializeField] private List<RacePortraitAssets> portraitAssets;
@@ -43,44 +36,27 @@ public class CharacterManager : MonoBehaviour {
     
     [Header("Character Marker Assets")]
     [SerializeField] private List<RaceMarkerAsset> markerAssets;
-    [SerializeField] private RuntimeAnimatorController baseAnimator;
-    public Sprite corpseSprite;
-
     [Header("Summon Settings")]
     [SerializeField] private SummonSettingDictionary summonSettings;
-
     [Header("Artifact Settings")]
     [SerializeField] private ArtifactSettingDictionary artifactSettings;
-
-    public Dictionary<Character, List<string>> allCharacterLogs { get; private set; }
-    public Dictionary<CHARACTER_ROLE, INTERACTION_TYPE[]> characterRoleInteractions { get; private set; }
+    
     public Dictionary<string, DeadlySin> deadlySins { get; private set; }
     public Dictionary<EMOTION, Emotion> emotionData { get; private set; }
     public List<Emotion> allEmotions { get; private set; }
-
-
-    private List<string> deadlySinsRotation = new List<string>();
-
     public int defaultSleepTicks { get; private set; } //how many ticks does a character must sleep per day?
     public SUMMON_TYPE[] summonsPool { get; private set; }
-
     public int CHARACTER_MISSING_THRESHOLD { get; private set; }
 
     #region getters/setters
-    public List<Character> allCharacters {
-        get { return _allCharacters; }
-    }
-    public GameObject characterPortraitPrefab {
-        get { return _characterPortraitPrefab; }
-    }
+    public List<Character> allCharacters => characterDatabase.allCharactersList;
+    public GameObject characterPortraitPrefab => _characterPortraitPrefab;
+    private CharacterDatabase characterDatabase { get; set; }
     #endregion
 
     private void Awake() {
         Instance = this;
-        _allCharacters = new List<Character>();
-        limboCharacters = new List<Character>();
         _allCharacterAvatars = new List<CharacterAvatar>();
-        allCharacterLogs = new Dictionary<Character, List<string>>();
     }
 
     public void Initialize() {
@@ -88,13 +64,14 @@ public class CharacterManager : MonoBehaviour {
         CreateDeadlySinsData();
         defaultSleepTicks = GameManager.Instance.GetTicksBasedOnHour(8);
         CHARACTER_MISSING_THRESHOLD = GameManager.Instance.GetTicksBasedOnHour(72);
-        summonsPool = new SUMMON_TYPE[] { SUMMON_TYPE.Wolf, SUMMON_TYPE.Golem, SUMMON_TYPE.Incubus, SUMMON_TYPE.Succubus };
+        summonsPool = new[] { SUMMON_TYPE.Wolf, SUMMON_TYPE.Golem, SUMMON_TYPE.Incubus, SUMMON_TYPE.Succubus };
+        characterDatabase = new CharacterDatabase();
         ConstructEmotionData();
         Messenger.AddListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);
     }
 
     #region Characters
-    public Character CreateNewLimboCharacter(CharacterRole role, RACE race, string className, GENDER gender, Faction faction = null,
+    public Character CreateNewLimboCharacter(RACE race, string className, GENDER gender, Faction faction = null,
     Settlement homeLocation = null, IDwelling homeStructure = null) {
         Character newCharacter = new Character(className, race, gender);
         newCharacter.SetIsLimboCharacter(true);
@@ -116,7 +93,7 @@ public class CharacterManager : MonoBehaviour {
         AddNewLimboCharacter(newCharacter);
         return newCharacter;
     }
-    public Character CreateNewCharacter(CharacterRole role, string className, RACE race, GENDER gender, Faction faction = null, 
+    public Character CreateNewCharacter(string className, RACE race, GENDER gender, Faction faction = null, 
         Settlement homeLocation = null, IDwelling homeStructure = null) {
         Character newCharacter = new Character(className, race, gender);
         newCharacter.Initialize();
@@ -136,7 +113,7 @@ public class CharacterManager : MonoBehaviour {
         AddNewCharacter(newCharacter);
         return newCharacter;
     }
-    public Character CreateNewCharacter(CharacterRole role, string className, RACE race, GENDER gender, SEXUALITY sexuality, Faction faction = null,
+    public Character CreateNewCharacter(string className, RACE race, GENDER gender, SEXUALITY sexuality, Faction faction = null,
         Settlement homeLocation = null, IDwelling homeStructure = null) {
         Character newCharacter = new Character(className, race, gender, sexuality);
         newCharacter.Initialize();
@@ -231,35 +208,26 @@ public class CharacterManager : MonoBehaviour {
         return newCharacter;
     }
     public void AddNewCharacter(Character character, bool broadcastSignal = true) {
-        _allCharacters.Add(character);
+        characterDatabase.AddCharacter(character);
         if (broadcastSignal) {
             Messenger.Broadcast(Signals.CHARACTER_CREATED, character);
         }
     }
     public void RemoveCharacter(Character character, bool broadcastSignal = true) {
-        if (_allCharacters.Remove(character)) {
+        if (characterDatabase.RemoveCharacter(character)) {
             if (broadcastSignal) {
                 Messenger.Broadcast(Signals.CHARACTER_REMOVED, character);
             }
         }
     }
     public void AddNewLimboCharacter(Character character) {
-        limboCharacters.Add(character);
+        characterDatabase.AddLimboCharacter(character);
         character.SetIsInLimbo(true);
     }
     public void RemoveLimboCharacter(Character character) {
-        if (limboCharacters.Remove(character)) {
+        if (characterDatabase.RemoveLimboCharacter(character)) {
             character.SetIsInLimbo(false);
         }
-    }
-
-    public string GetDeadlySinsClassNameFromRotation() {
-        if (deadlySinsRotation.Count == 0) {
-            deadlySinsRotation.AddRange(sevenDeadlySinsClassNames);
-        }
-        string nextClass = deadlySinsRotation[0];
-        deadlySinsRotation.RemoveAt(0);
-        return nextClass;
     }
     public void AddCharacterAvatar(CharacterAvatar characterAvatar) {
         int centerOrderLayer = (_allCharacterAvatars.Count * 2) + 1;
@@ -298,9 +266,6 @@ public class CharacterManager : MonoBehaviour {
         return classManager.CreateNewCharacterClass(className);
     }
     public string GetRandomClassByIdentifier(string identifier) {
-        if (identifier == "Demon") {
-            return GetDeadlySinsClassNameFromRotation();
-        }
         return classManager.GetRandomClassByIdentifier(identifier);
     }
     public bool HasCharacterClass(string className) {
@@ -368,7 +333,7 @@ public class CharacterManager : MonoBehaviour {
         }
 
         newCharacter.ownParty.CreateIcon();
-        Settlement home = null;
+        // Settlement home = null;
         //TODO:
         // if (data.homeID != -1) {
         //     home = GridMap.Instance.GetRegionByID(data.homeID);
@@ -430,7 +395,7 @@ public class CharacterManager : MonoBehaviour {
     }
     private object CreateNewSummonClassFromType(SUMMON_TYPE summonType) {
         var typeName = summonType.ToString();
-        return System.Activator.CreateInstance(System.Type.GetType(typeName));
+        return System.Activator.CreateInstance(System.Type.GetType(typeName) ?? throw new Exception($"provided summon type was invalid! {typeName}"));
     }
     public SummonSettings GetSummonSettings(SUMMON_TYPE type) {
         return summonSettings[type];
@@ -448,27 +413,16 @@ public class CharacterManager : MonoBehaviour {
 
     #region Utilities
     public Character GetCharacterByID(int id) {
-        for (int i = 0; i < _allCharacters.Count; i++) {
-            Character currChar = _allCharacters[i];
-            if (currChar.id == id) {
-                return currChar;
-            }
-        }
-        for (int i = 0; i < limboCharacters.Count; i++) {
-            Character currChar = limboCharacters[i];
-            if (currChar.id == id) {
-                if (currChar.isLycanthrope) {
-                    return currChar.lycanData.activeForm;
-                } else {
-                    return currChar;
-                }
-            }
+        if (characterDatabase.allCharacters.TryGetValue(id, out Character character)) {
+            return character;
+        } else if (characterDatabase.limboCharacters.TryGetValue(id, out character)) {
+            return character;
         }
         return null;
     }
     public Character GetCharacterByName(string name) {
-        for (int i = 0; i < _allCharacters.Count; i++) {
-            Character currChar = _allCharacters[i];
+        for (int i = 0; i < characterDatabase.allCharactersList.Count; i++) {
+            Character currChar = characterDatabase.allCharactersList[i];
             if (currChar.name.Equals(name, System.StringComparison.CurrentCultureIgnoreCase)) {
                 return currChar;
             }
@@ -476,38 +430,13 @@ public class CharacterManager : MonoBehaviour {
         return null;
     }
     public Character GetLimboCharacterByName(string name) {
-        for (int i = 0; i < limboCharacters.Count; i++) {
-            Character currChar = limboCharacters[i];
+        for (int i = 0; i < characterDatabase.limboCharacters.Count; i++) {
+            Character currChar = characterDatabase.limboCharacters[i];
             if (currChar.name.Equals(name, System.StringComparison.CurrentCultureIgnoreCase)) {
                 return currChar;
             }
         }
         return null;
-    }
-    public List<string> GetCharacterLogs(Character character) {
-        if (allCharacterLogs.ContainsKey(character)) {
-            return allCharacterLogs[character];
-        }
-        return null;
-    }
-    #endregion
-
-    #region Avatars
-    public Sprite GetSpriteByRole(CHARACTER_ROLE role){
-        return heroSprite;
-        //switch(role){
-        //case CHARACTER_ROLE.HERO:
-        //	return heroSprite;
-        //case CHARACTER_ROLE.VILLAIN:
-        //	return villainSprite;
-        //      case CHARACTER_ROLE.BEAST:
-        //          return beastSprite;
-        //      case CHARACTER_ROLE.BANDIT:
-        //          return banditSprite;
-        //      case CHARACTER_ROLE.LEADER:
-        //          return chieftainSprite;
-        //      }
-        //return null;
     }
     #endregion
 
@@ -849,9 +778,9 @@ public class CharacterManager : MonoBehaviour {
     private void ConstructEmotionData() {
         emotionData = new Dictionary<EMOTION, Emotion>();
         this.allEmotions = new List<Emotion>();
-        EMOTION[] allEmotions = CollectionUtilities.GetEnumValues<EMOTION>();
-        for (int i = 0; i < allEmotions.Length; i++) {
-            EMOTION emotion = allEmotions[i];
+        EMOTION[] enumValues = CollectionUtilities.GetEnumValues<EMOTION>();
+        for (int i = 0; i < enumValues.Length; i++) {
+            EMOTION emotion = enumValues[i];
             var typeName = UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(emotion.ToString());
             System.Type type = System.Type.GetType(typeName);
             if (type != null) {
@@ -880,14 +809,12 @@ public class CharacterManager : MonoBehaviour {
     public bool EmotionsChecker(string emotion) {
         //NOTE: This is only temporary since in the future, we will not have the name of the emotion as the response
         string[] emotions = emotion.Split(' ');
-        if (emotions != null) {
-            for (int i = 0; i < emotions.Length; i++) {
-                Emotion emotionData = GetEmotion(emotions[i]);
-                if (emotionData != null) {
-                    for (int j = 0; j < emotions.Length; j++) {
-                        if(i != j && (emotions[i] == emotions[j] || !emotionData.IsEmotionCompatibleWithThis(emotions[j]))){
-                            return false;
-                        }
+        for (int i = 0; i < emotions.Length; i++) {
+            Emotion _emotionData = GetEmotion(emotions[i]);
+            if (_emotionData != null) {
+                for (int j = 0; j < emotions.Length; j++) {
+                    if(i != j && (emotions[i] == emotions[j] || !_emotionData.IsEmotionCompatibleWithThis(emotions[j]))){
+                        return false;
                     }
                 }
             }

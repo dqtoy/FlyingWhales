@@ -3,14 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public interface IRelationshipData {
-
-    /// <summary>
-    /// Value from -100 to 100
-    /// </summary>
-	int relationshipValue { get; }
     List<RELATIONSHIP_TYPE> relationships { get; }
+    OpinionData opinions { get; }
 
-    void AdjustRelationshipValue(int amount);
+
     void AddRelationship(RELATIONSHIP_TYPE relType);
     void RemoveRelationship(RELATIONSHIP_TYPE relType);
     RELATIONSHIP_TYPE GetFirstMajorRelationship();

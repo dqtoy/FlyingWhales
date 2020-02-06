@@ -207,10 +207,10 @@ public class Bed : TileObject {
         for (int i = 0; i < users.Length; i++) {
             if (users[i] != null) {
                 Character user = users[i];
-                RELATIONSHIP_EFFECT relEffect = character.opinionComponent.GetRelationshipEffectWith(user);
-                if(character.opinionComponent.HasOpinion(user) == false 
-                   || character.opinionComponent.IsEnemiesWith(user) 
-                   || character.opinionComponent.HasOpinionLabelWithCharacter(user, OpinionComponent.Acquaintance)) {
+                RELATIONSHIP_EFFECT relEffect = character.relationshipContainer.GetRelationshipEffectWith(user);
+                if(character.relationshipContainer.HasRelationshipWith(user) == false 
+                   || character.relationshipContainer.IsEnemiesWith(user) 
+                   || character.relationshipContainer.HasOpinionLabelWithCharacter(user, OpinionComponent.Acquaintance)) {
                     return false;
                 }
             }

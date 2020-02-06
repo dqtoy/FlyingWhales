@@ -28,7 +28,7 @@ public class KnockoutCharacter : GoapAction {
         int cost = 0;
         if (target is Character) {
             Character targetCharacter = target as Character;
-            string opinionLabel = actor.opinionComponent.GetOpinionLabel(targetCharacter);
+            string opinionLabel = actor.relationshipContainer.GetOpinionLabel(targetCharacter);
             if (opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend || opinionLabel == OpinionComponent.Acquaintance
                 || actor.faction == targetCharacter.faction || actor.homeSettlement == targetCharacter.homeSettlement) {
                 cost += 15;
@@ -50,7 +50,7 @@ public class KnockoutCharacter : GoapAction {
         IPointOfInterest target = node.poiTarget;
         if (target is Character) {
             Character targetCharacter = target as Character;
-            string opinionLabel = witness.opinionComponent.GetOpinionLabel(targetCharacter);
+            string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
             if (opinionLabel == OpinionComponent.Rival) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor);
             } else {

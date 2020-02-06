@@ -56,7 +56,7 @@ public class Poison : GoapAction {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, actor);
             }
 
-            if (witness.opinionComponent.IsFriendsWith(actor) || witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.RELATIVE)) {
+            if (witness.relationshipContainer.IsFriendsWith(actor) || witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.RELATIVE)) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor);
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor);
             }
@@ -65,7 +65,7 @@ public class Poison : GoapAction {
             if(targetObjectOwners != null) {
                 for (int i = 0; i < targetObjectOwners.Count; i++) {
                     Character objectOwner = targetObjectOwners[i];
-                    if (witness.opinionComponent.IsFriendsWith(objectOwner) || witness.relationshipContainer.HasRelationshipWith(objectOwner, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.RELATIVE)) {
+                    if (witness.relationshipContainer.IsFriendsWith(objectOwner) || witness.relationshipContainer.HasRelationshipWith(objectOwner, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.RELATIVE)) {
                         isTargetObjectOwnedByFriend = true;
                         break;
                     }
@@ -77,13 +77,13 @@ public class Poison : GoapAction {
                 } else {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor);
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor);
-                    if (witness.opinionComponent.IsFriendsWith(actor) || witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.RELATIVE)) {
+                    if (witness.relationshipContainer.IsFriendsWith(actor) || witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.RELATIVE)) {
                         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor);
                     }
                 }
             } else {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor);
-                if (witness.opinionComponent.IsFriendsWith(actor) || witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.RELATIVE)) {
+                if (witness.relationshipContainer.IsFriendsWith(actor) || witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.RELATIVE)) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor);
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor);
                 }

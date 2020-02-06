@@ -29,8 +29,9 @@ namespace Traits {
         }
         public override string TriggerFlaw(Character character) {
             string successLogKey = base.TriggerFlaw(character);
-            if (character.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.LOVER) != null) {
-                Character affair = (character.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.AFFAIR) as Character) ?? null;
+            if (character.relationshipContainer.GetFirstRelatableIDWithRelationship(RELATIONSHIP_TYPE.LOVER) != -1) {
+                Character affair = CharacterManager.Instance.GetCharacterByID(character.relationshipContainer
+                    .GetFirstRelatableIDWithRelationship(RELATIONSHIP_TYPE.AFFAIR));
                 if (affair == null) {
                     if (!character.jobQueue.HasJob(JOB_TYPE.TRIGGER_FLAW)) {
                         List<Character> choices = new List<Character>();

@@ -51,7 +51,7 @@ public class DrinkBlood : GoapAction {
                     //Skip further cost processing
                     return cost;
                 }
-                string opinionLabel = actor.opinionComponent.GetOpinionLabel(targetCharacter);
+                string opinionLabel = actor.relationshipContainer.GetOpinionLabel(targetCharacter);
                 if (opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
                     cost += 2000;
                     costLog += " +2000(Hungry, Friend/Close)";
@@ -79,7 +79,7 @@ public class DrinkBlood : GoapAction {
                     //Skip further cost processing
                     return cost;
                 }
-                string opinionLabel = actor.opinionComponent.GetOpinionLabel(targetCharacter);
+                string opinionLabel = actor.relationshipContainer.GetOpinionLabel(targetCharacter);
                 if (opinionLabel == OpinionComponent.Close_Friend) {
                     cost += 60;
                     costLog += " +60(Starving, Close Friend)";
@@ -130,7 +130,7 @@ public class DrinkBlood : GoapAction {
             CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.HEINOUS);
             response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor);
 
-            string opinionLabel = witness.opinionComponent.GetOpinionLabel(actor);
+            string opinionLabel = witness.relationshipContainer.GetOpinionLabel(actor);
             if (opinionLabel == OpinionComponent.Acquaintance || opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Despair, witness, actor);
             }
@@ -142,7 +142,7 @@ public class DrinkBlood : GoapAction {
         }
         if(target is Character) {
             Character targetCharacter = target as Character;
-            string opinionLabel = witness.opinionComponent.GetOpinionLabel(targetCharacter);
+            string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
             if (opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor);
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor);
@@ -167,7 +167,7 @@ public class DrinkBlood : GoapAction {
             } else {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, targetCharacter, actor);
             }
-            if (targetCharacter.opinionComponent.IsFriendsWith(actor)) {
+            if (targetCharacter.relationshipContainer.IsFriendsWith(actor)) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, targetCharacter, actor);
             }
         }

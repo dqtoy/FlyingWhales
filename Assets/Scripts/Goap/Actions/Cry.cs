@@ -40,7 +40,7 @@ public class Cry : GoapAction {
     public override string ReactionToActor(Character witness, ActualGoapNode node) {
         string response = base.ReactionToActor(witness, node);
         Character actor = node.actor;
-        string opinionLabel = witness.opinionComponent.GetOpinionLabel(actor);
+        string opinionLabel = witness.relationshipContainer.GetOpinionLabel(actor);
         if (opinionLabel == OpinionComponent.Enemy || opinionLabel == OpinionComponent.Rival) {
             if (UnityEngine.Random.Range(0, 2) == 0) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, actor);

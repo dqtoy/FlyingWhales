@@ -12,7 +12,7 @@ public class Arousal : Emotion {
     public override string ProcessEmotion(Character witness, IPointOfInterest target) {
         if (target is Character) {
             Character targetCharacter = target as Character;
-            witness.opinionComponent.AdjustOpinion(targetCharacter, "Arousal", 4);
+            witness.relationshipContainer.AdjustOpinion(witness, targetCharacter, "Arousal", 4);
         }
         return base.ProcessEmotion(witness, target);
     }

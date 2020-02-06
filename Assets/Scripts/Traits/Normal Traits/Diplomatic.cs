@@ -22,8 +22,8 @@ namespace Traits {
                     ) {
                     int chance = UnityEngine.Random.Range(0, 100);
                     if (chance < 4) {
-                        if (targetCharacter.opinionComponent.HasEnemyCharacter()
-                            && !characterThatWillDoJob.opinionComponent.IsEnemiesWith(targetCharacter)) {
+                        if (targetCharacter.relationshipContainer.HasEnemyCharacter()
+                            && !characterThatWillDoJob.relationshipContainer.IsEnemiesWith(targetCharacter)) {
                             characterThatWillDoJob.interruptComponent.TriggerInterrupt(INTERRUPT.Reduce_Conflict, targetCharacter);
                             //if (!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.RESOLVE_CONFLICT)) {
                             //    GoapPlanJob resolveConflictJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.RESOLVE_CONFLICT, INTERACTION_TYPE.RESOLVE_CONFLICT, targetCharacter, characterThatWillDoJob);

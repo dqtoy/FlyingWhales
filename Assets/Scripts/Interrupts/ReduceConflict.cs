@@ -13,14 +13,14 @@ namespace Interrupts {
         #region Overrides
         public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target) {
             Character targetCharacter = target as Character;
-            List<Character> enemyOrRivalCharacters = targetCharacter.opinionComponent.GetEnemyCharacters();
+            List<Character> enemyOrRivalCharacters = targetCharacter.relationshipContainer.GetEnemyCharacters();
             if(enemyOrRivalCharacters.Count > 0) {
                 Character chosenEnemyOrRival = enemyOrRivalCharacters[UnityEngine.Random.Range(0, enemyOrRivalCharacters.Count)];
                 string logKey = "reduce_conflict";
                 if (UnityEngine.Random.Range(0, 2) == 0 && chosenEnemyOrRival.traitContainer.HasTrait("Hothead")) {
                     logKey = "reduce_conflict_rebuffed";
                 } else {
-                    targetCharacter.opinionComponent.AdjustOpinion(chosenEnemyOrRival, "Base", 15);
+                    targetCharacter.relationshipContainer.AdjustOpinion(targetCharacter, chosenEnemyOrRival, "Base", 15);
                 }
                 Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Reduce Conflict", logKey);
                 log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

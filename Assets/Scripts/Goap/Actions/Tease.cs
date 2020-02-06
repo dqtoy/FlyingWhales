@@ -23,7 +23,7 @@ public class Tease : GoapAction {
     protected override int GetBaseCost(Character actor, IPointOfInterest poiTarget, JobQueueItem job,
         object[] otherData) {
         Character targetCharacter = poiTarget as Character;
-        if (actor.opinionComponent.IsFriendsWith(targetCharacter)) {
+        if (actor.relationshipContainer.IsFriendsWith(targetCharacter)) {
             return UtilityScripts.Utilities.rng.Next(40, 61);
         } else {
             return UtilityScripts.Utilities.rng.Next(50, 71);

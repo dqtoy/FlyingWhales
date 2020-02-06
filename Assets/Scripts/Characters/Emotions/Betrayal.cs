@@ -12,7 +12,7 @@ public class Betrayal : Emotion {
     public override string ProcessEmotion(Character witness, IPointOfInterest target) {
         if (target is Character) {
             Character targetCharacter = target as Character;
-            witness.opinionComponent.AdjustOpinion(targetCharacter, "Base", -60);
+            witness.relationshipContainer.AdjustOpinion(witness, targetCharacter, "Base", -60);
             witness.traitContainer.AddTrait(witness, "Betrayed");
             if (UnityEngine.Random.Range(0, 100) < 50) {
                 int chance = UnityEngine.Random.Range(0, 3);

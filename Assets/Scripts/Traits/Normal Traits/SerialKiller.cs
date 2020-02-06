@@ -406,32 +406,31 @@ namespace Traits {
 
         #region Opinion
         private void CopyOpinionAndSetAllOpinionToZero() {
-            foreach (KeyValuePair<Character, OpinionData> kvp in character.opinionComponent.opinions) {
+            foreach (KeyValuePair<int, IRelationshipData> kvp in character.relationshipContainer.relationships) {
+                Character targetCharacter = CharacterManager.Instance.GetCharacterByID(kvp.Key);
+                if (targetCharacter == null) {
+                    //means that character has not been spawned yet. skip.
+                    continue;
+                }
+                OpinionData originalData = kvp.Value.opinions;
                 OpinionData data = ObjectPoolManager.Instance.CreateNewOpinionData();
-                data.SetCompatibilityValue(kvp.Value.compatibilityValue);
-                List<string> keys = kvp.Value.allOpinions.Keys.ToList();
+                data.SetCompatibilityValue(originalData.compatibilityValue);
+                List<string> keys = originalData.allOpinions.Keys.ToList();
                 for (int i = 0; i < keys.Count; i++) {
                     string key = keys[i];
-                    data.SetOpinion(key, kvp.Value.allOpinions[key]);
-                    kvp.Value.allOpinions[key] = 0;
+                    data.SetOpinion(key, originalData.allOpinions[key]);
+                    originalData.allOpinions[key] = 0;
                 }
-                opinionCopy.Add(kvp.Key, data);
+                opinionCopy.Add(targetCharacter, data);
             }
         }
         private void BringBackOpinion() {
-            //if(opinionCopy.Count > 0) {
-            //    List<Character> keys = opinionCopy.Keys.ToList();
-            //    for (int i = 0; i < keys.Count; i++) {
-            //        Character currChar = keys[i];
-                    
-            //    }
-            //}
             foreach (KeyValuePair<Character, OpinionData> kvp in opinionCopy) {
-                if (character.opinionComponent.HasOpinion(kvp.Key)) {
+                if (character.relationshipContainer.HasRelationshipWith(kvp.Key)) {
                     foreach (KeyValuePair<string, int> dataKvp in kvp.Value.allOpinions) {
                         if(dataKvp.Key == "Base") { continue; }
-                        if (character.opinionComponent.HasOpinion(kvp.Key, dataKvp.Key)) {
-                            character.opinionComponent.SetOpinion(kvp.Key, dataKvp.Key, dataKvp.Value);
+                        if (character.relationshipContainer.HasOpinion(kvp.Key, dataKvp.Key)) {
+                            character.relationshipContainer.SetOpinion(character, kvp.Key, dataKvp.Key, dataKvp.Value);
                         }
                     }
                 }

@@ -45,7 +45,7 @@ public class Strangle : GoapAction {
                 if (witness.traitContainer.HasTrait("Coward")) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor);
                 } else {
-                    string opinionLabel = witness.opinionComponent.GetOpinionLabel(targetCharacter);
+                    string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
                     if(opinionLabel == OpinionComponent.Rival) {
                         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor);
                     } else if (opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
@@ -59,7 +59,7 @@ public class Strangle : GoapAction {
                 CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.SERIOUS);
             } else {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor);
-                if (witness.traitContainer.HasTrait("Serial Killer") || witness.opinionComponent.IsEnemiesWith(actor)) {
+                if (witness.traitContainer.HasTrait("Serial Killer") || witness.relationshipContainer.IsEnemiesWith(actor)) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, actor);
                 } else {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor);
@@ -75,7 +75,7 @@ public class Strangle : GoapAction {
         if (target is Character) {
             Character targetCharacter = target as Character;
             if (actor != targetCharacter) {
-                string opinionLabel = witness.opinionComponent.GetOpinionLabel(targetCharacter);
+                string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
                 if (opinionLabel == OpinionComponent.Rival) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, targetCharacter);
                 } else {
@@ -93,7 +93,7 @@ public class Strangle : GoapAction {
             Character targetCharacter = target as Character;
             if (actor != targetCharacter) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, targetCharacter, actor);
-                if (targetCharacter.opinionComponent.IsFriendsWith(actor) && !targetCharacter.traitContainer.HasTrait("Serial Killer")) {
+                if (targetCharacter.relationshipContainer.IsFriendsWith(actor) && !targetCharacter.traitContainer.HasTrait("Serial Killer")) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, targetCharacter, actor);
                 }
                 CrimeManager.Instance.ReactToCrime(targetCharacter, actor, node, node.associatedJobType, CRIME_TYPE.SERIOUS);

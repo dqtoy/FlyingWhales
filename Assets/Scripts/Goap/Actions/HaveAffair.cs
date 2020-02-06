@@ -32,7 +32,7 @@ public class HaveAffair : GoapAction {
                 cost += 50;
             }
             if (existingRelsOfCurrentCharacter.Contains(RELATIONSHIP_TYPE.LOVER)
-                || currCharacter.opinionComponent.IsEnemiesWith(otherCharacter)) {
+                || currCharacter.relationshipContainer.IsEnemiesWith(otherCharacter)) {
                 //- character is a lover: Weight x0
                 //- character is an enemy: Weight x0
                 cost *= 0;

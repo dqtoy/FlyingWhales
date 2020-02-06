@@ -442,12 +442,12 @@ public class Faction {
             }
             int numberOfFriends = 0;
             int numberOfEnemies = 0;
-            for (int j = 0; j < member.opinionComponent.charactersWithOpinion.Count; j++) {
-                Character otherCharacter = member.opinionComponent.charactersWithOpinion[j];
+            for (int j = 0; j < member.relationshipContainer.charactersWithOpinion.Count; j++) {
+                Character otherCharacter = member.relationshipContainer.charactersWithOpinion[j];
                 if (otherCharacter.faction == this) {
-                    if (otherCharacter.opinionComponent.IsFriendsWith(member)) {
+                    if (otherCharacter.relationshipContainer.IsFriendsWith(member)) {
                         numberOfFriends++;
-                    } else if (otherCharacter.opinionComponent.IsEnemiesWith(member)) {
+                    } else if (otherCharacter.relationshipContainer.IsEnemiesWith(member)) {
                         numberOfEnemies++;
                     }
                 }
@@ -518,9 +518,11 @@ public class Faction {
     }
     public void GenerateInitialOpinionBetweenMembers() {
         for (int i = 0; i < characters.Count; i++) {
+            Character character1 = characters[i];
             for (int j = 0; j < characters.Count; j++) {
-                if(characters[i] != characters[j]) {
-                    characters[i].opinionComponent.AdjustOpinion(characters[j], "Base", 0);
+                Character character2 = characters[j];
+                if(character1 != character2) {
+                    character1.relationshipContainer.AdjustOpinion(character1, character2, "Base", 0);
                 }
             }
         }
@@ -637,7 +639,7 @@ public class Faction {
         List<Character> createdCharacters = new List<Character>();
         for (int i = 0; i < citizenCount; i++) {
             string className = classManager.GetCurrentClassToCreate();
-            Character citizen = CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, className, race, UtilityScripts.Utilities.GetRandomGender(), this, settlement);
+            Character citizen = CharacterManager.Instance.CreateNewCharacter(className, race, UtilityScripts.Utilities.GetRandomGender(), this, settlement);
             citizen.LevelUp(citizensLevel - 1);
             //if (className == "Leader") {
             //    citizen.LevelUp(leaderLevel - 1);
