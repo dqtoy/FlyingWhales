@@ -5,7 +5,7 @@ using Inner_Maps;
 
 public class SeizeComponent {
     public IPointOfInterest seizedPOI { get; private set; }
-    public bool isPreparingToBeUnseized { get; private set; }
+    // public bool isPreparingToBeUnseized { get; private set; }
 
     #region getters
     public bool hasSeizedPOI => seizedPOI != null;
@@ -37,18 +37,18 @@ public class SeizeComponent {
             PlayerUI.Instance.ShowGeneralConfirmation("ERROR", "Already have a seized object. You need to drop the currently seized object first.");
         }
     }
-    public void PrepareToUnseize() {
-        if (!isPreparingToBeUnseized) {
-            isPreparingToBeUnseized = true;
-            CursorManager.Instance.AddLeftClickAction(UnseizePOI);
-        }
-    }
+    // public void PrepareToUnseize() {
+    //     if (!isPreparingToBeUnseized) {
+    //         isPreparingToBeUnseized = true;
+    //         CursorManager.Instance.AddLeftClickAction(UnseizePOI);
+    //     }
+    // }
     public void UnseizePOI() {
         if(seizedPOI == null) {
             Debug.LogError("Cannot unseize. Not holding seized object");
             return;
         }
-        isPreparingToBeUnseized = false;
+        // isPreparingToBeUnseized = false;
         CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
 
         LocationGridTile hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();

@@ -1946,17 +1946,17 @@ public class PlayerUI : MonoBehaviour {
     
     #region Seize Object
     public void ShowSeizedObjectUI() {
-        unseizeButton.gameObject.SetActive(true);
+        // unseizeButton.gameObject.SetActive(true);
     }
     public void HideSeizedObjectUI() {
-        unseizeButton.gameObject.SetActive(false);
+        // unseizeButton.gameObject.SetActive(false);
     }
     //Not used right now, might be used in the future
     public void UpdateSeizedObjectUI() {
         unseizeButton.gameObject.SetActive(PlayerManager.Instance.player.seizeComponent.hasSeizedPOI);
     }
     public void OnClickSeizedObject() {
-        PlayerManager.Instance.player.seizeComponent.PrepareToUnseize();
+        // PlayerManager.Instance.player.seizeComponent.PrepareToUnseize();
     }
     #endregion
 

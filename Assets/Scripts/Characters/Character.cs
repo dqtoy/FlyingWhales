@@ -645,6 +645,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         marker.gameObject.SetActive(false);
         gridTileLocation.RemoveCharacterHere(this);
     }
+    public void EnableMarker() {
+        marker.gameObject.SetActive(true);
+    }
     private void SetCharacterMarker(CharacterMarker marker) {
         this.marker = marker;
     }
@@ -2425,11 +2428,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (marker.inVisionCharacters.Contains(node.actor)) {
                 //marker.actionsToWitness.Add(node);
                 //This is done so that the character will react again
-                marker.AddUnprocessedPOI(node.actor);
+                marker.AddUnprocessedPOI(node.actor, true);
             } else if (marker.inVisionPOIs.Contains(node.poiTarget)) {
                 //marker.actionsToWitness.Add(node);
                 //This is done so that the character will react again
-                marker.AddUnprocessedPOI(node.poiTarget);
+                marker.AddUnprocessedPOI(node.poiTarget, true);
             }
         }
 
@@ -2518,7 +2521,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return $"{name} is in {currentRegion.name}";
     }
     //Returns the list of goap actions to be witnessed by this character
-    public void ThisCharacterSaw(IPointOfInterest target) {
+    public void ThisCharacterSaw(IPointOfInterest target, bool reactToActionOnly = false) {
         //if (isDead) {
         //    return;
         //}
@@ -2583,13 +2586,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 }
             }
         }
-        //React To Character, Object, and Item
-        string debugLog = string.Empty;
-        reactionComponent.ReactTo(target, ref debugLog);
-        logComponent.PrintLogIfActive(debugLog);
-
-        if(targetCharacter != null) {
-            ThisCharacterWatchEvent(targetCharacter, null, null);
+        if (!reactToActionOnly) {
+            //React To Character, Object, and Item
+            string debugLog = string.Empty;
+            reactionComponent.ReactTo(target, ref debugLog);
+            logComponent.PrintLogIfActive(debugLog);
+ 
+            if(targetCharacter != null) {
+                ThisCharacterWatchEvent(targetCharacter, null, null);
+            }
         }
     }
     //public List<Log> GetWitnessOrInformedMemories(int dayFrom, int dayTo, Character involvedCharacter = null) {

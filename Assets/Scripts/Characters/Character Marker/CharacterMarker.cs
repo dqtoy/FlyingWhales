@@ -51,6 +51,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     //vision colliders
     public List<IPointOfInterest> inVisionPOIs { get; private set; } //POI's in this characters vision collider
     public List<IPointOfInterest> unprocessedVisionPOIs { get; private set; } //POI's in this characters vision collider
+    public List<IPointOfInterest> unprocessedVisionPOIsForActionOnly { get; private set; } //POI's in this characters vision collider
     public List<Character> inVisionCharacters { get; private set; } //POI's in this characters vision collider
     //public List<IPointOfInterest> hostilesInRange { get; private set; } //POI's in this characters hostility collider
     //public List<IPointOfInterest> avoidInRange { get; private set; } //POI's in this characters hostility collider
@@ -104,6 +105,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         UpdateActionIcon();
 
         unprocessedVisionPOIs = new List<IPointOfInterest>();
+        unprocessedVisionPOIsForActionOnly = new List<IPointOfInterest>();
         inVisionPOIs = new List<IPointOfInterest>();
         inVisionCharacters = new List<Character>();
         //hostilesInRange = new List<IPointOfInterest>();
@@ -1077,19 +1079,24 @@ public class CharacterMarker : MapObjectVisual<Character> {
             character.PerformGoapAction();
         }
     }
-    public void AddUnprocessedPOI(IPointOfInterest poi) {
+    public void AddUnprocessedPOI(IPointOfInterest poi, bool reactToActionOnly = false) {
         // if (character.minion != null || character is Summon) {
         //     //Minion or Summon cannot process pois
         //     return;
         // }
+        if (reactToActionOnly) {
+            unprocessedVisionPOIsForActionOnly.Add(poi);
+        }
         unprocessedVisionPOIs.Add(poi);
         // character.logComponent.PrintLogIfActive(character.name + " added unprocessed poi " + poi.nameWithID);
     }
     public void RemoveUnprocessedPOI(IPointOfInterest poi) {
         unprocessedVisionPOIs.Remove(poi);
+        unprocessedVisionPOIsForActionOnly.Remove(poi);
     }
     public void ClearUnprocessedPOI() {
         unprocessedVisionPOIs.Clear();
+        unprocessedVisionPOIsForActionOnly.Clear();
     }
     public bool HasUnprocessedPOI(IPointOfInterest poi) {
         return unprocessedVisionPOIs.Contains(poi);
@@ -1100,77 +1107,18 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
     }
     private void ProcessAllUnprocessedVisionPOIs() {
-        if(unprocessedVisionPOIs.Count > 0) { //&& (character.stateComponent.currentState == null || character.stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT)
+        if(unprocessedVisionPOIs.Count > 0) {
             string log = character.name + " tick ended! Processing all unprocessed in visions...";
             if (!character.isDead/* && character.canWitness*/) { //character.traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting", "Zapped") == null
                 for (int i = 0; i < unprocessedVisionPOIs.Count; i++) {
                     IPointOfInterest poi = unprocessedVisionPOIs[i];
                     log += "\n-" + poi.nameWithID;
-                    character.ThisCharacterSaw(poi);
-                    ////Collect all actions to witness and avoid duplicates
-                    //List<ActualGoapNode> nodes = character.ThisCharacterSaw(poi);
-                    //if (nodes != null && nodes.Count > 0) {
-                    //    for (int j = 0; j < nodes.Count; j++) {
-                    //        ActualGoapNode node = nodes[j];
-                    //        if (node.actionStatus == ACTION_STATUS.PERFORMING && node.goapType != INTERACTION_TYPE.WATCH) { // ||(action.currentState != null && action.currentState.name == action.whileMovingState)
-                    //            //Cannot witness a watch action
-                    //            if (node.actor != character && node.poiTarget != character) {
-                    //                if (!actionsToWitness.Contains(node)) {
-                    //                    actionsToWitness.Add(node);
-                    //                }
-                    //            }
-                    //        }
-                    //    }
-                    //}
-
-                    //log += "\n - Reacting to character traits...";
-                    ////Character reacts to traits
-                    //if(character.stateComponent.currentState == null || !character.stateComponent.currentState.OnEnterVisionWith(poi)) {
-                    //    if (!character.CreateJobsOnEnterVisionWith(poi)) {
-                    //        if (!character.isConversing && poi is Character) {
-                    //            Character target = poi as Character;
-                    //            if (!target.isConversing && character.nonActionEventsComponent.CanInteract(target)) {
-                    //                if (UnityEngine.Random.Range(0, 100) < 3) {
-                    //                    character.interruptComponent.TriggerInterrupt(INTERRUPT.Chat, poi);
-                    //                    //character.nonActionEventsComponent.NormalChatCharacter(poi as Character);
-                    //                } else {
-                    //                    Character targetCharacter = poi as Character;
-                    //                    if (character.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR)
-                    //                        || character.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.LOVER) == null
-                    //                        || character.traitContainer.GetNormalTrait<Trait>("Unfaithful") != null) {
-                    //                        int compatibility = RelationshipManager.Instance.GetCompatibilityBetween(character, targetCharacter);
-                    //                        int value = 2;
-                    //                        if (compatibility != -1) {
-                    //                            value = 1 * compatibility;
-                    //                        }
-                    //                        int chance = UnityEngine.Random.Range(0, 100);
-                    //                        string flirtLog = character.name + " will try to flirt with " + targetCharacter.name;
-                    //                        flirtLog += "\n-Chance: " + value;
-                    //                        flirtLog += "\n-Roll: " + chance;
-                    //                        character.PrintLogIfActive(flirtLog);
-                    //                        if (chance < value) {
-                    //                            character.interruptComponent.TriggerInterrupt(INTERRUPT.Flirt, targetCharacter);
-                    //                        }
-                    //                    }
-                    //                }
-                    //            }
- 
-                    //        }
-                    //    }
-                    //}
+                    bool reactToActionOnly = false;
+                    if (unprocessedVisionPOIsForActionOnly.Count > 0) {
+                        reactToActionOnly = unprocessedVisionPOIsForActionOnly.Contains(poi);
+                    }
+                    character.ThisCharacterSaw(poi, reactToActionOnly);
                 }
-
-                ////Witness all actions
-                //log += "\n - Witnessing collected actions:";
-                //if (actionsToWitness.Count > 0) {
-                //    for (int i = 0; i < actionsToWitness.Count; i++) {
-                //        ActualGoapNode node = actionsToWitness[i];
-                //        log += "\n   - Witnessed: " + node.goapName + " of " + node.actor.name + " with target " + node.poiTarget.name;
-                //        character.ThisCharacterWitnessedEvent(node);
-                //    }
-                //} else {
-                //    log += "\n   - No collected actions";
-                //}
             } else {
                 log += "\n - Character is either dead or cannot witness, not processing...";
             }
@@ -1178,7 +1126,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
             character.logComponent.PrintLogIfActive(log);
         }
         character.SetHasSeenFire(false);
-        // alreadyWitnessedActions.Clear();
         character.combatComponent.CheckCombatPerTickEnded();
     }
     #endregion
@@ -1707,6 +1654,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
         for (int i = 0; i < colliders.Length; i++) {
             colliders[i].enabled = state;
         }
+    }
+    public void SetAllColliderStates(bool state) {
+        SetCollidersState(state);
+        collisionTrigger.SetCollidersState(state);
     }
     #endregion
 
