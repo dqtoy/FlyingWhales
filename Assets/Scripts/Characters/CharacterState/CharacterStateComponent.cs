@@ -155,7 +155,9 @@ public class CharacterStateComponent {
         SetCurrentState(null);
         currState.AfterExitingState();
 
-        if(stateJob != null) {
+        //Note: Original owner is checked here because there are times that the job for this state is already cancelled in AfterExitingState
+        //So if we do not check here it will result in Null Ref since there is no more job at this point
+        if(stateJob != null && stateJob.originalOwner != null) {
             if(stateJob == character.currentJob) {
                 character.SetCurrentJob(null);
             }

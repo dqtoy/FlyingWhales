@@ -7,12 +7,12 @@ using Traits;
 
 public class Explosion : PlayerSpell {
 
-    private int radius;
+    private int abilityRadius;
 
     public Explosion() : base(SPELL_TYPE.EXPLOSION) {
         SetDefaultCooldownTime(24);
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
-        radius = 1;
+        abilityRadius = 1;
         tier = 1;
     }
 
@@ -23,16 +23,16 @@ public class Explosion : PlayerSpell {
     }
     protected override void OnLevelUp() {
         base.OnLevelUp();
-        radius++;
+        abilityRadius++;
     }
     public override void ShowRange(LocationGridTile targetTile) {
         base.ShowRange(targetTile);
-        List<LocationGridTile> tiles = targetTile.parentMap.GetTilesInRadius(targetTile, radius, 0, true);
+        List<LocationGridTile> tiles = targetTile.parentMap.GetTilesInRadius(targetTile, abilityRadius, 0, true);
         InnerMapManager.Instance.HighlightTiles(tiles);
     }
     public override void HideRange(LocationGridTile targetTile) {
         base.HideRange(targetTile);
-        List<LocationGridTile> tiles = targetTile.parentMap.GetTilesInRadius(targetTile, radius, 0, true);
+        List<LocationGridTile> tiles = targetTile.parentMap.GetTilesInRadius(targetTile, abilityRadius, 0, true);
         InnerMapManager.Instance.UnhighlightTiles(tiles);
     }
     #endregion

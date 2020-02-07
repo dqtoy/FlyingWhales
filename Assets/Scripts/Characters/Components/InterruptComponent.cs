@@ -93,7 +93,7 @@ public class InterruptComponent {
                     owner.marker.AddUnprocessedPOI(inVisionCharacter);
                 }
             } 
-            owner.needsComponent.CheckExtremeNeeds();
+            owner.needsComponent.CheckExtremeNeeds(finishedInterrupt);
         }
         Messenger.Broadcast(Signals.INTERRUPT_FINISHED, finishedInterrupt.interrupt, owner);
     }

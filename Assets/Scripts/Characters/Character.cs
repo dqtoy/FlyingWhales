@@ -3238,7 +3238,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         int previous = this._currentHP;
         this._currentHP += amount;
         this._currentHP = Mathf.Clamp(this._currentHP, 0, maxHP);
-        if (marker != null) {
+         if (marker != null) {
             if (marker.hpBarGO.activeSelf) {
                 marker.UpdateHP();
             } else {
