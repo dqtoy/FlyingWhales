@@ -274,16 +274,19 @@ public class SettlementGeneration : MapGenerationComponent {
 						Character character = CharacterManager.Instance.GetCharacterByID(characterData.id);
 						foreach (var kvp in characterData.relationships) {
 							PreCharacterData targetCharacterData = data.familyTreeDatabase.GetCharacterWithID(kvp.Key);
-							if (targetCharacterData.hasBeenSpawned) {
-								Character target = CharacterManager.Instance.GetCharacterByID(targetCharacterData.id);
-								character.relationshipContainer.SetOpinion(character, target, "Base", kvp.Value.baseOpinion);
-								character.relationshipContainer.GetOpinionData(target).SetCompatibilityValue(kvp.Value.compatibility);
-								for (int k = 0; k < kvp.Value.relationships.Count; k++) {
-									RELATIONSHIP_TYPE relationshipType = kvp.Value.relationships[k];
-									RelationshipManager.Instance.CreateNewOneWayRelationship(character, target,
-										relationshipType);
-								}
-								
+							IRelationshipData relationshipData = character.relationshipContainer
+								.GetOrCreateRelationshipDataWith(character, targetCharacterData.id,
+									targetCharacterData.firstName, targetCharacterData.gender);
+							
+							character.relationshipContainer.SetOpinion(character, targetCharacterData.id, 
+								targetCharacterData.firstName, targetCharacterData.gender,
+								"Base", kvp.Value.baseOpinion);
+							
+							relationshipData.opinions.SetCompatibilityValue(kvp.Value.compatibility);
+							
+							for (int k = 0; k < kvp.Value.relationships.Count; k++) {
+								RELATIONSHIP_TYPE relationshipType = kvp.Value.relationships[k];
+								relationshipData.AddRelationship(relationshipType);
 							}
 						}
 					}

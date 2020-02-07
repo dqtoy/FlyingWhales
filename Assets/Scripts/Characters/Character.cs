@@ -183,7 +183,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool isAtHomeRegion => currentRegion == homeRegion && !currentParty.icon.isTravellingOutside;
     public bool isPartOfHomeFaction => homeRegion != null && faction != null && homeRegion.IsFactionHere(faction); //is this character part of the faction that owns his home settlement
     //public bool isFlirting => _isFlirting;
-    public GENDER gender => _gender;
+    public override GENDER gender => _gender;
     public RACE race => _raceSetting.race;
     public CharacterClass characterClass => _characterClass;
     public RaceSetting raceSetting => _raceSetting;

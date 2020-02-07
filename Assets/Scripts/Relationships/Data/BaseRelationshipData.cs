@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class BaseRelationshipData : IRelationshipData {
+    
+    public string targetName { get; private set; }
+    public GENDER targetGender { get; private set; }
     public List<RELATIONSHIP_TYPE> relationships { get; }
     public OpinionData opinions { get; }
     
@@ -11,6 +14,15 @@ public class BaseRelationshipData : IRelationshipData {
         opinions = ObjectPoolManager.Instance.CreateNewOpinionData(); 
         opinions.OnInitiallyAdded();
     }
+
+    #region Utilities
+    public void SetTargetName(string name) {
+        targetName = name;
+    }
+    public void SetTargetGender(GENDER gender) {
+        targetGender = gender;
+    }
+    #endregion
     
     #region Adding
     public void AddRelationship(RELATIONSHIP_TYPE relType) {

@@ -9,7 +9,8 @@ public interface IRelationshipContainer {
 
     #region Adding
     void AddRelationship(Relatable owner, Relatable relatable, RELATIONSHIP_TYPE rel);
-    void CreateNewRelationship(Relatable owner, Relatable target);
+    IRelationshipData CreateNewRelationship(Relatable owner, Relatable target);
+    IRelationshipData CreateNewRelationship(Relatable owner, int id, string name, GENDER gender);
     #endregion
 
     #region Removing
@@ -35,6 +36,9 @@ public interface IRelationshipContainer {
     #region Opinions
     void AdjustOpinion(Character owner, Character target, string opinionText, int opinionValue, string lastStrawReason = "");
     void SetOpinion(Character owner, Character target, string opinionText, int opinionValue, string lastStrawReason = "");
+    void SetOpinion(Character owner, int targetID, string targetName, GENDER gender, string opinionText,
+        int opinionValue,
+        string lastStrawReason = "");
     void RemoveOpinion(Character target, string opinionText);
     bool HasOpinion(Character target, string opinionText);
     int GetTotalOpinion(Character target);
@@ -55,5 +59,12 @@ public interface IRelationshipContainer {
     RELATIONSHIP_EFFECT GetRelationshipEffectWith(Character character);
     int GetCompatibility(Character target);
     string GetRelationshipNameWith(Character target);
+    string GetRelationshipNameWith(int target);
     #endregion
+
+    OpinionData GetOpinionData(int id);
+    IRelationshipData GetRelationshipDataWith(int id);
+    int GetTotalOpinion(int id);
+    IRelationshipData GetOrCreateRelationshipDataWith(Relatable owner, int id, string name, GENDER gender);
+    IRelationshipData GetOrCreateRelationshipDataWith(Relatable owner, Relatable relatable);
 }

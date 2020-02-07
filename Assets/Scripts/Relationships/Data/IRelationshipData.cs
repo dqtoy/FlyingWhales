@@ -5,8 +5,8 @@ using UnityEngine;
 public interface IRelationshipData {
     List<RELATIONSHIP_TYPE> relationships { get; }
     OpinionData opinions { get; }
-
-
+    string targetName { get; }
+    GENDER targetGender { get; }
     void AddRelationship(RELATIONSHIP_TYPE relType);
     void RemoveRelationship(RELATIONSHIP_TYPE relType);
     RELATIONSHIP_TYPE GetFirstMajorRelationship();
@@ -17,4 +17,6 @@ public interface IRelationshipData {
     /// <param name="rels">The relationships to watch out for.</param>
     /// <returns>True or false</returns>
     bool HasRelationship(params RELATIONSHIP_TYPE[] rels);
+    void SetTargetName(string name);
+    void SetTargetGender(GENDER gender);
 }

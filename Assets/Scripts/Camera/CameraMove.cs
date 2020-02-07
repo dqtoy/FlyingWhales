@@ -5,8 +5,6 @@ using UnityEngine.EventSystems;
 public class CameraMove : MonoBehaviour {
 
 	public static CameraMove Instance;
-    
-    [SerializeField] private Camera nameplateCamera;
     [SerializeField] private Physics2DRaycaster _raycaster;
 
     [Header("Bounds")]
@@ -139,10 +137,8 @@ public class CameraMove : MonoBehaviour {
                 if (!Mathf.Approximately(previousCameraFOV, fov)) {
                     previousCameraFOV = fov;
                     _mainCamera.orthographicSize = Mathf.Lerp(_mainCamera.orthographicSize, fov, Time.deltaTime * _zoomSpeed);
-                    nameplateCamera.orthographicSize = Mathf.Lerp(nameplateCamera.orthographicSize, fov, Time.deltaTime * _zoomSpeed);
                 } else {
                     _mainCamera.orthographicSize = fov;
-                    nameplateCamera.orthographicSize = fov;
                 }
                 CalculateCameraBounds();
             }

@@ -582,17 +582,26 @@ public class CharacterInfoUI : UIMenu {
 
         List<int> keys = _activeCharacter.relationshipContainer.relationships.Keys.ToList();
         for (int i = 0; i < orderedRels.Keys.Count; i++) {
-            Character target = CharacterManager.Instance.GetCharacterByID(orderedRels.Keys.ElementAt(i));
-            int actualIndex = keys.IndexOf(target.id);
-            relationshipTypesLbl.text += $"{_activeCharacter.relationshipContainer.GetRelationshipNameWith(target)}\n";
+            int targetID = orderedRels.Keys.ElementAt(i);
+            int actualIndex = keys.IndexOf(targetID);
+            IRelationshipData relationshipData =
+                _activeCharacter.relationshipContainer.GetRelationshipDataWith(targetID);
+            relationshipTypesLbl.text += $"{_activeCharacter.relationshipContainer.GetRelationshipNameWith(targetID)}\n";
+            
             int opinionOfOther = 0;
-            if (target.relationshipContainer.HasRelationshipWith(activeCharacter)) {
+            string opinionText;
+            Character target = CharacterManager.Instance.GetCharacterByID(targetID);
+            if (target != null && target.relationshipContainer.HasRelationshipWith(activeCharacter)) {
                 opinionOfOther = target.relationshipContainer.GetTotalOpinion(activeCharacter);
+                opinionText = GetOpinionText(opinionOfOther);
+            } else {
+                opinionText = "-";
             }
-            relationshipNamesLbl.text += $"<link=\"{actualIndex.ToString()}\">{target.name}</link>\n";
-            relationshipValuesLbl.text += $"<link=\"{actualIndex.ToString()}\"><color=\"{ OpinionColor(activeCharacter.relationshipContainer.GetTotalOpinion(target)) }\"> " +
-                                          $"{GetOpinionText(activeCharacter.relationshipContainer.GetTotalOpinion(target))}</color> " +
-                                          $"<color=\"{OpinionColor(opinionOfOther)}\">({GetOpinionText(opinionOfOther)})</color></link>\n";
+            
+            relationshipNamesLbl.text += $"<link=\"{actualIndex.ToString()}\">{relationshipData.targetName}</link>\n";
+            relationshipValuesLbl.text += $"<link=\"{actualIndex.ToString()}\"><color=\"{ OpinionColor(activeCharacter.relationshipContainer.GetTotalOpinion(targetID)) }\"> " +
+                                          $"{GetOpinionText(activeCharacter.relationshipContainer.GetTotalOpinion(targetID))}</color> " +
+                                          $"<color=\"{OpinionColor(opinionOfOther)}\">({opinionText})</color></link>\n";
         }
     }
     public void OnHoverRelationshipValue(object obj) {

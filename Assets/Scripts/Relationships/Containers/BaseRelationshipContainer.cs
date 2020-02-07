@@ -29,25 +29,42 @@ public class BaseRelationshipContainer : IRelationshipContainer {
         }
         relationships[relatable.id].AddRelationship(relType);
     }
-    public void CreateNewRelationship(Relatable owner, Relatable relatable) {
-        relationships.Add(relatable.id, new BaseRelationshipData());
+    public IRelationshipData CreateNewRelationship(Relatable owner, Relatable relatable) {
+        IRelationshipData data = new BaseRelationshipData();
+        data.SetTargetName(relatable.relatableName);
+        data.SetTargetGender(relatable.gender);
+        relationships.Add(relatable.id, data);
         if (relatable is Character) {
             charactersWithOpinion.Add(relatable as Character);
         }
         Messenger.Broadcast(Signals.RELATIONSHIP_ADDED, owner, relatable);
+        return data;
     }
-    public void CreateNewRelationship(Relatable owner, int id) {
-        relationships.Add(id, new BaseRelationshipData());
+    public IRelationshipData CreateNewRelationship(Relatable owner, int id, string name, GENDER gender) {
+        IRelationshipData data = new BaseRelationshipData();
+        data.SetTargetName(name);
+        data.SetTargetGender(gender);
+        relationships.Add(id, data);
         Messenger.Broadcast<Relatable, Relatable>(Signals.RELATIONSHIP_ADDED, owner, null);
+        return data;
     }
-    private IRelationshipData GetOrCreateRelationshipDataWith(Relatable owner, Relatable relatable) {
+    public IRelationshipData GetOrCreateRelationshipDataWith(Relatable owner, Relatable relatable) {
         if (HasRelationshipWith(relatable) == false) {
             CreateNewRelationship(owner, relatable);
         }
         return relationships[relatable.id];
     }
+    public IRelationshipData GetOrCreateRelationshipDataWith(Relatable owner, int id, string name, GENDER gender) {
+        if (HasRelationshipWith(id) == false) {
+            CreateNewRelationship(owner, id, name, gender);
+        }
+        return relationships[id];
+    }
     private bool TryGetRelationshipDataWith(Relatable relatable, out IRelationshipData data) {
-        return relationships.TryGetValue(relatable.id, out data);
+        return TryGetRelationshipDataWith(relatable.id, out data);
+    }
+    private bool TryGetRelationshipDataWith(int id, out IRelationshipData data) {
+        return relationships.TryGetValue(id, out data);
     }
     #endregion
 
@@ -59,7 +76,10 @@ public class BaseRelationshipContainer : IRelationshipContainer {
 
     #region Inquiry
     public bool HasRelationshipWith(Relatable relatable) {
-        return relationships.ContainsKey(relatable.id);
+        return HasRelationshipWith(relatable.id);
+    }
+    public bool HasRelationshipWith(int id) {
+        return relationships.ContainsKey(id);
     }
     public bool HasRelationshipWith(Relatable relatable, RELATIONSHIP_TYPE relType) {
         if (HasRelationshipWith(relatable)) {
@@ -112,8 +132,11 @@ public class BaseRelationshipContainer : IRelationshipContainer {
         return count;
     }
     public IRelationshipData GetRelationshipDataWith(Relatable relatable) {
-        if (HasRelationshipWith(relatable)) {
-            return relationships[relatable.id];
+        return GetRelationshipDataWith(relatable.id);
+    }
+    public IRelationshipData GetRelationshipDataWith(int id) {
+        if (HasRelationshipWith(id)) {
+            return relationships[id];
         }
         return null;
     }
@@ -180,6 +203,28 @@ public class BaseRelationshipContainer : IRelationshipContainer {
             target.relationshipContainer.CreateNewRelationship(target, owner);
         }
     }
+    public void SetOpinion(Character owner, int targetID, string targetName, GENDER gender, string opinionText,
+        int opinionValue, string lastStrawReason = "") {
+        if (owner.minion != null || owner is Summon) {
+            //Minions or Summons cannot have opinions
+            return;
+        }
+        Character targetCharacter = CharacterManager.Instance.GetCharacterByID(targetID);
+        if (targetCharacter != null) {
+            SetOpinion(owner, targetCharacter, opinionText, opinionValue, lastStrawReason);
+        } else {
+            IRelationshipData relationshipData = GetOrCreateRelationshipDataWith(owner, targetID, targetName, gender);
+            if (owner.traitContainer.HasTrait("Serial Killer")) {
+                opinionValue = 0;
+            }
+            relationshipData.opinions.SetOpinion(opinionText, opinionValue);
+            if (opinionValue > 0) {
+                Messenger.Broadcast<Character, Character, string>(Signals.OPINION_INCREASED, owner, null, lastStrawReason);
+            } else if (opinionValue < 0) {
+                Messenger.Broadcast<Character, Character, string>(Signals.OPINION_DECREASED, owner, null, lastStrawReason);
+            }
+        }
+    }
     public void RemoveOpinion(Character target, string opinionText) {
         if (TryGetRelationshipDataWith(target, out var relationshipData)) {
             relationshipData.opinions.RemoveOpinion(opinionText);
@@ -192,14 +237,23 @@ public class BaseRelationshipContainer : IRelationshipContainer {
         return false;
     }
     public int GetTotalOpinion(Character target) {
-        return relationships[target.id].opinions.totalOpinion;
+        return GetTotalOpinion(target.id);
+    }
+    public int GetTotalOpinion(int id) {
+        return relationships[id].opinions.totalOpinion;
     }
     public OpinionData GetOpinionData(Character target) {
-        return relationships[target.id].opinions;
+        return GetOpinionData(target.id);
+    }
+    public OpinionData GetOpinionData(int id) {
+        return relationships[id].opinions;
     }
     public string GetOpinionLabel(Character target) {
-        if (HasRelationshipWith(target)) {
-            int totalOpinion = GetTotalOpinion(target);
+        return GetOpinionLabel(target.id);
+    }
+    public string GetOpinionLabel(int id) {
+        if (HasRelationshipWith(id)) {
+            int totalOpinion = GetTotalOpinion(id);
             if (totalOpinion > 70) {
                 return Close_Friend;
             } else if (totalOpinion > 20 && totalOpinion <= 70) {
@@ -346,19 +400,22 @@ public class BaseRelationshipContainer : IRelationshipContainer {
         return -1;
     }
     public string GetRelationshipNameWith(Character target) {
-        if (TryGetRelationshipDataWith(target, out var data)) {
+        return GetRelationshipNameWith(target.id);
+    }
+    public string GetRelationshipNameWith(int id) {
+        if (TryGetRelationshipDataWith(id, out var data)) {
             RELATIONSHIP_TYPE relType = data.GetFirstMajorRelationship();
             switch (relType) {
                 case RELATIONSHIP_TYPE.CHILD:
-                    return target.gender == GENDER.MALE ? "Son" : "Daughter";
+                    return data.targetGender == GENDER.MALE ? "Son" : "Daughter";
                 case RELATIONSHIP_TYPE.PARENT:
-                    return target.gender == GENDER.MALE ? "Father" : "Mother";
+                    return data.targetGender == GENDER.MALE ? "Father" : "Mother";
                 case RELATIONSHIP_TYPE.SIBLING:
-                    return target.gender == GENDER.MALE ? "Brother" : "Sister";
+                    return data.targetGender == GENDER.MALE ? "Brother" : "Sister";
                 case RELATIONSHIP_TYPE.LOVER:
-                    return target.gender == GENDER.MALE ? "Husband" : "Wife";
+                    return data.targetGender == GENDER.MALE ? "Husband" : "Wife";
                 case RELATIONSHIP_TYPE.NONE:
-                    string opinionLabel = GetOpinionLabel(target);
+                    string opinionLabel = GetOpinionLabel(id);
                     return string.IsNullOrEmpty(opinionLabel) == false ? opinionLabel : Acquaintance;
                 default:
                     return UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(relType.ToString());

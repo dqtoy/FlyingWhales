@@ -244,7 +244,7 @@ public class NonActionEventsComponent {
     #region Break Up
     //Char1 decreased his/her opinion of char2
     private void OnOpinionDecreased(Character char1, Character char2, string reason) {
-        if(char1 == owner) {
+        if(char1 == owner && char2 != null) {
             if (UnityEngine.Random.Range(0, 100) < 30) {
                 if (owner.relationshipContainer.GetTotalOpinion(char2) < -25) {
                     if (owner.relationshipContainer.HasRelationshipWith(char2, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR)) {
