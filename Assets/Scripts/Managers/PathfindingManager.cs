@@ -45,19 +45,6 @@ public class PathfindingManager : MonoBehaviour {
         mainGraph.collision.mask = LayerMask.GetMask("Unpassable");
         RescanGrid();
     }
-    public void LoadSettings(byte[] bytes) {
-        AstarPath.active.data.DeserializeGraphs(bytes);
-        if (AstarPath.active.graphs.Length > 0) {
-            mainGraph = AstarPath.active.graphs[0] as GridGraph;
-        }
-        
-        //RescanGrid();
-    }
-    public void ClearGraphs() {
-        if (mainGraph != null) {
-            aStarPath.data.RemoveGraph(mainGraph);
-        }
-    }
     public void RescanGrid() {
         AstarPath.active.Scan(mainGraph);
     }
@@ -69,6 +56,9 @@ public class PathfindingManager : MonoBehaviour {
     }
     public void RemoveAgent(CharacterAIPath agent) {
         _allAgents.Remove(agent);
+    }
+    public void UpdatePathfindingGraphPartial(Bounds bounds) {
+        AstarPath.active.UpdateGraphs(bounds);
     }
     public bool HasPath(LocationGridTile fromTile, LocationGridTile toTile) {
         if (fromTile == toTile) { return true; }

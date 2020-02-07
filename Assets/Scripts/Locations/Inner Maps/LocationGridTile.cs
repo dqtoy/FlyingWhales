@@ -649,7 +649,7 @@ namespace Inner_Maps {
             return count;
         }
         public bool IsPartOfSettlement(out Settlement settlement) {
-            if (buildSpotOwner.hexTileOwner != null && buildSpotOwner.hexTileOwner.settlementOnTile != null) {
+            if (buildSpotOwner.isPartOfParentRegionMap && buildSpotOwner.hexTileOwner.settlementOnTile != null) {
                 settlement = buildSpotOwner.hexTileOwner.settlementOnTile;
                 return true;
             }
@@ -657,10 +657,10 @@ namespace Inner_Maps {
             return false;
         }
         public bool IsPartOfSettlement(Settlement settlement) {
-            return buildSpotOwner.hexTileOwner != null && buildSpotOwner.hexTileOwner.settlementOnTile == settlement;
+            return buildSpotOwner.isPartOfParentRegionMap && buildSpotOwner.hexTileOwner.settlementOnTile == settlement;
         }
         public bool IsPartOfSettlement() {
-            return buildSpotOwner.hexTileOwner != null && buildSpotOwner.hexTileOwner.settlementOnTile != null;
+            return buildSpotOwner.isPartOfParentRegionMap && buildSpotOwner.hexTileOwner.settlementOnTile != null;
         }
         public bool IsNextToSettlement(out Settlement settlement) {
             for (int i = 0; i < neighbourList.Count; i++) {

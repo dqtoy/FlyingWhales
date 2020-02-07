@@ -16,7 +16,6 @@ public class AccessMemories : PlayerSpell {
         Character targetCharacter = targetPOI as Character;
         base.ActivateAction(targetCharacter);
         UIManager.Instance.ShowCharacterInfo(targetCharacter);
-        PlayerUI.Instance.ShowMemories(targetCharacter);
 
         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_access_memory");
         log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);

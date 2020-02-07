@@ -348,7 +348,7 @@ public class LocationStructureObject : PooledObject {
 
     #region Pathfinding
     internal void RescanPathfindingGridOfStructure() {
-        AstarPath.active.UpdateGraphs(_groundTileMapRenderer.bounds);
+        PathfindingManager.Instance.UpdatePathfindingGraphPartial(_groundTileMapRenderer.bounds);
     }
     #endregion
 

@@ -27,7 +27,6 @@ public class AttackSlotItem : MonoBehaviour {
         }
         //PlayerManager.Instance.player.AssignAttackGrid(savedCombatGrid);
         UIManager.Instance.HideObjectPicker();
-        PlayerUI.Instance.HideCombatGrid();
         UpdateVisuals();
     }
     private bool CanAssignCharacterToAttack(Character character) {

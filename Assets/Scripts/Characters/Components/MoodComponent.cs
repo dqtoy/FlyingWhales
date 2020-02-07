@@ -44,6 +44,7 @@ public class MoodComponent {
 		_owner = owner;
 		EnableMoodEffects();
 		moodModificationsSummary = new Dictionary<string, int>();
+		_isInNormalMood = true; //set as initially in normal mood
 	}
 
 	#region Events
@@ -111,8 +112,7 @@ public class MoodComponent {
 
 	#region Normal Mood
 	private void EnterNormalMood() {
-		ExitCurrentMoodState();
-		_isInNormalMood = true;
+		SwitchMoodStates(MOOD_STATE.NORMAL);
 		Debug.Log($"{GameManager.Instance.TodayLogString()} {_owner.name} is <color=green>entering</color> " +
 		          "<b>normal</b> mood state");
 	}
@@ -125,8 +125,7 @@ public class MoodComponent {
 	
 	#region Low Mood
 	private void EnterLowMood() {
-		ExitCurrentMoodState();
-		_isInLowMood = true;
+		SwitchMoodStates(MOOD_STATE.LOW);
 		Debug.Log($"{GameManager.Instance.TodayLogString()} {_owner.name} is <color=green>entering</color> " +
 		          "<b>Low</b> mood state");
 		if (executeMoodChangeEffects) {
@@ -160,8 +159,7 @@ public class MoodComponent {
 
 	#region Critical Mood
 	private void EnterCriticalMood() {
-		ExitCurrentMoodState();
-		_isInCriticalMood = true;
+		SwitchMoodStates(MOOD_STATE.CRITICAL);
 		Debug.Log($"{GameManager.Instance.TodayLogString()} {_owner.name} is <color=green>entering</color> " +
 		          "<b>critical</b> mood state");
 		if (executeMoodChangeEffects) {
@@ -428,15 +426,29 @@ public class MoodComponent {
 	#endregion
 	
 	#region Utilities
-	private void ExitCurrentMoodState() {
-		if (_isInCriticalMood) {
-			ExitCriticalMood();
+	private void SwitchMoodStates(MOOD_STATE moodToEnter) {
+		MOOD_STATE lastMoodState = moodState;
+		switch (moodToEnter) {
+			case MOOD_STATE.LOW:
+				_isInLowMood = true;
+				break;
+			case MOOD_STATE.NORMAL:
+				_isInNormalMood = true;
+				break;
+			case MOOD_STATE.CRITICAL:
+				_isInCriticalMood = true;
+				break;
 		}
-		if (_isInNormalMood) {
-			ExitNormalMood();
-		}
-		if (_isInLowMood) {
-			ExitLowMood();
+		switch (lastMoodState) {
+			case MOOD_STATE.LOW:
+				ExitLowMood();
+				break;
+			case MOOD_STATE.NORMAL:
+				ExitNormalMood();
+				break;
+			case MOOD_STATE.CRITICAL:
+				ExitCriticalMood();
+				break;
 		}
 	}
 	#endregion

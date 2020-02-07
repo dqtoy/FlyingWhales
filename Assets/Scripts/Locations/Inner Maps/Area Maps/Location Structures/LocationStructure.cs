@@ -13,9 +13,7 @@ public class LocationStructure {
     public STRUCTURE_TYPE structureType { get; private set; }
     public List<Character> charactersHere { get; private set; }
     public ILocation location { get; private set; }
-    public Settlement settlementLocation => tiles[0].buildSpotOwner.isPartOfParentRegionMap 
-                                            && tiles[0].buildSpotOwner.hexTileOwner.settlementOnTile != null 
-        ? tiles[0].buildSpotOwner.hexTileOwner.settlementOnTile : null;
+    public Settlement settlementLocation { get; private set; }
     public List<SpecialToken> itemsInStructure { get; private set; }
     public HashSet<IPointOfInterest> pointsOfInterest { get; private set; }
     public POI_STATE state { get; private set; }
@@ -325,6 +323,9 @@ public class LocationStructure {
             } else {
                 RemoveUnoccupiedTile(tile);
             }
+            if (structureType != STRUCTURE_TYPE.WILDERNESS && tile.IsPartOfSettlement(out var settlement)) {
+                SetSettlementLocation(settlement);
+            }
         }
     }
     public void RemoveTile(LocationGridTile tile) {
@@ -397,6 +398,9 @@ public class LocationStructure {
             }
         }
     }
+    public void SetSettlementLocation(Settlement settlement) {
+        settlementLocation = settlement;
+    }
     #endregion
 
     #region Tile Objects
@@ -455,6 +459,15 @@ public class LocationStructure {
     #region Destroy
     private void DestroyStructure() {
         Debug.Log($"{GameManager.Instance.TodayLogString()}{ToString()} was destroyed!");
+        
+        if (settlementLocation != null) {
+            Settlement settlement = settlementLocation;
+            JobQueueItem existingRepairJob = settlement.GetJob(JOB_TYPE.REPAIR, occupiedBuildSpot);
+            if (existingRepairJob != null) {
+                settlement.RemoveFromAvailableJobs(existingRepairJob);
+            }    
+        }
+        
         //transfer tiles to either the wilderness or work settlement
         List<LocationGridTile> tilesInStructure = new List<LocationGridTile>(tiles);
         LocationStructure workArea = location.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA);
@@ -467,63 +480,43 @@ public class LocationStructure {
 
             tile.SetStructure(transferTo);
             if (tile.objHere != null) {
-                if (tile.objHere is SpecialToken) {
-                    AddItem(tile.objHere as SpecialToken, tile);
-                } else {
-                    AddPOI(tile.objHere, tile);
-                }
+                // if (tile.objHere is SpecialToken) {
+                //     AddItem(tile.objHere as SpecialToken, tile);
+                // } else {
+                //     AddPOI(tile.objHere, tile);
+                // }
+                RemovePOI(tile.objHere);
             }
+            tile.RevertToPreviousGroundVisual();
+            tile.CreateSeamlessEdgesForTile(location.innerMap);
             tile.SetPreviousGroundVisual(null); //so that the tile will never revert to the structure tile, unless a new structure is put on it.
             tile.genericTileObject.AdjustHP(tile.genericTileObject.maxHP);
-        }
-        if (settlementLocation != null) {
-            Settlement settlement = settlementLocation;
-            JobQueueItem existingRepairJob = settlement.GetJob(JOB_TYPE.REPAIR, occupiedBuildSpot);
-            if (existingRepairJob != null) {
-                settlement.RemoveFromAvailableJobs(existingRepairJob);
-            }    
         }
         
         occupiedBuildSpot.RemoveOccupyingStructure(this);
         ObjectPoolManager.Instance.DestroyObject(structureObj.gameObject);
         location.RemoveStructure(this);
         settlementLocation.RemoveStructure(this);
-        Messenger.Broadcast(Signals.STRUCTURE_OBJECT_REMOVED, this, occupiedBuildSpot);
+        Messenger.Broadcast(Signals.STRUCTURE_OBJECT_REMOVED, this, occupiedBuildSpot.spot);
         SetOccupiedBuildSpot(null);
     }
     private bool CheckIfStructureDestroyed() {
-        string summary = $"Checking if {ToString()} has been destroyed...";
-        //check walls and floors, if all of them are destroyed consider this structure as destroyed
-        bool allObjectsDestroyed = true;
+        //To check if a structure is destroyed, check if 50% of its walls have been destroyed.
+        int neededWallsToBeConsideredValid = Mathf.FloorToInt(structureObj.walls.Length * 0.5f);
+        int intactWalls = 0;
         for (int i = 0; i < structureObj.walls.Length; i++) {
             WallObject wall = structureObj.walls[i];
             if (wall.currentHP > 0) {
                 //wall is not yet destroyed
-                summary += $"\n{ToString()} still has an intact wall. Not yet destroyed.";
-                allObjectsDestroyed = false;
-                break;
+                intactWalls++;
             }
         }
-
-        if (allObjectsDestroyed) {
-            //check floor tiles
-            for (int i = 0; i < tiles.Count; i++) {
-                LocationGridTile tile = tiles[i];
-                if (tile.genericTileObject.currentHP > 0) {
-                    summary += $"\n{ToString()} still has an intact floor. Not yet destroyed.";
-                    allObjectsDestroyed = false;
-                    break;
-                }
-            }
-        }
-
-        //if at end of checking, all objects are destroyed, then consider this structure as destroyed
-        if (allObjectsDestroyed) {
-            summary += $"\n{ToString()} has no intact walls or floors. It has been destroyed.";
+        if (intactWalls < neededWallsToBeConsideredValid) {
+            //consider structure as destroyed
             DestroyStructure();
+            return true;
         }
-        Debug.Log(summary);
-        return allObjectsDestroyed;
+        return false;
     }
     #endregion
 
@@ -558,7 +551,7 @@ public class LocationStructure {
         if (structureType.IsOpenSpace()) {
             return; //do not check for destruction if structure is open space (Wilderness, Work Settlement, Cemetery, etc.)
         }
-        CheckIfStructureDestroyed();
+        // CheckIfStructureDestroyed();
     }
     private void OnStructureDamaged() {
         if (structureType.IsOpenSpace() || structureType.IsSettlementStructure() == false) {

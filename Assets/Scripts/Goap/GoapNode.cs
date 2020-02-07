@@ -4,6 +4,7 @@ using System.Linq;
 using Inner_Maps;
 using UnityEngine;
 using Traits;
+using UnityEngine.Assertions;
 
 public class GoapNode {
     //public GoapNode parent;
@@ -447,7 +448,8 @@ public class ActualGoapNode {
         if (actor.currentActionNode == this) {
             actor.SetCurrentActionNode(null, null, null);
         }
-        job.CancelJob(false);
+        //Assert.IsNotNull(job, $"{actor.name} was interrupted when performing {action.goapName} but, in this process his/her current job is null!");
+        job?.CancelJob(false);
         Messenger.Broadcast(Signals.CHARACTER_FINISHED_ACTION, this);
     }
     public void ActionResult(GoapActionState actionState) {

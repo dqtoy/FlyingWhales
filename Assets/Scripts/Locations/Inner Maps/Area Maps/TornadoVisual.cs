@@ -169,21 +169,13 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
             GoToRandomTileInRadius();
         }
 
-        for (int i = 0; i < _damagablesInTornado.Count; i++) {
-            IDamageable damageable = _damagablesInTornado[i];
-            if (damageable.mapObjectVisual != null && damageable.CanBeDamaged()) {
-                iTween.ShakeRotation(damageable.mapObjectVisual.gameObjectVisual, new Vector3(5f, 5f, 5f), 0.5f);
-            }
-        }
+        // for (int i = 0; i < _damagablesInTornado.Count; i++) {
+        //     IDamageable damageable = _damagablesInTornado[i];
+        //     if (damageable.mapObjectVisual != null && damageable.CanBeDamaged()) {
+        //         iTween.ShakeRotation(damageable.mapObjectVisual.gameObjectVisual, new Vector3(5f, 5f, 5f), 0.5f);
+        //     }
+        // }
     }
-    // void FixedUpdate() {
-    //     for (int i = 0; i < _damagablesInTornado.Count; i++) {
-    //         IDamageable damageable = _damagablesInTornado[i];
-    //         if (damageable.mapObjectVisual != null && damageable.CanBeDamaged()) {
-    //             iTween.ShakeRotation(damageable.mapObjectVisual.gameObjectVisual, new Vector3(5f, 5f, 5f), 0.5f);
-    //         }
-    //     }
-    // }
     #endregion
 
     #region Triggers
@@ -248,7 +240,8 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
     }
     private void DealDamage(IDamageable damageable) {
         if (damageable.CanBeDamaged()) {
-            damageable.AdjustHP(-(int)(damageable.maxHP * 0.35f), true, _tornado);
+            //0.35f
+            damageable.AdjustHP(-(int)(damageable.maxHP * 0.55f), true, _tornado);
         }
     }
     private void TrySuckIn(IDamageable damageable) {

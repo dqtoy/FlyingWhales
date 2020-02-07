@@ -109,10 +109,14 @@ public class UnleashSummonUI : MonoBehaviour {
             }
         }
         for (int i = 0; i < entrances.Count; i++) {
-            PlayerUI.Instance.TryPlaceSummon(chosenSummons[i] as Summon, entrances[i]);
+            TryPlaceSummon(chosenSummons[i] as Summon, entrances[i]);
             //chosenSummons[i].marker.InitialPlaceMarkerAt(entrances[i]);
         }
         chosenSummons[0].CenterOnCharacter();
+    }
+    private void TryPlaceSummon(Summon summon, LocationGridTile locationTile) {
+        CharacterManager.Instance.PlaceSummon(summon, locationTile);
+        Messenger.Broadcast(Signals.PLAYER_PLACED_SUMMON, summon);
     }
     //private void SetSummon(Summon summon) {
     //    this.summon = summon;

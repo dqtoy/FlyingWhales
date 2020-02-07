@@ -146,7 +146,7 @@ public class GoapPlanJob : JobQueueItem {
     #region Overrides 
     public override bool ProcessJob() {
         //if(id == -1) { return false; }
-        if(assignedPlan == null) {
+        if(assignedPlan == null && originalOwner != null) {
             Character characterOwner = assignedCharacter as Character;
             bool isPersonal = originalOwner.ownerType == JOB_OWNER.CHARACTER;
             if (targetInteractionType != INTERACTION_TYPE.NONE) {

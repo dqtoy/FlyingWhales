@@ -365,17 +365,9 @@ public class Player : ILeader {
         if (currentActivePlayerSpell == null) {
             Messenger.RemoveListener<KeyCode>(Signals.KEY_DOWN, OnSpellCast);
             CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
-            PlayerJobActionButton jobActionButton = PlayerUI.Instance.GetPlayerJobActionButton(previousActiveAction);
-            jobActionButton?.UpdateInteractableState();
-            jobActionButton?.SetSelectedIconState(false);
-            // if (previousActiveAction != null) {
-            //     previousActiveAction.HideRange(InnerMapManager.Instance.GetTileFromMousePosition());
-            // }
         } else {
-            PlayerJobActionButton jobActionButton = PlayerUI.Instance.GetPlayerJobActionButton(currentActivePlayerSpell);
             CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Cross);
             Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnSpellCast);
-            jobActionButton?.SetSelectedIconState(true);
         }
     }
     private void OnSpellCast(KeyCode key) {
@@ -583,13 +575,6 @@ public class Player : ILeader {
 
     #region Player Notifications
     public bool ShouldShowNotificationFrom(Character character, bool onlyClickedCharacter = false) {
-#if TRAILER_BUILD
-        if (character.name == "Fiona" || character.name == "Jamie" || character.name == "Audrey") {
-            return true;
-        }
-        return false;
-#endif
-
         if (!onlyClickedCharacter && InnerMapCameraMove.Instance.gameObject.activeSelf) { //&& !character.isDead
             if ((UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == character.id) || (character.marker != null &&  InnerMapCameraMove.Instance.CanSee(character.marker.gameObject))) {
                 return true;
@@ -600,12 +585,6 @@ public class Player : ILeader {
         return false;
     }
     public bool ShouldShowNotificationFrom(Character character, Log log) {
-#if TRAILER_BUILD
-        if (character.name == "Fiona" || character.name == "Jamie" || character.name == "Audrey") {
-            return true;
-        }
-        return false;
-#endif
         if (ShouldShowNotificationFrom(character)) {
             return true;
         } else {
@@ -1330,20 +1309,16 @@ public class Player : ILeader {
         currentActiveCombatAbility = ability;
         if (currentActiveCombatAbility == null) {
             CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Default);
-            CombatAbilityButton abilityButton = PlayerUI.Instance.GetCombatAbilityButton(previousAbility);
-            abilityButton?.UpdateInteractableState();
             InnerMapManager.Instance.UnhighlightTiles();
             CursorManager.Instance.ClearLeftClickActions();
             CursorManager.Instance.ClearRightClickActions();
             //GameManager.Instance.SetPausedState(false);
         } else {
-            CombatAbilityButton abilityButton = PlayerUI.Instance.GetCombatAbilityButton(ability);
             //change the cursor
             CursorManager.Instance.SetCursorTo(CursorManager.Cursor_Type.Cross);
             CursorManager.Instance.AddLeftClickAction(TryExecuteCurrentActiveCombatAbility);
             CursorManager.Instance.AddLeftClickAction(() => SetCurrentActiveCombatAbility(null));
             CursorManager.Instance.AddRightClickAction(() => SetCurrentActiveCombatAbility(null));
-            abilityButton?.UpdateInteractableState();
             //GameManager.Instance.SetPausedState(true);
         }
     }

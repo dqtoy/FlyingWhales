@@ -15,8 +15,6 @@ public class UIManager : MonoBehaviour {
     public static UIManager Instance = null;
 
     public RectTransform mainRT;
-    [SerializeField] private EventSystem eventSystem;
-
     private UIMenu[] allMenus;
 
     [Space(10)]
@@ -27,8 +25,7 @@ public class UIManager : MonoBehaviour {
     public Toggle x2Btn;
     public Toggle x4Btn;
     [SerializeField] private TextMeshProUGUI dateLbl;
-    [SerializeField] private TextMeshProUGUI timeLbl;
-
+    
     [Space(10)]
     [Header("Small Info")]
     public GameObject smallInfoGO;
@@ -44,34 +41,13 @@ public class UIManager : MonoBehaviour {
     public RectTransform characterPortraitHoverInfoRT;
 
     [Space(10)]
-    [Header("Detailed Info")]
-    public GameObject detailedInfoGO;
-    public RectTransform detailedInfoRect;
-    public TextMeshProUGUI detailedInfoLbl;
-    public Image detailedInfoIcon;
-    public RectTransform detailedInfoContentParent;
-    public CharacterPortrait[] detailedInfoPortraits;
-
-    [Space(10)]
     [Header("Other Settlement Info")]
     public Sprite[] areaCenterSprites;
     public GameObject portalPopup;
     
-
     [Space(10)]
     [Header("Notification Settlement")]
     public DeveloperNotificationArea developerNotificationArea;
-
-    [Space(10)]
-    [Header("Portraits")]
-    public Transform characterPortraitsParent;
-
-    [Space(10)]
-    [Header("Player")]
-    [SerializeField] private Toggle minionsMenuToggle;
-    [SerializeField] private Toggle charactersMenuToggle;
-    [SerializeField] private Toggle locationsMenuToggle;
-    [SerializeField] private Toggle factionsMenuToggle;
 
     [Space(10)]
     [Header("Shared")]
@@ -81,7 +57,6 @@ public class UIManager : MonoBehaviour {
     [Header("World UI")]
     [SerializeField] private RectTransform worldUIParent;
     [SerializeField] private GraphicRaycaster worldUIRaycaster;
-    [SerializeField] private GameObject worldEventIconPrefab;
 
     [Space(10)]
     [Header("Object Picker")]
@@ -211,9 +186,6 @@ public class UIManager : MonoBehaviour {
         }
         if (objectPicker.gameObject.activeSelf) {
             HideObjectPicker();
-        }
-        if (PlayerUI.Instance.attackGridGO.activeSelf) {
-            PlayerUI.Instance.HideCombatGrid();
         }
         if (PlayerUI.Instance.isShowingKillSummary) {
             PlayerUI.Instance.HideKillSummary();

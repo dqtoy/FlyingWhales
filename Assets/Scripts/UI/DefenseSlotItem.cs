@@ -18,7 +18,6 @@ public class DefenseSlotItem : MonoBehaviour {
         }
         //PlayerManager.Instance.player.AssignDefenseGrid(savedCombatGrid);
         UIManager.Instance.HideObjectPicker();
-        PlayerUI.Instance.HideCombatGrid();
         UpdateVisuals();
     }
     private bool CanAssignCharacterToDefend(Character character) {
