@@ -1,4 +1,5 @@
 ﻿using System;
+using Interrupts;
 using Traits;
 using UnityEngine;
 
@@ -162,17 +163,17 @@ public class CharacterNeedsComponent {
     }
     #endregion
 
-    public void CheckExtremeNeeds() {
+    public void CheckExtremeNeeds(Interrupt interruptThatTriggered = null) {
         string summary = GameManager.Instance.TodayLogString() + _character.name + " will check his/her needs.";
-        if (isStarving) {
+        if (isStarving && (interruptThatTriggered == null || interruptThatTriggered.interrupt != INTERRUPT.Grieving)) {
             summary += "\n" + _character.name + " is starving. Planning fullness recovery actions...";
             PlanFullnessRecoveryActions(_character);
         }
-        if (isExhausted) {
+        if (isExhausted && (interruptThatTriggered == null || interruptThatTriggered.interrupt != INTERRUPT.Feeling_Spooked)) {
             summary += "\n" + _character.name + " is exhausted. Planning tiredness recovery actions...";
             PlanTirednessRecoveryActions(_character);
         }
-        if (isSulking) {
+        if (isSulking && (interruptThatTriggered == null || interruptThatTriggered.interrupt != INTERRUPT.Feeling_Brokenhearted)) {
             summary += "\n" + _character.name + " is sulking. Planning happiness recovery actions...";
             PlanHappinessRecoveryActions(_character);
         }

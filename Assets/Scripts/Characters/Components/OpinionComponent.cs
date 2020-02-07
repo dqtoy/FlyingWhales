@@ -302,7 +302,10 @@ public class OpinionComponent {
 //TODO: Object pool this
 public class OpinionData {
     public Dictionary<string, int> allOpinions;
-    public int compatibilityValue; //NOTE: Getting compatibility value must be gotten from RelationshipManager, DO NOT CALL THIS DIRECTLY!
+    /// <summary>
+    /// Getting compatibility value must be gotten from RelationshipManager, DO NOT CALL THIS DIRECTLY!
+    /// </summary>
+    public int compatibilityValue;
 
     #region getters
     public int totalOpinion => allOpinions.Sum(x => x.Value);
