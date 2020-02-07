@@ -24,9 +24,10 @@ public static class FamilyTreeGenerator {
         PreCharacterData father = new PreCharacterData(race, GENDER.MALE, parentsSexuality);
         PreCharacterData mother = new PreCharacterData(race, GENDER.FEMALE, parentsSexuality);
         mother.SetSurName(father.surName);
-        
-        father.RandomizeCompatibility(3, 5, mother);
-        mother.RandomizeCompatibility(3, 5, father);
+
+        int parentsCompatibility = Random.Range(3, 6);
+        father.SetCompatibility(parentsCompatibility, mother);
+        mother.SetCompatibility(parentsCompatibility, father);
         
         father.AddRelationship(RELATIONSHIP_TYPE.LOVER, mother);
         mother.AddRelationship(RELATIONSHIP_TYPE.LOVER, father);
@@ -42,22 +43,30 @@ public static class FamilyTreeGenerator {
         for (int i = 0; i < children.Count; i++) {
             PreCharacterData child = children[i];
             //randomize compatibility with parents
-            child.RandomizeCompatibility(2, 5, father);
-            child.RandomizeCompatibility(2, 5, mother);
+            int compatibilityWithFather = Random.Range(2, 5);
+            int compatibilityWithMother = Random.Range(2, 5);
+            child.SetCompatibility(compatibilityWithFather, father);
+            child.SetCompatibility(compatibilityWithMother, mother);
+            //parents randomize compatibility with child
+            father.SetCompatibility(compatibilityWithFather, child);
+            mother.SetCompatibility(compatibilityWithMother, child);
+            
             child.AddRelationship(RELATIONSHIP_TYPE.PARENT, father);
             child.AddRelationship(RELATIONSHIP_TYPE.PARENT, mother);
-            
-            //parents randomize compatibility with child
-            father.RandomizeCompatibility(2, 5, child);
-            mother.RandomizeCompatibility(2, 5, child);
             father.AddRelationship(RELATIONSHIP_TYPE.CHILD, child);
             mother.AddRelationship(RELATIONSHIP_TYPE.CHILD, child);
             
             for (int j = 0; j < children.Count; j++) {
                 PreCharacterData otherChild = children[j];
                 if (child != otherChild) {
+                    child.GetOrInitializeRelationshipWith(otherChild);
+                    otherChild.GetOrInitializeRelationshipWith(child);
+                    int compatibilityWithSibling = otherChild.GetCompatibilityWith(child);
+                    if (compatibilityWithSibling == -1) {
+                        compatibilityWithSibling = Random.Range(2, 5);
+                    }
                     //child randomize compatibility with sibling
-                    child.RandomizeCompatibility(2, 5, otherChild);
+                    child.SetCompatibility(compatibilityWithSibling, otherChild);
 
                     //add sibling relationship between created children                     
                     child.AddRelationship(RELATIONSHIP_TYPE.SIBLING, otherChild);
@@ -85,7 +94,7 @@ public static class FamilyTreeGenerator {
                             familyMember.RandomizeOpinion(10, 50, otherFamilyMember);
                         } else if (compatibility == 4) {
                             familyMember.RandomizeOpinion(30, 70, otherFamilyMember);
-                        } else if (compatibility == 5) {
+                        } else if (compatibility >= 5) {
                             familyMember.RandomizeOpinion(50, 100, otherFamilyMember);
                         }
                     }

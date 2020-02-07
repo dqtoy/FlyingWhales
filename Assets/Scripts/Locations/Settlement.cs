@@ -538,7 +538,25 @@ public class Settlement : IJobOwner {
             for (int j = 0; j < residents.Count; j++) {
                 Character resident2 = residents[j];
                 if (resident1 != resident2) {
-                    resident1.relationshipContainer.AdjustOpinion(resident1, resident2, "Base", 0);
+                    IRelationshipData rel1Data =
+                        resident1.relationshipContainer.GetOrCreateRelationshipDataWith(resident1, resident2);
+                    IRelationshipData rel2Data =
+                        resident2.relationshipContainer.GetOrCreateRelationshipDataWith(resident2, resident1);
+
+                    int compatibilityValue;
+                    if (rel1Data.opinions.compatibilityValue != -1) {
+                        compatibilityValue = rel1Data.opinions.compatibilityValue;
+                    } else if (rel2Data.opinions.compatibilityValue != -1) {
+                        compatibilityValue = rel2Data.opinions.compatibilityValue;
+                    } else {
+                        compatibilityValue = UnityEngine.Random.Range(OpinionComponent.MinCompatibility,
+                            OpinionComponent.MaxCompatibility);  
+                    }
+                    rel1Data.opinions.SetCompatibilityValue(compatibilityValue);
+                    rel2Data.opinions.SetCompatibilityValue(compatibilityValue);
+                    
+                    rel1Data.opinions.RandomizeBaseOpinionBasedOnCompatibility();
+                    rel2Data.opinions.RandomizeBaseOpinionBasedOnCompatibility();
                 }
             }
         }

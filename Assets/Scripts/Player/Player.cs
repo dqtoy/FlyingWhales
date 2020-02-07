@@ -121,7 +121,7 @@ public class Player : ILeader {
         settlement.LoadAdditionalData();
         settlement.SetName("Demonic Intrusion");
         SetPlayerArea(settlement);
-        portal.tileLocation.InstantlyCorruptAllOwnedInnerMapTiles();
+        // portal.tileLocation.InstantlyCorruptAllOwnedInnerMapTiles();
         return settlement;
     }
     public void LoadPlayerArea(Settlement settlement) {

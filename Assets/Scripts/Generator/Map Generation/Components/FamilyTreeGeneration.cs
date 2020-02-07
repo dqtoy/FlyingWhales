@@ -45,8 +45,8 @@ public class FamilyTreeGeneration : MapGenerationComponent {
                 randomChildFromFirst.AddRelationship(RELATIONSHIP_TYPE.LOVER, compatibleChildFromSecond);
                 compatibleChildFromSecond.AddRelationship(RELATIONSHIP_TYPE.LOVER, randomChildFromFirst);
                 
-                randomChildFromFirst.RandomizeCompatibility(3, 5, compatibleChildFromSecond);
-                compatibleChildFromSecond.RandomizeCompatibility(3, 5, randomChildFromFirst);
+                randomChildFromFirst.SetCompatibility(5, compatibleChildFromSecond);
+                compatibleChildFromSecond.SetCompatibility(5, randomChildFromFirst);
                 
                 randomChildFromFirst.RandomizeOpinion(30, 100, compatibleChildFromSecond);
                 compatibleChildFromSecond.RandomizeOpinion(30, 100, randomChildFromFirst);

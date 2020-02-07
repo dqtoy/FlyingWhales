@@ -90839,7 +90839,7 @@ MonoBehaviour:
   desertRockTile: {fileID: 11400000, guid: 57e9debb8d8ebae4babfd8ce69f12eff, type: 2}
   crateBarrelTile: {fileID: 11400000, guid: 6b086f52f77704c46a54b33f4dffaedd, type: 2}
   edgeAssets:
-    m_keys: 00000000010000000200000003000000040000000500000007000000080000000a000000090000000c0000000b0000000d0000000e000000
+    m_keys: 00000000010000000200000003000000040000000500000007000000080000000a000000090000000c0000000b0000000d0000000e0000000f000000
     m_values:
     - data:
       - {fileID: 11400000, guid: 5feee36b7595b4b43b002f0537da2a11, type: 2}
@@ -90911,6 +90911,11 @@ MonoBehaviour:
       - {fileID: 11400000, guid: 9078b96f046a1694ba4b6c4b76beea54, type: 2}
       - {fileID: 11400000, guid: e4b77427dc7843e4fabe6d5f924513d8, type: 2}
       - {fileID: 11400000, guid: ff2a7c1d7f7a441448f01ea049497be4, type: 2}
+    - data:
+      - {fileID: 11400000, guid: 095c1ebd91ae010419b1279d368f53c4, type: 2}
+      - {fileID: 11400000, guid: b6a2d8c5c33894e4c9cc1580dc0ae06d, type: 2}
+      - {fileID: 11400000, guid: 19f3da5b51fa58c4bb055244f71665cc, type: 2}
+      - {fileID: 11400000, guid: 78b0f9e67e3076d48b373e812b793909, type: 2}
   waterTle: {fileID: 11400000, guid: c0b31ac02d9ac8849818798789e80415, type: 2}
   shoreTle: {fileID: 11400000, guid: e83a6083d3b5e404ab91ccf1bb8a0c5a, type: 2}
   caveWallTile: {fileID: 11400000, guid: 0e76310f7d566d54c98f2d850927ab6d, type: 2}

@@ -35,17 +35,15 @@ public class PreCharacterData {
     public void SetSurName(string _surName) {
         surName = _surName;
     }
-
     /// <summary>
     /// Randomize Compatibility of this character with another character.
     /// NOTE: This creates new relationship data if none exists yet for the target character.
     /// </summary>
-    /// <param name="lowerBound">lower bound of random compatibility [inclusive].</param>
-    /// <param name="upperBound">upper bound of random compatibility [inclusive].</param>
+    /// <param name="compatibility"></param>
     /// <param name="characterData">the target character.</param>
-    public void RandomizeCompatibility(int lowerBound, int upperBound, PreCharacterData characterData) {
+    public void SetCompatibility(int compatibility, PreCharacterData characterData) {
         PreCharacterRelationship relationship = GetOrInitializeRelationshipWith(characterData);
-        relationship.SetCompatibility(Random.Range(lowerBound, upperBound + 1));
+        relationship.SetCompatibility(compatibility);
     }
     
     /// <summary>
@@ -65,7 +63,7 @@ public class PreCharacterData {
         relationship.AddRelationship(relationshipType);
     }
     
-    private PreCharacterRelationship GetOrInitializeRelationshipWith(PreCharacterData characterData) {
+    public PreCharacterRelationship GetOrInitializeRelationshipWith(PreCharacterData characterData) {
         if (relationships.ContainsKey(characterData.id) == false) {
             relationships.Add(characterData.id, new PreCharacterRelationship());
         }

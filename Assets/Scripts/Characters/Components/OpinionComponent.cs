@@ -36,7 +36,7 @@ public class OpinionComponent {
         if (!HasOpinion(target)) {
             OpinionData opinionData = ObjectPoolManager.Instance.CreateNewOpinionData(); 
             opinions.Add(target, opinionData);
-            opinionData.OnInitiallyAdded();
+            // opinionData.OnInitiallyAdded(target);
             charactersWithOpinion.Add(target);
 
             // //Note: I did this because compatibility value between two characters must only be 1 instance, but since we have compatibilityValue variable per opinion, it now has 2 instances
@@ -73,7 +73,7 @@ public class OpinionComponent {
         if (!HasOpinion(target)) {
             OpinionData opinionData = ObjectPoolManager.Instance.CreateNewOpinionData(); 
             opinions.Add(target, opinionData);
-            opinionData.OnInitiallyAdded();
+            // opinionData.OnInitiallyAdded(target);
             charactersWithOpinion.Add(target);
 
             // //Note: I did this because compatibility value between two characters must only be 1 instance, but since we have compatibilityValue variable per opinion, it now has 2 instances

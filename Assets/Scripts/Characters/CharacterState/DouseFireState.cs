@@ -69,7 +69,9 @@ public class DouseFireState : CharacterState {
                 DouseNearestFire();
             } else {
                 //get water from pond
-                GetWater();
+                if (GetWater() == false) {
+                    stateComponent.ExitCurrentState();
+                }
             }
         } else {
             if (stateComponent.character.currentActionNode == null && stateComponent.currentState == this) {
@@ -160,9 +162,9 @@ public class DouseFireState : CharacterState {
     private bool StillHasFire() {
         return fires.Count > 0;
     }
-    private void GetWater() {
+    private bool GetWater() {
         if (isFetchingWater) {
-            return;
+            return false;
         }
         List<TileObject> targets = stateComponent.character.currentRegion.GetTileObjectsOfType(TILE_OBJECT_TYPE.WATER_WELL);
         TileObject nearestWater = null;
@@ -179,9 +181,10 @@ public class DouseFireState : CharacterState {
         if (nearestWater != null) {
             stateComponent.character.marker.GoTo(nearestWater.gridTileLocation, ObtainWater);
             isFetchingWater = true;
-        } else {
-            throw new System.Exception(stateComponent.character.name + " cannot find any sources of water!");
+            return true;
         }
+        Debug.LogWarning(stateComponent.character.name + " cannot find any sources of water!");
+        return false;
     }
     private void ObtainWater() {
         stateComponent.character.ObtainToken(TokenManager.Instance.CreateSpecialToken(SPECIAL_TOKEN.WATER_BUCKET));

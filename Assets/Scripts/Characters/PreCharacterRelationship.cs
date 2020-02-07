@@ -11,6 +11,7 @@ public class PreCharacterRelationship {
 
     public PreCharacterRelationship() {
         relationships = new List<RELATIONSHIP_TYPE>();
+        compatibility = -1;
     }
 
     public void SetCompatibility(int value) {

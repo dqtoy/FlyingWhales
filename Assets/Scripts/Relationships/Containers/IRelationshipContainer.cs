@@ -67,4 +67,5 @@ public interface IRelationshipContainer {
     int GetTotalOpinion(int id);
     IRelationshipData GetOrCreateRelationshipDataWith(Relatable owner, int id, string name, GENDER gender);
     IRelationshipData GetOrCreateRelationshipDataWith(Relatable owner, Relatable relatable);
+    int GetCompatibility(int targetID);
 }

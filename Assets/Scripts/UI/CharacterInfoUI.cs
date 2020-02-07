@@ -595,7 +595,7 @@ public class CharacterInfoUI : UIMenu {
                 opinionOfOther = target.relationshipContainer.GetTotalOpinion(activeCharacter);
                 opinionText = GetOpinionText(opinionOfOther);
             } else {
-                opinionText = "-";
+                opinionText = "???";
             }
             
             relationshipNamesLbl.text += $"<link=\"{actualIndex.ToString()}\">{relationshipData.targetName}</link>\n";
@@ -608,11 +608,8 @@ public class CharacterInfoUI : UIMenu {
         if (obj is string) {
             string text = (string)obj;
             int index = int.Parse(text);
-            Character target = CharacterManager.Instance.GetCharacterByID(_activeCharacter.relationshipContainer
-                .relationships.Keys.ElementAtOrDefault(index));
-            if (target != null) {
-                ShowOpinionData(target);
-            }
+            int id = _activeCharacter.relationshipContainer.relationships.Keys.ElementAtOrDefault(index);
+            ShowOpinionData(id);
         }
     }
     private void OnOpinionChanged(Character owner, Character target, string reason) {
@@ -630,18 +627,26 @@ public class CharacterInfoUI : UIMenu {
             UpdateRelationships();
         }
     }
-    private void ShowOpinionData(Character target) {
-        int opinionOfOther = target.relationshipContainer.GetTotalOpinion(activeCharacter);
-        string summary = activeCharacter.name + "'s opinion of " + target.name;
+    private void ShowOpinionData(int targetID) {
+        IRelationshipData targetData = _activeCharacter.relationshipContainer.GetRelationshipDataWith(targetID);
+        Character target = CharacterManager.Instance.GetCharacterByID(targetID);
+
+        string summary = activeCharacter.name + "'s opinion of " + targetData.targetName;
         summary += "\n---------------------";
-        Dictionary<string, int> opinions = activeCharacter.relationshipContainer.GetOpinionData(target).allOpinions;
+        Dictionary<string, int> opinions = activeCharacter.relationshipContainer.GetOpinionData(targetID).allOpinions;
         foreach (KeyValuePair<string, int> kvp in opinions) {
             summary += "\n" + kvp.Key + ": " + "<color=" + OpinionColor(kvp.Value) + ">" + GetOpinionText(kvp.Value) + "</color>";
         }
         summary += "\n---------------------";
-        summary += "\nTotal: <color=" + OpinionColor(opinionOfOther) + ">" + GetOpinionText(activeCharacter.relationshipContainer.GetTotalOpinion(target)) + "</color>";
-        summary += "\n" + target.name + "'s opinion of " + activeCharacter.name + ": <color=" + OpinionColor(opinionOfOther) + ">" + GetOpinionText(opinionOfOther) + "</color>";
-        summary += "\n\nCompatibility: " + RelationshipManager.Instance.GetCompatibilityBetween(activeCharacter, target);
+        summary += "\nTotal: <color=" + OpinionColor(targetData.opinions.totalOpinion) + ">" + GetOpinionText(activeCharacter.relationshipContainer.GetTotalOpinion(targetID)) + "</color>";
+        if (target != null) {
+            int opinionOfOther = target.relationshipContainer.GetTotalOpinion(activeCharacter);
+            summary += "\n" + targetData.targetName + "'s opinion of " + activeCharacter.name + ": <color=" + OpinionColor(opinionOfOther) + ">" + GetOpinionText(opinionOfOther) + "</color>";
+        } else {
+            summary += "\n" + targetData.targetName + "'s opinion of " + activeCharacter.name + ": ???</color>";
+        }
+        
+        summary += "\n\nCompatibility: " + RelationshipManager.Instance.GetCompatibilityBetween(activeCharacter, targetID);
         UIManager.Instance.ShowSmallInfo(summary);
     }
     public void HideRelationshipData() {

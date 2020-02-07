@@ -11,8 +11,7 @@ public class BaseRelationshipData : IRelationshipData {
     
     public BaseRelationshipData() {
         relationships = new List<RELATIONSHIP_TYPE>();
-        opinions = ObjectPoolManager.Instance.CreateNewOpinionData(); 
-        opinions.OnInitiallyAdded();
+        opinions = ObjectPoolManager.Instance.CreateNewOpinionData();
     }
 
     #region Utilities

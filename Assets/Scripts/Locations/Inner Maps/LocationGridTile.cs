@@ -16,7 +16,9 @@ namespace Inner_Maps {
 
         public enum Tile_Type { Empty, Wall, Structure_Entrance }
         public enum Tile_State { Empty, Occupied }
-        public enum Ground_Type { Soil, Grass, Stone, Snow, Tundra, Cobble, Wood, Snow_Dirt, Water, Cave, Corrupted, Desert_Grass, Sand, Desert_Stone, Bone }
+        public enum Ground_Type { Soil, Grass, Stone, Snow, Tundra, Cobble, Wood, Snow_Dirt, Water, Cave, Corrupted, 
+            Desert_Grass, Sand, Desert_Stone, Bone, Demon_Stone
+        }
         public bool hasDetail { get; set; }
         public InnerTileMap parentMap { get; private set; }
         public Tilemap parentTileMap { get; private set; }
@@ -213,7 +215,11 @@ namespace Inner_Maps {
                         SetGroundType(Ground_Type.Soil);
                     }
                 } else if (assetName.Contains("stone") || assetName.Contains("road")) {
-                    SetGroundType(Ground_Type.Stone);
+                    if (assetName.Contains("demon")) {
+                        SetGroundType(Ground_Type.Demon_Stone);   
+                    } else {
+                        SetGroundType(Ground_Type.Stone);    
+                    }
                 } else if (assetName.Contains("grass")) {
                     SetGroundType(Ground_Type.Grass);
                 } else if (assetName.Contains("tundra")) {
@@ -283,6 +289,8 @@ namespace Inner_Maps {
                     } else if (groundType != Ground_Type.Water && currNeighbour.groundType == Ground_Type.Water) {
                         createEdge = true;
                     } else if (groundType == Ground_Type.Corrupted) {
+                        createEdge = true;
+                    } else if (groundType == Ground_Type.Demon_Stone) {
                         createEdge = true;
                     } else if (groundType == Ground_Type.Bone) {
                         createEdge = true;

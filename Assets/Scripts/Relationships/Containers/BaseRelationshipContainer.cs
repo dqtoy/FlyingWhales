@@ -394,7 +394,10 @@ public class BaseRelationshipContainer : IRelationshipContainer {
         return RELATIONSHIP_EFFECT.NONE;
     }
     public int GetCompatibility(Character target) {
-        if (TryGetRelationshipDataWith(target, out var relationshipData)) {
+        return GetCompatibility(target.id);
+    }
+    public int GetCompatibility(int targetID) {
+        if (TryGetRelationshipDataWith(targetID, out var relationshipData)) {
             return relationshipData.opinions.compatibilityValue;
         }
         return -1;

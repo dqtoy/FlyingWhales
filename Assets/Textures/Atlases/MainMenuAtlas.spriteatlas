@@ -48,6 +48,7 @@ SpriteAtlas:
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
   - {fileID: 21300000, guid: 373550004dae78d40a853eac3ee92801, type: 3}
+  - {fileID: 21300000, guid: 031201009e100000052201009e100000, type: 3}
   - {fileID: 21300000, guid: c7513830e2eb521408c5d295524a5d88, type: 3}
   - {fileID: 21300000, guid: 91c6624050669a641aeff522c8a15382, type: 3}
   - {fileID: 21300000, guid: 3c22d2408af182842891aca017fc9672, type: 3}
@@ -81,7 +82,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 0f22c7965bc7c8b40902a59a17bc9039, type: 3}
   - {fileID: 21300000, guid: dd677f2786e46fd43baf05028fe00bd9, type: 3}
   - {fileID: 21300000, guid: 972a4b37fbdfc504a80be01b47467e96, type: 3}
-  - {fileID: 21300000, guid: fcd02a570f0b89a43861c34329643b57, type: 3}
   - {fileID: 21300000, guid: c9992677622a51f44bf9b258f1742819, type: 3}
   - {fileID: 21300000, guid: 1a27c3876e6b6ca4a87f07368c9b76cd, type: 3}
   - {fileID: 21300000, guid: 35d1e1b7dd03b024d825b5f6c704f698, type: 3}
@@ -103,6 +103,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 32b11fdf4fe54a94390363d811b89a5a, type: 3}
   m_PackedSpriteNamesToIndex:
   - main_menu_logo
+  - defect1-32db6
   - main_menu_newgame_btn_default
   - main_menu_loadgame_btn_pressed
   - main_menu_loadgame_btn_default
@@ -136,7 +137,6 @@ SpriteAtlas:
   - main_menu_continue_btn_pressed
   - main_menu_loadgame_btn_pressed
   - main_menu_settings_btn_hover
-  - defect1-32db6
   - ironcladportrait-5dc24
   - main_menu_exit_btn_default
   - main_menu_credits_btn_default

@@ -263,13 +263,6 @@ public class RelationshipManager : MonoBehaviour {
     }
 
     #region Adding
-    public IRelationshipData CreateNewOneWayRelationship(Relatable rel1, Relatable rel2, RELATIONSHIP_TYPE rel) {
-        if (!rel1.relationshipContainer.HasRelationshipWith(rel2, rel)) {
-            rel1.relationshipContainer.AddRelationship(rel1, rel2, rel);
-            rel1.relationshipProcessor?.OnRelationshipAdded(rel1, rel2, rel);
-        }
-        return rel1.relationshipContainer.GetRelationshipDataWith(rel2);
-    }
     public IRelationshipData CreateNewRelationshipBetween(Relatable rel1, Relatable rel2, RELATIONSHIP_TYPE rel) {
         RELATIONSHIP_TYPE pair = GetPairedRelationship(rel);
         if (CanHaveRelationship(rel1, rel2, rel)) {
@@ -281,6 +274,19 @@ public class RelationshipManager : MonoBehaviour {
             rel2.relationshipProcessor?.OnRelationshipAdded(rel2, rel1, pair);
         }
         return rel1.relationshipContainer.GetRelationshipDataWith(rel2);
+    }
+    public void CreateNewRelationshipDataBetween(Relatable rel1, Relatable rel2) {
+        IRelationshipData relationshipData1 = rel1.relationshipContainer.GetOrCreateRelationshipDataWith(rel1, rel2);
+        IRelationshipData relationshipData2 = rel2.relationshipContainer.GetOrCreateRelationshipDataWith(rel2, rel1);
+
+        int randomCompatibility = UnityEngine.Random.Range(OpinionComponent.MinCompatibility,
+            OpinionComponent.MaxCompatibility);
+                        
+        relationshipData1.opinions.SetCompatibilityValue(randomCompatibility);
+        relationshipData2.opinions.SetCompatibilityValue(randomCompatibility);
+
+        relationshipData1.opinions.RandomizeBaseOpinionBasedOnCompatibility();
+        relationshipData2.opinions.RandomizeBaseOpinionBasedOnCompatibility();
     }
     #endregion
 
@@ -490,12 +496,22 @@ public class RelationshipManager : MonoBehaviour {
 
     #region Compatibility
     public int GetCompatibilityBetween(Character character1, Character character2) {
-        int char1Compatibility = character1.relationshipContainer.GetCompatibility(character2);
-        int char2Compatibility = character2.relationshipContainer.GetCompatibility(character1);
-        if (char1Compatibility != -1 && char2Compatibility != -1) {
-            return char1Compatibility + char2Compatibility;
-        }
-        return -1;
+        // int char1Compatibility = character1.relationshipContainer.GetCompatibility(character2);
+        // int char2Compatibility = character2.relationshipContainer.GetCompatibility(character1);
+        // if (char1Compatibility != -1 && char2Compatibility != -1) {
+        //     return char1Compatibility + char2Compatibility;
+        // }
+        // return -1;
+        return character1.relationshipContainer.GetCompatibility(character2); //since it is expected that both characters have the same compatibility values
+    }
+    public int GetCompatibilityBetween(Character character1, int target) {
+        // int char1Compatibility = character1.relationshipContainer.GetCompatibility(character2);
+        // int char2Compatibility = character2.relationshipContainer.GetCompatibility(character1);
+        // if (char1Compatibility != -1 && char2Compatibility != -1) {
+        //     return char1Compatibility + char2Compatibility;
+        // }
+        // return -1;
+        return character1.relationshipContainer.GetCompatibility(target); //since it is expected that both characters have the same compatibility values
     }
     #endregion
 }

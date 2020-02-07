@@ -14,14 +14,10 @@ public class OpinionData {
 
     public OpinionData() {
         allOpinions = new Dictionary<string, int>();
+        compatibilityValue = -1;
     }
-
-    /// <summary>
-    /// On opinion data initially added to a character.
-    /// </summary>
-    public void OnInitiallyAdded() {
-        SetCompatibilityValue(Random.Range(OpinionComponent.MinCompatibility, OpinionComponent.MaxCompatibility));
-        //initialize opinion
+    
+    public void RandomizeBaseOpinionBasedOnCompatibility() {
         switch (compatibilityValue) {
             case 0:
                 SetOpinion("Base", Random.Range(-100, 11));
