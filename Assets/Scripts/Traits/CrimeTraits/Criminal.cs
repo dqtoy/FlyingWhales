@@ -43,7 +43,7 @@ namespace Traits {
         //}
         public override string GetNameInUI(ITraitable traitable) {
             if(crimeData != null) {
-                return name + ":" + crimeData.crime.name;
+                return name + ":" + crimeData.strCrimeType;
             }
             return name;
         }

@@ -149,6 +149,7 @@ public class CrimeData {
     public CRIME_TYPE crimeType { get; private set; }
     public CRIME_STATUS crimeStatus { get; private set; }
     public IReactable crime { get; private set; }
+    public string strCrimeType { get; private set; }
 
     public Character criminal { get; private set; }
     public Character judge { get; private set; }
@@ -158,6 +159,7 @@ public class CrimeData {
         this.crimeType = crimeType;
         this.crime = crime;
         this.criminal = criminal;
+        strCrimeType = Utilities.NormalizeStringUpperCaseFirstLetterOnly(this.crimeType.ToString());
         witnesses = new List<Character>();
         SetCrimeStatus(CRIME_STATUS.Unpunished);
     }
