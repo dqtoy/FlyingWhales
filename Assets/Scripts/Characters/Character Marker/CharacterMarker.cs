@@ -22,6 +22,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     [SerializeField] private SpriteRenderer hoveredImg;
     [SerializeField] private SpriteRenderer clickedImg;
     [SerializeField] private SpriteRenderer actionIcon;
+    [SerializeField] private BoxCollider2D buttonCollider;
 
     [Header("Actions")]
     [SerializeField] private StringSpriteDictionary actionIconDictionary;
@@ -131,11 +132,13 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     private void OnEnable() {
         if (character != null) {
+            //if (character.isBeingSeized) { return; }
             UpdateAnimation();
         }
     }
     private void Update() {
         if (GameManager.Instance.gameHasStarted && !GameManager.Instance.isPaused) {
+            if (character.isBeingSeized) { return; }
             if (attackSpeedMeter < character.attackSpeed) {
                 attackSpeedMeter += ((Time.deltaTime * 1000f) * progressionSpeedMultiplier);
                 UpdateAttackSpeedMeter();
@@ -143,6 +146,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
     }
     void LateUpdate() {
+        //if (character.isBeingSeized) { return; }
         string currSpriteName = mainImg.sprite.name;
         if (character.visuals.markerAnimations.ContainsKey(currSpriteName)) {
             Sprite newSprite = character.visuals.markerAnimations[currSpriteName];
@@ -1679,5 +1683,17 @@ public class CharacterMarker : MapObjectVisual<Character> {
         // }
     }
     #endregion
-    
+
+    #region Seize
+    public void OnSeize() {
+        Character character = this.character;
+        Reset();
+        this.character = character;
+        buttonCollider.enabled = false;
+    }
+    public void OnUnseize() {
+        buttonCollider.enabled = true;
+    }
+    #endregion
+
 }

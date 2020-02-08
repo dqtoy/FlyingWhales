@@ -60,6 +60,7 @@ public class SpecialToken : MapObject<SpecialToken>, IPointOfInterest, IPlayerAc
     }
     public Transform worldObject { get { return mapVisual.transform; } }
     public string nameWithID => ToString();
+    public GameObject visualGO => null;
     #endregion
 
     public SpecialToken(SPECIAL_TOKEN specialTokenType, int appearanceRate) {

@@ -122,7 +122,8 @@ public class PlayerUI : MonoBehaviour {
     [Header("Seize Object")]
     [SerializeField] private Button unseizeButton;
 
-    [Header("Custom Dropdown")]
+    [Header("Top Menu")]
+    [SerializeField] private Toggle[] topMenuButtons;
     [SerializeField] private CustomDropdownList customDropdownList;
     private readonly List<string> spellsList = new List<string>() { "Tornado", "Meteor", "Poison Cloud", "Lightning", "Spawn Monster", "Spawn Spike", "Place Trap", "Produce Food" };
     private readonly List<string> factionActionsList = new List<string>() { "Manage Cult", "Meddle" };
@@ -210,7 +211,9 @@ public class PlayerUI : MonoBehaviour {
         Messenger.AddListener<Character>(Signals.CHARACTER_BECOMES_NON_MINION_OR_SUMMON, CharacterBecomesNonMinionOrSummon);
         Messenger.AddListener<Character, CharacterClass, CharacterClass>(Signals.CHARACTER_CLASS_CHANGE, OnCharacterClassChange);
         Messenger.AddListener<Character, Character>(Signals.ON_SWITCH_FROM_LIMBO, OnCharacterSwitchFromLimbo);
-        
+        Messenger.AddListener<IPointOfInterest>(Signals.ON_SEIZE_POI, OnSeizePOI);
+        Messenger.AddListener<IPointOfInterest>(Signals.ON_UNSEIZE_POI, OnUnseizePOI);
+
         //key presses
         Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressed);
 
@@ -1944,7 +1947,13 @@ public class PlayerUI : MonoBehaviour {
     }
     #endregion
     
-    #region Seize Object
+    #region Seize
+    private void OnSeizePOI(IPointOfInterest poi) {
+        DisableTopMenuButtons();
+    }
+    private void OnUnseizePOI(IPointOfInterest poi) {
+        EnableTopMenuButtons();
+    }
     public void ShowSeizedObjectUI() {
         // unseizeButton.gameObject.SetActive(true);
     }
@@ -2007,6 +2016,19 @@ public class PlayerUI : MonoBehaviour {
     }
     private void OnClickFactionAction(string text) {
         //TODO
+    }
+    #endregion
+
+    #region Top Menu
+    private void EnableTopMenuButtons() {
+        for (int i = 0; i < topMenuButtons.Length; i++) {
+            topMenuButtons[i].interactable = true;
+        }
+    }
+    private void DisableTopMenuButtons() {
+        for (int i = 0; i < topMenuButtons.Length; i++) {
+            topMenuButtons[i].interactable = false;
+        }
     }
     #endregion
 }

@@ -271,10 +271,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool isStillConsideredAlive => minion == null /*&& !(this is Summon)*/ && !faction.isPlayerFaction;
     public Character isBeingCarriedBy => IsInOwnParty() ? null : currentParty.owner;
     public bool isMissing => currentMissingTicks > CharacterManager.Instance.CHARACTER_MISSING_THRESHOLD;
-    public bool isBeingSeized => PlayerManager.Instance.player.seizeComponent.seizedPOI == this;
+    public bool isBeingSeized => PlayerManager.Instance.player != null && PlayerManager.Instance.player.seizeComponent.seizedPOI == this;
     public bool isLycanthrope => lycanData != null;
     //public JobQueueItem currentJob => jobQueue.jobsInQueue.Count > 0 ? jobQueue.jobsInQueue[0] : null; //The current job is always the top of the queue
     public JobTriggerComponent jobTriggerComponent => jobComponent;
+    public GameObject visualGO => marker.gameObject;
     #endregion
 
     // public Character(CharacterRole role, RACE race, GENDER gender) : this() {
@@ -507,8 +508,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
         Messenger.AddListener<Character>(Signals.SCREAM_FOR_HELP, HeardAScream);
         Messenger.AddListener<ActualGoapNode>(Signals.ACTION_PERFORMED, OnActionPerformed);
-        Messenger.AddListener<Character>(Signals.ON_SEIZE_CHARACTER, OnSeizeOtherCharacter);
-        Messenger.AddListener<TileObject>(Signals.ON_SEIZE_TILE_OBJECT, OnSeizeTileObject);
+        Messenger.AddListener<IPointOfInterest>(Signals.ON_SEIZE_POI, OnSeizePOI);
+        //Messenger.AddListener<Character>(Signals.ON_SEIZE_CHARACTER, OnSeizeOtherCharacter);
+        //Messenger.AddListener<TileObject>(Signals.ON_SEIZE_TILE_OBJECT, OnSeizeTileObject);
         Messenger.AddListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
         Messenger.AddListener<Character>(Signals.CHARACTER_NO_LONGER_MISSING, OnCharacterNoLongerMissing);
         //Messenger.AddListener<ActualGoapNode>(Signals.ACTION_PERFORMED, OnCharacterPerformedAction);
@@ -530,8 +532,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
         Messenger.RemoveListener<Character>(Signals.SCREAM_FOR_HELP, HeardAScream);
         Messenger.RemoveListener<ActualGoapNode>(Signals.ACTION_PERFORMED, OnActionPerformed);
-        Messenger.RemoveListener<Character>(Signals.ON_SEIZE_CHARACTER, OnSeizeOtherCharacter);
-        Messenger.RemoveListener<TileObject>(Signals.ON_SEIZE_TILE_OBJECT, OnSeizeTileObject);
+        Messenger.RemoveListener<IPointOfInterest>(Signals.ON_SEIZE_POI, OnSeizePOI);
+        //Messenger.RemoveListener<Character>(Signals.ON_SEIZE_CHARACTER, OnSeizeOtherCharacter);
+        //Messenger.RemoveListener<TileObject>(Signals.ON_SEIZE_TILE_OBJECT, OnSeizeTileObject);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_NO_LONGER_MISSING, OnCharacterNoLongerMissing);
         //Messenger.RemoveListener<ActualGoapNode>(Signals.ACTION_PERFORMED, OnCharacterPerformedAction);
@@ -2248,10 +2251,17 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             marker.OnOtherCharacterDied(characterThatDied);
         }
     }
-    private void OnSeizeOtherCharacter(Character otherCharacter) {
-        if (otherCharacter.id != this.id) {
+    private void OnSeizePOI(IPointOfInterest poi) {
+        if(poi is Character) {
+            OnSeizeCharacter(poi as Character);
+        } else if (poi is TileObject) {
+            OnSeizeTileObject(poi as TileObject);
+        }
+    }
+    private void OnSeizeCharacter(Character character) {
+        if (character.id != this.id) {
             //RemoveRelationship(characterThatDied); //do not remove relationships when dying
-            marker.OnSeizeOtherCharacter(otherCharacter);
+            marker.OnSeizeOtherCharacter(character);
         }
     }
     private void OnSeizeTileObject(TileObject tileObject) {
@@ -5525,10 +5535,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         SetPOIState(POI_STATE.INACTIVE);
         SchedulingManager.Instance.ClearAllSchedulesBy(this);
         if (marker != null) {
-            DestroyMarker();
+            //DestroyMarker();
+            //marker.collisionTrigger.SetCollidersState(false);
+            marker.OnSeize();
+            DisableMarker();
+            Messenger.Broadcast(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, this as IPointOfInterest);
         }
         Messenger.AddListener(Signals.TICK_STARTED, OnTickStartedWhileSeized);
-        Messenger.Broadcast(Signals.ON_SEIZE_CHARACTER, this);
+        //Messenger.Broadcast(Signals.ON_SEIZE_CHARACTER, this);
     }
     public void OnUnseizePOI(LocationGridTile tileLocation) {
         Messenger.RemoveListener(Signals.TICK_STARTED, OnTickStartedWhileSeized);
@@ -5539,7 +5553,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         SetPOIState(POI_STATE.ACTIVE);
         if (marker == null) {
             CreateMarker();
+        } else {
+            marker.SetCharacter(this);
         }
+        //marker.SetAllColliderStates(true);
+        EnableMarker();
+        marker.OnUnseize();
         minion?.OnUnseize();
         if(tileLocation.structure.location.coreTile.region != currentRegion) {
             currentRegion.RemoveCharacterFromLocation(this);
@@ -5548,7 +5567,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             marker.InitialPlaceMarkerAt(tileLocation, false);
         }
         needsComponent.CheckExtremeNeeds();
-        Messenger.Broadcast(Signals.ON_UNSEIZE_CHARACTER, this);
+        //Messenger.Broadcast(Signals.ON_UNSEIZE_CHARACTER, this);
     }
     #endregion
 

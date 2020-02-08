@@ -42,10 +42,12 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		Messenger.AddListener<Settlement, bool>(Signals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, OnSettlementUnderSiegeChanged);
 		Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
 		Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_EXITED_HEXTILE, OnCharacterExitedHexTile);
-		Messenger.AddListener<Character>(Signals.ON_SEIZE_CHARACTER, OnSeizedCharacter);
-		Messenger.AddListener<Character>(Signals.ON_UNSEIZE_CHARACTER, OnUnseizeCharacter);
-	}
-	public void UnsubscribeListeners() {
+        Messenger.AddListener<IPointOfInterest>(Signals.ON_SEIZE_POI, OnSeizePOI);
+        Messenger.AddListener<IPointOfInterest>(Signals.ON_UNSEIZE_POI, OnUnseizePOI);
+        //Messenger.AddListener<Character>(Signals.ON_SEIZE_CHARACTER, OnSeizedCharacter);
+        //Messenger.AddListener<Character>(Signals.ON_UNSEIZE_CHARACTER, OnUnseizeCharacter);
+    }
+    public void UnsubscribeListeners() {
 		Messenger.RemoveListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterCanNoLongerMove);
 		Messenger.RemoveListener<Character>(Signals.CHARACTER_CAN_MOVE_AGAIN, OnCharacterCanMoveAgain);
 		Messenger.RemoveListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJob);
@@ -54,7 +56,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		Messenger.RemoveListener<Settlement, bool>(Signals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, OnSettlementUnderSiegeChanged);
 		Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
 		Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_EXITED_HEXTILE, OnCharacterExitedHexTile);
-		TryStopScreamCheck();
+        Messenger.RemoveListener<IPointOfInterest>(Signals.ON_SEIZE_POI, OnSeizePOI);
+        Messenger.RemoveListener<IPointOfInterest>(Signals.ON_UNSEIZE_POI, OnUnseizePOI);
+        TryStopScreamCheck();
 	}
 	private void OnCharacterCanPerformAgain(Character character) {
 		if (character == _owner) {
@@ -129,7 +133,17 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			// Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.RESTRAIN, _owner as IPointOfInterest);
 		}
 	}
-	private void OnSeizedCharacter(Character character) {
+    private void OnSeizePOI(IPointOfInterest poi) {
+        if(poi is Character) {
+            OnSeizedCharacter(poi as Character);
+        }
+    }
+    private void OnUnseizePOI(IPointOfInterest poi) {
+        if (poi is Character) {
+            OnUnseizeCharacter(poi as Character);
+        }
+    }
+    private void OnSeizedCharacter(Character character) {
 		if (character == _owner) {
 			TryStopScreamCheck();
 		}

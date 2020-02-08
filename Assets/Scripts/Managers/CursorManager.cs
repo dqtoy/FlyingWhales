@@ -52,9 +52,12 @@ public class CursorManager : MonoBehaviour {
         if (PlayerManager.Instance != null && PlayerManager.Instance.player != null) {
             if (PlayerManager.Instance.player.seizeComponent.hasSeizedPOI) {
                 IPointOfInterest seizedPOI = PlayerManager.Instance.player.seizeComponent.seizedPOI;
-                if (UIManager.Instance.IsMouseOnUI()) {
+                if (UIManager.Instance.IsMouseOnUI() || !InnerMapManager.Instance.isAnInnerMapShowing) {
                     SetCursorTo(Cursor_Type.Default);
+                    PlayerManager.Instance.player.seizeComponent.DisableFollowMousePosition();
                 } else {
+                    PlayerManager.Instance.player.seizeComponent.EnableFollowMousePosition();
+                    PlayerManager.Instance.player.seizeComponent.FollowMousePosition();
                     LocationGridTile hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
                     if (hoveredTile != null) {
                         if(hoveredTile.objHere != null) {

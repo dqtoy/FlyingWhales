@@ -49,8 +49,8 @@ public class Artifact : TileObject, IWorldObject {
     //        OnRemoveArtifact();
     //    }
     //}
-    protected override void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom) {
-        base.OnRemoveTileObject(removedBy, removedFrom);
+    protected override void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom, bool removeTraits = true, bool destroyTileSlots = true) {
+        base.OnRemoveTileObject(removedBy, removedFrom, removeTraits, destroyTileSlots);
         OnRemoveArtifact();
     }
     protected override void OnPlaceTileObjectAtTile(LocationGridTile tile) {

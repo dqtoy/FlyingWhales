@@ -746,6 +746,7 @@ MonoBehaviour:
   hoveredImg: {fileID: 212097248544747360}
   clickedImg: {fileID: 212731852412647684}
   actionIcon: {fileID: 212948007245262788}
+  buttonCollider: {fileID: 61734465707681460}
   actionIconDictionary:
     m_keys:
     - Eat
@@ -803,8 +804,6 @@ MonoBehaviour:
   colorHighlight: {fileID: 212374460377128016}
   penaltyRadius: 8
   useCanTraverse: 0
-  chaosOrbPrefab: {fileID: 1969525015451714, guid: 9d5aaca52e9a40742a8a193fd001aa13,
-    type: 2}
 --- !u!114 &114503541738452620
 MonoBehaviour:
   m_ObjectHideFlags: 1

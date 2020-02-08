@@ -89,8 +89,8 @@ public class Table : TileObject {
             CreateNewGUS(Vector2.zero, new Vector2(0.5f, 0.5f));
         }
     }
-    protected override void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom) {
-        base.OnRemoveTileObject(removedBy, removedFrom);
+    protected override void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom, bool removeTraits = true, bool destroyTileSlots = true) {
+        base.OnRemoveTileObject(removedBy, removedFrom, destroyTileSlots);
         DestroyExistingGUS();
     }
     protected override void ConstructMaxResources() {

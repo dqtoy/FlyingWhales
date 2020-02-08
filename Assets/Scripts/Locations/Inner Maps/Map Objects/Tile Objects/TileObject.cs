@@ -67,6 +67,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     }
     public Transform worldObject { get { return mapVisual.transform; } }
     public string nameWithID => ToString();
+    public GameObject visualGO => mapVisual.gameObject;
     #endregion
 
     protected void Initialize(TILE_OBJECT_TYPE tileObjectType) {
@@ -281,14 +282,16 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     /// <summary>
     /// Triggered when the grid tile location of this object is set to null.
     /// </summary>
-    protected virtual void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom) {
+    protected virtual void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom, bool removeTraits = true, bool destroyTileSlots = true) {
         // Debug.Log(GameManager.Instance.TodayLogString() + "Tile Object " + this.name + " has been removed");
         this.removedBy = removedBy;
         Messenger.Broadcast(Signals.TILE_OBJECT_REMOVED, this, removedBy, removedFrom);
-        if (hasCreatedSlots) {
+        if (hasCreatedSlots && destroyTileSlots) {
             DestroyTileSlots();
         }
-        traitContainer.RemoveAllTraits(this);
+        if (removeTraits) {
+            traitContainer.RemoveAllTraits(this);
+        }
     }
     public virtual bool CanBeReplaced() {
         return false;
@@ -424,11 +427,22 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             UIManager.Instance.tileObjectInfoUI.CloseMenu();
         }
         Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
-        Messenger.Broadcast(Signals.ON_SEIZE_TILE_OBJECT, this);
-
-        gridTileLocation.structure.RemovePOI(this);
+        //Messenger.Broadcast(Signals.ON_SEIZE_TILE_OBJECT, this);
+        gridTileLocation.structure.RemovePOIWithoutDestroying(this);
+        //DestroyGameObject();
+        OnRemoveTileObject(null, previousTile, false, false);
+        SetPOIState(POI_STATE.INACTIVE);
+        TileObjectData objData;
+        if (TileObjectDB.TryGetTileObjectData(tileObjectType, out objData)) {
+            if (objData.occupiedSize.X > 1 || objData.occupiedSize.Y > 1) {
+                UnoccupyTiles(objData.occupiedSize, previousTile);
+            }
+        }
+        Messenger.Broadcast(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, this as IPointOfInterest);
+        UnsubscribeListeners();
     }
     public void OnUnseizePOI(LocationGridTile tileLocation) {
+        DestroyGameObject();
         tileLocation.structure.AddPOI(this, tileLocation);
     }
     #endregion
