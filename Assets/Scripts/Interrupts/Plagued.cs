@@ -10,14 +10,14 @@ namespace Interrupts {
 		}
 
 		#region Overrides
-		public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target) {
+		public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target, ref Log overrideEffectLog) {
 			if (actor.traitContainer.AddTrait(actor, "Plagued")) {
-				Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Plagued", "contract");
-				log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-				log.AddLogToInvolvedObjects();
+				overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", "Plagued", "contract");
+				overrideEffectLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+				//log.AddLogToInvolvedObjects();
 				return true;
 			}
-			return base.ExecuteInterruptStartEffect(actor, target);
+			return base.ExecuteInterruptStartEffect(actor, target, ref overrideEffectLog);
 		}
 		#endregion
 	}

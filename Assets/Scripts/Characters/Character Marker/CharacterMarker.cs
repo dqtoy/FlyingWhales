@@ -1089,9 +1089,13 @@ public class CharacterMarker : MapObjectVisual<Character> {
         //     return;
         // }
         if (reactToActionOnly) {
-            unprocessedVisionPOIsForActionOnly.Add(poi);
+            if (!unprocessedVisionPOIsForActionOnly.Contains(poi)) {
+                unprocessedVisionPOIsForActionOnly.Add(poi);
+            }
         }
-        unprocessedVisionPOIs.Add(poi);
+        if (!unprocessedVisionPOIs.Contains(poi)) {
+            unprocessedVisionPOIs.Add(poi);
+        }
         // character.logComponent.PrintLogIfActive(character.name + " added unprocessed poi " + poi.nameWithID);
     }
     public void RemoveUnprocessedPOI(IPointOfInterest poi) {

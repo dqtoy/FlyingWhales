@@ -12,7 +12,7 @@ namespace Interrupts {
 		}
 
 		#region Overrides
-		public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target) {
+		public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target, ref Log overrideEffectLog) {
 			if (UnityEngine.Random.Range(0, 2) == 0) {
 				if(actor.traitContainer.AddTrait(actor, "Sick")) {
 					//TODO: Can still be improved: Create a function that returns the trait that's been added instead of boolean
@@ -24,15 +24,15 @@ namespace Interrupts {
 						}
 					}
 					
-					Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Poisoned", "sick");
-					log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-					log.AddLogToInvolvedObjects();
+					overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", "Poisoned", "sick");
+					overrideEffectLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+					//log.AddLogToInvolvedObjects();
 				}
 			} else {
 				actor.Death("poisoned");
 			}
 
-			return base.ExecuteInterruptStartEffect(actor, target);
+			return base.ExecuteInterruptStartEffect(actor, target, ref overrideEffectLog);
 		}
 		#endregion
 	}

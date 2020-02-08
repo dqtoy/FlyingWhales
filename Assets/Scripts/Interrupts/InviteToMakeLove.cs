@@ -11,7 +11,7 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target) {
+        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target, ref Log overrideEffectLog) {
             if(target is Character) {
                 string debugLog = actor.name + " invite to make love interrupt with " + target.name;
 
@@ -59,10 +59,10 @@ namespace Interrupts {
                 actor.logComponent.PrintLogIfActive(debugLog);
 
 
-                Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Invite To Make Love", chosen);
-                log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                actor.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+                overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", "Invite To Make Love", chosen);
+                overrideEffectLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                overrideEffectLog.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                //actor.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
 
                 if (chosen == "Reject") {
                     actor.opinionComponent.AdjustOpinion(targetCharacter, "Base", -3, "rejected sexual advances");

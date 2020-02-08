@@ -11,7 +11,7 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target) {
+        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target, ref Log overrideEffectLog) {
             Character targetCharacter = target as Character;
             List<Character> enemyOrRivalCharacters = targetCharacter.opinionComponent.GetEnemyCharacters();
             if(enemyOrRivalCharacters.Count > 0) {
@@ -22,11 +22,11 @@ namespace Interrupts {
                 } else {
                     targetCharacter.opinionComponent.AdjustOpinion(chosenEnemyOrRival, "Base", 15);
                 }
-                Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Reduce Conflict", logKey);
-                log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                log.AddToFillers(chosenEnemyOrRival, chosenEnemyOrRival.name, LOG_IDENTIFIER.CHARACTER_3);
-                actor.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+                overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", "Reduce Conflict", logKey);
+                overrideEffectLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                overrideEffectLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                overrideEffectLog.AddToFillers(chosenEnemyOrRival, chosenEnemyOrRival.name, LOG_IDENTIFIER.CHARACTER_3);
+                //actor.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
             }
             return true;
         }

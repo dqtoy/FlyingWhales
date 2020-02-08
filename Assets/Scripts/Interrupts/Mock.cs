@@ -10,7 +10,7 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target) {
+        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target, ref Log overrideEffectLog) {
             Character targetCharacter = target as Character;
             targetCharacter.opinionComponent.AdjustOpinion(actor, "Base", -3);
             return true;

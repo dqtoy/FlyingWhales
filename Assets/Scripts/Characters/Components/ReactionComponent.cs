@@ -48,7 +48,7 @@ public class ReactionComponent {
         }
         return string.Empty;
     }
-    public void ReactTo(Interrupt interrupt, Character actor, IPointOfInterest target, Character witness) {
+    public void ReactTo(Interrupt interrupt, Character actor, IPointOfInterest target) {
         if (owner.minion != null || owner is Summon) {
             //Minions or Summons cannot react to interrupts
             return;
@@ -58,6 +58,13 @@ public class ReactionComponent {
             return;
         }
         if (actor != owner && target != owner) {
+            if(actor.interruptComponent.currentInterrupt == interrupt && actor.interruptComponent.currentEffectLog != null) {
+                Log witnessLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "witness_event");
+                witnessLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.OTHER);
+                witnessLog.AddToFillers(null, Utilities.LogDontReplace(actor.interruptComponent.currentEffectLog), LOG_IDENTIFIER.APPEND);
+                witnessLog.AddToFillers(actor.interruptComponent.currentEffectLog.fillers);
+                owner.logComponent.AddHistory(witnessLog);
+            }
             string emotionsToActor = interrupt.ReactionToActor(owner, actor, target, interrupt);
             if (emotionsToActor != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsToActor)) {
                 string error = "Interrupt Error in Witness Reaction To Actor (Duplicate/Incompatible Emotions Triggered)";

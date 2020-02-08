@@ -10,16 +10,16 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target) {
+        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target, ref Log overrideEffectLog) {
             Faction newFaction = FactionManager.Instance.CreateNewFaction();
             actor.ChangeFactionTo(newFaction);
             newFaction.SetLeader(actor);
 
-            Log createFactionLog = new Log(GameManager.Instance.Today(), "Interrupt", "Create Faction", "character_create_faction");
-            createFactionLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            createFactionLog.AddToFillers(newFaction, newFaction.name, LOG_IDENTIFIER.FACTION_1);
-            createFactionLog.AddToFillers(actor.currentRegion, actor.currentRegion.name, LOG_IDENTIFIER.LANDMARK_1);
-            actor.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(createFactionLog, onlyClickedCharacter: false);
+            overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", "Create Faction", "character_create_faction");
+            overrideEffectLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            overrideEffectLog.AddToFillers(newFaction, newFaction.name, LOG_IDENTIFIER.FACTION_1);
+            overrideEffectLog.AddToFillers(actor.currentRegion, actor.currentRegion.name, LOG_IDENTIFIER.LANDMARK_1);
+            //actor.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(createFactionLog, onlyClickedCharacter: false);
             return true;
         }
         #endregion

@@ -9,13 +9,13 @@ namespace Interrupts {
             isSimulateneous = true;
         }
 
-        #region Overrides
-        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target) {
-            Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Minor Mental Break", "minor_break");
-            log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            actor.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
-            return true;
-        }
-        #endregion
+        //#region Overrides
+        //public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target, ref Log overrideEffectLog) {
+        //    Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Minor Mental Break", "minor_break");
+        //    log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        //    actor.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+        //    return true;
+        //}
+        //#endregion
     }
 }
