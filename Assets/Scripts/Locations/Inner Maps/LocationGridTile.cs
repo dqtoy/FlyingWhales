@@ -288,9 +288,9 @@ namespace Inner_Maps {
                         createEdge = false;
                     } else if (groundType != Ground_Type.Water && currNeighbour.groundType == Ground_Type.Water) {
                         createEdge = true;
-                    } else if (groundType == Ground_Type.Corrupted) {
+                    } else if (groundType == Ground_Type.Corrupted && currNeighbour.groundType != Ground_Type.Bone) {
                         createEdge = true;
-                    } else if (groundType == Ground_Type.Demon_Stone) {
+                    } else if (groundType == Ground_Type.Demon_Stone && currNeighbour.groundType != Ground_Type.Corrupted) {
                         createEdge = true;
                     } else if (groundType == Ground_Type.Bone) {
                         createEdge = true;

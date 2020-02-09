@@ -215,6 +215,7 @@ public class LocationStructureObject : PooledObject {
 
             //set the ground asset of the parent settlement map to what this objects ground map uses, then clear this objects ground map
             ApplyGroundTileAssetForTile(tile);
+            tile.CreateSeamlessEdgesForTile(innerMap);
             
             tile.parentMap.detailsTilemap.SetTile(tile.localPlace, null);
         }

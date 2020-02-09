@@ -1193,7 +1193,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         UIManager.Instance.HideSmallInfo();
     }
     private bool CanChooseLandmark(string landmarkName) {
-        return false;
+        // return false;
         if (landmarkName == "The Pit") {
             return false;
         }
