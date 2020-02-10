@@ -17,7 +17,7 @@ public class Drop : GoapAction {
     
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, target = GOAP_EFFECT_TARGET.TARGET }, IsInActorParty);
+        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_POI, target = GOAP_EFFECT_TARGET.TARGET }, IsCarriedOrInInventory);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, target = GOAP_EFFECT_TARGET.TARGET });
     }
     public override void Perform(ActualGoapNode actionNode) {
@@ -54,14 +54,14 @@ public class Drop : GoapAction {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
         Character targetCharacter = poiTarget as Character;
-        actor.currentParty.RemovePOI(targetCharacter);
+        actor.UncarryPOI(targetCharacter);
     }
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
         Character targetCharacter = poiTarget as Character;
-        actor.currentParty.RemovePOI(targetCharacter);
+        actor.UncarryPOI(targetCharacter);
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
         Character actor = node.actor;
@@ -102,14 +102,14 @@ public class Drop : GoapAction {
     #endregion
 
     #region Preconditions
-    private bool IsInActorParty(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        if (poiTarget is Character) {
-            Character target = poiTarget as Character;
-            return target.currentParty == actor.currentParty;    
-        } else {
-            return actor.ownParty.IsPOICarried(poiTarget);
-        }
-        
+    private bool IsCarriedOrInInventory(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        // if (poiTarget is Character) {
+        //     Character target = poiTarget as Character;
+        //     return target.currentParty == actor.currentParty;    
+        // } else {
+        //     return actor.ownParty.IsPOICarried(poiTarget);
+        // }
+        return actor.IsPOICarriedOrInInventory(poiTarget);
     }
     #endregion
 
@@ -127,7 +127,7 @@ public class Drop : GoapAction {
                 tile = otherData[1] as LocationGridTile;
             }
         }
-        goapNode.actor.currentParty.RemovePOI(goapNode.poiTarget, dropLocation: tile);
+        goapNode.actor.UncarryPOI(goapNode.poiTarget, dropLocation: tile);
         if(goapNode.poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER && goapNode.associatedJobType == JOB_TYPE.APPREHEND 
             && goapNode.poiTarget.gridTileLocation.structure == goapNode.actor.homeSettlement.prison) {
             Restrained restrainedTrait = goapNode.poiTarget.traitContainer.GetNormalTrait<Restrained>("Restrained");

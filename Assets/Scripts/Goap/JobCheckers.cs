@@ -71,7 +71,7 @@ public partial class InteractionManager {
     }
     public bool CanCraftTool(Character character) {
         //return character.HasExtraTokenInInventory(SPECIAL_TOKEN.TOOL);
-        return SPECIAL_TOKEN.TOOL.CanBeCraftedBy(character);
+        return TILE_OBJECT_TYPE.TOOL.CanBeCraftedBy(character);
     }
     public bool CanDoObtainSupplyJob(Character character) {
         return character.traitContainer.HasTrait("Combatant");
@@ -90,7 +90,7 @@ public partial class InteractionManager {
     }
     public bool CanBrewPotion(Character character) {
         //return character.HasExtraTokenInInventory(SPECIAL_TOKEN.HEALING_POTION);
-        return SPECIAL_TOKEN.HEALING_POTION.CanBeCraftedBy(character);
+        return TILE_OBJECT_TYPE.HEALING_POTION.CanBeCraftedBy(character);
     }
     public bool CanTakeBuryJob(Character character) {
         if (!character.traitContainer.HasTrait("Criminal") && character.isAtHomeRegion &&

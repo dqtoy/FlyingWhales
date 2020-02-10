@@ -39,14 +39,16 @@ public class MeteorVisual : MonoBehaviour {
                         continue; //object was destroyed, do not add burning trait
                     }
                 }
-            } else if (traitable is SpecialToken) {
-                SpecialToken token = traitable as SpecialToken;
-                GameManager.Instance.CreateExplodeEffectAt(token.gridTileLocation);
-                token.AdjustHP(-token.currentHP);
-                if (token.gridTileLocation == null) {
-                    continue; //object was destroyed, do not add burning trait
-                }
-            } else if (traitable is Character) {
+            } 
+            // else if (traitable is SpecialToken) {
+            //     SpecialToken token = traitable as SpecialToken;
+            //     GameManager.Instance.CreateExplodeEffectAt(token.gridTileLocation);
+            //     token.AdjustHP(-token.currentHP);
+            //     if (token.gridTileLocation == null) {
+            //         continue; //object was destroyed, do not add burning trait
+            //     }
+            // } 
+            else if (traitable is Character) {
                 Character character = traitable as Character;
                 GameManager.Instance.CreateExplodeEffectAt(character.gridTileLocation);
                 character.AdjustHP(-(int)(character.maxHP * 0.4f), true);

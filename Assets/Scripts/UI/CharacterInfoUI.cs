@@ -96,8 +96,8 @@ public class CharacterInfoUI : UIMenu {
         Messenger.AddListener(Signals.ON_OPEN_SHARE_INTEL, OnOpenShareIntelMenu);
         Messenger.AddListener(Signals.ON_CLOSE_SHARE_INTEL, OnCloseShareIntelMenu);
         Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
-        Messenger.AddListener<SpecialToken, Character>(Signals.CHARACTER_OBTAINED_ITEM, UpdateInventoryInfoFromSignal);
-        Messenger.AddListener<SpecialToken, Character>(Signals.CHARACTER_LOST_ITEM, UpdateInventoryInfoFromSignal);
+        Messenger.AddListener<TileObject, Character>(Signals.CHARACTER_OBTAINED_ITEM, UpdateInventoryInfoFromSignal);
+        Messenger.AddListener<TileObject, Character>(Signals.CHARACTER_LOST_ITEM, UpdateInventoryInfoFromSignal);
         Messenger.AddListener<Character>(Signals.CHARACTER_SWITCHED_ALTER_EGO, OnCharacterChangedAlterEgo);
         //Messenger.AddListener<Relatable, Relatable>(Signals.RELATIONSHIP_ADDED, OnRelationshipAdded);
         //Messenger.AddListener<Relatable, RELATIONSHIP_TRAIT, Relatable>(Signals.RELATIONSHIP_REMOVED, OnRelationshipRemoved);
@@ -424,7 +424,7 @@ public class CharacterInfoUI : UIMenu {
     #endregion
 
     #region Items
-    private void UpdateInventoryInfoFromSignal(SpecialToken token, Character character) {
+    private void UpdateInventoryInfoFromSignal(TileObject item, Character character) {
         if (isShowing && _activeCharacter == character) {
             UpdateInventoryInfo();
         }
@@ -432,7 +432,7 @@ public class CharacterInfoUI : UIMenu {
     private void UpdateInventoryInfo() {
         itemsLbl.text = string.Empty;
         for (int i = 0; i < _activeCharacter.items.Count; i++) {
-            SpecialToken currInventoryItem = _activeCharacter.items[i];
+            TileObject currInventoryItem = _activeCharacter.items[i];
             itemsLbl.text = $"{itemsLbl.text} {currInventoryItem.name}";
             if (i < _activeCharacter.items.Count - 1) {
                 itemsLbl.text = $"{itemsLbl.text}, ";

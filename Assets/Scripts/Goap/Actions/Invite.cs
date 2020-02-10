@@ -64,7 +64,8 @@ public class Invite : GoapAction {
     #region Effects
     public void PreInviteSuccess(ActualGoapNode goapNode) {
         goapNode.poiTarget.traitContainer.AddTrait(goapNode.poiTarget, "Wooed", goapNode.actor);
-        goapNode.actor.ownParty.AddPOI(goapNode.poiTarget);
+        // goapNode.actor.ownParty.AddPOI(goapNode.poiTarget);
+        goapNode.actor.CarryPOI(goapNode.poiTarget);
     }
     //public void PreInviteFail(ActualGoapNode goapNode) {
     //    currentState.SetIntelReaction(InviteFailReactions);

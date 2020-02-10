@@ -5,6 +5,7 @@ using System.Linq;
 using Inner_Maps;
 using UnityEngine;
 using Traits;
+using UnityEngine.WSA;
 using UtilityScripts;
 
 public class Settlement : IJobOwner {
@@ -542,7 +543,7 @@ public class Settlement : IJobOwner {
     }
     #endregion
 
-    #region Special Tokens
+    #region Tile Objects
     //public bool AddSpecialTokenToLocation(SpecialToken token, LocationStructure structure = null, LocationGridTile gridLocation = null) {
     //    if (!itemsInArea.Contains(token)) {
     //        itemsInArea.Add(token);
@@ -587,18 +588,18 @@ public class Settlement : IJobOwner {
     //    }
     //    return count;
     //}
-    public void OnItemAddedToLocation(SpecialToken item, LocationStructure structure) {
+    public void OnItemAddedToLocation(TileObject item, LocationStructure structure) {
         CheckAreaInventoryJobs(structure);
     }
-    public void OnItemRemovedFromLocation(SpecialToken item, LocationStructure structure) {
+    public void OnItemRemovedFromLocation(TileObject item, LocationStructure structure) {
         CheckAreaInventoryJobs(structure);
     }
-    public bool IsRequiredByLocation(SpecialToken token) {
-        if (token.gridTileLocation != null && token.gridTileLocation.structure == mainStorage) {
-            if (token.specialTokenType == SPECIAL_TOKEN.HEALING_POTION) {
-                return mainStorage.GetItemsOfTypeCount(SPECIAL_TOKEN.HEALING_POTION) <= 2; //item is required by warehouse.
-            } else if (token.specialTokenType == SPECIAL_TOKEN.TOOL) {
-                return mainStorage.GetItemsOfTypeCount(SPECIAL_TOKEN.TOOL) <= 2; //item is required by warehouse.
+    public bool IsRequiredByLocation(TileObject item) {
+        if (item.gridTileLocation != null && item.gridTileLocation.structure == mainStorage) {
+            if (item.tileObjectType == TILE_OBJECT_TYPE.HEALING_POTION) {
+                return mainStorage.GetTileObjectsOfTypeCount(TILE_OBJECT_TYPE.HEALING_POTION) <= 2; //item is required by warehouse.
+            } else if (item.tileObjectType == TILE_OBJECT_TYPE.TOOL) {
+                return mainStorage.GetTileObjectsOfTypeCount(TILE_OBJECT_TYPE.TOOL) <= 2; //item is required by warehouse.
             }
         }
         return false;
@@ -1073,31 +1074,30 @@ public class Settlement : IJobOwner {
     }
     private void CheckAreaInventoryJobs(LocationStructure affectedStructure) {
         if (affectedStructure == mainStorage) {
-
             //brew potion
-            if (affectedStructure.GetItemsOfTypeCount(SPECIAL_TOKEN.HEALING_POTION) < 2) {
+            if (affectedStructure.GetTileObjectsOfTypeCount(TILE_OBJECT_TYPE.HEALING_POTION) < 2) {
                 //create an un crafted potion and place it at the main storage structure, then use that as the target for the job.
-                SpecialToken item = TokenManager.Instance.CreateSpecialToken(SPECIAL_TOKEN.HEALING_POTION);
-                affectedStructure.AddItem(item);
+                TileObject item = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.HEALING_POTION);
+                affectedStructure.AddPOI(item);
                 item.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
 
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_ITEM, item, this);
-                job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TokenManager.Instance.itemData[SPECIAL_TOKEN.HEALING_POTION].craftCost });
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, item, this);
+                job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.HEALING_POTION).constructionCost });
                 job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanBrewPotion);
                 AddToAvailableJobs(job);
             }
 
 
             //craft tool
-            if (affectedStructure.GetItemsOfTypeCount(SPECIAL_TOKEN.TOOL) < 2) {
+            if (affectedStructure.GetTileObjectsOfTypeCount(TILE_OBJECT_TYPE.TOOL) < 2) {
                 if (!HasJob(JOB_TYPE.CRAFT_OBJECT)) {
                     //create an un crafted potion and place it at the main storage structure, then use that as the target for the job.
-                    SpecialToken item = TokenManager.Instance.CreateSpecialToken(SPECIAL_TOKEN.TOOL);
-                    affectedStructure.AddItem(item);
+                    TileObject item = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.TOOL);
+                    affectedStructure.AddPOI(item);
                     item.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
 
-                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_ITEM, item, this);
-                    job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TokenManager.Instance.itemData[SPECIAL_TOKEN.TOOL].craftCost });
+                    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, item, this);
+                    job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(TILE_OBJECT_TYPE.TOOL).constructionCost });
                     job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanCraftTool);
                     AddToAvailableJobs(job);
                 }
@@ -1194,10 +1194,10 @@ public class Settlement : IJobOwner {
         this.owner = owner;
         /*Whenever a location is occupied, 
             all items in structures Inside Settlement will be owned by the occupying faction.*/
-        List<LocationStructure> insideStructures = GetStructuresAtLocation();
-        for (int i = 0; i < insideStructures.Count; i++) {
-            insideStructures[i].OwnItemsInLocation(owner);
-        }
+        // List<LocationStructure> insideStructures = GetStructuresAtLocation();
+        // for (int i = 0; i < insideStructures.Count; i++) {
+        //     insideStructures[i].OwnItemsInLocation(owner);
+        // }
         Messenger.Broadcast(Signals.AREA_OWNER_CHANGED, this);
         
         bool isCorrupted = this.owner != null && this.owner.isPlayerFaction;

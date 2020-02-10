@@ -621,8 +621,7 @@ namespace Inner_Maps {
                 }
             }
             if (objHere != null && objHere.traitContainer.HasTrait(requiredTrait)) {
-                if ((objHere is TileObject && (objHere as TileObject).mapObjectState == MAP_OBJECT_STATE.BUILT)
-                    || (objHere is SpecialToken && (objHere as SpecialToken).mapObjectState == MAP_OBJECT_STATE.BUILT)) {
+                if ((objHere is TileObject && (objHere as TileObject).mapObjectState == MAP_OBJECT_STATE.BUILT)) { //|| (objHere is SpecialToken && (objHere as SpecialToken).mapObjectState == MAP_OBJECT_STATE.BUILT)
                     traitables.Add(objHere);
                 }
             }
@@ -643,8 +642,7 @@ namespace Inner_Maps {
                 traitables.Add(wallObject);
             }
             if (objHere != null) {
-                if ((objHere is TileObject && (objHere as TileObject).mapObjectState == MAP_OBJECT_STATE.BUILT)
-                    || (objHere is SpecialToken && (objHere as SpecialToken).mapObjectState == MAP_OBJECT_STATE.BUILT)) {
+                if ((objHere is TileObject && (objHere as TileObject).mapObjectState == MAP_OBJECT_STATE.BUILT)) {//|| (objHere is SpecialToken && (objHere as SpecialToken).mapObjectState == MAP_OBJECT_STATE.BUILT)
                     traitables.Add(objHere);
                 }
             }

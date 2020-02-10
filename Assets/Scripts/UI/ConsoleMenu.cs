@@ -593,7 +593,7 @@ public class ConsoleMenu : UIMenu {
         List<Character> characters = new List<Character>();
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
             Character currCharacter = CharacterManager.Instance.allCharacters[i];
-            if (currCharacter.isHoldingItem && currCharacter.GetToken(itemParameterString) != null) {
+            if (currCharacter.isHoldingItem && currCharacter.HasItem(itemParameterString)) {
                 characters.Add(currCharacter);
             }
         }
@@ -1402,18 +1402,19 @@ public class ConsoleMenu : UIMenu {
                 log += "\n" + tileObj.advertisedActions[i].ToString();
             }
             AddSuccessMessage(log);
-        } else if (poiType == POINT_OF_INTEREST_TYPE.ITEM) {
-            SPECIAL_TOKEN specialTokenType;
-            if (System.Enum.TryParse(objTypeStr, out specialTokenType) == false) {
-                AddErrorMessage("There is no special token of type " + objTypeStr);
-            }
-            SpecialToken st = TokenManager.Instance.GetSpecialTokenByID(id);
-            string log = $"Advertised actions of {st.name}:";
-            for (int i = 0; i < st.advertisedActions.Count; i++) {
-                log += "\n" + st.advertisedActions[i].ToString();
-            }
-            AddSuccessMessage(log);
-        }
+        } 
+        // else if (poiType == POINT_OF_INTEREST_TYPE.ITEM) {
+        //     SPECIAL_TOKEN specialTokenType;
+        //     if (System.Enum.TryParse(objTypeStr, out specialTokenType) == false) {
+        //         AddErrorMessage("There is no special token of type " + objTypeStr);
+        //     }
+        //     SpecialToken st = TokenManager.Instance.GetSpecialTokenByID(id);
+        //     string log = $"Advertised actions of {st.name}:";
+        //     for (int i = 0; i < st.advertisedActions.Count; i++) {
+        //         log += "\n" + st.advertisedActions[i].ToString();
+        //     }
+        //     AddSuccessMessage(log);
+        // }
     }
     #endregion
 }

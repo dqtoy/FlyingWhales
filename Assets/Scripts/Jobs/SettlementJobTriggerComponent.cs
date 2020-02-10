@@ -66,13 +66,13 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		}
 	}
 	private void OnObjectDamaged(IPointOfInterest poi) {
-		Assert.IsTrue(poi is TileObject || poi is SpecialToken);
+		Assert.IsTrue(poi is TileObject); // || poi is SpecialToken
 		if (poi.gridTileLocation != null && poi.gridTileLocation.IsPartOfSettlement(_owner)) {
 			TryCreateRepairJob(poi);
 		}
 	}
 	private void OnObjectRepaired(IPointOfInterest poi) {
-		Assert.IsTrue(poi is TileObject || poi is SpecialToken);
+		Assert.IsTrue(poi is TileObject); // || poi is SpecialToken
 		if (poi.gridTileLocation != null && poi.gridTileLocation.IsPartOfSettlement(_owner)) {
 			//cancel existing repair job
 			Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.REPAIR, poi);
@@ -280,12 +280,13 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 				job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] {
 					(int) (TileObjectDB.GetTileObjectData(tileObject.tileObjectType).constructionCost * 0.5f)
 				});	
-			} else if (target is SpecialToken) {
-				SpecialToken specialToken = target as SpecialToken;
-				job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] {
-					TokenManager.Instance.itemData[specialToken.specialTokenType].craftCost
-				});
-			}
+			} 
+			// else if (target is SpecialToken) {
+			// 	SpecialToken specialToken = target as SpecialToken;
+			// 	job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] {
+			// 		TokenManager.Instance.itemData[specialToken.specialTokenType].craftCost
+			// 	});
+			// }
 			
 			_owner.AddToAvailableJobs(job);
 		}
@@ -368,7 +369,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	private void TryTriggerObtainPersonalFood(Table table) {
 		if (table.food < 20 && _owner.HasJob(JOB_TYPE.OBTAIN_PERSONAL_FOOD, table) == false) {
 			int neededFood = table.GetMaxResourceValue(RESOURCE.FOOD) - table.food;
-			GoapEffect goapEffect = new GoapEffect(GOAP_EFFECT_CONDITION.HAS_FOOD, "0", true, GOAP_EFFECT_TARGET.TARGET);
+			GoapEffect goapEffect = new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Food Pile", false, GOAP_EFFECT_TARGET.TARGET);
 			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.OBTAIN_PERSONAL_FOOD, goapEffect, table, _owner);
 			job.SetCanTakeThisJobChecker(CanTakeObtainPersonalFoodJob);
 			job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { neededFood });

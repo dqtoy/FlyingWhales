@@ -146,10 +146,11 @@ public struct ScheduledAction {
         } else if (scheduler is TileObject) {
             TileObject tileObject = scheduler as TileObject;
             return tileObject.gridTileLocation != null;
-        } else if (scheduler is SpecialToken) {
-            SpecialToken token = scheduler as SpecialToken;
-            return token.gridTileLocation != null;
-        }
+        } 
+        // else if (scheduler is SpecialToken) {
+        //     SpecialToken token = scheduler as SpecialToken;
+        //     return token.gridTileLocation != null;
+        // }
         return true;
     }
 

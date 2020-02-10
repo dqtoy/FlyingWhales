@@ -658,7 +658,7 @@ public class Region : ILocation {
     //        takenFrom.RemoveItem(token);
     //    }
     //}
-    public bool IsRequiredByLocation(SpecialToken token) {
+    public bool IsRequiredByLocation(TileObject item) {
         return false;
     }
     public bool IsSameCoreLocationAs(ILocation location) {

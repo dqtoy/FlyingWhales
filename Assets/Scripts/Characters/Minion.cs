@@ -101,14 +101,15 @@ public class Minion {
                 character.stateComponent.ExitCurrentState();
             }
             if (character.currentSettlement != null && character.isHoldingItem) {
-                character.DropAllTokens(character.currentStructure, deathTile, true);
+                character.DropAllItems(deathTile);
             }
 
             //clear traits that need to be removed
             character.traitsNeededToBeRemoved.Clear();
 
-            if (!character.IsInOwnParty()) {
-                character.currentParty.RemovePOI(character);
+            Character carrier = character.isBeingCarriedBy;
+            if (carrier != null) {
+                carrier.UncarryPOI(character);
             }
             character.ownParty.PartyDeath();
             character.currentRegion?.RemoveCharacterFromLocation(character);

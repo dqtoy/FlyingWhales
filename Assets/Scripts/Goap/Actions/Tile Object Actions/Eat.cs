@@ -23,7 +23,7 @@ public class Eat : GoapAction {
     public override List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, object[] otherData) {
         if (target is Table) { // || target is FoodPile
             List<Precondition> p = new List<Precondition>(base.GetPreconditions(actor, target, otherData));
-            p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_FOOD, "0" /*+ (int)otherData[0]*/, true, GOAP_EFFECT_TARGET.TARGET), HasFood));
+            p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Food Pile" /*+ (int)otherData[0]*/, false, GOAP_EFFECT_TARGET.TARGET), HasFood));
             return p;
         }
         return base.GetPreconditions(actor, target, otherData);

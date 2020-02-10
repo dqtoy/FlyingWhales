@@ -190,7 +190,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         //Messenger.AddListener<Character, string>(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, TransferEngageToFleeList);
         Messenger.AddListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
         Messenger.AddListener(Signals.TICK_ENDED, ProcessAllUnprocessedVisionPOIs);
-        Messenger.AddListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
+        // Messenger.AddListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
         Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED,
             OnTileObjectRemovedFromTile);
         Messenger.AddListener<IPointOfInterest>(Signals.REPROCESS_POI, ReprocessPOI);
@@ -204,7 +204,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
         //Messenger.RemoveListener<Character, string>(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, TransferEngageToFleeList);
         Messenger.RemoveListener(Signals.TICK_ENDED, ProcessAllUnprocessedVisionPOIs);
-        Messenger.RemoveListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
+        // Messenger.RemoveListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
         Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemovedFromTile);
         Messenger.RemoveListener<IPointOfInterest>(Signals.REPROCESS_POI, ReprocessPOI);
     }
@@ -358,12 +358,12 @@ public class CharacterMarker : MapObjectVisual<Character> {
             }
         }
     }
-    private void OnItemRemovedFromTile(SpecialToken token, LocationGridTile removedFrom) {
-        character.combatComponent.RemoveHostileInRange(token);
-        //if (hostilesInRange.Contains(token)) {
-        //    RemoveHostileInRange(token);
-        //}
-    }
+    // private void OnItemRemovedFromTile(SpecialToken token, LocationGridTile removedFrom) {
+    //     character.combatComponent.RemoveHostileInRange(token);
+    //     //if (hostilesInRange.Contains(token)) {
+    //     //    RemoveHostileInRange(token);
+    //     //}
+    // }
     private void OnTileObjectRemovedFromTile(TileObject obj, Character removedBy, LocationGridTile removedFrom) {
         character.combatComponent.RemoveHostileInRange(obj);
         character.combatComponent.RemoveAvoidInRange(obj);

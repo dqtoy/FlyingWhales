@@ -226,9 +226,9 @@ public class CharacterManager : MonoBehaviour {
         //         currRegion.AddCharacterToLocation(newCharacter.ownParty.owner, null, false);
         //     }
         // }
-        for (int i = 0; i < data.items.Count; i++) {
-            data.items[i].Load(newCharacter);
-        }
+        // for (int i = 0; i < data.items.Count; i++) {
+        //     data.items[i].Load(newCharacter);
+        // }
 
         AddNewCharacter(newCharacter);
         return newCharacter;
@@ -401,9 +401,9 @@ public class CharacterManager : MonoBehaviour {
         //     }
         // }
 
-        for (int i = 0; i < data.items.Count; i++) {
-            data.items[i].Load(newCharacter);
-        }
+        // for (int i = 0; i < data.items.Count; i++) {
+        //     data.items[i].Load(newCharacter);
+        // }
         //for (int i = 0; i < data.normalTraits.Count; i++) {
         //    Character responsibleCharacter = null;
         //    Trait trait = data.normalTraits[i].Load(ref responsibleCharacter);

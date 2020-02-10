@@ -209,9 +209,9 @@ public class UIManager : MonoBehaviour {
         if (tileObjectInfoUI.isShowing) {
             tileObjectInfoUI.CloseMenu();
         }
-        if (itemInfoUI.isShowing) {
-            itemInfoUI.CloseMenu();
-        }
+        // if (itemInfoUI.isShowing) {
+        //     itemInfoUI.CloseMenu();
+        // }
         if (objectPicker.gameObject.activeSelf) {
             HideObjectPicker();
         }
@@ -272,7 +272,7 @@ public class UIManager : MonoBehaviour {
         UpdateTileObjectInfo();
         UpdateRegionInfo();
         UpdateQuestInfo();
-        UpdateItemInfo();
+        // UpdateItemInfo();
         UpdateHextileInfo();
     }
 
@@ -853,24 +853,24 @@ public class UIManager : MonoBehaviour {
     }
     #endregion
 
-    #region Item Info
-    [Space(10)]
-    [Header("Item Object Info")]
-    [SerializeField] internal ItemInfoUI itemInfoUI;
-    public void ShowItemInfo(SpecialToken item) {
-        if (tempDisableShowInfoUI) {
-            SetTempDisableShowInfoUI(false);
-            return;
-        }
-        itemInfoUI.SetData(item);
-        itemInfoUI.OpenMenu();
-    }
-    public void UpdateItemInfo() {
-        if (itemInfoUI.isShowing) {
-            itemInfoUI.UpdateInfo();
-        }
-    }
-    #endregion
+    // #region Item Info
+    // [Space(10)]
+    // [Header("Item Object Info")]
+    // [SerializeField] internal ItemInfoUI itemInfoUI;
+    // public void ShowItemInfo(SpecialToken item) {
+    //     if (tempDisableShowInfoUI) {
+    //         SetTempDisableShowInfoUI(false);
+    //         return;
+    //     }
+    //     itemInfoUI.SetData(item);
+    //     itemInfoUI.OpenMenu();
+    // }
+    // public void UpdateItemInfo() {
+    //     if (itemInfoUI.isShowing) {
+    //         itemInfoUI.UpdateInfo();
+    //     }
+    // }
+    // #endregion
 
     #region Combat Info
     [Space(10)]

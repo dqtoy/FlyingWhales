@@ -16,7 +16,7 @@ public class Feed : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TAKE_FOOD, conditionKey = "0", isKeyANumber = true, target = GOAP_EFFECT_TARGET.ACTOR }, ActorHasFood);
+        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TAKE_POI, conditionKey = "Food Pile", isKeyANumber = false, target = GOAP_EFFECT_TARGET.ACTOR }, ActorHasFood);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.FULLNESS_RECOVERY, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.TARGET });
     }
     public override void Perform(ActualGoapNode goapNode) {
@@ -31,13 +31,13 @@ public class Feed : GoapAction {
     public override void OnStopWhileStarted(ActualGoapNode node) {
         base.OnStopWhileStarted(node);
         Character actor = node.actor;
-        actor.ownParty.RemoveCarriedPOI();
+        actor.UncarryPOI();
     }
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
-        actor.ownParty.RemoveCarriedPOI();
+        actor.UncarryPOI();
         (poiTarget as Character).needsComponent.AdjustDoNotGetHungry(-1);
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {

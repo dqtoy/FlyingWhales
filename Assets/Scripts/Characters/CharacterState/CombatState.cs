@@ -89,7 +89,7 @@ public class CombatState : CharacterState {
         //    stateComponent.character.currentActionNode.Perform(); //this is for when a character will assault a target, but his/her attack range is less than his/her vision range. (Because end reached distance of assault action is set to attack range)
         //}
         //stateComponent.character.StopCurrentActionNode(false);
-        stateComponent.character.currentParty.RemoveCarriedPOI(); //Drop characters when entering combat
+        stateComponent.character.UncarryPOI(); //Drop characters when entering combat
         // if(stateComponent.character is SeducerSummon) { //If succubus/incubus enters a combat, automatically change its faction to the player faction if faction is still disguised
         //     if(stateComponent.character.faction == FactionManager.Instance.disguisedFaction) {
         //         stateComponent.character.ChangeFactionTo(PlayerManager.Instance.player.playerFaction);

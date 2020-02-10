@@ -16,7 +16,7 @@ public class RemovePoison : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = SPECIAL_TOKEN.TOOL.ToString(), target = GOAP_EFFECT_TARGET.ACTOR }, HasItemTool);
+        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_POI, conditionKey = TILE_OBJECT_TYPE.TOOL.ToString(), target = GOAP_EFFECT_TARGET.ACTOR }, HasItemTool);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Poisoned", target = GOAP_EFFECT_TARGET.TARGET });
     }
     public override void Perform(ActualGoapNode goapNode) {
@@ -38,11 +38,12 @@ public class RemovePoison : GoapAction {
         //**Effect 1**: Remove Poisoned Trait from target table
         goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Poisoned");
         //**Effect 2**: Remove Tool from Actor's inventory
-        if (goapNode.actor.HasTokenInInventory(SPECIAL_TOKEN.TOOL)) {
-            goapNode.actor.ConsumeToken(goapNode.actor.GetToken(SPECIAL_TOKEN.TOOL));
+        TileObject tool = goapNode.actor.GetItem(TILE_OBJECT_TYPE.TOOL);
+        if (tool != null) {
+            goapNode.actor.UnobtainItem(tool);
         } else {
             //the actor does not have a tool, log for now
-            Debug.LogWarning(goapNode.actor.name + " does not have a tool for removing poison! Poison was still removed, but thought you should know.");
+            goapNode.actor.logComponent.PrintLogErrorIfActive(goapNode.actor.name + " does not have a tool for removing poison! Poison was still removed, but thought you should know.");
         }
        
     }
@@ -63,7 +64,7 @@ public class RemovePoison : GoapAction {
 
     #region Preconditions
     private bool HasItemTool(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor.GetToken("Tool") != null;
+        return actor.HasItem(TILE_OBJECT_TYPE.TOOL);
     }
     #endregion
 }

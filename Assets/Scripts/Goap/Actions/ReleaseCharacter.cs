@@ -15,7 +15,7 @@ public class ReleaseCharacter : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = SPECIAL_TOKEN.TOOL.ToString(), target = GOAP_EFFECT_TARGET.ACTOR }, HasItemTool);
+        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_POI, conditionKey = TILE_OBJECT_TYPE.TOOL.ToString(), target = GOAP_EFFECT_TARGET.ACTOR }, HasItemTool);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_TRAIT, conditionKey = "Restrained", target = GOAP_EFFECT_TARGET.TARGET });
     }
     public override void Perform(ActualGoapNode goapNode) {
@@ -39,7 +39,7 @@ public class ReleaseCharacter : GoapAction {
 
     #region Preconditions
     private bool HasItemTool(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor.isHoldingItem && actor.GetToken("Tool") != null;
+        return actor.HasItem(TILE_OBJECT_TYPE.TOOL);
     }
     #endregion
 

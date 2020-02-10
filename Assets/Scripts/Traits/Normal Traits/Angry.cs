@@ -19,7 +19,7 @@ namespace Traits {
 
         #region Overrides
         public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
-            if (targetPOI is TileObject || targetPOI is SpecialToken) {
+            if (targetPOI is TileObject) { // || targetPOI is SpecialToken
                 if (UnityEngine.Random.Range(0, 100) < 3) {
                     return characterThatWillDoJob.jobComponent.TriggerDestroy(targetPOI);
                 }

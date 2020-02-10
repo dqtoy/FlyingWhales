@@ -16,7 +16,7 @@ public class CraftFurniture : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TAKE_WOOD, conditionKey = "0", isKeyANumber = true, target = GOAP_EFFECT_TARGET.ACTOR }, HasSupply);
+        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TAKE_POI, conditionKey = "Wood Pile", isKeyANumber = false, target = GOAP_EFFECT_TARGET.ACTOR }, HasSupply);
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
@@ -37,13 +37,12 @@ public class CraftFurniture : GoapAction {
     public override void OnStopWhileStarted(ActualGoapNode node) {
         base.OnStopWhileStarted(node);
         Character actor = node.actor;
-        actor.ownParty.RemoveCarriedPOI();
+        actor.UncarryPOI();
     }
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);
         Character actor = node.actor;
-        IPointOfInterest poiTarget = node.poiTarget;
-        actor.ownParty.RemoveCarriedPOI();
+        actor.UncarryPOI();
     }
     #endregion
 

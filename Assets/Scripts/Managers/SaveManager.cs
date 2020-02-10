@@ -34,7 +34,7 @@ public class SaveManager : MonoBehaviour {
         save.SaveCharacters(CharacterManager.Instance.allCharacters);
         save.SavePlayer(PlayerManager.Instance.player);
         save.SaveTileObjects(InnerMapManager.Instance.allTileObjects);
-        save.SaveSpecialObjects(TokenManager.Instance.specialObjects);
+        // save.SaveSpecialObjects(TokenManager.Instance.specialObjects);
 //        save.SaveAreaMaps(InnerMapManager.Instance.innerMaps); TODO: Saving for new generic inner map
         save.SaveCurrentDate();
         save.SaveNotifications();

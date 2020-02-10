@@ -15,7 +15,7 @@ public class CureCharacter : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_ITEM, SPECIAL_TOKEN.HEALING_POTION.ToString(), false, GOAP_EFFECT_TARGET.ACTOR), HasItemInInventory);
+        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, TILE_OBJECT_TYPE.HEALING_POTION.ToString(), false, GOAP_EFFECT_TARGET.ACTOR), HasItemInInventory);
         AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.REMOVE_TRAIT, "Sick", false, GOAP_EFFECT_TARGET.TARGET));
         AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.REMOVE_TRAIT, "Infected", false, GOAP_EFFECT_TARGET.TARGET));
         AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.REMOVE_TRAIT, "Plagued", false, GOAP_EFFECT_TARGET.TARGET));
@@ -85,14 +85,14 @@ public class CureCharacter : GoapAction {
         goapNode.poiTarget.traitContainer.RemoveTraitAndStacks(goapNode.poiTarget, "Plagued", goapNode.actor);
         goapNode.poiTarget.traitContainer.RemoveTraitAndStacks(goapNode.poiTarget, "Infected", goapNode.actor);
         //**After Effect 2**: Remove Healing Potion from Actor's Inventory
-        goapNode.actor.ConsumeToken(goapNode.actor.GetToken(SPECIAL_TOKEN.HEALING_POTION));
+        goapNode.actor.UnobtainItem(TILE_OBJECT_TYPE.HEALING_POTION);
         //**After Effect 3**: Allow movement of Target
     }
     #endregion
 
     #region Preconditions
     private bool HasItemInInventory(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor.HasTokenInInventory(SPECIAL_TOKEN.HEALING_POTION);
+        return actor.HasItem(TILE_OBJECT_TYPE.HEALING_POTION);
         //return true;
     }
     #endregion

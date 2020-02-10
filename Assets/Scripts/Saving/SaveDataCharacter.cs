@@ -58,7 +58,7 @@ public class SaveDataCharacter {
 
     //public List<INTERACTION_TYPE> currentInteractionTypes;
     public int supply;
-    public List<SaveDataItem> items;
+    // public List<SaveDataItem> items;
     public int moodValue;
     public bool isCombatant;
     public bool isDisabledByPlayer;
@@ -196,12 +196,12 @@ public class SaveDataCharacter {
 
         state = character.state;
 
-        items = new List<SaveDataItem>();
-        for (int i = 0; i < character.items.Count; i++) {
-            SaveDataItem newSaveDataItem = new SaveDataItem();
-            newSaveDataItem.Save(character.items[i]);
-            items.Add(newSaveDataItem);
-        }
+        // items = new List<SaveDataItem>();
+        // for (int i = 0; i < character.items.Count; i++) {
+        //     SaveDataItem newSaveDataItem = new SaveDataItem();
+        //     newSaveDataItem.Save(character.items[i]);
+        //     items.Add(newSaveDataItem);
+        // }
 
         tiredness = character.needsComponent.tiredness;
         fullness = character.needsComponent.fullness;

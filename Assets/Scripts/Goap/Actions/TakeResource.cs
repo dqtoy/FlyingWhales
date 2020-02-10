@@ -14,29 +14,30 @@ public class TakeResource : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.TAKE_FOOD, GOAP_EFFECT_TARGET.ACTOR));
-        AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.TAKE_WOOD, GOAP_EFFECT_TARGET.ACTOR));
-        AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.TAKE_STONE, GOAP_EFFECT_TARGET.ACTOR));
-        AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.TAKE_METAL, GOAP_EFFECT_TARGET.ACTOR));
+        AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.TAKE_POI, GOAP_EFFECT_TARGET.ACTOR));
+        // AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.TAKE_WOOD, GOAP_EFFECT_TARGET.ACTOR));
+        // AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.TAKE_STONE, GOAP_EFFECT_TARGET.ACTOR));
+        // AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.TAKE_METAL, GOAP_EFFECT_TARGET.ACTOR));
     }
     protected override List<GoapEffect> GetExpectedEffects(Character actor, IPointOfInterest target, object[] otherData) {
         List<GoapEffect> ee = base.GetExpectedEffects(actor, target, otherData);
         if(target is ResourcePile) {
             ResourcePile pile = target as ResourcePile;
-            switch (pile.providedResource) {
-                case RESOURCE.FOOD:
-                    ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TAKE_FOOD, conditionKey = "0", isKeyANumber = true, target = GOAP_EFFECT_TARGET.ACTOR });
-                    break;
-                case RESOURCE.WOOD:
-                    ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TAKE_WOOD, conditionKey = "0", isKeyANumber = true, target = GOAP_EFFECT_TARGET.ACTOR });
-                    break;
-                case RESOURCE.STONE:
-                    ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TAKE_STONE, conditionKey = "0", isKeyANumber = true, target = GOAP_EFFECT_TARGET.ACTOR });
-                    break;
-                case RESOURCE.METAL:
-                    ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TAKE_METAL, conditionKey = "0", isKeyANumber = true, target = GOAP_EFFECT_TARGET.ACTOR });
-                    break;
-            }
+            ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TAKE_POI, conditionKey = pile.name, isKeyANumber = false, target = GOAP_EFFECT_TARGET.ACTOR });
+            // switch (pile.providedResource) {
+            //     case RESOURCE.FOOD:
+            //         ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TAKE_FOOD, conditionKey = "0", isKeyANumber = true, target = GOAP_EFFECT_TARGET.ACTOR });
+            //         break;
+            //     case RESOURCE.WOOD:
+            //         ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TAKE_WOOD, conditionKey = "0", isKeyANumber = true, target = GOAP_EFFECT_TARGET.ACTOR });
+            //         break;
+            //     case RESOURCE.STONE:
+            //         ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TAKE_STONE, conditionKey = "0", isKeyANumber = true, target = GOAP_EFFECT_TARGET.ACTOR });
+            //         break;
+            //     case RESOURCE.METAL:
+            //         ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TAKE_METAL, conditionKey = "0", isKeyANumber = true, target = GOAP_EFFECT_TARGET.ACTOR });
+            //         break;
+            // }
         } 
         //NOTE: UNCOMMENT THIS IF WE WANT CHARACTERS TO TAKE FOOD FROM OTHER TABLES
         //else if (target is Table) {
@@ -161,15 +162,13 @@ public class TakeResource : GoapAction {
         //If the actor is not carrying anything, create new object to be carried
         if(carriedResourcePile != null) {
             if(carriedResourcePile.tileObjectType != resourcePile.tileObjectType) {
-                goapNode.actor.ownParty.RemoveCarriedPOI();
+                goapNode.actor.UncarryPOI();
                 CarryResourcePile(goapNode.actor, resourcePile, takenResource);
             } else {
                 carriedResourcePile.AdjustResourceInPile(takenResource);
             }
         } else {
-            if (goapNode.actor.ownParty.isCarryingAnyPOI) {
-                goapNode.actor.ownParty.RemoveCarriedPOI();
-            }
+            goapNode.actor.UncarryPOI();
             CarryResourcePile(goapNode.actor, resourcePile, takenResource);
         }
 
@@ -192,6 +191,7 @@ public class TakeResource : GoapAction {
         newPile.gridTileLocation.structure.location.AddAwareness(newPile);
         newPile.SetGridTileLocation(null);
 
-        carrier.ownParty.AddPOI(newPile);
+        // carrier.ownParty.AddPOI(newPile);
+        carrier.CarryPOI(newPile);
     }
 }

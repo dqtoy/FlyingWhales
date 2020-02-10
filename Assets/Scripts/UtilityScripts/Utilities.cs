@@ -83,10 +83,12 @@ public class Utilities : MonoBehaviour {
         } else if (obj is Character) {
             lastCharacterID += 1;
             return lastCharacterID;
-        } else if (obj is SpecialToken) {
-            lastItemID += 1;
-            return lastItemID;
-        } else if (obj is Settlement) {
+        } 
+        // else if (obj is SpecialToken) {
+        //     lastItemID += 1;
+        //     return lastItemID;
+        // } 
+        if (obj is Settlement) {
             lastAreaID += 1;
             return lastAreaID;
         } else if (obj is Party) {
@@ -115,10 +117,12 @@ public class Utilities : MonoBehaviour {
         } else if (obj is BurningSource) {
             lastBurningSourceID += 1;
             return lastBurningSourceID;
-        } else if (obj is SpecialObject) {
-            lastSpecialObjectID += 1;
-            return lastSpecialObjectID;
-        } else if (obj is BuildingSpot) {
+        } 
+        // else if (obj is SpecialObject) {
+        //     lastSpecialObjectID += 1;
+        //     return lastSpecialObjectID;
+        // } 
+        else if (obj is BuildingSpot) {
             lastBuildSpotID += 1;
             return lastBuildSpotID;
         }
@@ -136,9 +140,11 @@ public class Utilities : MonoBehaviour {
             if (lastFactionID <= idToUse) { lastFactionID = idToUse; }
         } else if (obj is Character) {
             if (lastCharacterID <= idToUse) { lastCharacterID = idToUse; }
-        } else if (obj is SpecialToken) {
-            if (lastItemID <= idToUse) { lastItemID = idToUse; }
-        } else if (obj is Settlement) {
+        } 
+        // else if (obj is SpecialToken) {
+        //     if (lastItemID <= idToUse) { lastItemID = idToUse; }
+        // } 
+        else if (obj is Settlement) {
             if (lastAreaID <= idToUse) { lastAreaID = idToUse; }
         } else if (obj is Party) {
             if (lastPartyID <= idToUse) { lastPartyID = idToUse; }
@@ -154,9 +160,10 @@ public class Utilities : MonoBehaviour {
             if (lastJobID <= idToUse) { lastJobID = idToUse; }
         } else if (obj is BurningSource) {
             if (lastBurningSourceID <= idToUse) { lastBurningSourceID = idToUse; }
-        } else if (obj is SpecialObject) {
-            if (lastSpecialObjectID <= idToUse) { lastSpecialObjectID = idToUse; }
-        }
+        } 
+        // else if (obj is SpecialObject) {
+        //     if (lastSpecialObjectID <= idToUse) { lastSpecialObjectID = idToUse; }
+        // }
         //else if (obj is Interaction) {
         //    lastInteractionID = idToUse;
         //}

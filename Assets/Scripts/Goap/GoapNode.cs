@@ -538,9 +538,9 @@ public class ActualGoapNode {
         GoapActionState currentState = action.states[currentStateName];
 
         IPointOfInterest target = poiTarget;
-        if (poiTarget is SpecialToken && action.goapType == INTERACTION_TYPE.STEAL) {
-            SpecialToken item = poiTarget as SpecialToken;
-            if (item.carriedByCharacter != null) {
+        if(poiTarget is TileObject && action.goapType == INTERACTION_TYPE.STEAL) {
+            TileObject item = poiTarget as TileObject;
+            if(item.carriedByCharacter != null) {
                 target = item.carriedByCharacter;
             }
         }
@@ -620,8 +620,8 @@ public class ActualGoapNode {
         ActionResult(currentState);
 
         IPointOfInterest target = poiTarget;
-        if(poiTarget is SpecialToken && action.goapType == INTERACTION_TYPE.STEAL) {
-            SpecialToken item = poiTarget as SpecialToken;
+        if(poiTarget is TileObject && action.goapType == INTERACTION_TYPE.STEAL) {
+            TileObject item = poiTarget as TileObject;
             if(item.carriedByCharacter != null) {
                 target = item.carriedByCharacter;
             }
@@ -657,9 +657,9 @@ public class ActualGoapNode {
         currentStateDuration++;
 
         IPointOfInterest target = poiTarget;
-        if (poiTarget is SpecialToken && action.goapType == INTERACTION_TYPE.STEAL) {
-            SpecialToken item = poiTarget as SpecialToken;
-            if (item.carriedByCharacter != null) {
+        if(poiTarget is TileObject && action.goapType == INTERACTION_TYPE.STEAL) {
+            TileObject item = poiTarget as TileObject;
+            if(item.carriedByCharacter != null) {
                 target = item.carriedByCharacter;
             }
         }

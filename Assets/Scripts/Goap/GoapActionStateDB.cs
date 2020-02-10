@@ -137,9 +137,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.FEED, new[]{
             new StateNameAndDuration(){ name = "Feed Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1) },
         } },
-        {INTERACTION_TYPE.DROP_ITEM, new[]{
-            new StateNameAndDuration(){ name = "Drop Success", status = InteractionManager.Goap_State_Success, duration = 1 },
-        } },
+        // {INTERACTION_TYPE.DROP_ITEM, new[]{
+        //     new StateNameAndDuration(){ name = "Drop Success", status = InteractionManager.Goap_State_Success, duration = 1 },
+        // } },
         {INTERACTION_TYPE.ASK_FOR_HELP_SAVE_CHARACTER, new[]{
             new StateNameAndDuration(){ name = "Ask Success", status = InteractionManager.Goap_State_Success, duration = 1 },
         } },
@@ -161,9 +161,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.REMEMBER_FALLEN, new[]{
             new StateNameAndDuration(){ name = "Remember Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnHour(1) },
         } },
-        {INTERACTION_TYPE.CRAFT_ITEM, new[]{
-            new StateNameAndDuration(){ name = "Craft Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
-        } },
+        // {INTERACTION_TYPE.CRAFT_ITEM, new[]{
+        //     new StateNameAndDuration(){ name = "Craft Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
+        // } },
         {INTERACTION_TYPE.SPIT, new[]{
             new StateNameAndDuration(){ name = "Spit Success", status = InteractionManager.Goap_State_Success, duration = 1 },
         } },
