@@ -1071,28 +1071,28 @@ public enum JOB {
     LEADER,
     WORKER,
 }
-public enum SPECIAL_TOKEN {
-    BLIGHTED_POTION,
-    BOOK_OF_THE_DEAD,
-    CHARM_SPELL,
-    FEAR_SPELL,
-    MARK_OF_THE_WITCH,
-    BRAND_OF_THE_BEASTMASTER,
-    BOOK_OF_WIZARDRY,
-    SECRET_SCROLL,
-    MUTAGENIC_GOO,
-    DISPEL_SCROLL,
-    PANACEA,
-    JUNK,
-    HEALING_POTION,
-    ENCHANTED_AMULET,
-    GOLDEN_NECTAR,
-    SCROLL_OF_POWER,
-    ACID_FLASK,
-    SCROLL_OF_FRENZY,
-    TOOL,
-    WATER_BUCKET,
-}
+//public enum SPECIAL_TOKEN {
+//    BLIGHTED_POTION,
+//    BOOK_OF_THE_DEAD,
+//    CHARM_SPELL,
+//    FEAR_SPELL,
+//    MARK_OF_THE_WITCH,
+//    BRAND_OF_THE_BEASTMASTER,
+//    BOOK_OF_WIZARDRY,
+//    SECRET_SCROLL,
+//    MUTAGENIC_GOO,
+//    DISPEL_SCROLL,
+//    PANACEA,
+//    JUNK,
+//    HEALING_POTION,
+//    ENCHANTED_AMULET,
+//    GOLDEN_NECTAR,
+//    SCROLL_OF_POWER,
+//    ACID_FLASK,
+//    SCROLL_OF_FRENZY,
+//    TOOL,
+//    WATER_BUCKET,
+//}
 public enum COMBAT_POSITION {
     FRONTLINE,
     BACKLINE,
@@ -1171,7 +1171,7 @@ public enum RELATIONSHIP_TYPE {
 }
 
 public enum POINT_OF_INTEREST_TYPE {
-    ITEM,
+    //ITEM,
     CHARACTER,
     TILE_OBJECT,
 }
@@ -1250,6 +1250,9 @@ public enum TILE_OBJECT_TYPE {
     FLOWER,
     KINDLING,
     BIG_TREE_OBJECT,
+    HEALING_POTION,
+    TOOL,
+    WATER_BUCKET,
 }
 public enum POI_STATE {
     ACTIVE,
@@ -1405,14 +1408,14 @@ public static class Extensions {
         System.Type t = typeof(CRIME);
         MemberInfo mi = t.GetMember(sub.ToString()).FirstOrDefault(m => m.GetCustomAttribute(typeof(SubcategoryOf)) != null);
         if (mi == null) throw new System.ArgumentException("Subcategory " + sub + " has no category.");
-        SubcategoryOf subAttr = (SubcategoryOf)mi.GetCustomAttribute(typeof(SubcategoryOf));
+        SubcategoryOf subAttr = (SubcategoryOf) mi.GetCustomAttribute(typeof(SubcategoryOf));
         return subAttr.Category == cat;
     }
     public static CRIME_TYPE GetCategory(this CRIME sub) {
         System.Type t = typeof(CRIME);
         MemberInfo mi = t.GetMember(sub.ToString()).FirstOrDefault(m => m.GetCustomAttribute(typeof(SubcategoryOf)) != null);
         if (mi == null) throw new System.ArgumentException("Subcategory " + sub + " has no category.");
-        SubcategoryOf subAttr = (SubcategoryOf)mi.GetCustomAttribute(typeof(SubcategoryOf));
+        SubcategoryOf subAttr = (SubcategoryOf) mi.GetCustomAttribute(typeof(SubcategoryOf));
         return subAttr.Category;
     }
     public static bool IsLessThan(this CRIME_TYPE sub, CRIME_TYPE other) {
@@ -1446,8 +1449,8 @@ public static class Extensions {
             case STRUCTURE_TYPE.THE_EYE:
             case STRUCTURE_TYPE.THE_NEEDLES:
             case STRUCTURE_TYPE.OCEAN:
-            // case STRUCTURE_TYPE.CAVE:
-            // case STRUCTURE_TYPE.MONSTER_LAIR:
+                // case STRUCTURE_TYPE.CAVE:
+                // case STRUCTURE_TYPE.MONSTER_LAIR:
                 return true;
             default:
                 return false;
@@ -1644,31 +1647,31 @@ public static class Extensions {
     }
     #endregion
 
-    #region Tokens
-    public static bool CanBeCraftedBy(this SPECIAL_TOKEN type, Character character) {
-        if (TokenManager.Instance.itemData.ContainsKey(type)) {
-            ItemData data = TokenManager.Instance.itemData[type];
-            if (data.canBeCraftedBy == null) {
-                return true;
-            }
-            for (int i = 0; i < data.canBeCraftedBy.Length; i++) {
-                if (character.traitContainer.HasTrait(data.canBeCraftedBy[i])) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        return true;
-    }
-    public static bool CreatesObjectWhenDropped(this SPECIAL_TOKEN type) {
-        switch (type) {
-            case SPECIAL_TOKEN.WATER_BUCKET:
-                return false;
-            default:
-                return true;
-        }
-    }
-    #endregion
+    //#region Tokens
+    //public static bool CanBeCraftedBy(this SPECIAL_TOKEN type, Character character) {
+    //    if (TokenManager.Instance.itemData.ContainsKey(type)) {
+    //        ItemData data = TokenManager.Instance.itemData[type];
+    //        if (data.canBeCraftedBy == null) {
+    //            return true;
+    //        }
+    //        for (int i = 0; i < data.canBeCraftedBy.Length; i++) {
+    //            if (character.traitContainer.HasTrait(data.canBeCraftedBy[i])) {
+    //                return true;
+    //            }
+    //        }
+    //        return false;
+    //    }
+    //    return true;
+    //}
+    //public static bool CreatesObjectWhenDropped(this SPECIAL_TOKEN type) {
+    //    switch (type) {
+    //        case SPECIAL_TOKEN.WATER_BUCKET:
+    //            return false;
+    //        default:
+    //            return true;
+    //    }
+    //}
+    //#endregion
 
     #region Furniture
     public static TILE_OBJECT_TYPE ConvertFurnitureToTileObject(this FURNITURE_TYPE type) {
@@ -1683,10 +1686,10 @@ public static class Extensions {
             return false;
         }
         TileObjectData data = TileObjectDB.GetTileObjectData(type);
-        if (string.IsNullOrEmpty(data.neededTraitType)) {
+        if (data.neededTraitTypes == null || data.neededTraitTypes.Length <= 0) {
             return true;
         }
-        return character.traitContainer.HasTrait(data.neededTraitType);
+        return character.traitContainer.HasTrait(data.neededTraitTypes);
     }
     #endregion
 

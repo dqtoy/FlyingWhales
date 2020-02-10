@@ -74,6 +74,6 @@ public class SaveDataItem {
             Trait trait = traits[i].Load(ref responsibleCharacter);
             item.traitContainer.AddTrait(item, trait, responsibleCharacter);
         }
-        characterOwner.ObtainToken(item);
+        characterOwner.ObtainItem(item);
     }
 }

@@ -125,7 +125,7 @@ public class CraftItem : GoapAction {
         } else {
             craftedItem = (SPECIAL_TOKEN)goapNode.otherData[0];
             SpecialToken tool = TokenManager.Instance.CreateSpecialToken(craftedItem);
-            goapNode.actor.ObtainToken(tool);
+            goapNode.actor.ObtainItem(tool);
         }
         int amount = TokenManager.Instance.itemData[craftedItem].craftCost;
         goapNode.poiTarget.AdjustResource(RESOURCE.WOOD, -amount);

@@ -14,7 +14,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public string name { get; protected set; }
     public int id { get; private set; }
     public TILE_OBJECT_TYPE tileObjectType { get; private set; }
-    public Faction factionOwner { get { return null; } }
+    public Faction factionOwner { get; protected set; }
+    public Character characterOwner { get; protected set; }
     public List<INTERACTION_TYPE> advertisedActions { get; protected set; }
     public Region currentRegion { get { return gridTileLocation.structure.location.coreTile.region; } }
     public List<string> actionHistory { get; private set; } //list of actions that was done to this object
@@ -23,6 +24,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public bool isSummonedByPlayer { get; protected set; }
     public List<JobQueueItem> allJobsTargetingThis { get; protected set; }
     public List<Character> owners { get; private set; }
+    public Character carriedByCharacter { get; private set; }
     public virtual Character[] users {
         get {
             return slots?.Where(x => x != null && x.user != null).Select(x => x.user).ToArray() ?? null;
@@ -648,13 +650,26 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
     }
     public bool IsOwnedBy(Character character) {
-        return gridTileLocation != null && character.homeStructure == gridTileLocation.structure;
+        return owners != null && owners.Contains(character);
+        //return gridTileLocation != null && character.homeStructure == gridTileLocation.structure;
+        //return this.characterOwner == character;
     }
     public List<Character> GetOwners() {
-        if(gridTileLocation != null && gridTileLocation.structure is Dwelling) {
-            return (gridTileLocation.structure as Dwelling).residents;
-        }
-        return null;
+        //if(gridTileLocation != null && gridTileLocation.structure is Dwelling) {
+        //    return (gridTileLocation.structure as Dwelling).residents;
+        //}
+        //return null;
+        return owners;
+    }
+    public void SetFactionOwner(Faction factionOwner) {
+        this.factionOwner = factionOwner;
+    }
+    public void SetCharacterOwner(Character characterOwner) {
+        this.characterOwner = characterOwner;
+    }
+    public void SetInventoryOwner(Character character) {
+        Debug.Log($"Set Carried by character of item {this.ToString()} to {(carriedByCharacter?.name ?? "null")}");
+        this.carriedByCharacter = character;
     }
     #endregion
 

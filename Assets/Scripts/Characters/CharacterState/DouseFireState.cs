@@ -184,7 +184,7 @@ public class DouseFireState : CharacterState {
         }
     }
     private void ObtainWater() {
-        stateComponent.character.ObtainToken(TokenManager.Instance.CreateSpecialToken(SPECIAL_TOKEN.WATER_BUCKET));
+        stateComponent.character.ObtainItem(TokenManager.Instance.CreateSpecialToken(SPECIAL_TOKEN.WATER_BUCKET));
         isFetchingWater = false; 
     }
     private void DouseNearestFire() {
