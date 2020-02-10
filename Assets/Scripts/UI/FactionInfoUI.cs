@@ -153,7 +153,7 @@ public class FactionInfoUI : UIMenu {
             CharacterNameplateItem item = GetItem(character);
             if (item != null) {
                 _characterItems.Remove(item);
-                ObjectPoolManager.Instance.DestroyObject(item.gameObject);
+                ObjectPoolManager.Instance.DestroyObject(item);
                 OrderCharacterItems();
             }
         }
@@ -190,7 +190,7 @@ public class FactionInfoUI : UIMenu {
         RegionNameplateItem item = GetLocationItem(region);
         if (item != null) {
             locationItems.Remove(item);
-            ObjectPoolManager.Instance.DestroyObject(item.gameObject);
+            ObjectPoolManager.Instance.DestroyObject(item);
         }
     }
     private void OnFactionRegionAdded(Faction faction, Settlement region) {

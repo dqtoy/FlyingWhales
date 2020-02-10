@@ -9,9 +9,7 @@ using Inner_Maps;
 public class MapGenerator : MonoBehaviour {
 
     public static MapGenerator Instance;
-
-    private bool isCoroutineRunning;
-
+    
     private void Awake() {
         Instance = this;
     }
@@ -45,8 +43,10 @@ public class MapGenerator : MonoBehaviour {
             componentWatch.Start();
             yield return StartCoroutine(currComponent.Execute(data));
             componentWatch.Stop();
-            loadingDetails +=
-                $"\n{currComponent.ToString()} took {componentWatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.";
+            loadingDetails += $"\n{currComponent.ToString()} took {componentWatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.";
+            if (string.IsNullOrEmpty(currComponent.log) == false) {
+                loadingDetails += $"\n{currComponent.log}";
+            }
             componentWatch.Reset();
             
             componentFailed = currComponent.succeess == false;
@@ -63,7 +63,7 @@ public class MapGenerator : MonoBehaviour {
             Debug.Log(
                 $"{loadingDetails}\nTotal loading time is {loadingWatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds");
 
-            LevelLoaderManager.SetLoadingState(false);
+            LevelLoaderManager.Instance.SetLoadingState(false);
             CameraMove.Instance.CenterCameraOn(data.portal.tileLocation.gameObject);
             InnerMapManager.Instance.TryShowLocationMap(data.portal.tileLocation.region);
             InnerMapCameraMove.Instance.CenterCameraOnTile(data.portal.tileLocation);
@@ -106,7 +106,7 @@ public class MapGenerator : MonoBehaviour {
         //System.Diagnostics.Stopwatch st = new System.Diagnostics.Stopwatch();
         loadingWatch.Start();
 
-        LevelLoaderManager.UpdateLoadingInfo("Loading Map...");
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Loading Map...");
         GridMap.Instance.SetupInitialData(data.width, data.height);
         yield return null;
         CameraMove.Instance.Initialize();
@@ -139,7 +139,7 @@ public class MapGenerator : MonoBehaviour {
 
         // CameraMove.Instance.CalculateCameraBounds();
         UIManager.Instance.InitializeUI();
-        LevelLoaderManager.UpdateLoadingInfo("Starting Game...");
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Starting Game...");
         yield return null;
 
         TokenManager.Instance.Initialize();
@@ -174,8 +174,8 @@ public class MapGenerator : MonoBehaviour {
         data.LoadNotifications();
 
         loadingWatch.Stop();
-        Debug.Log(string.Format("Total loading time is {0} ms", loadingWatch.ElapsedMilliseconds.ToString()));
-        LevelLoaderManager.SetLoadingState(false);
+        Debug.Log($"Total loading time is {loadingWatch.ElapsedMilliseconds.ToString()} ms");
+        LevelLoaderManager.Instance.SetLoadingState(false);
         //TODO:
         // CameraMove.Instance.CenterCameraOn(PlayerManager.Instance.player.playerSettlement.coreTile.gameObject);
         AudioManager.Instance.TransitionTo("World Music", 10);
@@ -192,7 +192,5 @@ public class MapGenerator : MonoBehaviour {
         //PlayerManager.Instance.player.LoadResearchNewInterventionAbility(data.playerSave);
 
     }
-    public void SetIsCoroutineRunning(bool state) {
-        isCoroutineRunning = state;
-    }
+    public void SetIsCoroutineRunning(bool state) { }
 }

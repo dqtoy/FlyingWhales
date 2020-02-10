@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -14,20 +15,22 @@ namespace Inner_Maps {
             base.Initialize(location);
             this.region = location as Region;
         }
-        public IEnumerator GenerateMap() {
+        public IEnumerator GenerateMap(MapGenerationComponent mapGenerationComponent) {
             this.name = $"{region.name}'s Inner Map";
             region.SetRegionInnerMap(this);
             ClearAllTilemaps();
-            Vector2Int buildSpotGridSize = CreateBuildSpotGrid();
+            Vector2Int buildSpotGridSize = CreateBuildSpotGrid(mapGenerationComponent);
             int tileMapWidth = buildSpotGridSize.x * InnerMapManager.BuildingSpotSize.x;
             int tileMapHeight = buildSpotGridSize.y * InnerMapManager.BuildingSpotSize.y;
-            yield return StartCoroutine(GenerateGrid(tileMapWidth, tileMapHeight));
-            InitializeBuildingSpots();
-            ConnectHexTilesToBuildSpots();
-            AssignWilderness();
-            yield return StartCoroutine(GenerateDetails());
+            yield return StartCoroutine(GenerateGrid(tileMapWidth, tileMapHeight, mapGenerationComponent));
+            InitializeBuildingSpots(mapGenerationComponent);
+            ConnectHexTilesToBuildSpots(mapGenerationComponent);
+            AssignWilderness(mapGenerationComponent);
+            yield return StartCoroutine(GenerateDetails(mapGenerationComponent));
         }
-        private void AssignWilderness() {
+        private void AssignWilderness(MapGenerationComponent mapGenerationComponent) {
+            System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+            stopwatch.Start();
             LocationStructure structure = location.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
             for (int i = 0; i < allTiles.Count; i++) {
                 LocationGridTile tile = allTiles[i];
@@ -40,9 +43,13 @@ namespace Inner_Maps {
                     tile.SetStructure(structure);
                 }
             }
+            stopwatch.Stop();
+            mapGenerationComponent.AddLog($"{location.name} AssignWilderness took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
         }
         #region Build Spots
-        private Vector2Int CreateBuildSpotGrid() {
+        private Vector2Int CreateBuildSpotGrid(MapGenerationComponent mapGenerationComponent) {
+            System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+            stopwatch.Start();
             int buildSpotGridWidth;
             
             int maxX = region.tiles.Max(t => t.data.xCoordinate);
@@ -76,18 +83,30 @@ namespace Inner_Maps {
                     newSpot.SetBuildSpotItem(spotItem);
                 }
             }
+            
+            stopwatch.Stop();
+            mapGenerationComponent.AddLog($"{location.name} CreateBuildSpotGrid took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
             return new Vector2Int(buildSpotGridWidth, buildSpotGridHeight);
         }
-        private void InitializeBuildingSpots() {
-            for (int x = 0; x <= buildingSpots.GetUpperBound(0); x++) {
-                for (int y = 0; y <= buildingSpots.GetUpperBound(1); y++) {
+        private void InitializeBuildingSpots(MapGenerationComponent mapGenerationComponent) {
+            System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+            stopwatch.Start();
+            int upperBoundX = buildingSpots.GetUpperBound(0);
+            int upperBoundY = buildingSpots.GetUpperBound(1);
+            for (int x = 0; x <= upperBoundX; x++) {
+                for (int y = 0; y <= upperBoundY; y++) {
                     BuildingSpot spot = buildingSpots[x, y];
                     spot.Initialize(this);
                     spot.FindNeighbours(this);
                 }
             }
+            stopwatch.Stop();
+            mapGenerationComponent.AddLog($"{location.name} initialize building spots took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
         }
-        private void ConnectHexTilesToBuildSpots() {
+        private void ConnectHexTilesToBuildSpots(MapGenerationComponent mapGenerationComponent) {
+            System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+            stopwatch.Start();
+            
             HexTile leftMostTile = region.GetLeftMostTile();
             List<int> leftMostRows = region.GetLeftMostRows();
             for (int localX = 0; localX <= region.hexTileMap.GetUpperBound(0); localX++) {
@@ -120,14 +139,9 @@ namespace Inner_Maps {
                     }
                 }
             }
-            // for (int x = 0; x <= buildingSpots.GetUpperBound(0); x++) {
-            //     for (int y = 0; y <= buildingSpots.GetUpperBound(1); y++) {
-            //         BuildingSpot spot = buildingSpots[x, y];
-            //         if (spot.isPartOfParentRegionMap == false) {
-            //             Messenger.Broadcast(Signals.MODIFY_BUILD_SPOT_WALKABILITY, spot, false);
-            //         }
-            //     }
-            // }
+            
+            stopwatch.Stop();
+            mapGenerationComponent.AddLog($"{location.name} ConnectHexTilesToBuildSpots took {stopwatch.Elapsed.TotalSeconds.ToString(CultureInfo.InvariantCulture)} seconds to complete.");
         }
         private void AssignBuildSpotsToHexTile(HexTile tile, int column1, int column2, int row1, int row2) {
             int width = (column2 - column1) + 1;

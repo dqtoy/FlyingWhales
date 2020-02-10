@@ -8,6 +8,11 @@ using UnityEngine;
 public abstract class MapGenerationComponent {
 
 	public bool succeess = true; //if generation component succeeded or not.
+	public string log = "";
 	
 	public abstract IEnumerator Execute(MapGenerationData data);
+
+	public void AddLog(string str) {
+		log += $"\t-{str}\n";
+	}
 }

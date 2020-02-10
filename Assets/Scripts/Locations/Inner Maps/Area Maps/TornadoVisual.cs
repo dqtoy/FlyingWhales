@@ -122,7 +122,7 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
     }
     private IEnumerator ExpireCoroutine() {
         yield return new WaitForSeconds(1f);
-        ObjectPoolManager.Instance.DestroyObject(this.gameObject);
+        ObjectPoolManager.Instance.DestroyObject(this);
         _tornado.OnExpire();
     }
 

@@ -27,7 +27,7 @@ public class SettlementGeneration : MapGenerationComponent {
 		Settlement settlement = LandmarkManager.Instance.CreateNewSettlement
 			(region, LOCATION_TYPE.HUMAN_SETTLEMENT, 1, settlementTiles.ToArray());
 		int totalRemainingBuildSpots = settlementTiles.Count * 4; //*4 because each hex tile = 4 build spots
-		totalRemainingBuildSpots -= 2; //to accomodate for city center
+		totalRemainingBuildSpots -= 1; //to accomodate for city center
 
 		int dwellingCount = totalRemainingBuildSpots;
 		Faction faction = FactionManager.Instance.CreateNewFaction(CollectionUtilities.GetRandomElement(raceChoices));

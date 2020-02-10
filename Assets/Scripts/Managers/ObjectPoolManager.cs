@@ -46,11 +46,11 @@ public class ObjectPoolManager : MonoBehaviour {
         GameObject instantiatedObj = null;
         EZObjectPool objectPoolToUse = allObjectPools[poolName];
 
-        if(objectPoolToUse == null) {
+        if(ReferenceEquals(objectPoolToUse, null)) {
             throw new Exception("Cannot find an object pool with name " + poolName);
         } else {
             if(objectPoolToUse.TryGetNextObject(Vector3.zero, rotation, out instantiatedObj)) {
-                if(parent != null) {
+                if(ReferenceEquals(parent, null) == false) {
                     instantiatedObj.transform.SetParent(parent, false);
                 }
                 instantiatedObj.transform.localPosition = position;
@@ -60,16 +60,19 @@ public class ObjectPoolManager : MonoBehaviour {
         return instantiatedObj;
     }
 
-    public void DestroyObject(GameObject go) {
-        PooledObject po = go.GetComponent<PooledObject>();
-        if(po == null) {
-             Debug.LogWarning("Cannot Destroy Object via Object Pool! Object " + go.name + " is not from an object pool");
-        } else {
-            Messenger.Broadcast(Signals.POOLED_OBJECT_DESTROYED, go);
-            po.SendObjectBackToPool();
-            po.Reset();
-            po.transform.SetParent(po.ParentPool.transform);
-        }
+    public void DestroyObject(PooledObject pooledObject) {
+        Messenger.Broadcast(Signals.POOLED_OBJECT_DESTROYED, pooledObject.gameObject);
+        pooledObject.SendObjectBackToPool();
+        pooledObject.Reset();
+        pooledObject.transform.SetParent(pooledObject.ParentPool.transform);
+    }
+    public void DestroyObject(GameObject gameObject) {
+        PooledObject pooledObject = gameObject.GetComponent<PooledObject>(); 
+        Messenger.Broadcast(Signals.POOLED_OBJECT_DESTROYED, pooledObject.gameObject);
+        pooledObject.SendObjectBackToPool();
+        pooledObject.Reset();
+        pooledObject.transform.SetParent(pooledObject.ParentPool.transform);
+        
     }
 
     public EZObjectPool CreateNewPool(GameObject template, string poolName, int size, bool autoResize, bool instantiateImmediate, bool shared) {

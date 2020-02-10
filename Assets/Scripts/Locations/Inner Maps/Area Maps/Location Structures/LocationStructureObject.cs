@@ -428,7 +428,7 @@ public class LocationStructureObject : PooledObject {
     public void ConvertObjects() {
         UtilityScripts.Utilities.DestroyChildren(_objectsParent);
         _detailTileMap.CompressBounds();
-        Material mat = Resources.Load<Material>("Fonts & Materials/2D Lighting");
+        // Material mat = Resources.Load<Material>("Fonts & Materials/2D Lighting");
         BoundsInt bounds = _detailTileMap.cellBounds;
         for (int x = bounds.xMin; x < bounds.xMax; x++) {
             for (int y = bounds.yMin; y < bounds.yMax; y++) {
@@ -441,7 +441,7 @@ public class LocationStructureObject : PooledObject {
                     Vector2 centeredPos = new Vector2(worldPos.x + 0.5f, worldPos.y + 0.5f);
                     
                     GameObject newGo = new GameObject("StructureTemplateObjectData");
-                    newGo.layer = LayerMask.NameToLayer("Settlement Maps");
+                    newGo.layer = LayerMask.NameToLayer("Area Maps");
                     newGo.transform.SetParent(_objectsParent);
                     newGo.transform.position = centeredPos;
                     newGo.transform.localRotation = m.rotation;
@@ -449,9 +449,9 @@ public class LocationStructureObject : PooledObject {
                     StructureTemplateObjectData stod = newGo.AddComponent<StructureTemplateObjectData>();
                     SpriteRenderer spriteRenderer = newGo.AddComponent<SpriteRenderer>();
 
-                    spriteRenderer.sortingLayerName = "Settlement Maps";
+                    spriteRenderer.sortingLayerName = "Area Maps";
                     spriteRenderer.sortingOrder = 60;
-                    spriteRenderer.material = mat;
+                    // spriteRenderer.material = mat;
                     
                     int index = tile.name.IndexOf("#", StringComparison.Ordinal);
                     string tileObjectName = tile.name;

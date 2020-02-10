@@ -20,7 +20,6 @@ public class SeducerSummon : Summon {
         }
     }
 
-    private bool hasSucceeded;
 
     public SeducerSummon(SUMMON_TYPE type, GENDER gender) : base(type, CharacterRole.MINION, "Lust", RACE.DEMON, gender) {
         seduceChance = 25;
@@ -41,7 +40,6 @@ public class SeducerSummon : Summon {
     //}
     public override void OnPlaceSummon(LocationGridTile tile) {
         base.OnPlaceSummon(tile);
-        hasSucceeded = false;
         //Messenger.AddListener(Signals.TICK_STARTED, PerTickGoapPlanGeneration);
         AdjustIgnoreHostilities(1);
     }
@@ -78,10 +76,6 @@ public class SeducerSummon : Summon {
     public override void OnActionPerformed(ActualGoapNode node) {
         if (node.actor == this && node.goapType == INTERACTION_TYPE.INVITE) {
             doneCharacters.Add(node.poiTarget as Character);
-        } else if (node.actor == this && node.goapType == INTERACTION_TYPE.MAKE_LOVE) {
-            if (node.actionStatus == ACTION_STATUS.SUCCESS) {
-                hasSucceeded = true;
-            }
         }
     }
     public override void LevelUp() {

@@ -582,7 +582,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         isMoving = false;
         string log = character.name + " StopMovement function is called!";
         character.logComponent.PrintLogIfActive(log);
-        if (character.currentParty.icon != null) {
+        if (ReferenceEquals(character.currentParty.icon, null) == false) {
             character.currentParty.icon.SetIsTravelling(false);
         }
         pathfindingAI.SetIsStopMovement(true);
@@ -731,7 +731,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
             }
         } else if (character.canMove == false || (!character.canPerform && !character.canWitness) /*|| character.traitContainer.GetNormalTrait<Trait>("Resting") != null || character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)*/) {
             PlaySleepGround();
-        } else if (character.currentParty.icon != null && character.currentParty.icon.isTravelling) {
+        } else if (ReferenceEquals(character.currentParty.icon, null) == false && character.currentParty.icon.isTravelling) {
             //|| character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL
             PlayWalkingAnimation();
         } else if (character.currentActionNode != null && string.IsNullOrEmpty(character.currentActionNode.currentStateName) == false 
@@ -817,7 +817,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         useWalkSpeed += amount;
         useWalkSpeed = Mathf.Max(0, useWalkSpeed);
     }
-    public void SetActiveState(bool state) {
+    public new void SetActiveState(bool state) {
         Debug.Log($"Set active state of {this.name} to {state.ToString()}");
         this.gameObject.SetActive(state);
     }

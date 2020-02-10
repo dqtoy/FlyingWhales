@@ -101,7 +101,7 @@ public class QuestInfoUI : MonoBehaviour {
             QuestJobNameplate nameplate = activeQuestJobNameplates[i];
             if (nameplate.job == job) {
                 activeQuestJobNameplates.RemoveAt(i);
-                ObjectPoolManager.Instance.DestroyObject(nameplate.gameObject);
+                ObjectPoolManager.Instance.DestroyObject(nameplate);
                 break;
             }
         }

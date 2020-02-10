@@ -1,9 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using EZObjectPools;
 using Inner_Maps;
 using UnityEngine;
 
-public class AreaMapTravelLine : MonoBehaviour {
+public class AreaMapTravelLine : PooledObject {
 
     [SerializeField] private LineRenderer line;
     [SerializeField] private SpriteRenderer lineSprite;
@@ -78,7 +79,7 @@ public class AreaMapTravelLine : MonoBehaviour {
             //    ObjectPoolManager.Instance.DestroyObject(start.prefabHere);
             //}
         }
-        ObjectPoolManager.Instance.DestroyObject(this.gameObject);
+        ObjectPoolManager.Instance.DestroyObject(this);
     }
 
     #region Listeners

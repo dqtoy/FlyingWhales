@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using Inner_Maps;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
@@ -123,12 +124,8 @@ namespace Inner_Maps {
         /// </summary>
         /// <param name="location"></param>
         public void TryShowLocationMap(ILocation location) {
-            if (location.innerMap != null) {
-                //show existing map
-                ShowInnerMap(location);
-            } else {
-                throw new System.Exception($"{location.name} does not have a generated inner map");
-            }
+            Assert.IsNotNull(location.innerMap, $"{location.name} does not have a generated inner map");
+            ShowInnerMap(location);
         }
         public void ShowInnerMap(ILocation location, bool centerCameraOnMapCenter = true, bool instantCenter = true) {
             if (location.locationType == LOCATION_TYPE.DEMONIC_INTRUSION) {

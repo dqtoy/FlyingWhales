@@ -159,17 +159,17 @@ namespace Inner_Maps {
                 }
             }
         }
-        private void UpdateGroundTypeBasedOnAsset() {
+        public void UpdateGroundTypeBasedOnAsset() {
             Sprite groundAsset = parentMap.groundTilemap.GetSprite(localPlace);
             Sprite structureAsset = parentMap.structureTilemap.GetSprite(localPlace);
-            if (structureAsset != null) {
+            if (ReferenceEquals(structureAsset, null) == false) {
                 string assetName = structureAsset.name.ToLower();
                 if (assetName.Contains("dungeon") || assetName.Contains("cave") || assetName.Contains("laid")) {
                     SetGroundType(Ground_Type.Cave);
                 } else if (assetName.Contains("water") || assetName.Contains("pond") || assetName.Contains("shore")) {
                     SetGroundType(Ground_Type.Water);
                 } 
-            } else if (groundAsset != null) {
+            } else if (ReferenceEquals(groundAsset, null) == false) {
                 string assetName = groundAsset.name.ToLower();
                 if (assetName.Contains("desert")) {
                     if (assetName.Contains("grass")) {
@@ -246,18 +246,16 @@ namespace Inner_Maps {
             SetPreviousGroundVisual(parentMap.groundTilemap.GetTile(localPlace));
             parentMap.groundTilemap.SetTile(localPlace, tileBase);
             UpdateGroundTypeBasedOnAsset();
-            // Debug.Log($"Set ground visual of {localPlace.ToString()} to {tileBase.name} and ground type to {groundType.ToString()}");
         }
         public void SetStructureTilemapVisual(TileBase tileBase) {
             parentMap.structureTilemap.SetTile(localPlace, tileBase);
             UpdateGroundTypeBasedOnAsset();
-            // Debug.Log($"Set structure visual of {localPlace.ToString()} to {(tileBase?.name ?? "null")} and ground type to {groundType.ToString()}");
         }
         public void SetPreviousGroundVisual(TileBase tileBase) {
             previousGroundVisual = tileBase;
         }
         public void RevertToPreviousGroundVisual() {
-            if (previousGroundVisual != null) {
+            if (ReferenceEquals(previousGroundVisual, null) == false) {
                 SetGroundTilemapVisual(previousGroundVisual);
             }
         }
@@ -276,11 +274,7 @@ namespace Inner_Maps {
                 Dictionary<GridNeighbourDirection, LocationGridTile> fourNeighbours = FourNeighboursDictionary();
                 foreach (KeyValuePair<GridNeighbourDirection, LocationGridTile> keyValuePair in fourNeighbours) {
                     LocationGridTile currNeighbour = keyValuePair.Value;
-                    //if (currNeighbour.structure != null && !currNeighbour.structure.structureType.IsOpenSpace()) { continue; } //skip non open space structure tiles.
                     bool createEdge = false;
-                    //if (tile.groundType == currNeighbour.groundType) {
-                    //    createEdge = true;
-                    //} else 
                     summary += $"\n\tChecking {currNeighbour.ToString()}. Ground type is {groundType.ToString()}. Neighbour Ground Type is {currNeighbour.groundType.ToString()}";
                     if (this.groundType != Ground_Type.Cave && currNeighbour.groundType == Ground_Type.Cave) {
                         createEdge = true;
@@ -338,7 +332,7 @@ namespace Inner_Maps {
                             mapToUse = null;
                             break;
                     }
-                    Assert.IsTrue(mapToUse != null, nameof(mapToUse) + " != null");
+                    Assert.IsNotNull(mapToUse, nameof(mapToUse) + " != null");
                     if (createEdge) {
                         Assert.IsTrue(InnerMapManager.Instance.assetManager.edgeAssets.ContainsKey(groundType), 
                             $"No edge asset for {groundType.ToString()} for neighbour {currNeighbour.groundType.ToString()} ");
@@ -356,9 +350,7 @@ namespace Inner_Maps {
 
         #region Structures
         public void SetStructure(LocationStructure structure) {
-            if (this.structure != null) {
-                this.structure.RemoveTile(this);
-            }
+            structure?.RemoveTile(this);
             this.structure = structure;
             this.structure.AddTile(this);
             if (!genericTileObject.hasBeenInitialized) { //TODO: Make this better
@@ -374,9 +366,6 @@ namespace Inner_Maps {
                 }
             }
             tileState = state;
-            //if (state == Tile_State.Occupied) {
-            //    Messenger.Broadcast(Signals.TILE_OCCUPIED, this, objHere);
-            //}
         }
         #endregion
 

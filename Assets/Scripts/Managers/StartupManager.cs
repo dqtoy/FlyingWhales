@@ -14,11 +14,11 @@ public class StartupManager : MonoBehaviour {
     }
 
     private IEnumerator PerformStartup() {
-        LevelLoaderManager.SetLoadingState(true);
-        LevelLoaderManager.UpdateLoadingInfo("Initializing Data...");
+        LevelLoaderManager.Instance.SetLoadingState(true);
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Initializing Data...");
         yield return StartCoroutine(initializer.InitializeDataBeforeWorldCreation());
 
-        LevelLoaderManager.UpdateLoadingInfo("Initializing World...");
+        LevelLoaderManager.Instance.UpdateLoadingInfo("Initializing World...");
         if (SaveManager.Instance.currentSave != null) {
             Debug.Log("Loading world from current saved data...");
             this.mapGenerator.InitializeWorld(SaveManager.Instance.currentSave);

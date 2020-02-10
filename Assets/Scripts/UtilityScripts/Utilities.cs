@@ -5,6 +5,7 @@ using System;
 using System.Text;
 using System.Linq;
 using System.Reflection;
+using EZObjectPools;
 using Inner_Maps;
 using UnityEngine.Assertions;
 using UnityEngine.UI;
@@ -1501,14 +1502,15 @@ namespace UtilityScripts {
             Transform[] children = GameUtilities.GetComponentsInDirectChildren<Transform>(parent.gameObject);
             for (int i = 0; i < children.Length; i++) {
                 Transform currTransform = children[i];
-                if (currTransform.gameObject.GetComponent<EZObjectPools.PooledObject>() == null) {
+                PooledObject pooledObject = currTransform.gameObject.GetComponent<EZObjectPools.PooledObject>(); 
+                if (ReferenceEquals(pooledObject, null)) {
                     if (Application.isEditor) {
                         GameObject.DestroyImmediate(currTransform.gameObject);
                     } else {
                         GameObject.Destroy(currTransform.gameObject);
                     }
                 } else {
-                    ObjectPoolManager.Instance.DestroyObject(currTransform.gameObject);
+                    ObjectPoolManager.Instance.DestroyObject(pooledObject);
                 }
             
             }

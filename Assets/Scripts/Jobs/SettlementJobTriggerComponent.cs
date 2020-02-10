@@ -510,19 +510,23 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		}
 	}
 	private bool CanTakeRemoveFireJob(Character character, IPointOfInterest target) {
-		if (target is Character) {
-			Character targetCharacter = target as Character;
-			if (character == target) {
+		if (target is Character targetCharacter) {
+			if (character == targetCharacter) {
 				//the burning character is himself
-				return true;
+				return HasWaterAvailable(character);
 			} else {
 				//if burning character is other character, make sure that the character that will do the job is not burning.
-				return !character.traitContainer.HasTrait("Burning", "Pyrophobic") && !character.relationshipContainer.IsEnemiesWith(targetCharacter);
+				return !character.traitContainer.HasTrait("Burning", "Pyrophobic") 
+				       && !character.relationshipContainer.IsEnemiesWith(targetCharacter)
+				       && HasWaterAvailable(character);
 			}
 		} else {
 			//make sure that the character that will do the job is not burning.
-			return !character.traitContainer.HasTrait("Burning", "Pyrophobic");
+			return !character.traitContainer.HasTrait("Burning", "Pyrophobic") && HasWaterAvailable(character);
 		}
+	}
+	private bool HasWaterAvailable(Character character) {
+		return character.currentRegion.HasTileObjectOfType(TILE_OBJECT_TYPE.WATER_WELL);
 	}
 	#endregion
 }

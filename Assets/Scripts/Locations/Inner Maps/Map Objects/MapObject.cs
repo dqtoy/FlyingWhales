@@ -33,7 +33,7 @@ public abstract class MapObject<T> where T: IDamageable {
         mapVisual.SetActiveState(true);
     }
     protected void DestroyGameObject() {
-        ObjectPoolManager.Instance.DestroyObject(mapVisual.gameObject);
+        ObjectPoolManager.Instance.DestroyObject(mapVisual);
         mapVisual = null;
     }
     #endregion

@@ -23,7 +23,7 @@ namespace Inner_Maps {
         public void Destroy() {
             gus.setWalkability = true;
             Apply();
-            ObjectPoolManager.Instance.DestroyObject(this.gameObject);
+            ObjectPoolManager.Instance.DestroyObject(this);
         }
     }
 }

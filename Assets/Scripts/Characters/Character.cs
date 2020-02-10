@@ -612,7 +612,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         } else {
             destroyedAt.RemoveCharacterHere(this);
         }
-        ObjectPoolManager.Instance.DestroyObject(marker.gameObject);
+        ObjectPoolManager.Instance.DestroyObject(marker);
         SetCharacterMarker(null);
         Messenger.Broadcast(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, this as IPointOfInterest);
     }
@@ -1363,116 +1363,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //Debug.Log(this.name + " created job to obtain item " + item.ToString());
         //Messenger.Broadcast<string, int, UnityEngine.Events.UnityAction>(Signals.SHOW_DEVELOPER_NOTIFICATION, this.name + " created job to obtain item " + item.ToString(), 5, null);
         return job;
-    }
-    public void CreatePersonalJobs() {
-        bool hasCreatedJob = false;
-
-        //build furniture job
-        // if (!hasCreatedJob && isAtHomeRegion && homeSettlement != null && currentStructure is Dwelling) {
-        //     IDwelling dwelling = currentStructure as IDwelling;
-        //     if (dwelling.HasUnoccupiedFurnitureSpot()) { //&& advertisedActions.Contains(INTERACTION_TYPE.CRAFT_TILE_OBJECT)
-        //         if (UnityEngine.Random.Range(0, 100) < 10) { //if the dwelling has a facility deficit(facility at 0) or if chance is met.
-        //             FACILITY_TYPE mostNeededFacility = dwelling.GetMostNeededValidFacility();
-        //             if (mostNeededFacility != FACILITY_TYPE.NONE) {
-        //                 List<LocationGridTile> validSpots = dwelling.GetUnoccupiedFurnitureSpotsThatCanProvide(mostNeededFacility);
-        //                 if(validSpots != null && validSpots.Count > 0) {
-        //                     LocationGridTile chosenTile = validSpots[UnityEngine.Random.Range(0, validSpots.Count)];
-        //                     FURNITURE_TYPE furnitureToCreate = chosenTile.GetFurnitureThatCanProvide(mostNeededFacility);
-        //                     TILE_OBJECT_TYPE tileObj = furnitureToCreate.ConvertFurnitureToTileObject();
-        //
-        //                     //create new unbuilt furniture on spot, and target that in the job
-        //                     TileObject furniture = InnerMapManager.Instance.CreateNewTileObject<TileObject>(tileObj);
-        //                     dwelling.AddPOI(furniture, chosenTile);
-        //                     furniture.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
-        //                     Debug.Log($"Created new unbuilt {furniture.name} at {chosenTile}");
-        //
-        //                     if (tileObj.CanBeCraftedBy(this)) { //check first if the character can build that specific type of furniture
-        //                         if (jobQueue.HasJob(JOB_TYPE.CRAFT_OBJECT, furniture) == false) {
-        //                             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, furniture, this);
-        //                             job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(furniture.tileObjectType).constructionCost });
-        //                             job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoCraftFurnitureJob);
-        //                             jobQueue.AddJobInQueue(job);
-        //                             Debug.Log($"{GameManager.Instance.TodayLogString()}{job.ToString()} was added to {this.name}'s jobqueue");
-        //                         }
-        //                     } else {
-        //                     //furniture cannot be crafted by this character, post a job on the settlement
-        //                     if (homeSettlement.HasJob(JOB_TYPE.CRAFT_OBJECT, furniture) == false) {
-        //                         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, furniture, homeSettlement);
-        //                             job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(furniture.tileObjectType).constructionCost });
-        //                             job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoCraftFurnitureJob);
-        //                         homeSettlement.AddToAvailableJobs(job);
-        //                         }
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
-
-        //Obtain Item job
-        //if the character is part of a Faction and he doesnt have an Obtain Item Job in his personal job queue, 
-        //there is a 10% chance that the character will create a Obtain Item Job if he has less than four items owned 
-        //(sum from items in his inventory and in his home whose owner is this character). 
-        //Reduce this chance by 3% for every item he owns (disregard stolen items)
-        //NOTE: If he already has all items he needs, he doesnt need to do this job anymore.
-        // if (!isFactionless && !jobQueue.HasJob(JOB_TYPE.OBTAIN_PERSONAL_ITEM) && !role.HasNeededItems(this) && isAtHomeRegion) {
-        //     int numOfItemsOwned = GetNumOfItemsOwned();
-        //     if (numOfItemsOwned < 4) {
-        //         //string obtainSummary = name + " will roll to obtain item.";
-        //         int chance = 10 - (3 * numOfItemsOwned);
-        //         chance = Mathf.Max(0, chance);
-        //         int roll = UnityEngine.Random.Range(0, 100);
-        //         //obtainSummary += "\nChance to create job is " + chance.ToString() + ". Roll is " + roll.ToString();
-        //         if (roll < chance) {
-        //             SPECIAL_TOKEN itemToObtain;
-        //             if (role.TryGetNeededItem(this, out itemToObtain)) {
-        //                 CreateObtainItemJob(itemToObtain);
-        //                 hasCreatedJob = true;
-        //                 //obtainSummary += "\nCreated job to obtain " + itemToObtain.ToString();
-        //             } else {
-        //                 //obtainSummary += "\nDoes not have any needed items.";
-        //             }
-        //         }
-        //         //Debug.Log(obtainSummary);
-        //     }
-        // }
-
-        //Undermine Enemy Job
-        // List<Character> enemyCharacters = opinionComponent.GetEnemyCharacters();
-        // if (!hasCreatedJob && enemyCharacters.Count > 0) {
-        //     int chance = UnityEngine.Random.Range(0, 100);
-        //     int value = 3;
-        //     CHARACTER_MOOD currentMood = currentMoodType;
-        //     if (currentMood == CHARACTER_MOOD.DARK) {
-        //         value += 1;
-        //     } else if (currentMood == CHARACTER_MOOD.GOOD) {
-        //         value -= 1;
-        //     } else if (currentMood == CHARACTER_MOOD.GREAT) {
-        //         value -= 3;
-        //     }
-        //     if (chance < value) {
-        //         Character chosenCharacter = null;
-        //         while (chosenCharacter == null && enemyCharacters.Count > 0) {
-        //             int index = UnityEngine.Random.Range(0, enemyCharacters.Count);
-        //             Character character = enemyCharacters[index];
-        //             if (character.HasJobTargetingThis(JOB_TYPE.UNDERMINE_ENEMY) || jobQueue.HasJob(JOB_TYPE.UNDERMINE_ENEMY, character)) {
-        //                 enemyCharacters.RemoveAt(index);
-        //             } else {
-        //                 chosenCharacter = character;
-        //             }
-        //         }
-        //         if (chosenCharacter != null) {
-        //             hasCreatedJob = CreateUndermineJobOnly(chosenCharacter, "idle");
-        //             //GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob("Undermine Enemy", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = chosenCharacter });
-        //             //job.SetCancelOnFail(true);
-        //             //job.SetCannotOverrideJob(true);
-        //             ////GameManager.Instance.SetPausedState(true);
-        //             //Debug.LogWarning(GameManager.Instance.TodayLogString() + "Added an UNDERMINE ENEMY Job to " + this.name + " with target " + chosenCharacter.name);
-        //             //jobQueue.AddJobInQueue(job);
-        //             //hasCreatedJob = true;
-        //         }
-        //     }
-        // }
     }
     public Character troubledCharacter { get; private set; }
     public void CreateAskForHelpJob(Character troubledCharacter, INTERACTION_TYPE helpType, params object[] otherData) {
@@ -3790,9 +3680,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             log += this.name + " is already dead not planning other idle plans.";
             return log;
         }
-        if (!isFactionless) {
-            CreatePersonalJobs();
-        }
+        if (!isFactionless) { }
         string classIdlePlanLog = behaviourComponent.RunBehaviour();
         log += "\n" + classIdlePlanLog;
         return log;
@@ -5043,7 +4931,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //    }
         //}
         if (currentParty.icon.isTravelling) {
-            if (currentParty.icon.travelLine == null) {
+            if (ReferenceEquals(currentParty.icon.travelLine, null)) {
                 //This means that the actor currently travelling to another tile in tilemap
                 marker.StopMovement();
             } else {

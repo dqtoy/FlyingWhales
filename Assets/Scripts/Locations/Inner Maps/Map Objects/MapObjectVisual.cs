@@ -14,7 +14,7 @@ public abstract class MapObjectVisual<T> : BaseMapObjectVisual where T : IDamage
 
     #region Placement
     public virtual void PlaceObjectAt(LocationGridTile tile) {
-        if (tile.structure.structureObj != null) {
+        if (ReferenceEquals(tile.structure.structureObj, null) == false) {
             tile.structure.structureObj.ReceiveMapObject(this);
         } else {
             //TODO: Make it so that work settlement and wilderness can also have a structure object to prevent this checking.

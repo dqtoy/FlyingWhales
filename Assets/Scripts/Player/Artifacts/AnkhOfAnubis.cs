@@ -39,7 +39,7 @@ public class AnkhOfAnubis : Artifact {
     protected override void OnRemoveArtifact() {
         base.OnRemoveArtifact();
         Messenger.RemoveListener(Signals.TICK_ENDED, CheckPerTick);
-        ObjectPoolManager.Instance.DestroyObject(particle.gameObject);
+        ObjectPoolManager.Instance.DestroyObject(particle);
     }
     public override void LevelUp() {
         base.LevelUp();

@@ -29,12 +29,12 @@ public partial class LandmarkManager {
     #endregion
 
     #region Region Maps
-    public IEnumerator GenerateRegionMap(Region region) {
+    public IEnumerator GenerateRegionMap(Region region, MapGenerationComponent mapGenerationComponent) {
         GameObject regionMapGo = Instantiate(regionInnerStructurePrefab, innerMapsParent);
         RegionInnerTileMap innerTileMap = regionMapGo.GetComponent<RegionInnerTileMap>();
         innerTileMap.Initialize(region);
         region.GenerateStructures();
-        yield return StartCoroutine(innerTileMap.GenerateMap());
+        yield return StartCoroutine(innerTileMap.GenerateMap(mapGenerationComponent));
         InnerMapManager.Instance.OnCreateInnerMap(innerTileMap);
     }
     #endregion

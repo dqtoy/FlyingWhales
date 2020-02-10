@@ -105,7 +105,7 @@ public class BaseLandmark {
             HexTile tile = _location;
             UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(specificLandmarkType.ToString()) + " was destroyed!", () => UIManager.Instance.ShowRegionInfo(tile.region));
         }
-        ObjectPoolManager.Instance.DestroyObject(nameplate.gameObject);
+        ObjectPoolManager.Instance.DestroyObject(nameplate);
         _location = null;
     }
     public virtual void OnFinishedBuilding() { }

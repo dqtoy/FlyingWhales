@@ -42,7 +42,7 @@ public class ChaosOrb : PooledObject {
 		Destroy();
 	}
 	private void Destroy() {
-		ObjectPoolManager.Instance.DestroyObject(gameObject);
+		ObjectPoolManager.Instance.DestroyObject(this);
 	}
 	public void OnPointerClick(BaseEventData data) {
 		// if (positionCoroutine != null) {

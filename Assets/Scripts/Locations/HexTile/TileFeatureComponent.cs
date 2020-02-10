@@ -15,7 +15,6 @@ public class TileFeatureComponent {
 		if (!features.Contains(feature)) {
 			features.Add(feature);
 			feature.OnAddFeature(tile);
-			Debug.Log(GameManager.Instance.TodayLogString() + " added new tile feature " + feature.name + " to " + tile.ToString());
 		}
 	}
 	public void AddFeature(string featureName, HexTile tile) {

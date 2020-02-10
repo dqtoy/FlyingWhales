@@ -79,7 +79,7 @@ public class MiasmaEmitter : Artifact {
 //                currCharacter.marker.RemoveTerrifyingObject(this);
 //            }
 //        }
-        ObjectPoolManager.Instance.DestroyObject(particle.gameObject);
+        ObjectPoolManager.Instance.DestroyObject(particle);
     }
     public override void LevelUp() {
         base.LevelUp();

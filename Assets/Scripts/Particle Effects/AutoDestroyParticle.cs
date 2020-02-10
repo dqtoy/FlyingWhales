@@ -17,7 +17,7 @@ public class AutoDestroyParticle : PooledObject {
             }
         }
         if (allInactive) {
-            ObjectPoolManager.Instance.DestroyObject(this.gameObject);
+            ObjectPoolManager.Instance.DestroyObject(this);
         }
     }
 

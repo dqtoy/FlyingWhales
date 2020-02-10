@@ -9,7 +9,7 @@ public class RegionInnerMapGeneration : MapGenerationComponent {
 	public override IEnumerator Execute(MapGenerationData data) {
 		for (int i = 0; i < GridMap.Instance.allRegions.Length; i++) {
 			Region region = GridMap.Instance.allRegions[i];
-			yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.GenerateRegionMap(region));
+			yield return MapGenerator.Instance.StartCoroutine(LandmarkManager.Instance.GenerateRegionMap(region, this));
 		}
 	}
 }

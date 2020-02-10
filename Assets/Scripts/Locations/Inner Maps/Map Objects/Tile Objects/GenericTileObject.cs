@@ -24,14 +24,14 @@ public class GenericTileObject : TileObject {
         }
     }
     public override void OnPlacePOI() {
-        if (mapVisual == null) {
+        if (ReferenceEquals(mapVisual, null)) {
             InitializeMapObject(this);
-            //gridTileLocation.structure.location.region.AddAwareness(this);
         }
         PlaceMapObjectAt(gridTileLocation);
         OnPlaceTileObjectAtTile(gridTileLocation);
         SetPOIState(POI_STATE.ACTIVE);
     }
+    protected override void OnPlaceTileObjectAtTile(LocationGridTile tile) { } //overridden this to reduce unnecessary processing 
     public override void OnDestroyPOI() {
         DisableGameObject();
         OnRemoveTileObject(null, previousTile);

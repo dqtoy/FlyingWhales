@@ -483,9 +483,13 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         UpdateOwners();
         Messenger.Broadcast(Signals.TILE_OBJECT_PLACED, this, tile);
     }
+    private bool HasSlotSettings() {
+        return ReferenceEquals(mapVisual.usedSprite, null) == false
+               && InnerMapManager.Instance.HasSettingForTileObjectAsset(mapVisual.usedSprite);
+    }
     private void CreateTileObjectSlots() {
-        Sprite usedAsset = mapVisual.usedSprite;
-        if (tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT && usedAsset != null && InnerMapManager.Instance.HasSettingForTileObjectAsset(usedAsset)) {
+        if (tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT && HasSlotSettings()) {
+            Sprite usedAsset = mapVisual.usedSprite;
             List<TileObjectSlotSetting> slotSettings = InnerMapManager.Instance.GetTileObjectSlotSettings(usedAsset);
             slotsParent = Object.Instantiate(InnerMapManager.Instance.tileObjectSlotsParentPrefab, mapVisual.transform);
             slotsParent.transform.localPosition = Vector3.zero;
@@ -502,7 +506,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         hasCreatedSlots = true;
     }
     private void RepositionTileSlots(LocationGridTile tile) {
-        if (slotsParent != null) {
+        if (ReferenceEquals(slotsParent, null) == false) {
             slotsParent.transform.localPosition = tile.centeredLocalLocation;
         }
     }
@@ -672,8 +676,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     #region Visuals
     private void CheckFurnitureSettings() {
         if (gridTileLocation.hasFurnitureSpot) {
-            FurnitureSetting furnitureSetting;
-            if (gridTileLocation.furnitureSpot.TryGetFurnitureSettings(tileObjectType.ConvertTileObjectToFurniture(), out furnitureSetting)) {
+            if (gridTileLocation.furnitureSpot.TryGetFurnitureSettings(tileObjectType.ConvertTileObjectToFurniture(), out var furnitureSetting)) {
                 mapVisual.ApplyFurnitureSettings(furnitureSetting);
             }
         }

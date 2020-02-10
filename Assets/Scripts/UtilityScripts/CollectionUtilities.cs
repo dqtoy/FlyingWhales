@@ -106,5 +106,9 @@ namespace UtilityScripts {
         public static T GetRandomElement<T>(T[] list) {
             return list[UtilityScripts.Utilities.rng.Next(0, list.Length)];
         }
+        public static T GetRandomElement<T>(IEnumerable<T> list) {
+            var enumerable = list.ToList();
+            return enumerable.ElementAt(UtilityScripts.Utilities.rng.Next(0, enumerable.Count()));
+        }
     }
 }

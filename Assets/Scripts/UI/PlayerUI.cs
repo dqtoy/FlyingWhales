@@ -1065,7 +1065,7 @@ public class PlayerUI : MonoBehaviour {
     private void DeleteMinionItem(Minion minion) {
         CharacterNameplateItem item = GetMinionItem(minion);
         if (item != null) {
-            ObjectPoolManager.Instance.DestroyObject(item.gameObject);
+            ObjectPoolManager.Instance.DestroyObject(item);
         }
     }
     private CharacterNameplateItem GetMinionItem(Minion minion) {

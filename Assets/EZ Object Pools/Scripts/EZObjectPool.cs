@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections.Generic;
 
 namespace EZObjectPools
@@ -167,18 +168,18 @@ namespace EZObjectPools
         {
             if (ObjectList.Count == 0)
             {
-                Debug.LogError("EZ Object Pool " + PoolName + ", the pool has not been instantiated but you are trying to retrieve an object!");
+                throw new Exception("EZ Object Pool " + PoolName + ", the pool has not been instantiated but you are trying to retrieve an object!");
             }
 
             int lastIndex = AvailableObjects.Count - 1;
 
             if (AvailableObjects.Count > 0)
             {
-                if (AvailableObjects[lastIndex] == null)
+                if (ReferenceEquals(AvailableObjects[lastIndex], null))
                 {
-                    Debug.LogError("EZObjectPool " + PoolName + " has missing objects in its pool! Are you accidentally destroying any GameObjects retrieved from the pool?");
                     obj = null;
-                    return false;
+                    throw new Exception("EZObjectPool " + PoolName + " has missing objects in its pool! Are you accidentally destroying any GameObjects retrieved from the pool?");
+                    // return false;
                 }
 
                 AvailableObjects[lastIndex].transform.position = pos;

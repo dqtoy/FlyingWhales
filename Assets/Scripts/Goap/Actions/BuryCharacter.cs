@@ -70,7 +70,6 @@ public class BuryCharacter : GoapAction {
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
         string stateName = "Target Missing";
-        bool defaultTargetMissing = false;
         GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(false, stateName);
         //bury cannot be invalid because all cases are handled by the requirements of the action
         return goapActionInvalidity;

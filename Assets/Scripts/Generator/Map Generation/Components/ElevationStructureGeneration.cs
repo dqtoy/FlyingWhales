@@ -7,6 +7,7 @@ using Inner_Maps;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Tilemaps;
+using UtilityScripts;
 
 public class ElevationStructureGeneration : MapGenerationComponent {
 	public override IEnumerator Execute(MapGenerationData data) {
@@ -103,8 +104,7 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 			HexTile tileInIsland = island.tilesInIsland[i];
 			locationGridTiles.AddRange(tileInIsland.locationGridTiles);
 		}
-		
-		int[,] cellMap = null;
+
 		if (island.elevation == ELEVATION.WATER) {
 			WaterCellAutomata(locationGridTiles, elevationStructure);
 		} else if (island.elevation == ELEVATION.MOUNTAIN) {
@@ -132,6 +132,33 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 		CellularAutomataGenerator.DrawMap(tileMap, cellMap, null, 
 			InnerMapManager.Instance.assetManager.shoreTle, 
 			null, (locationGridTile) => SetAsWater(locationGridTile, elevationStructure));
+
+		//create water wells
+		int westMost = elevationStructure.tiles.Min(t => t.localPlace.x);
+		int eastMost = elevationStructure.tiles.Max(t => t.localPlace.x);
+		int southMost = elevationStructure.tiles.Min(t => t.localPlace.y);
+		int northMost = elevationStructure.tiles.Max(t => t.localPlace.y);
+
+		LocationGridTile northTile = CollectionUtilities.GetRandomElement(
+			elevationStructure.tiles.Where(t => t.localPlace.y == northMost && t.objHere == null));
+		CreateInvisibleWellAt(northTile);
+		
+		LocationGridTile southTile = CollectionUtilities.GetRandomElement(
+			elevationStructure.tiles.Where(t => t.localPlace.y == southMost && t.objHere == null));
+		CreateInvisibleWellAt(southTile);
+		
+		LocationGridTile westTile = CollectionUtilities.GetRandomElement(
+			elevationStructure.tiles.Where(t => t.localPlace.x == westMost && t.objHere == null));
+		CreateInvisibleWellAt(westTile);
+		
+		LocationGridTile eastTile = CollectionUtilities.GetRandomElement(
+			elevationStructure.tiles.Where(t => t.localPlace.x == eastMost && t.objHere == null));
+		CreateInvisibleWellAt(eastTile);
+	}
+	private void CreateInvisibleWellAt(LocationGridTile tile) {
+		TileObject well = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.WATER_WELL);
+		tile.structure.AddPOI(well, tile);
+		well.mapObjectVisual.SetVisual(null);
 	}
 	private void SetAsWater(LocationGridTile tile, LocationStructure structure) {
 		tile.SetTileState(LocationGridTile.Tile_State.Occupied);

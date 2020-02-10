@@ -23,7 +23,7 @@ public class ImportantNotificationItem : PooledObject {
     public void OnPointerClick(BaseEventData eventData) {
         onClickAction?.Invoke();
         //destroy on click
-        ObjectPoolManager.Instance.DestroyObject(this.gameObject);
+        ObjectPoolManager.Instance.DestroyObject(this);
     }
 
     public override void Reset() {

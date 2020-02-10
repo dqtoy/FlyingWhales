@@ -319,7 +319,7 @@ public class RelationshipManager : MonoBehaviour {
         }
         string summary = "Relationship improvement between " + actor.name + " and " + target.name;
         bool hasImproved = false;
-        Log log = null;
+        // Log log = null;
         // if (target.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TYPE.ENEMY)) {
         //     //If Actor and Target are Enemies, 25% chance to remove Enemy relationship. If so, Target now considers Actor a Friend.
         //     summary += "\n" + target.name + " considers " + actor.name + " an enemy. Rolling for chance to consider as a friend...";

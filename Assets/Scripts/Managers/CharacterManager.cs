@@ -149,7 +149,6 @@ public class CharacterManager : MonoBehaviour {
         }
         newCharacter.ownParty.CreateIcon();
 
-        Settlement home = null;
         //TODO:
         // if (data.homeID != -1) {
         //     home = GridMap.Instance.GetRegionByID(data.homeID);

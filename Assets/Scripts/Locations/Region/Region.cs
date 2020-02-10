@@ -660,6 +660,18 @@ public class Region : ILocation {
         }
         return objs;
     }
+    public bool HasTileObjectOfType(TILE_OBJECT_TYPE type) {
+        List<TileObject> objs = new List<TileObject>();
+        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in structures) {
+            for (int i = 0; i < keyValuePair.Value.Count; i++) {
+                LocationStructure structure = keyValuePair.Value[i];
+                if (structure.HasTileObjectOfType(type)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     public List<T> GetTileObjectsOfType<T>() where T : TileObject{
         List<T> objs = new List<T>();
         foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in structures) {

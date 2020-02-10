@@ -89635,6 +89635,8 @@ MonoBehaviour:
       - {fileID: 1293362371696982, guid: 191a9e123946de349a254ec4c008d174, type: 3}
       - {fileID: 1278905920532976, guid: 4902757e8108d364c986d722999cd416, type: 3}
       - {fileID: 1766440140310878, guid: e56f7a0c61f19984bb2ecff86616d591, type: 3}
+      - {fileID: 1766440140310878, guid: d2c2cf637970237418614bb4a0293668, type: 3}
+      - {fileID: 1766440140310878, guid: 5297e34c7cb8e6f4d8a979ffe961e642, type: 3}
     - data:
       - {fileID: 1141179552670562, guid: fef47f679840f2349bbbdd68a5d554de, type: 3}
     - data:

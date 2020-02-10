@@ -32,7 +32,7 @@ public class MainMenuManager : MonoBehaviour {
     private void Start() {
         Initialize();
         AudioManager.Instance.PlayFade("Main Menu", 5, () => MainMenuUI.Instance.ShowMenuButtons());
-        LevelLoaderManager.SetLoadingState(false);
+        LevelLoaderManager.Instance.SetLoadingState(false);
     }
     #endregion
     private void Initialize() {

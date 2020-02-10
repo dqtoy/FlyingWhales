@@ -62,6 +62,6 @@ public class PlayerNotificationItem : PooledObject {
         //    Messenger.RemoveListener(Signals.TICK_ENDED, CheckForExpiry);
         //}
         onDestroyAction?.Invoke(this);
-        ObjectPoolManager.Instance.DestroyObject(this.gameObject);
+        ObjectPoolManager.Instance.DestroyObject(this);
     }
 }

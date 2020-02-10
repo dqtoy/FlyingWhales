@@ -203,6 +203,19 @@ public class LocationStructure {
         }
         return objs;
     }
+    public bool HasTileObjectOfType(TILE_OBJECT_TYPE type) {
+        List<TileObject> objs = new List<TileObject>();
+        for (int i = 0; i < pointsOfInterest.Count; i++) {
+            IPointOfInterest poi = pointsOfInterest.ElementAt(i); 
+            if (poi is TileObject) {
+                TileObject obj = poi as TileObject;
+                if (obj.tileObjectType == type) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     public List<T> GetTileObjectsOfType<T>(TILE_OBJECT_TYPE type) where T : TileObject {
         List<T> objs = new List<T>();
         for (int i = 0; i < pointsOfInterest.Count; i++) {
@@ -494,7 +507,7 @@ public class LocationStructure {
         }
         
         occupiedBuildSpot.RemoveOccupyingStructure(this);
-        ObjectPoolManager.Instance.DestroyObject(structureObj.gameObject);
+        ObjectPoolManager.Instance.DestroyObject(structureObj);
         location.RemoveStructure(this);
         settlementLocation.RemoveStructure(this);
         Messenger.Broadcast(Signals.STRUCTURE_OBJECT_REMOVED, this, occupiedBuildSpot.spot);
