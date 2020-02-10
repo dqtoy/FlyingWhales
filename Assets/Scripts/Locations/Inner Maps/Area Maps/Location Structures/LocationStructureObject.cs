@@ -111,12 +111,15 @@ public class LocationStructureObject : PooledObject {
             newTileObject.mapVisual.SetVisual(preplacedObj.spriteRenderer.sprite);
             newTileObject.mapVisual.SetRotation(preplacedObj.transform.localEulerAngles.z);
             newTileObject.RevalidateTileObjectSlots();
-            newTileObject.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
-
-            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, newTileObject, settlement);
-            job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(newTileObject.tileObjectType).constructionCost });
-            job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoCraftFurnitureJob);
-            settlement.AddToAvailableJobs(job);
+            
+            if (newTileObject.tileObjectType.IsPreBuilt() == false) { //non-prebuilt items should create a craft job targeting themselves
+                newTileObject.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
+                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, newTileObject, settlement);
+                job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(newTileObject.tileObjectType).constructionCost });
+                job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoCraftFurnitureJob);
+                settlement.AddToAvailableJobs(job);    
+            }
+            
         }
     }
     private StructureTemplateObjectData[] GetPreplacedObjects() {

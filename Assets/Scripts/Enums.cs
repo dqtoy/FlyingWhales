@@ -1707,6 +1707,27 @@ public static class Extensions {
         }
         return false;
     }
+    public static bool IsPreBuilt(this TILE_OBJECT_TYPE tileObjectType) {
+        switch (tileObjectType) {
+            case TILE_OBJECT_TYPE.TABLE:
+            case TILE_OBJECT_TYPE.BED:
+            case TILE_OBJECT_TYPE.BED_CLINIC:
+            case TILE_OBJECT_TYPE.DESK:
+            case TILE_OBJECT_TYPE.GUITAR:
+            case TILE_OBJECT_TYPE.TABLE_ARMOR:
+            case TILE_OBJECT_TYPE.TABLE_ALCHEMY:
+            case TILE_OBJECT_TYPE.TABLE_SCROLLS:
+            case TILE_OBJECT_TYPE.TABLE_WEAPONS:
+            case TILE_OBJECT_TYPE.TABLE_MEDICINE:
+            case TILE_OBJECT_TYPE.TABLE_CONJURING:
+            case TILE_OBJECT_TYPE.TABLE_HERBALISM:
+            case TILE_OBJECT_TYPE.TABLE_METALWORKING_TOOLS:
+            case TILE_OBJECT_TYPE.PLINTH_BOOK:
+                return false;
+            default:
+                return true;
+        }
+    }
     #endregion
 
     #region Jobs

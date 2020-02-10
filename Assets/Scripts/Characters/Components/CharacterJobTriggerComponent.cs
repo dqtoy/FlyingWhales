@@ -69,7 +69,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		}
 	}
 	private void OnCharacterCanNoLongerPerform(Character character) {
-		if (character == _owner) {
+		if (character == _owner && character.isDead == false) {
 			//TODO: THIS IS ONLY TEMPORARY! REDO THIS!
 			if (character.interruptComponent.isInterrupted &&
 			           character.interruptComponent.currentInterrupt.interrupt == INTERRUPT.Narcoleptic_Attack) {
