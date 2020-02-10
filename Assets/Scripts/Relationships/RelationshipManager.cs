@@ -326,7 +326,7 @@ public class RelationshipManager : MonoBehaviour {
         //     int roll = UnityEngine.Random.Range(0, 100);
         //     summary += "\nRoll is " + roll.ToString();
         //     if (roll < 25) {
-        //         if (target.traitContainer.GetNormalTrait<Trait>("Serial Killer") == null) {
+        //         if (target.traitContainer.GetNormalTrait<Trait>("Psychopath") == null) {
         //             log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "enemy_now_friend");
         //             summary += target.name + " now considers " + actor.name + " an enemy.";
         //             RemoveOneWayRelationship(target, actor, RELATIONSHIP_TYPE.ENEMY);
@@ -339,7 +339,7 @@ public class RelationshipManager : MonoBehaviour {
         // else if (target.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TYPE.FRIEND)) {
         //     hasImproved = true;
         // } else if (!target.relationshipContainer.HasRelationshipWith(actor)) {
-        //     if (target.traitContainer.GetNormalTrait<Trait>("Serial Killer") == null) {
+        //     if (target.traitContainer.GetNormalTrait<Trait>("Psychopath") == null) {
         //         log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "now_friend");
         //         summary += "\n" + target.name + " has no relationship with " + actor.name + ". " + target.name + " now considers " + actor.name + " a friend.";
         //         //If Target has no relationship with Actor, Target now considers Actor a Friend.

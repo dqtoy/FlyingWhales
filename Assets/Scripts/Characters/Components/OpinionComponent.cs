@@ -48,8 +48,8 @@ public class OpinionComponent {
             // }
             Messenger.Broadcast(Signals.OPINION_ADDED, owner, target);
         }
-        if (owner.traitContainer.HasTrait("Serial Killer")) {
-            SerialKiller serialKiller = owner.traitContainer.GetNormalTrait<SerialKiller>("Serial Killer");
+        if (owner.traitContainer.HasTrait("Psychopath")) {
+            Psychopath serialKiller = owner.traitContainer.GetNormalTrait<Psychopath>("Psychopath");
             serialKiller.AdjustOpinion(target, opinionText, opinionValue);
             //Psychopaths do not gain or lose Opinion towards other characters (ensure that logs related to Opinion changes also do not show up)
             owner.logComponent.PrintLogIfActive(owner.name + " wants to adjust " + opinionText + " opinion towards " + target.name + " by " + opinionValue + " but " + owner.name + " is a Serial Killer");
@@ -85,7 +85,7 @@ public class OpinionComponent {
             // }
             Messenger.Broadcast(Signals.OPINION_ADDED, owner, target);
         }
-        if (owner.traitContainer.HasTrait("Serial Killer")) {
+        if (owner.traitContainer.HasTrait("Psychopath")) {
             //Psychopaths do not gain or lose Opinion towards other characters (ensure that logs related to Opinion changes also do not show up)
             owner.logComponent.PrintLogIfActive(owner.name + " wants to adjust " + opinionText + " opinion towards " + target.name + " by " + opinionValue + " but " + owner.name + " is a Serial Killer, setting the value to zero...");
             opinionValue = 0;

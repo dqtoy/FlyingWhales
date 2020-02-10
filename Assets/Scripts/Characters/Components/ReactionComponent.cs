@@ -48,7 +48,7 @@ public class ReactionComponent {
         }
         return string.Empty;
     }
-    public void ReactTo(Interrupt interrupt, Character actor, IPointOfInterest target, Character witness) {
+    public void ReactTo(Interrupt interrupt, Character actor, IPointOfInterest target) {
         if (owner.minion != null || owner is Summon) {
             //Minions or Summons cannot react to interrupts
             return;
@@ -58,6 +58,13 @@ public class ReactionComponent {
             return;
         }
         if (actor != owner && target != owner) {
+            if(actor.interruptComponent.currentInterrupt == interrupt && actor.interruptComponent.currentEffectLog != null) {
+                Log witnessLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "witness_event");
+                witnessLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.OTHER);
+                witnessLog.AddToFillers(null,  UtilityScripts.Utilities.LogDontReplace(actor.interruptComponent.currentEffectLog), LOG_IDENTIFIER.APPEND);
+                witnessLog.AddToFillers(actor.interruptComponent.currentEffectLog.fillers);
+                owner.logComponent.AddHistory(witnessLog);
+            }
             string emotionsToActor = interrupt.ReactionToActor(owner, actor, target, interrupt);
             if (emotionsToActor != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsToActor)) {
                 string error = "Interrupt Error in Witness Reaction To Actor (Duplicate/Incompatible Emotions Triggered)";
@@ -105,8 +112,14 @@ public class ReactionComponent {
         if (node.descriptionLog == null) {
             throw new Exception(GameManager.Instance.TodayLogString() + owner.name + " witnessed event " + node.action.goapName + " by " + node.actor.name + " with state " + node.currentStateName + " but it does not have a description log!");
         }
-
-        if(node.actor != owner && node.poiTarget != owner) {
+        IPointOfInterest target = node.poiTarget;
+        if(node.poiTarget is SpecialToken && node.action.goapType == INTERACTION_TYPE.STEAL) {
+            SpecialToken item = node.poiTarget as SpecialToken;
+            if(item.carriedByCharacter != null) {
+                target = item.carriedByCharacter;
+            }
+        }
+        if(node.actor != owner && target != owner) {
             Log witnessLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "witness_event", node);
             witnessLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.OTHER);
             witnessLog.AddToFillers(null, UtilityScripts.Utilities.LogDontReplace(node.descriptionLog), LOG_IDENTIFIER.APPEND);
@@ -134,8 +147,8 @@ public class ReactionComponent {
             string response = "Witness action reaction of " + owner.name + " to " + node.action.goapName + " of " + node.actor.name + " with target " + node.poiTarget.name
                 + ": " + emotionsToActor + emotionsToTarget;
             owner.logComponent.PrintLogIfActive(response);
-        } else if (node.poiTarget == owner) {
-            if (!node.isStealth) {
+        } else if (target == owner) {
+            if (!node.isStealth || target.traitContainer.HasTrait("Vigilant")) {
                 string emotionsOfTarget = node.action.ReactionOfTarget(node);
                 if (emotionsOfTarget != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsOfTarget)) {
                     string error = "Action Error in Witness Reaction Of Target (Duplicate/Incompatible Emotions Triggered)";
@@ -289,11 +302,11 @@ public class ReactionComponent {
                                     debugLog += "\n-Target is tired or exhausted, will create Move Character job to bed if Target has a home and an available bed";
                                     if (targetCharacter.homeStructure != null) {
                                         Bed bed = targetCharacter.homeStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.BED) as Bed;
-                                        if (bed != null) {
+                                        if (bed != null && bed.gridTileLocation != targetCharacter.gridTileLocation) {
                                             debugLog += "\n-Target has a home and an available bed, will trigger Move Character job to bed";
                                             owner.jobComponent.TryTriggerMoveCharacter(targetCharacter, targetCharacter.homeStructure.GetLocationStructure(), bed.gridTileLocation);
                                         } else {
-                                            debugLog += "\n-Target has a home but does not have an available bed, will not trigger Move Character job";
+                                            debugLog += "\n-Target has a home but does not have an available bed or already in bed, will not trigger Move Character job";
                                         }
                                     } else {
                                         debugLog += "\n-Target does not have a home, will not trigger Move Character job";

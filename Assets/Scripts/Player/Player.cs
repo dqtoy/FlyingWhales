@@ -374,7 +374,9 @@ public class Player : ILeader {
         if (key == KeyCode.Mouse0) {
             TryExecuteCurrentActiveAction();
             SetCurrentlyActivePlayerJobAction(null);
-            Messenger.RemoveListener<KeyCode>(Signals.KEY_DOWN, OnSpellCast);
+            // Messenger.RemoveListener<KeyCode>(Signals.KEY_DOWN, OnSpellCast);
+        } else if (key == KeyCode.Mouse1) {
+            SetCurrentlyActivePlayerJobAction(null);
         }
     }
 

@@ -115,7 +115,7 @@ public class TraitManager : MonoBehaviour {
             new Infected(),
             new MusicLover(),
             new MusicHater(),
-            new SerialKiller(),
+            new Psychopath(),
             new Plagued(),
             new Vigilant(),
             new Curious(),

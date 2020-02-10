@@ -10,11 +10,11 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target) {
-            Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Mental Break", "break");
-            log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            log.AddToFillers(null, actor.moodComponent.mentalBreakName, LOG_IDENTIFIER.STRING_1);
-            actor.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target, ref Log overrideEffectLog) {
+            overrideEffectLog = new Log(GameManager.Instance.Today(), "Interrupt", "Mental Break", "break");
+            overrideEffectLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+            overrideEffectLog.AddToFillers(null, actor.moodComponent.mentalBreakName, LOG_IDENTIFIER.STRING_1);
+            actor.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(overrideEffectLog, onlyClickedCharacter: false);
             return true;
         }
         #endregion

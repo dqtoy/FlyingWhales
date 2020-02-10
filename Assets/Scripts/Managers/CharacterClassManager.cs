@@ -119,7 +119,7 @@ public class CharacterClassManager : MonoBehaviour {
             }
             identifierClasses["All"].Add(currentClass);
 
-            if (!currentClass.isNormalNonCombatant && currentClass.identifier == "Normal") {
+            if (currentClass.IsCombatant()) {
                 normalCombatantClasses.Add(currentClass);
             }
         }

@@ -881,6 +881,7 @@ MonoBehaviour:
   hoveredImg: {fileID: 212097248544747360}
   clickedImg: {fileID: 212731852412647684}
   actionIcon: {fileID: 212948007245262788}
+  buttonCollider: {fileID: 61734465707681460}
   actionIconDictionary:
     m_keys:
     - Eat

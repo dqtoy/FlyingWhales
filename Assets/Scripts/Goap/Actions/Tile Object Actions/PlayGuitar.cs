@@ -41,7 +41,7 @@ public class PlayGuitar : GoapAction {
 
         if (target.gridTileLocation != null && target.gridTileLocation.structure is Dwelling
             && target.gridTileLocation.structure != actor.homeStructure
-            && !actor.traitContainer.HasTrait("Serial Killer")) {
+            && !actor.traitContainer.HasTrait("Psychopath")) {
             Dwelling structureLocation = target.gridTileLocation.structure as Dwelling;
             if (structureLocation.residents.Count > 0) {
                 Character dwellingOwner = structureLocation.residents[0];

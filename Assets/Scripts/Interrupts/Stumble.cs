@@ -10,7 +10,7 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target) {
+        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target, ref Log overrideEffectLog) {
             int randomHpToLose = UnityEngine.Random.Range(1, 6);
             float percentMaxHPToLose = randomHpToLose / 100f;
             int actualHPToLose = Mathf.CeilToInt(actor.maxHP * percentMaxHPToLose);

@@ -163,6 +163,10 @@ public class ActualGoapNode {
     public virtual void DoAction(JobQueueItem job, GoapPlan plan) {
         actionStatus = ACTION_STATUS.STARTED;
         associatedJobType = job.jobType;
+        //Temporary only, create a system for this
+        if(action.goapType == INTERACTION_TYPE.STEAL) {
+            isStealth = true;
+        }
         actor.SetCurrentActionNode(this, job, plan);
         CreateThoughtBubbleLog(targetStructure);
         //parentPlan?.SetPlanState(GOAP_PLAN_STATE.IN_PROGRESS);
@@ -534,19 +538,33 @@ public class ActualGoapNode {
         }
         Debug.Log("Executing action state of " + actor.name + "'s " + action.goapName + ", " + currentStateName);
         GoapActionState currentState = action.states[currentStateName];
-        CreateDescriptionLog(currentState);
-        currentState.preEffect?.Invoke(this);
+
+        IPointOfInterest target = poiTarget;
+        if (poiTarget is SpecialToken && action.goapType == INTERACTION_TYPE.STEAL) {
+            SpecialToken item = poiTarget as SpecialToken;
+            if (item.carriedByCharacter != null) {
+                target = item.carriedByCharacter;
+            }
+        }
+
+        if (isStealth && target.traitContainer.HasTrait("Vigilant")) {
+            descriptionLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "vigilant", this);
+            action.AddFillersToLog(descriptionLog, this);
+            descriptionLog.AddToFillers(null, action.name, LOG_IDENTIFIER.STRING_1);
+        } else {
+            CreateDescriptionLog(currentState);
+            currentState.preEffect?.Invoke(this);
+            for (int i = 0; i < actor.traitContainer.allTraits.Count; i++) {
+                Trait currTrait = actor.traitContainer.allTraits[i];
+                currTrait.ExecuteActionPreEffects(action.goapType, this);
+            }
+            for (int i = 0; i < poiTarget.traitContainer.allTraits.Count; i++) {
+                Trait currTrait = poiTarget.traitContainer.allTraits[i];
+                currTrait.ExecuteActionPreEffects(action.goapType, this);
+            }
+        }
 
         actor.marker.UpdateAnimation();
-
-        for (int i = 0; i < actor.traitContainer.allTraits.Count; i++) {
-            Trait currTrait = actor.traitContainer.allTraits[i];
-            currTrait.ExecuteActionPreEffects(action.goapType, this);
-        }
-        for (int i = 0; i < poiTarget.traitContainer.allTraits.Count; i++) {
-            Trait currTrait = poiTarget.traitContainer.allTraits[i];
-            currTrait.ExecuteActionPreEffects(action.goapType, this);
-        }
         //parentAction.SetExecutionDate(GameManager.Instance.Today());
 
         if (currentState.duration > 0) {
@@ -603,8 +621,16 @@ public class ActualGoapNode {
         GoapActionState currentState = action.states[currentStateName];
         ActionResult(currentState);
 
+        IPointOfInterest target = poiTarget;
+        if(poiTarget is SpecialToken && action.goapType == INTERACTION_TYPE.STEAL) {
+            SpecialToken item = poiTarget as SpecialToken;
+            if(item.carriedByCharacter != null) {
+                target = item.carriedByCharacter;
+            }
+        }
+
         //After effect and logs should be done after processing action result so that we can be sure that the action is completely done before doing anything
-        if (shouldDoAfterEffect) {
+        if (shouldDoAfterEffect && !(isStealth && target.traitContainer.HasTrait("Vigilant"))) {
             currentState.afterEffect?.Invoke(this);
             bool isRemoved = false;
             for (int i = 0; i < actor.traitContainer.allTraits.Count; i++) {
@@ -631,14 +657,24 @@ public class ActualGoapNode {
     private void PerTickEffect() {
         GoapActionState currentState = action.states[currentStateName];
         currentStateDuration++;
-        currentState.perTickEffect?.Invoke(this);
-        for (int i = 0; i < actor.traitContainer.allTraits.Count; i++) {
-            Trait currTrait = actor.traitContainer.allTraits[i];
-            currTrait.ExecuteActionPerTickEffects(action.goapType, this);
+
+        IPointOfInterest target = poiTarget;
+        if (poiTarget is SpecialToken && action.goapType == INTERACTION_TYPE.STEAL) {
+            SpecialToken item = poiTarget as SpecialToken;
+            if (item.carriedByCharacter != null) {
+                target = item.carriedByCharacter;
+            }
         }
-        for (int i = 0; i < poiTarget.traitContainer.allTraits.Count; i++) {
-            Trait currTrait = poiTarget.traitContainer.allTraits[i];
-            currTrait.ExecuteActionPerTickEffects(action.goapType, this);
+        if (!(isStealth && target.traitContainer.HasTrait("Vigilant"))) {
+            currentState.perTickEffect?.Invoke(this);
+            for (int i = 0; i < actor.traitContainer.allTraits.Count; i++) {
+                Trait currTrait = actor.traitContainer.allTraits[i];
+                currTrait.ExecuteActionPerTickEffects(action.goapType, this);
+            }
+            for (int i = 0; i < poiTarget.traitContainer.allTraits.Count; i++) {
+                Trait currTrait = poiTarget.traitContainer.allTraits[i];
+                currTrait.ExecuteActionPerTickEffects(action.goapType, this);
+            }
         }
         if (currentStateDuration >= currentState.duration) {
             EndPerTickEffect();

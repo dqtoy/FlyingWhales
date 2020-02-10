@@ -19,10 +19,19 @@ namespace Interrupts {
 
         #region Virtuals
         public virtual bool ExecuteInterruptEndEffect(Character actor, IPointOfInterest target) { return false; }
-        public virtual bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target) { return false; }
+        public virtual bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target, ref Log overrideEffectLog) { return false; }
         public virtual string ReactionToActor(Character witness, Character actor, IPointOfInterest target, Interrupt interrupt) { return string.Empty; }
         public virtual string ReactionToTarget(Character witness, Character actor, IPointOfInterest target, Interrupt interrupt) { return string.Empty; }
         public virtual string ReactionOfTarget(Character actor, IPointOfInterest target, Interrupt interrupt) { return string.Empty; }
+        public virtual Log CreateEffectLog(Character actor, IPointOfInterest target) {
+            if (LocalizationManager.Instance.HasLocalizedValue("Interrupt", name, "effect")) {
+                Log effectLog = new Log(GameManager.Instance.Today(), "Interrupt", name, "effect");
+                effectLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                effectLog.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+                return effectLog;
+            }
+            return null;
+        }
         #endregion
     }
 }

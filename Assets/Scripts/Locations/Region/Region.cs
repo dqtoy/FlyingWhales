@@ -13,6 +13,7 @@ public class Region : ILocation {
     public string name { get; private set; }
     public string description => GetDescription();
     public List<HexTile> tiles { get; }
+    public List<HexTile> shuffledNonMountainWaterTiles { get; private set; }
     public HexTile coreTile { get; private set; }
     public LOCATION_TYPE locationType => LOCATION_TYPE.EMPTY;
     public Color regionColor { get; }
@@ -50,6 +51,7 @@ public class Region : ILocation {
         name = RandomNameGenerator.GetRegionName();
         this.coreTile = coreTile;
         tiles = new List<HexTile>();
+        shuffledNonMountainWaterTiles = new List<HexTile>();
         AddTile(coreTile);
         regionColor = GenerateRandomRegionColor();
         Debug.Log($"Created region {this.name} with core tile {coreTile.ToString()}");
@@ -59,6 +61,7 @@ public class Region : ILocation {
         name = data.name;
         coreTile = GridMap.Instance.normalHexTiles[data.coreTileID];
         tiles = new List<HexTile>();
+        shuffledNonMountainWaterTiles = new List<HexTile>();
         regionColor = data.regionColor;
     }
 
@@ -66,11 +69,24 @@ public class Region : ILocation {
     public void AddTile(HexTile tile) {
         if (!tiles.Contains(tile)) {
             tiles.Add(tile);
+            if(tile.elevationType != ELEVATION.MOUNTAIN && tile.elevationType != ELEVATION.WATER) {
+                if(shuffledNonMountainWaterTiles.Count > 1) {
+                    int index = UnityEngine.Random.Range(0, shuffledNonMountainWaterTiles.Count + 1);
+                    if(index == shuffledNonMountainWaterTiles.Count) {
+                        shuffledNonMountainWaterTiles.Add(tile);
+                    } else {
+                        shuffledNonMountainWaterTiles.Insert(index, tile);
+                    }
+                } else {
+                    shuffledNonMountainWaterTiles.Add(tile);
+                }
+            }
             tile.SetRegion(this);
         }
     }
     private void RemoveTile(HexTile tile) {
         if (tiles.Remove(tile)) {
+            shuffledNonMountainWaterTiles.Remove(tile);
             tile.SetRegion(null);
         }
     }
@@ -832,6 +848,25 @@ public class Region : ILocation {
             }
         }
         return count;
+    }
+    #endregion
+
+    #region Location Grid Tiles
+    public LocationGridTile GetRandomOutsideSettlementLocationGridTileWithPathTo(LocationGridTile fromTile) {
+        LocationGridTile chosenTile = null;
+        while(chosenTile == null) {
+            for (int i = 0; i < shuffledNonMountainWaterTiles.Count; i++) {
+                if (shuffledNonMountainWaterTiles[i].settlementOnTile == null) {
+                    HexTile hex = shuffledNonMountainWaterTiles[i];
+                    LocationGridTile potentialTile = hex.locationGridTiles[UnityEngine.Random.Range(0, hex.locationGridTiles.Count)];
+                    if(PathfindingManager.Instance.HasPath(fromTile, potentialTile)) {
+                        chosenTile = potentialTile;
+                        break;
+                    }
+                }
+            }
+        }
+        return chosenTile;
     }
     #endregion
 }

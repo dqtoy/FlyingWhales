@@ -176,7 +176,16 @@ public class CharacterClass {
         this._traitNames = ClassPanelUI.Instance.traitNames.ToArray();
         this._jobType = (JOB) System.Enum.Parse(typeof(JOB), ClassPanelUI.Instance.jobTypeOptions.options[ClassPanelUI.Instance.jobTypeOptions.value].text);
     }
-
+    public bool IsCombatant() {
+        if(_traitNames != null) {
+            for (int i = 0; i < _traitNames.Length; i++) {
+                if(_traitNames[i] == "Combatant") {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     //public void ConstructData() {
     //    ConstructSkills();
     //}

@@ -145,9 +145,11 @@ public static class Signals {
     public static string DETERMINE_COMBAT_REACTION = "DetermineCombatReaction"; //Parameters (Character character)
     public static string TRANSFER_ENGAGE_TO_FLEE_LIST = "TransferEngageToFleeList"; //Parameters (Character character)
     public static string CHARACTER_CLASS_CHANGE = "CharacterClassChange";
-    public static string ON_SEIZE_CHARACTER = "OnSeizeCharacter";
-    public static string ON_UNSEIZE_CHARACTER = "OnUnseizeCharacter";
-    public static string ON_SEIZE_TILE_OBJECT = "OnSeizeTileObject";
+    //public static string ON_SEIZE_CHARACTER = "OnSeizeCharacter";
+    //public static string ON_UNSEIZE_CHARACTER = "OnUnseizeCharacter";
+    //public static string ON_SEIZE_TILE_OBJECT = "OnSeizeTileObject";
+    public static string ON_SEIZE_POI = "OnSeizePOI";
+    public static string ON_UNSEIZE_POI = "OnUnseizePOI";
     public static string CHARACTER_MISSING = "OnCharacterMissing";
     public static string CHARACTER_NO_LONGER_MISSING = "OnCharacterNoLongerMissing";
     public static string ON_SET_AS_FACTION_LEADER = "OnSetAsFactionLeader";

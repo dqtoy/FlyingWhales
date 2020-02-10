@@ -33,11 +33,11 @@ public class PsychopathUI : MonoBehaviour {
 
     public void OnClickOK() {
         
-        SerialKiller serialKillerTrait = new SerialKiller();
+        Psychopath serialKillerTrait = new Psychopath();
         character.traitContainer.AddTrait(character, serialKillerTrait);
         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_afflicted");
         log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        log.AddToFillers(null, "Serial Killer", LOG_IDENTIFIER.STRING_1);
+        log.AddToFillers(null, "Psychopath", LOG_IDENTIFIER.STRING_1);
         log.AddLogToInvolvedObjects();
         PlayerManager.Instance.player.ShowNotification(log);
 

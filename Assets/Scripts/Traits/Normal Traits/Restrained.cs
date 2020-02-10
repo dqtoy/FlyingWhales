@@ -86,8 +86,8 @@ namespace Traits {
                     return false;
                 }
                 if (!targetCharacter.traitContainer.HasTrait("Criminal")) {
-                    if (characterThatWillDoJob.traitContainer.HasTrait("Serial Killer")) {
-                        //SerialKiller serialKiller = characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Serial Killer") as SerialKiller;
+                    if (characterThatWillDoJob.traitContainer.HasTrait("Psychopath")) {
+                        //SerialKiller serialKiller = characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Psychopath") as SerialKiller;
                         //serialKiller.SerialKillerSawButWillNotAssist(targetCharacter, this);
                         return false;
                         //if (serialKiller != null) {

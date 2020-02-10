@@ -269,6 +269,25 @@ public class Summon : Character, IWorldObject {
     public void RemoveTerritory(HexTile tile) {
         territorries.Remove(tile);
     }
+    public bool HasTerritory() {
+        return territorries.Count > 0;
+    }
+    public bool IsInTerritory() {
+        return territorries.Contains(gridTileLocation.buildSpotOwner.hexTileOwner);
+    }
+    public LocationGridTile GetRandomLocationGridTileWithPath() {
+        LocationGridTile chosenTile = null;
+        if(territorries.Count > 0) {
+            while (chosenTile == null) {
+                HexTile chosenTerritory = territorries[UnityEngine.Random.Range(0, territorries.Count)];
+                LocationGridTile chosenGridTile = chosenTerritory.locationGridTiles[UnityEngine.Random.Range(0, chosenTerritory.locationGridTiles.Count)];
+                if(PathfindingManager.Instance.HasPath(gridTileLocation, chosenGridTile)) {
+                    chosenTile = chosenGridTile;
+                }
+            }
+        }
+        return chosenTile;
+    }
     #endregion
 
     #region Player Action Target

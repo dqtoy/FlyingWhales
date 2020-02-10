@@ -12,8 +12,11 @@ public class InterruptComponent {
 
     public Log thoughtBubbleLog { get; private set; }
 
+    private Log _currentEffectLog;
+
     #region getters
     public bool isInterrupted => currentInterrupt != null;
+    public Log currentEffectLog => _currentEffectLog;
     #endregion
 
     public InterruptComponent(Character owner) {
@@ -50,7 +53,7 @@ public class InterruptComponent {
             Messenger.Broadcast(Signals.UPDATE_THOUGHT_BUBBLE, owner);
 
             if (currentInterrupt.duration <= 0) {
-                CreateAndAddEffectLog();
+                AddEffectLog();
                 currentInterrupt.ExecuteInterruptEndEffect(owner, currentTargetPOI);
                 EndInterrupt();
             }
@@ -63,18 +66,22 @@ public class InterruptComponent {
         owner.logComponent.PrintLogIfActive(owner.name + " triggered a simultaneous interrupt: " + interrupt.name);
         this.identifier = identifier;
         ExecuteStartInterrupt(interrupt, targetPOI);
-        CreateAndAddEffectLog(interrupt, targetPOI);
+        AddEffectLog();
         interrupt.ExecuteInterruptEndEffect(owner, currentTargetPOI);
         return true;
     }
     private void ExecuteStartInterrupt(Interrupt interrupt, IPointOfInterest targetPOI) {
-        interrupt.ExecuteInterruptStartEffect(owner, targetPOI);
+        _currentEffectLog = null;
+        interrupt.ExecuteInterruptStartEffect(owner, targetPOI, ref _currentEffectLog);
+        if(_currentEffectLog == null) {
+            _currentEffectLog = interrupt.CreateEffectLog(owner, targetPOI);
+        }
     }
     public void OnTickEnded() {
         if (isInterrupted) {
             currentDuration++;
             if(currentDuration >= currentInterrupt.duration) {
-                CreateAndAddEffectLog();
+                AddEffectLog();
                 currentInterrupt.ExecuteInterruptEndEffect(owner, currentTargetPOI);
                 EndInterrupt();
             }
@@ -93,7 +100,7 @@ public class InterruptComponent {
                     owner.marker.AddUnprocessedPOI(inVisionCharacter);
                 }
             } 
-            owner.needsComponent.CheckExtremeNeeds();
+            owner.needsComponent.CheckExtremeNeeds(finishedInterrupt);
         }
         Messenger.Broadcast(Signals.INTERRUPT_FINISHED, finishedInterrupt.interrupt, owner);
     }
@@ -104,26 +111,34 @@ public class InterruptComponent {
             thoughtBubbleLog.AddToFillers(currentTargetPOI, currentTargetPOI.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         }
     }
-    private void CreateAndAddEffectLog() {
-        if (LocalizationManager.Instance.HasLocalizedValue("Interrupt", currentInterrupt.name, "effect")) {
-            Log effectLog = new Log(GameManager.Instance.Today(), "Interrupt", currentInterrupt.name, "effect");
-            effectLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            effectLog.AddToFillers(currentTargetPOI, currentTargetPOI.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            effectLog.AddLogToInvolvedObjects();
-            PlayerManager.Instance.player.ShowNotificationFrom(owner, effectLog);
-        } 
+    private void AddEffectLog() {
+        if(_currentEffectLog != null) {
+            if (owner != currentTargetPOI) {
+                _currentEffectLog.AddLogToInvolvedObjects();
+            } else {
+                owner.logComponent.AddHistory(_currentEffectLog);
+            }
+            PlayerManager.Instance.player.ShowNotificationFrom(owner, _currentEffectLog);
+        }
+        //if (LocalizationManager.Instance.HasLocalizedValue("Interrupt", currentInterrupt.name, "effect")) {
+        //    Log effectLog = new Log(GameManager.Instance.Today(), "Interrupt", currentInterrupt.name, "effect");
+        //    effectLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        //    effectLog.AddToFillers(currentTargetPOI, currentTargetPOI.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        //    effectLog.AddLogToInvolvedObjects();
+        //    PlayerManager.Instance.player.ShowNotificationFrom(owner, effectLog);
+        //} 
         //else {
         //    Debug.LogWarning(currentInterrupt.name + " interrupt does not have effect log!");
         //}
     }
-    private void CreateAndAddEffectLog(Interrupt interrupt, IPointOfInterest target) {
-        if (LocalizationManager.Instance.HasLocalizedValue("Interrupt", interrupt.name, "effect")) {
-            Log effectLog = new Log(GameManager.Instance.Today(), "Interrupt", interrupt.name, "effect");
-            effectLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            effectLog.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            effectLog.AddLogToInvolvedObjects();
-            PlayerManager.Instance.player.ShowNotificationFrom(owner, effectLog);
-        }
-    }
+    //private void CreateAndAddEffectLog(Interrupt interrupt, IPointOfInterest target) {
+    //    if (LocalizationManager.Instance.HasLocalizedValue("Interrupt", interrupt.name, "effect")) {
+    //        Log effectLog = new Log(GameManager.Instance.Today(), "Interrupt", interrupt.name, "effect");
+    //        effectLog.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+    //        effectLog.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+    //        effectLog.AddLogToInvolvedObjects();
+    //        PlayerManager.Instance.player.ShowNotificationFrom(owner, effectLog);
+    //    }
+    //}
     #endregion
 }

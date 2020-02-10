@@ -50,7 +50,26 @@ public class CursorManager : MonoBehaviour {
     //}
     private void Update() {
         if (PlayerManager.Instance != null && PlayerManager.Instance.player != null) {
-            if (PlayerManager.Instance.player.currentActivePlayerSpell != null) {
+            if (PlayerManager.Instance.player.seizeComponent.hasSeizedPOI) {
+                IPointOfInterest seizedPOI = PlayerManager.Instance.player.seizeComponent.seizedPOI;
+                if (UIManager.Instance.IsMouseOnUI() || !InnerMapManager.Instance.isAnInnerMapShowing) {
+                    SetCursorTo(Cursor_Type.Default);
+                    PlayerManager.Instance.player.seizeComponent.DisableFollowMousePosition();
+                } else {
+                    PlayerManager.Instance.player.seizeComponent.EnableFollowMousePosition();
+                    PlayerManager.Instance.player.seizeComponent.FollowMousePosition();
+                    LocationGridTile hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
+                    if (hoveredTile != null) {
+                        if(hoveredTile.objHere != null) {
+                            SetCursorTo(Cursor_Type.Cross);
+                        } else {
+                            SetCursorTo(Cursor_Type.Check);
+                        }
+                    } else {
+                        SetCursorTo(Cursor_Type.Cross);
+                    }
+                }
+            } else if (PlayerManager.Instance.player.currentActivePlayerSpell != null) {
                 LocationGridTile hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
                 if (previousHoveredTile != null && previousHoveredTile != hoveredTile) {
                     // PlayerManager.Instance.player.currentActivePlayerJobAction.HideRange(previousHoveredTile);
@@ -155,18 +174,19 @@ public class CursorManager : MonoBehaviour {
                     UIManager.Instance.HideSmallInfo();
                     SetCursorTo(Cursor_Type.Cross);
                 }
-            } else if (PlayerManager.Instance.player.seizeComponent.isPreparingToBeUnseized) {
-                LocationGridTile hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
-                if (hoveredTile != null) {
-                    if(hoveredTile.objHere != null) {
-                        SetCursorTo(Cursor_Type.Cross);
-                    } else {
-                        SetCursorTo(Cursor_Type.Check);
-                    }
-                } else {
-                    SetCursorTo(Cursor_Type.Cross);
-                }
-            }
+            } 
+            // else if (PlayerManager.Instance.player.seizeComponent.isPreparingToBeUnseized) {
+            //     LocationGridTile hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
+            //     if (hoveredTile != null) {
+            //         if(hoveredTile.objHere != null) {
+            //             SetCursorTo(Cursor_Type.Cross);
+            //         } else {
+            //             SetCursorTo(Cursor_Type.Check);
+            //         }
+            //     } else {
+            //         SetCursorTo(Cursor_Type.Cross);
+            //     }
+            // }
             //else {
             //    UIManager.Instance.HideSmallInfo();
             //}

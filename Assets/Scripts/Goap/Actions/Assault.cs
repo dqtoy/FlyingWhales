@@ -41,12 +41,32 @@ public class Assault : GoapAction {
                 string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
                 if (opinionLabel == OpinionComponent.Enemy || opinionLabel == OpinionComponent.Rival) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor);
-                } else if (opinionLabel == OpinionComponent.Acquaintance) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor);
-                } else if (opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor);
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor);
+                } else if (node.associatedJobType != JOB_TYPE.APPREHEND) {
+                    if (opinionLabel == OpinionComponent.Acquaintance) {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor);
+                    } else if (opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor);
+                    }
                 }
+            }
+        }
+        return response;
+    }
+    public override string ReactionToTarget(Character witness, ActualGoapNode node) {
+        string response = base.ReactionToTarget(witness, node);
+        Character actor = node.actor;
+        IPointOfInterest target = node.poiTarget;
+        if (node.associatedJobType == JOB_TYPE.APPREHEND) {
+            Character targetCharacter = target as Character;
+            string opinionLabel = witness.opinionComponent.GetOpinionLabel(targetCharacter);
+            if (opinionLabel == OpinionComponent.Acquaintance) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, targetCharacter);
+            } else if (opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, targetCharacter);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, targetCharacter);
+            } else {
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disgust, witness, targetCharacter);
             }
         }
         return response;

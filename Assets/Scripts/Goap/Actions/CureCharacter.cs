@@ -47,7 +47,7 @@ public class CureCharacter : GoapAction {
         Character targetCharacter = target as Character;
         string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
         if (opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
-            if (!witness.traitContainer.HasTrait("Serial Killer")) {
+            if (!witness.traitContainer.HasTrait("Psychopath")) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Gratefulness, witness, actor);
             }
         } else if (opinionLabel == OpinionComponent.Rival) {
@@ -60,7 +60,7 @@ public class CureCharacter : GoapAction {
         Character actor = node.actor;
         IPointOfInterest target = node.poiTarget;
         Character targetCharacter = target as Character;
-        if (!targetCharacter.traitContainer.HasTrait("Serial Killer")) {
+        if (!targetCharacter.traitContainer.HasTrait("Psychopath")) {
             if (targetCharacter.relationshipContainer.IsEnemiesWith(actor)) {
                 if(UnityEngine.Random.Range(0, 100) < 30) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Gratefulness, targetCharacter, actor);

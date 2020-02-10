@@ -106,7 +106,7 @@ namespace Traits {
             bool triggerSpooked = false;
             Spooked spooked = owner.traitContainer.GetNormalTrait<Spooked>("Spooked");
             if (spooked != null) {
-                triggerSpooked = UnityEngine.Random.Range(0, 100) < 20;
+                triggerSpooked = UnityEngine.Random.Range(0, 100) < (25 * owner.traitContainer.stacks[spooked.name]);
             }
             if (!triggerSpooked) {
                 GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, INTERACTION_TYPE.SLEEP, bed, owner);

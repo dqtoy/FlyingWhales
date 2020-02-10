@@ -107,14 +107,14 @@ public class Butcher : GoapAction {
                 if (opinionLabel == OpinionComponent.Acquaintance || opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor);
                 }
-                if (!witness.traitContainer.HasTrait("Serial Killer")) {
+                if (!witness.traitContainer.HasTrait("Psychopath")) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor);
                 }
             }
             string witnessOpinionToTarget = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
             if (witnessOpinionToTarget == OpinionComponent.Friend || witnessOpinionToTarget == OpinionComponent.Close_Friend || witnessOpinionToTarget == OpinionComponent.Acquaintance 
                 || witness.faction == targetCharacter.faction || witness.homeSettlement == targetCharacter.homeSettlement) {
-                if (!witness.traitContainer.HasTrait("Serial Killer")) {
+                if (!witness.traitContainer.HasTrait("Psychopath")) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor);
                 }
             }

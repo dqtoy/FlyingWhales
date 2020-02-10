@@ -12,7 +12,7 @@ public class DefaultMonster : CharacterBehaviourComponent {
 			log += "\n-" + character.name + " is monster";
 			Summon summon = character as Summon;
 			if (summon.gridTileLocation != null) {
-				if (summon.territorries.Contains(summon.gridTileLocation.buildSpotOwner.hexTileOwner)) {
+				if (summon.IsInTerritory()) {
 					bool hasAddedJob = false;
 					log += "\n-Inside territory";
 					int fiftyPercentOfMaxHP = Mathf.RoundToInt(summon.maxHP * 0.5f);

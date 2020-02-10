@@ -48,7 +48,7 @@ public class Puke : GoapAction {
     //private void CreateRemoveTraitJob(Character characterThatWillDoJob) {
     //    Trait trait = actor.traitContainer.GetNormalTrait<Trait>("Plagued", "Infected", "Sick");
     //    if (trait != null && !actor.isDead && !actor.HasJobTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, trait.name) && !actor.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
-    //        SerialKiller serialKiller = characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Serial Killer") as SerialKiller;
+    //        SerialKiller serialKiller = characterThatWillDoJob.traitContainer.GetNormalTrait<Trait>("Psychopath") as SerialKiller;
     //        if (serialKiller != null) {
     //            serialKiller.SerialKillerSawButWillNotAssist(actor, trait);
     //            return;
@@ -89,7 +89,7 @@ public class Puke : GoapAction {
     //        if (!isPuking) {
     //            Trait trait = actor.traitContainer.GetNormalTrait<Trait>("Plagued", "Infected", "Sick");
     //            if (trait != null && !actor.isDead && !actor.HasJobTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, trait.name) && !actor.traitContainer.HasTraitOf(TRAIT_TYPE.CRIMINAL)) {
-    //                SerialKiller serialKiller = recipient.traitContainer.GetNormalTrait<Trait>("Serial Killer") as SerialKiller;
+    //                SerialKiller serialKiller = recipient.traitContainer.GetNormalTrait<Trait>("Psychopath") as SerialKiller;
     //                if (serialKiller != null) {
     //                    serialKiller.SerialKillerSawButWillNotAssist(actor, trait);
     //                } else {

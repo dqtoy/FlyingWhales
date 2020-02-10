@@ -10,8 +10,8 @@ namespace Interrupts {
         }
 
         #region Overrides
-        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target) {
-            actor.nonActionEventsComponent.ForceChatCharacter(target as Character);
+        public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target, ref Log overrideEffectLog) {
+            actor.nonActionEventsComponent.ForceChatCharacter(target as Character, ref overrideEffectLog);
             return true;
         }
         #endregion

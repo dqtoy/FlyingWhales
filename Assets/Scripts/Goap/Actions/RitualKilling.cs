@@ -74,7 +74,7 @@ public class RitualKilling : GoapAction {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor);
 
                 Character targetCharacter = target as Character;
-                if (witness.relationshipContainer.IsFriendsWith(actor) && !witness.traitContainer.HasTrait("Serial Killer")) {
+                if (witness.relationshipContainer.IsFriendsWith(actor) && !witness.traitContainer.HasTrait("Psychopath")) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor);
                 }
                 if (witness.relationshipContainer.IsFriendsWith(targetCharacter)) {
@@ -92,7 +92,7 @@ public class RitualKilling : GoapAction {
         IPointOfInterest target = node.poiTarget;
         if (target is Character) {
             Character targetCharacter = target as Character;
-            if (!witness.traitContainer.HasTrait("Serial Killer")) {
+            if (!witness.traitContainer.HasTrait("Psychopath")) {
                 string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
                 if (opinionLabel == OpinionComponent.Acquaintance || opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, target);
@@ -113,7 +113,7 @@ public class RitualKilling : GoapAction {
             } else {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, targetCharacter, actor);
 
-                if (targetCharacter.relationshipContainer.IsFriendsWith(actor) && !targetCharacter.traitContainer.HasTrait("Serial Killer")) {
+                if (targetCharacter.relationshipContainer.IsFriendsWith(actor) && !targetCharacter.traitContainer.HasTrait("Psychopath")) {
                     response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, targetCharacter, actor);
                 }
             }
@@ -127,14 +127,14 @@ public class RitualKilling : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
-            return actor != poiTarget && actor.traitContainer.HasTrait("Serial Killer");
+            return actor != poiTarget && actor.traitContainer.HasTrait("Psychopath");
         }
         return false;
     }
     private bool IsTargetInWildernessOrHome(Character actor, IPointOfInterest target, object[] otherData) {
         if(target is Character) {
             Character targetCharacter = target as Character;
-            return targetCharacter.IsInOwnParty() && targetCharacter.currentStructure == actor.homeStructure; //targetCharacter.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS || 
+            return targetCharacter.IsInOwnParty() && (targetCharacter.currentStructure == actor.homeStructure || targetCharacter.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile == null); //targetCharacter.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS || 
         }
         return false;
     }
@@ -165,7 +165,7 @@ public class RitualKillingData : GoapActionData {
     }
 
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor != poiTarget && actor.traitContainer.HasTrait("Serial Killer");
+        return actor != poiTarget && actor.traitContainer.HasTrait("Psychopath");
     }
 }
 

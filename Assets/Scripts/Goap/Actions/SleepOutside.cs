@@ -7,7 +7,7 @@ using System.Linq;
 public class SleepOutside : GoapAction {
 
     public SleepOutside() : base(INTERACTION_TYPE.SLEEP_OUTSIDE) {
-        actionLocationType = ACTION_LOCATION_TYPE.NEARBY;
+        actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         actionIconString = GoapActionStateDB.Sleep_Icon;
         //animationName = "Sleep Ground";
         showNotification = false;

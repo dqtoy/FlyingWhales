@@ -37,7 +37,7 @@ public class Pray : GoapAction {
             cost += timesCost;
             costLog += " +" + timesCost + "(10 x Times Prayed)";
         }
-        if (actor.traitContainer.HasTrait("Evil", "Serial Killer")) {
+        if (actor.traitContainer.HasTrait("Evil", "Psychopath")) {
             cost += 2000;
             costLog += " +2000(Evil/Psychopath)";
         }

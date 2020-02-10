@@ -33204,6 +33204,11 @@ MonoBehaviour:
   aliveHeader: {fileID: 658455209}
   deadHeader: {fileID: 763144097}
   unseizeButton: {fileID: 271216281}
+  topMenuButtons:
+  - {fileID: 1411875441}
+  - {fileID: 197814391}
+  - {fileID: 374432336}
+  - {fileID: 556227247}
   customDropdownList: {fileID: 1677628230}
   playerActionIconDictionary:
     m_keys:

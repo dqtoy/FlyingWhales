@@ -94,7 +94,7 @@ namespace Traits {
                 bool triggerGrieving = false;
                 Griefstricken griefstricken = character.traitContainer.GetNormalTrait<Griefstricken>("Griefstricken");
                 if (griefstricken != null) {
-                    triggerGrieving = UnityEngine.Random.Range(0, 100) < 20;
+                    triggerGrieving = UnityEngine.Random.Range(0, 100) < (25 * character.traitContainer.stacks[griefstricken.name]);
                 }
                 if (!triggerGrieving) {
                     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TRIGGER_FLAW, INTERACTION_TYPE.DRINK_BLOOD, character, character);

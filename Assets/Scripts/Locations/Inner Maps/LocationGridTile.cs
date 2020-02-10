@@ -632,6 +632,26 @@ namespace Inner_Maps {
             }
             return traitables;
         }
+        public List<ITraitable> GetTraitablesOnTile() {
+            List<ITraitable> traitables = new List<ITraitable>();
+            traitables.Add(genericTileObject);
+            for (int i = 0; i < walls.Count; i++) {
+                WallObject wallObject = walls[i];
+                traitables.Add(wallObject);
+            }
+            if (objHere != null) {
+                if ((objHere is TileObject && (objHere as TileObject).mapObjectState == MAP_OBJECT_STATE.BUILT)
+                    || (objHere is SpecialToken && (objHere as SpecialToken).mapObjectState == MAP_OBJECT_STATE.BUILT)) {
+                    traitables.Add(objHere);
+                }
+            }
+        
+            for (int i = 0; i < charactersHere.Count; i++) {
+                Character character = charactersHere[i];
+                traitables.Add(character);
+            }
+            return traitables;
+        }
         public int GetNeighbourOfTypeCount(Ground_Type type, bool useFourNeighbours = false) {
             int count = 0;
             Dictionary<GridNeighbourDirection, LocationGridTile> n = neighbours;

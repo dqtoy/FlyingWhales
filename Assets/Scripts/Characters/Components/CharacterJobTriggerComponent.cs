@@ -42,10 +42,12 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		Messenger.AddListener<Settlement, bool>(Signals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, OnSettlementUnderSiegeChanged);
 		Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
 		Messenger.AddListener<Character, HexTile>(Signals.CHARACTER_EXITED_HEXTILE, OnCharacterExitedHexTile);
-		Messenger.AddListener<Character>(Signals.ON_SEIZE_CHARACTER, OnSeizedCharacter);
-		Messenger.AddListener<Character>(Signals.ON_UNSEIZE_CHARACTER, OnUnseizeCharacter);
-	}
-	public void UnsubscribeListeners() {
+        Messenger.AddListener<IPointOfInterest>(Signals.ON_SEIZE_POI, OnSeizePOI);
+        Messenger.AddListener<IPointOfInterest>(Signals.ON_UNSEIZE_POI, OnUnseizePOI);
+        //Messenger.AddListener<Character>(Signals.ON_SEIZE_CHARACTER, OnSeizedCharacter);
+        //Messenger.AddListener<Character>(Signals.ON_UNSEIZE_CHARACTER, OnUnseizeCharacter);
+    }
+    public void UnsubscribeListeners() {
 		Messenger.RemoveListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterCanNoLongerMove);
 		Messenger.RemoveListener<Character>(Signals.CHARACTER_CAN_MOVE_AGAIN, OnCharacterCanMoveAgain);
 		Messenger.RemoveListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJob);
@@ -54,7 +56,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		Messenger.RemoveListener<Settlement, bool>(Signals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, OnSettlementUnderSiegeChanged);
 		Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_ENTERED_HEXTILE, OnCharacterEnteredHexTile);
 		Messenger.RemoveListener<Character, HexTile>(Signals.CHARACTER_EXITED_HEXTILE, OnCharacterExitedHexTile);
-		TryStopScreamCheck();
+        Messenger.RemoveListener<IPointOfInterest>(Signals.ON_SEIZE_POI, OnSeizePOI);
+        Messenger.RemoveListener<IPointOfInterest>(Signals.ON_UNSEIZE_POI, OnUnseizePOI);
+        TryStopScreamCheck();
 	}
 	private void OnCharacterCanPerformAgain(Character character) {
 		if (character == _owner) {
@@ -70,7 +74,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			if (character.interruptComponent.isInterrupted &&
 			           character.interruptComponent.currentInterrupt.interrupt == INTERRUPT.Narcoleptic_Attack) {
 				//Don't do anything
-			} else if (character.traitContainer.HasTrait("Resting")) {
+			} else if (character.currentActionNode != null && InteractionManager.Instance.IsActionTirednessRecovery(character.currentActionNode.action)) {
 				character.CancelAllJobsExceptForCurrent();
 			} else {
 				character.jobQueue.CancelAllJobs();
@@ -129,7 +133,17 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			// Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.RESTRAIN, _owner as IPointOfInterest);
 		}
 	}
-	private void OnSeizedCharacter(Character character) {
+    private void OnSeizePOI(IPointOfInterest poi) {
+        if(poi is Character) {
+            OnSeizedCharacter(poi as Character);
+        }
+    }
+    private void OnUnseizePOI(IPointOfInterest poi) {
+        if (poi is Character) {
+            OnUnseizeCharacter(poi as Character);
+        }
+    }
+    private void OnSeizedCharacter(Character character) {
 		if (character == _owner) {
 			TryStopScreamCheck();
 		}
@@ -275,7 +289,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 					       character.relationshipContainer.HasOpinionLabelWithCharacter(targetCharacter,
 						       OpinionComponent.Rival, OpinionComponent.Enemy) == false 
 					       && isResponsibleForTrait == false
-                           && !character.traitContainer.HasTrait("Serial Killer")
+                           && !character.traitContainer.HasTrait("Psychopath")
                            && character.traitContainer.HasTrait("Healer");	
 				}
 				
@@ -283,7 +297,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 				       character.relationshipContainer.HasOpinionLabelWithCharacter(targetCharacter,
 					       OpinionComponent.Rival, OpinionComponent.Enemy) == false 
 				       && isResponsibleForTrait == false
-                       && !character.traitContainer.HasTrait("Serial Killer");
+                       && !character.traitContainer.HasTrait("Psychopath");
 			}
 		}
 		return false;
@@ -297,7 +311,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		}
 		if ((_owner.canMove == false && 
 		     _owner.traitContainer.HasTrait("Exhausted", "Starving", "Sulking"))
-		    || (_owner.traitContainer.HasTrait("Restrained") && _owner.currentStructure.structureType != STRUCTURE_TYPE.PRISON)) {
+            || (_owner.traitContainer.HasTrait("Restrained") && _owner.currentStructure.structureType != STRUCTURE_TYPE.PRISON)) {
 			hasStartedScreamCheck = true;
 			Messenger.AddListener(Signals.HOUR_STARTED, HourlyScreamCheck);
 			Debug.Log($"<color=green>{GameManager.Instance.TodayLogString()}{_owner.name} has started scream check</color>");
@@ -325,14 +339,18 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		}
 	}
 	private void HourlyScreamCheck() {
-		if (_owner.canPerform == false) {
+		if (_owner.canPerform == true) {
 			return;
 		}
+        if (_owner.needsComponent.isExhausted) {
+            _owner.needsComponent.PlanExtremeTirednessRecoveryActionsForCannotPerform();
+            return;
+        }
 		string summary = $"{_owner.name} is checking for scream.";
 		int chance = 50;
 		if (_owner.canMove == false && 
-		    _owner.traitContainer.HasTrait("Exhausted", "Starving", "Sulking")) {
-			chance = 75;
+		    _owner.traitContainer.HasTrait("Starving", "Sulking")) { //"Exhausted", 
+            chance = 75;
 		}
 		summary += $"Chance is {chance.ToString()}.";
 		int roll = Random.Range(0, 100); 

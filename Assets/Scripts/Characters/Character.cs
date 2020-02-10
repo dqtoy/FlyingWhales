@@ -275,10 +275,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool isStillConsideredAlive => minion == null /*&& !(this is Summon)*/ && !faction.isPlayerFaction;
     public Character isBeingCarriedBy => IsInOwnParty() ? null : currentParty.owner;
     public bool isMissing => currentMissingTicks > CharacterManager.Instance.CHARACTER_MISSING_THRESHOLD;
-    public bool isBeingSeized => PlayerManager.Instance.player.seizeComponent.seizedPOI == this;
+    public bool isBeingSeized => PlayerManager.Instance.player != null && PlayerManager.Instance.player.seizeComponent.seizedPOI == this;
     public bool isLycanthrope => lycanData != null;
     //public JobQueueItem currentJob => jobQueue.jobsInQueue.Count > 0 ? jobQueue.jobsInQueue[0] : null; //The current job is always the top of the queue
     public JobTriggerComponent jobTriggerComponent => jobComponent;
+    public GameObject visualGO => marker.gameObject;
     #endregion
     
     public Character(string className, RACE race, GENDER gender) : this() {
@@ -482,8 +483,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
         Messenger.AddListener<Character>(Signals.SCREAM_FOR_HELP, HeardAScream);
         Messenger.AddListener<ActualGoapNode>(Signals.ACTION_PERFORMED, OnActionPerformed);
-        Messenger.AddListener<Character>(Signals.ON_SEIZE_CHARACTER, OnSeizeOtherCharacter);
-        Messenger.AddListener<TileObject>(Signals.ON_SEIZE_TILE_OBJECT, OnSeizeTileObject);
+        Messenger.AddListener<Character, IPointOfInterest, Interrupt>(Signals.INTERRUPT_STARTED, OnInterruptStarted);
+        Messenger.AddListener<IPointOfInterest>(Signals.ON_SEIZE_POI, OnSeizePOI);
+        //Messenger.AddListener<Character>(Signals.ON_SEIZE_CHARACTER, OnSeizeOtherCharacter);
+        //Messenger.AddListener<TileObject>(Signals.ON_SEIZE_TILE_OBJECT, OnSeizeTileObject);
         Messenger.AddListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
         Messenger.AddListener<Character>(Signals.CHARACTER_NO_LONGER_MISSING, OnCharacterNoLongerMissing);
         //Messenger.AddListener<ActualGoapNode>(Signals.ACTION_PERFORMED, OnCharacterPerformedAction);
@@ -505,8 +508,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
         Messenger.RemoveListener<Character>(Signals.SCREAM_FOR_HELP, HeardAScream);
         Messenger.RemoveListener<ActualGoapNode>(Signals.ACTION_PERFORMED, OnActionPerformed);
-        Messenger.RemoveListener<Character>(Signals.ON_SEIZE_CHARACTER, OnSeizeOtherCharacter);
-        Messenger.RemoveListener<TileObject>(Signals.ON_SEIZE_TILE_OBJECT, OnSeizeTileObject);
+        Messenger.RemoveListener<Character, IPointOfInterest, Interrupt>(Signals.INTERRUPT_STARTED, OnInterruptStarted);
+        Messenger.RemoveListener<IPointOfInterest>(Signals.ON_SEIZE_POI, OnSeizePOI);
+        //Messenger.RemoveListener<Character>(Signals.ON_SEIZE_CHARACTER, OnSeizeOtherCharacter);
+        //Messenger.RemoveListener<TileObject>(Signals.ON_SEIZE_TILE_OBJECT, OnSeizeTileObject);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_MISSING, OnCharacterMissing);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_NO_LONGER_MISSING, OnCharacterNoLongerMissing);
         //Messenger.RemoveListener<ActualGoapNode>(Signals.ACTION_PERFORMED, OnCharacterPerformedAction);
@@ -619,6 +624,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public void DisableMarker() {
         marker.gameObject.SetActive(false);
         gridTileLocation.RemoveCharacterHere(this);
+    }
+    public void EnableMarker() {
+        marker.gameObject.SetActive(true);
     }
     private void SetCharacterMarker(CharacterMarker marker) {
         this.marker = marker;
@@ -2078,7 +2086,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 needsComponent.AdjustHope(-5f);
             } else if (opinionLabel == OpinionComponent.Close_Friend) {
                 needsComponent.AdjustHope(-10f);
-                if (!traitContainer.HasTrait("Serial Killer")) {
+                if (!traitContainer.HasTrait("Psychopath")) {
                     traitContainer.AddTrait(this, "Griefstricken");
                 }
             }
@@ -2093,10 +2101,17 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             marker.OnOtherCharacterDied(characterThatDied);
         }
     }
-    private void OnSeizeOtherCharacter(Character otherCharacter) {
-        if (otherCharacter.id != this.id) {
+    private void OnSeizePOI(IPointOfInterest poi) {
+        if(poi is Character) {
+            OnSeizeCharacter(poi as Character);
+        } else if (poi is TileObject) {
+            OnSeizeTileObject(poi as TileObject);
+        }
+    }
+    private void OnSeizeCharacter(Character character) {
+        if (character.id != this.id) {
             //RemoveRelationship(characterThatDied); //do not remove relationships when dying
-            marker.OnSeizeOtherCharacter(otherCharacter);
+            marker.OnSeizeOtherCharacter(character);
         }
     }
     private void OnSeizeTileObject(TileObject tileObject) {
@@ -2123,7 +2138,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return currentRegion.innerMap.map[x, y];
     }
     public void UpdateCanCombatState() {
-        bool combatState = !_characterClass.isNormalNonCombatant && !traitContainer.HasTrait("Injured");
+        bool combatState = traitContainer.HasTrait("Combatant") && !traitContainer.HasTrait("Injured");
         if (canCombat != combatState) {
             canCombat = combatState;
             //if (canCombat && marker != null) {
@@ -2273,11 +2288,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (marker.inVisionCharacters.Contains(node.actor)) {
                 //marker.actionsToWitness.Add(node);
                 //This is done so that the character will react again
-                marker.AddUnprocessedPOI(node.actor);
+                marker.AddUnprocessedPOI(node.actor, true);
             } else if (marker.inVisionPOIs.Contains(node.poiTarget)) {
                 //marker.actionsToWitness.Add(node);
                 //This is done so that the character will react again
-                marker.AddUnprocessedPOI(node.poiTarget);
+                marker.AddUnprocessedPOI(node.poiTarget, true);
             }
         }
 
@@ -2294,7 +2309,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (marker != null) {
             if (marker.inVisionCharacters.Contains(actor)) {
                 //This is done so that the character will react again
-                marker.AddUnprocessedPOI(actor);
+                marker.AddUnprocessedPOI(actor, true);
             } 
             //else if (marker.inVisionPOIs.Contains(target)) {
             //    //This is done so that the character will react again
@@ -2366,7 +2381,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return $"{name} is in {currentRegion.name}";
     }
     //Returns the list of goap actions to be witnessed by this character
-    public void ThisCharacterSaw(IPointOfInterest target) {
+    public void ThisCharacterSaw(IPointOfInterest target, bool reactToActionOnly = false) {
         //if (isDead) {
         //    return;
         //}
@@ -2402,7 +2417,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             targetCharacter = target as Character;
             //React To Interrupt
             if (targetCharacter.interruptComponent.isInterrupted) {
-                reactionComponent.ReactTo(targetCharacter.interruptComponent.currentInterrupt, targetCharacter, targetCharacter.interruptComponent.currentTargetPOI, this);
+                reactionComponent.ReactTo(targetCharacter.interruptComponent.currentInterrupt, targetCharacter, targetCharacter.interruptComponent.currentTargetPOI);
             } else {
                 //targetCharacter.OnSeenBy(this); //trigger that the target character was seen by this character.
                 targetCharacterCurrentActionNode = targetCharacter.currentActionNode;
@@ -2431,13 +2446,15 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 }
             }
         }
-        //React To Character, Object, and Item
-        string debugLog = string.Empty;
-        reactionComponent.ReactTo(target, ref debugLog);
-        logComponent.PrintLogIfActive(debugLog);
-
-        if(targetCharacter != null) {
-            ThisCharacterWatchEvent(targetCharacter, null, null);
+        if (!reactToActionOnly) {
+            //React To Character, Object, and Item
+            string debugLog = string.Empty;
+            reactionComponent.ReactTo(target, ref debugLog);
+            logComponent.PrintLogIfActive(debugLog);
+ 
+            if(targetCharacter != null) {
+                ThisCharacterWatchEvent(targetCharacter, null, null);
+            }
         }
     }
     //public List<Log> GetWitnessOrInformedMemories(int dayFrom, int dayTo, Character involvedCharacter = null) {
@@ -3086,7 +3103,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         int previous = this._currentHP;
         this._currentHP += amount;
         this._currentHP = Mathf.Clamp(this._currentHP, 0, maxHP);
-        if (marker != null) {
+         if (marker != null) {
             if (marker.hpBarGO.activeSelf) {
                 marker.UpdateHP();
             } else {
@@ -5125,10 +5142,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         SetPOIState(POI_STATE.INACTIVE);
         SchedulingManager.Instance.ClearAllSchedulesBy(this);
         if (marker != null) {
-            DestroyMarker();
+            //DestroyMarker();
+            //marker.collisionTrigger.SetCollidersState(false);
+            marker.OnSeize();
+            DisableMarker();
+            Messenger.Broadcast(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, this as IPointOfInterest);
         }
         Messenger.AddListener(Signals.TICK_STARTED, OnTickStartedWhileSeized);
-        Messenger.Broadcast(Signals.ON_SEIZE_CHARACTER, this);
+        //Messenger.Broadcast(Signals.ON_SEIZE_CHARACTER, this);
     }
     public void OnUnseizePOI(LocationGridTile tileLocation) {
         Messenger.RemoveListener(Signals.TICK_STARTED, OnTickStartedWhileSeized);
@@ -5139,7 +5160,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         SetPOIState(POI_STATE.ACTIVE);
         if (marker == null) {
             CreateMarker();
+        } else {
+            marker.SetCharacter(this);
         }
+        //marker.SetAllColliderStates(true);
+        EnableMarker();
+        marker.OnUnseize();
         minion?.OnUnseize();
         if(tileLocation.structure.location.coreTile.region != currentRegion) {
             currentRegion.RemoveCharacterFromLocation(this);
@@ -5148,7 +5174,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             marker.InitialPlaceMarkerAt(tileLocation, false);
         }
         needsComponent.CheckExtremeNeeds();
-        Messenger.Broadcast(Signals.ON_UNSEIZE_CHARACTER, this);
+        //Messenger.Broadcast(Signals.ON_UNSEIZE_CHARACTER, this);
     }
     #endregion
 

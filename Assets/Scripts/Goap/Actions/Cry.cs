@@ -46,11 +46,11 @@ public class Cry : GoapAction {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, actor);
             }
         } else if (opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
-            if (!witness.traitContainer.HasTrait("Serial Killer")) {
+            if (!witness.traitContainer.HasTrait("Psychopath")) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor);
             }        
         } else if (opinionLabel == OpinionComponent.Acquaintance) {
-            if (!witness.traitContainer.HasTrait("Serial Killer") && UnityEngine.Random.Range(0, 2) == 0) {
+            if (!witness.traitContainer.HasTrait("Psychopath") && UnityEngine.Random.Range(0, 2) == 0) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor);
             }        
         } 

@@ -22,6 +22,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     [SerializeField] private SpriteRenderer hoveredImg;
     [SerializeField] private SpriteRenderer clickedImg;
     [SerializeField] private SpriteRenderer actionIcon;
+    [SerializeField] private BoxCollider2D buttonCollider;
 
     [Header("Actions")]
     [SerializeField] private StringSpriteDictionary actionIconDictionary;
@@ -51,6 +52,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     //vision colliders
     public List<IPointOfInterest> inVisionPOIs { get; private set; } //POI's in this characters vision collider
     public List<IPointOfInterest> unprocessedVisionPOIs { get; private set; } //POI's in this characters vision collider
+    public List<IPointOfInterest> unprocessedVisionPOIsForActionOnly { get; private set; } //POI's in this characters vision collider
     public List<Character> inVisionCharacters { get; private set; } //POI's in this characters vision collider
     //public List<IPointOfInterest> hostilesInRange { get; private set; } //POI's in this characters hostility collider
     //public List<IPointOfInterest> avoidInRange { get; private set; } //POI's in this characters hostility collider
@@ -104,6 +106,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         UpdateActionIcon();
 
         unprocessedVisionPOIs = new List<IPointOfInterest>();
+        unprocessedVisionPOIsForActionOnly = new List<IPointOfInterest>();
         inVisionPOIs = new List<IPointOfInterest>();
         inVisionCharacters = new List<Character>();
         //hostilesInRange = new List<IPointOfInterest>();
@@ -129,11 +132,13 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     private void OnEnable() {
         if (character != null) {
+            //if (character.isBeingSeized) { return; }
             UpdateAnimation();
         }
     }
     private void Update() {
         if (GameManager.Instance.gameHasStarted && !GameManager.Instance.isPaused) {
+            if (character.isBeingSeized) { return; }
             if (attackSpeedMeter < character.attackSpeed) {
                 attackSpeedMeter += ((Time.deltaTime * 1000f) * progressionSpeedMultiplier);
                 UpdateAttackSpeedMeter();
@@ -141,6 +146,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
     }
     void LateUpdate() {
+        //if (character.isBeingSeized) { return; }
         string currSpriteName = mainImg.sprite.name;
         if (character.visuals.markerAnimations.ContainsKey(currSpriteName)) {
             Sprite newSprite = character.visuals.markerAnimations[currSpriteName];
@@ -407,7 +413,16 @@ public class CharacterMarker : MapObjectVisual<Character> {
         //    return;
         //}
         if (!character.canWitness) {
-            actionIcon.gameObject.SetActive(false);
+            if (character.currentActionNode != null) {
+                if (character.currentActionNode.action.actionIconString != GoapActionStateDB.No_Icon) {
+                    actionIcon.sprite = actionIconDictionary[character.currentActionNode.action.actionIconString];
+                    actionIcon.gameObject.SetActive(true);
+                } else {
+                    actionIcon.gameObject.SetActive(false);
+                }
+            } else {
+                actionIcon.gameObject.SetActive(false);
+            }
             return;
         }
         if (character.isConversing && !character.isInCombat) {
@@ -1068,19 +1083,28 @@ public class CharacterMarker : MapObjectVisual<Character> {
             character.PerformGoapAction();
         }
     }
-    public void AddUnprocessedPOI(IPointOfInterest poi) {
+    public void AddUnprocessedPOI(IPointOfInterest poi, bool reactToActionOnly = false) {
         // if (character.minion != null || character is Summon) {
         //     //Minion or Summon cannot process pois
         //     return;
         // }
-        unprocessedVisionPOIs.Add(poi);
+        if (reactToActionOnly) {
+            if (!unprocessedVisionPOIsForActionOnly.Contains(poi)) {
+                unprocessedVisionPOIsForActionOnly.Add(poi);
+            }
+        }
+        if (!unprocessedVisionPOIs.Contains(poi)) {
+            unprocessedVisionPOIs.Add(poi);
+        }
         // character.logComponent.PrintLogIfActive(character.name + " added unprocessed poi " + poi.nameWithID);
     }
     public void RemoveUnprocessedPOI(IPointOfInterest poi) {
         unprocessedVisionPOIs.Remove(poi);
+        unprocessedVisionPOIsForActionOnly.Remove(poi);
     }
     public void ClearUnprocessedPOI() {
         unprocessedVisionPOIs.Clear();
+        unprocessedVisionPOIsForActionOnly.Clear();
     }
     public bool HasUnprocessedPOI(IPointOfInterest poi) {
         return unprocessedVisionPOIs.Contains(poi);
@@ -1091,77 +1115,18 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
     }
     private void ProcessAllUnprocessedVisionPOIs() {
-        if(unprocessedVisionPOIs.Count > 0) { //&& (character.stateComponent.currentState == null || character.stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT)
+        if(unprocessedVisionPOIs.Count > 0) {
             string log = character.name + " tick ended! Processing all unprocessed in visions...";
             if (!character.isDead/* && character.canWitness*/) { //character.traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting", "Zapped") == null
                 for (int i = 0; i < unprocessedVisionPOIs.Count; i++) {
                     IPointOfInterest poi = unprocessedVisionPOIs[i];
                     log += "\n-" + poi.nameWithID;
-                    character.ThisCharacterSaw(poi);
-                    ////Collect all actions to witness and avoid duplicates
-                    //List<ActualGoapNode> nodes = character.ThisCharacterSaw(poi);
-                    //if (nodes != null && nodes.Count > 0) {
-                    //    for (int j = 0; j < nodes.Count; j++) {
-                    //        ActualGoapNode node = nodes[j];
-                    //        if (node.actionStatus == ACTION_STATUS.PERFORMING && node.goapType != INTERACTION_TYPE.WATCH) { // ||(action.currentState != null && action.currentState.name == action.whileMovingState)
-                    //            //Cannot witness a watch action
-                    //            if (node.actor != character && node.poiTarget != character) {
-                    //                if (!actionsToWitness.Contains(node)) {
-                    //                    actionsToWitness.Add(node);
-                    //                }
-                    //            }
-                    //        }
-                    //    }
-                    //}
-
-                    //log += "\n - Reacting to character traits...";
-                    ////Character reacts to traits
-                    //if(character.stateComponent.currentState == null || !character.stateComponent.currentState.OnEnterVisionWith(poi)) {
-                    //    if (!character.CreateJobsOnEnterVisionWith(poi)) {
-                    //        if (!character.isConversing && poi is Character) {
-                    //            Character target = poi as Character;
-                    //            if (!target.isConversing && character.nonActionEventsComponent.CanInteract(target)) {
-                    //                if (UnityEngine.Random.Range(0, 100) < 3) {
-                    //                    character.interruptComponent.TriggerInterrupt(INTERRUPT.Chat, poi);
-                    //                    //character.nonActionEventsComponent.NormalChatCharacter(poi as Character);
-                    //                } else {
-                    //                    Character targetCharacter = poi as Character;
-                    //                    if (character.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR)
-                    //                        || character.relationshipContainer.GetFirstRelatableWithRelationship(RELATIONSHIP_TYPE.LOVER) == null
-                    //                        || character.traitContainer.GetNormalTrait<Trait>("Unfaithful") != null) {
-                    //                        int compatibility = RelationshipManager.Instance.GetCompatibilityBetween(character, targetCharacter);
-                    //                        int value = 2;
-                    //                        if (compatibility != -1) {
-                    //                            value = 1 * compatibility;
-                    //                        }
-                    //                        int chance = UnityEngine.Random.Range(0, 100);
-                    //                        string flirtLog = character.name + " will try to flirt with " + targetCharacter.name;
-                    //                        flirtLog += "\n-Chance: " + value;
-                    //                        flirtLog += "\n-Roll: " + chance;
-                    //                        character.PrintLogIfActive(flirtLog);
-                    //                        if (chance < value) {
-                    //                            character.interruptComponent.TriggerInterrupt(INTERRUPT.Flirt, targetCharacter);
-                    //                        }
-                    //                    }
-                    //                }
-                    //            }
- 
-                    //        }
-                    //    }
-                    //}
+                    bool reactToActionOnly = false;
+                    if (unprocessedVisionPOIsForActionOnly.Count > 0) {
+                        reactToActionOnly = unprocessedVisionPOIsForActionOnly.Contains(poi);
+                    }
+                    character.ThisCharacterSaw(poi, reactToActionOnly);
                 }
-
-                ////Witness all actions
-                //log += "\n - Witnessing collected actions:";
-                //if (actionsToWitness.Count > 0) {
-                //    for (int i = 0; i < actionsToWitness.Count; i++) {
-                //        ActualGoapNode node = actionsToWitness[i];
-                //        log += "\n   - Witnessed: " + node.goapName + " of " + node.actor.name + " with target " + node.poiTarget.name;
-                //        character.ThisCharacterWitnessedEvent(node);
-                //    }
-                //} else {
-                //    log += "\n   - No collected actions";
-                //}
             } else {
                 log += "\n - Character is either dead or cannot witness, not processing...";
             }
@@ -1169,7 +1134,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
             character.logComponent.PrintLogIfActive(log);
         }
         character.SetHasSeenFire(false);
-        // alreadyWitnessedActions.Clear();
         character.combatComponent.CheckCombatPerTickEnded();
     }
     #endregion
@@ -1435,6 +1399,28 @@ public class CharacterMarker : MapObjectVisual<Character> {
         fleePath.spread = 4000;
         seeker.StartPath(fleePath);
     }
+    public void OnStartFleeToHome() {
+        if (character.combatComponent.avoidInRange.Count == 0) {
+            return;
+        }
+        pathfindingAI.ClearAllCurrentPathData();
+        SetHasFleePath(true);
+        LocationGridTile chosenTile = character.homeStructure.GetLocationStructure().GetRandomTile();
+        if(character is Summon) {
+            Summon summon = character as Summon;
+            chosenTile = summon.GetRandomLocationGridTileWithPath();
+        }
+        if(chosenTile == null) {
+            chosenTile = character.currentStructure.GetRandomTile();
+        }
+        //pathfindingAI.canSearch = false; //set to false, because if this is true and a destination has been set in the ai path, the ai will still try and go to that point instead of the computed flee path
+        GoTo(chosenTile, OnFinishedTraversingFleePath);
+        //pathfindingAI.canSearch = false;
+        //FleeMultiplePath fleePath = FleeMultiplePath.Construct(this.transform.position, character.combatComponent.avoidInRange.Select(x => x.gridTileLocation.worldLocation).ToArray(), 20000);
+        //fleePath.aimStrength = 1;
+        //fleePath.spread = 4000;
+        //seeker.StartPath(fleePath);
+    }
     public void OnFleePathComputed(Path path) {
         //|| character.stateComponent.currentState == null || character.stateComponent.currentState.characterState != CHARACTER_STATE.COMBAT 
         if (character == null || character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
@@ -1447,12 +1433,12 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     public void OnFinishedTraversingFleePath() {
         //Debug.Log(name + " has finished traversing flee path.");
-        SetHasFleePath(false);
-        if (character.stateComponent.currentState is CombatState) {
+        //SetHasFleePath(false);
+        if (character.isInCombat) {
             (character.stateComponent.currentState as CombatState).FinishedTravellingFleePath();
         }
-        UpdateAnimation();
-        UpdateActionIcon();
+        //UpdateAnimation();
+        //UpdateActionIcon();
     }
     public void SetHasFleePath(bool state) {
         hasFleePath = state;
@@ -1677,6 +1663,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
             colliders[i].enabled = state;
         }
     }
+    public void SetAllColliderStates(bool state) {
+        SetCollidersState(state);
+        collisionTrigger.SetCollidersState(state);
+    }
     #endregion
 
     #region Map Object Visual
@@ -1697,5 +1687,17 @@ public class CharacterMarker : MapObjectVisual<Character> {
         // }
     }
     #endregion
-    
+
+    #region Seize
+    public void OnSeize() {
+        Character character = this.character;
+        Reset();
+        this.character = character;
+        buttonCollider.enabled = false;
+    }
+    public void OnUnseize() {
+        buttonCollider.enabled = true;
+    }
+    #endregion
+
 }

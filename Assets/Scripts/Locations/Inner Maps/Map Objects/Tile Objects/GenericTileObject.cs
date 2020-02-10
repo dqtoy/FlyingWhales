@@ -17,9 +17,9 @@ public class GenericTileObject : TileObject {
     }
 
     #region Override
-    protected override void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom) {
-        Messenger.Broadcast(Signals.TILE_OBJECT_REMOVED, this as TileObject, removedBy, removedFrom);
-        if (hasCreatedSlots) {
+    protected override void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom, bool removeTraits = true, bool destroyTileSlots = true) {
+        Messenger.Broadcast(Signals.TILE_OBJECT_REMOVED, this as TileObject, removedBy, removedFrom, destroyTileSlots);
+        if (hasCreatedSlots && destroyTileSlots) {
             DestroyTileSlots();
         }
     }

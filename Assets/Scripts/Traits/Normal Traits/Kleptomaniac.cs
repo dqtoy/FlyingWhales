@@ -87,7 +87,7 @@ namespace Traits {
                 bool triggerBrokenhearted = false;
                 Heartbroken heartbroken = character.traitContainer.GetNormalTrait<Heartbroken>("Heartbroken");
                 if (heartbroken != null) {
-                    triggerBrokenhearted = UnityEngine.Random.Range(0, 100) < 20;
+                    triggerBrokenhearted = UnityEngine.Random.Range(0, 100) < (25 * character.traitContainer.stacks[heartbroken.name]);
                 }
                 if (!triggerBrokenhearted) {
                     if (character.jobQueue.HasJob(JOB_TYPE.HAPPINESS_RECOVERY)) {
