@@ -14,8 +14,8 @@ public class EditableValuesManager : MonoBehaviour {
 	[SerializeField] private int _lowMoodHighThreshold;
 	[SerializeField] private int _criticalMoodMinThreshold;
 	[SerializeField] private int _criticalMoodHighThreshold;
-	[Tooltip("Number days a character needs to be in a critical mood to have a 100% chance to trigger a major mental break.")]
-	[SerializeField] private int _majorMentalBreakDayThreshold;
+	[Tooltip("Number hours a character needs to be in a critical mood to have a 100% chance to trigger a major mental break.")]
+	[SerializeField] private int _majorMentalBreakHourThreshold;
 	[Tooltip("Number days a character needs to be in a low mood to have a 100% chance to trigger a minor mental break.")]
 	[SerializeField] private int _minorMentalBreakDayThreshold;
 
@@ -48,7 +48,7 @@ public class EditableValuesManager : MonoBehaviour {
 	public int lowMoodMinThreshold => _lowMoodMinThreshold;
 	public int lowMoodHighThreshold => _lowMoodHighThreshold;
 	public int criticalMoodHighThreshold => _criticalMoodHighThreshold;
-	public int majorMentalBreakDayThreshold => _majorMentalBreakDayThreshold;
+	public int majorMentalBreakHourThreshold => _majorMentalBreakHourThreshold;
 	public int minorMentalBreakDayThreshold => _minorMentalBreakDayThreshold;
 	public float baseFullnessDecreaseRate => _baseFullnessDecreaseRate;
 	public float baseTirednessDecreaseRate => _baseTirednessDecreaseRate;

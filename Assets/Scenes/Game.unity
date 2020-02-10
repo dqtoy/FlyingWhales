@@ -79438,8 +79438,8 @@ MonoBehaviour:
   _lowMoodHighThreshold: 30
   _criticalMoodMinThreshold: 0
   _criticalMoodHighThreshold: 10
-  _majorMentalBreakDayThreshold: 1
-  _minorMentalBreakDayThreshold: 3
+  _majorMentalBreakHourThreshold: 2
+  _minorMentalBreakDayThreshold: 1
   _baseFullnessDecreaseRate: 0.42
   _baseTirednessDecreaseRate: 0.34
   _baseHappinessDecreaseRate: 0.21
