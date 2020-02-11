@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="C:\Users\Mykel Abania\.Rider2019.3\system\extResources" t="IncludeRecursive" />
-    <e p="C:\Users\Mykel Abania\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_FlyingWhales.1985073317.00" t="ExcludeRecursive" />
-    <e p="C:\Users\Mykel Abania\Repositories\FlyingWhales" t="IncludeRecursive">
+    <e p="C:\Users\12myk\.Rider2019.3\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\12myk\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_FlyingWhales.-362142238.00" t="ExcludeRecursive" />
+    <e p="D:\Repositories\FlyingWhales" t="IncludeRecursive">
       <e p="Assembly-CSharp-Editor.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp-firstpass.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
@@ -1202,7 +1202,6 @@
               <e p="ChangeClass.cs" t="Include" />
               <e p="ChatCharacter.cs" t="Include" />
               <e p="CraftFurniture.cs" t="Include" />
-              <e p="CraftItem.cs" t="Include" />
               <e p="Cry.cs" t="Include" />
               <e p="CureCharacter.cs" t="Include" />
               <e p="CurseCharacter.cs" t="Include" />
@@ -1212,7 +1211,6 @@
               <e p="DispelMagic.cs" t="Include" />
               <e p="DrinkBlood.cs" t="Include" />
               <e p="Drop.cs" t="Include" />
-              <e p="DropItem.cs" t="Include" />
               <e p="DropResource.cs" t="Include" />
               <e p="Feed.cs" t="Include" />
               <e p="FeelingBrokenhearted.cs" t="Include" />
@@ -1308,7 +1306,6 @@
             <e p="Awareness" t="Include">
               <e p="CharacterAwareness.cs" t="Include" />
               <e p="IAwareness.cs" t="Include" />
-              <e p="ItemAwareness.cs" t="Include" />
               <e p="StructureAwareness.cs" t="Include" />
               <e p="TileObjectAwareness.cs" t="Include" />
             </e>
@@ -1430,7 +1427,6 @@
                 <e p="CharacterCollisionTrigger.cs" t="Include" />
                 <e p="IBaseCollider.cs" t="Include" />
                 <e p="IVisibleCollider.cs" t="Include" />
-                <e p="SpecialTokenCollisionTrigger.cs" t="Include" />
                 <e p="TileObjectCollisionTrigger.cs" t="Include" />
                 <e p="WallObjectCollisionTrigger.cs" t="Include" />
               </e>
@@ -1449,7 +1445,6 @@
               <e p="Map Objects" t="Include">
                 <e p="BaseMapObjectVisual.cs" t="Include" />
                 <e p="BedObjectGameObject.cs" t="Include" />
-                <e p="ItemGameObject.cs" t="Include" />
                 <e p="MapObject.cs" t="Include" />
                 <e p="MapObjectVisual.cs" t="Include" />
                 <e p="MapVisualFactory.cs" t="Include" />
@@ -1478,6 +1473,7 @@
                   <e p="GoddessStatue.cs" t="Include" />
                   <e p="Grave.cs" t="Include" />
                   <e p="Guitar.cs" t="Include" />
+                  <e p="HealingPotion.cs" t="Include" />
                   <e p="Kindling.cs" t="Include" />
                   <e p="MagicCircle.cs" t="Include" />
                   <e p="MetalPile.cs" t="Include" />
@@ -1517,6 +1513,7 @@
                   <e p="TileObjectDB.cs" t="Include" />
                   <e p="TileObjectSlotItem.cs" t="Include" />
                   <e p="Tombstone.cs" t="Include" />
+                  <e p="Tool.cs" t="Include" />
                   <e p="Torch.cs" t="Include" />
                   <e p="TornadoTileObject.cs" t="Include" />
                   <e p="TrainingDummy.cs" t="Include" />
@@ -1604,7 +1601,6 @@
             <e p="StartupManager.cs" t="Include" />
             <e p="TaskManager.cs" t="Include" />
             <e p="TimerHubUI.cs" t="Include" />
-            <e p="TokenManager.cs" t="Include" />
             <e p="TraitManager.cs" t="Include" />
             <e p="UIManager.cs" t="Include" />
             <e p="WorldConfigManager.cs" t="Include" />
@@ -1697,13 +1693,6 @@
             <e p="Player.cs" t="Include" />
             <e p="PlayerJobData.cs" t="Include" />
             <e p="SeizeComponent.cs" t="Include" />
-            <e p="Special Objects" t="Include">
-              <e p="DemonStone.cs" t="Include" />
-              <e p="SkillScroll.cs" t="Include" />
-              <e p="SpecialObject.cs" t="Include" />
-              <e p="SpellScroll.cs" t="Include" />
-            </e>
-            <e p="SpecialToken.cs" t="Include" />
             <e p="Summons" t="Include">
               <e p="Golem.cs" t="Include" />
               <e p="Incubus.cs" t="Include" />
@@ -1746,7 +1735,6 @@
             <e p="SaveDataFaction.cs" t="Include" />
             <e p="SaveDataHextile.cs" t="Include" />
             <e p="SaveDataInterventionAbility.cs" t="Include" />
-            <e p="SaveDataItem.cs" t="Include" />
             <e p="SaveDataLandmark.cs" t="Include" />
             <e p="SaveDataMinion.cs" t="Include" />
             <e p="SaveDataPlayer.cs" t="Include" />
@@ -1791,28 +1779,6 @@
           <e p="Tile Maps" t="Include">
             <e p="StructureFloorTile.cs" t="Include" />
           </e>
-          <e p="Tokens" t="Include">
-            <e p="Special Tokens" t="Include">
-              <e p="AcidFlask.cs" t="Include" />
-              <e p="BlightedPotion.cs" t="Include" />
-              <e p="BookOfTheDead.cs" t="Include" />
-              <e p="BookOfWizardry.cs" t="Include" />
-              <e p="BrandOfTheBeastmaster.cs" t="Include" />
-              <e p="CharmSpell.cs" t="Include" />
-              <e p="DispelScroll.cs" t="Include" />
-              <e p="EnchantedAmulet.cs" t="Include" />
-              <e p="FearSpell.cs" t="Include" />
-              <e p="GoldenNectar.cs" t="Include" />
-              <e p="HealingPotion.cs" t="Include" />
-              <e p="MarkOfTheWitch.cs" t="Include" />
-              <e p="MutagenicGoo.cs" t="Include" />
-              <e p="Panacea.cs" t="Include" />
-              <e p="ScrollOfFrenzy.cs" t="Include" />
-              <e p="ScrollOfPower.cs" t="Include" />
-              <e p="SecretScroll.cs" t="Include" />
-              <e p="WaterBucket.cs" t="Include" />
-            </e>
-          </e>
           <e p="Traits" t="Include">
             <e p="CrimeTraits" t="Include">
               <e p="Aberration.cs" t="Include" />
@@ -1830,7 +1796,6 @@
               <e p="Angry.cs" t="Include" />
               <e p="BerserkBuff.cs" t="Include" />
               <e p="Berserked.cs" t="Include" />
-              <e p="Betrayed.cs" t="Include" />
               <e p="Bored.cs" t="Include" />
               <e p="Burning.cs" t="Include" />
               <e p="Burnt.cs" t="Include" />
@@ -1995,8 +1960,6 @@
             <e p="IntelItem.cs" t="Include" />
             <e p="IntelNotificationItem.cs" t="Include" />
             <e p="InvestigationMinionDraggableItem.cs" t="Include" />
-            <e p="ItemContainer.cs" t="Include" />
-            <e p="ItemInfoUI.cs" t="Include" />
             <e p="KillCountCharacterItem.cs" t="Include" />
             <e p="LandmarkCharacterItem.cs" t="Include" />
             <e p="LandmarkNameplate.cs" t="Include" />
@@ -2063,7 +2026,6 @@
             <e p="SkirmishUI.cs" t="Include" />
             <e p="SlotItem.cs" t="Include" />
             <e p="SlotItemDraggable.cs" t="Include" />
-            <e p="SpecialTokenItem.cs" t="Include" />
             <e p="StringPickerItem.cs" t="Include" />
             <e p="SummonSlotPickerItem.cs" t="Include" />
             <e p="TheEyeUI.cs" t="Include" />
@@ -2110,7 +2072,6 @@
             <e p="SerializableDictionary.cs" t="Include" />
             <e p="Signals.cs" t="Include" />
             <e p="SortingLayerExposer.cs" t="Include" />
-            <e p="SpecialTokenDraggable.cs" t="Include" />
             <e p="TestingUtilities.cs" t="Include" />
             <e p="TextTyper.cs" t="Include" />
             <e p="ToggleTextColorizer.cs" t="Include" />

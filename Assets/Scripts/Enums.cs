@@ -826,11 +826,11 @@ public enum FACTION_TYPE {
 public enum INTERACTION_TYPE {
     NONE,
     RETURN_HOME,
-    DROP_ITEM,
+    // DROP_ITEM,
     ABDUCT_CHARACTER,
     PICK_UP,
     RELEASE_CHARACTER,
-    CRAFT_ITEM,
+    // CRAFT_ITEM,
     MINE_METAL,
     ASK_FOR_HELP_SAVE_CHARACTER,
     ASSAULT,
@@ -862,7 +862,7 @@ public enum INTERACTION_TYPE {
     DISPEL_MAGIC,
     JUDGE_CHARACTER,
     FEED,
-    DROP_ITEM_WAREHOUSE,
+    // DROP_ITEM_WAREHOUSE,
     ASK_FOR_HELP_REMOVE_POISON_TABLE,
     SIT,
     STAND,
@@ -1070,28 +1070,28 @@ public enum JOB {
     LEADER,
     WORKER,
 }
-public enum SPECIAL_TOKEN {
-    BLIGHTED_POTION,
-    BOOK_OF_THE_DEAD,
-    CHARM_SPELL,
-    FEAR_SPELL,
-    MARK_OF_THE_WITCH,
-    BRAND_OF_THE_BEASTMASTER,
-    BOOK_OF_WIZARDRY,
-    SECRET_SCROLL,
-    MUTAGENIC_GOO,
-    DISPEL_SCROLL,
-    PANACEA,
-    JUNK,
-    HEALING_POTION,
-    ENCHANTED_AMULET,
-    GOLDEN_NECTAR,
-    SCROLL_OF_POWER,
-    ACID_FLASK,
-    SCROLL_OF_FRENZY,
-    TOOL,
-    WATER_BUCKET,
-}
+//public enum SPECIAL_TOKEN {
+//    BLIGHTED_POTION,
+//    BOOK_OF_THE_DEAD,
+//    CHARM_SPELL,
+//    FEAR_SPELL,
+//    MARK_OF_THE_WITCH,
+//    BRAND_OF_THE_BEASTMASTER,
+//    BOOK_OF_WIZARDRY,
+//    SECRET_SCROLL,
+//    MUTAGENIC_GOO,
+//    DISPEL_SCROLL,
+//    PANACEA,
+//    JUNK,
+//    HEALING_POTION,
+//    ENCHANTED_AMULET,
+//    GOLDEN_NECTAR,
+//    SCROLL_OF_POWER,
+//    ACID_FLASK,
+//    SCROLL_OF_FRENZY,
+//    TOOL,
+//    WATER_BUCKET,
+//}
 public enum COMBAT_POSITION {
     FRONTLINE,
     BACKLINE,
@@ -1173,7 +1173,7 @@ public enum RELATIONSHIP_TYPE {
 }
 
 public enum POINT_OF_INTEREST_TYPE {
-    ITEM,
+    //ITEM,
     CHARACTER,
     TILE_OBJECT,
 }
@@ -1252,6 +1252,9 @@ public enum TILE_OBJECT_TYPE {
     FLOWER,
     KINDLING,
     BIG_TREE_OBJECT,
+    HEALING_POTION,
+    TOOL,
+    WATER_BUCKET,
 }
 public enum POI_STATE {
     ACTIVE,
@@ -1263,7 +1266,7 @@ public enum GridNeighbourDirection { North, South, West, East, North_West,  Nort
 public enum TIME_IN_WORDS { AFTER_MIDNIGHT, AFTER_MIDNIGHT_1, AFTER_MIDNIGHT_2, MORNING, MORNING_1, MORNING_2, AFTERNOON, AFTERNOON_1, AFTERNOON_2, EARLY_NIGHT, LATE_NIGHT, NIGHT_1, NIGHT_2, LUNCH_TIME, NONE }
 //public enum CRIME_SEVERITY { NONE, INFRACTION, MISDEMEANOUR, SERIOUS_CRIME, }
 public enum Food { BERRY, MUSHROOM, RABBIT, RAT }
-public enum GOAP_EFFECT_CONDITION { NONE, REMOVE_TRAIT, HAS_TRAIT, HAS_WOOD, HAS_STONE, HAS_METAL, HAS_ITEM, FULLNESS_RECOVERY, TIREDNESS_RECOVERY, HAPPINESS_RECOVERY, COMFORT_RECOVERY, CANNOT_MOVE, IN_PARTY, REMOVE_FROM_PARTY, DESTROY, DEATH, PATROL, EXPLORE, REMOVE_ITEM, HAS_TRAIT_EFFECT, HAS_PLAN, HAS_FOOD
+public enum GOAP_EFFECT_CONDITION { NONE, REMOVE_TRAIT, HAS_TRAIT, FULLNESS_RECOVERY, TIREDNESS_RECOVERY, HAPPINESS_RECOVERY, COMFORT_RECOVERY, CANNOT_MOVE, HAS_POI, REMOVE_FROM_PARTY, DESTROY, DEATH, PATROL, EXPLORE, REMOVE_ITEM, HAS_TRAIT_EFFECT, HAS_PLAN
         , TARGET_REMOVE_RELATIONSHIP, TARGET_STOP_ACTION_AND_JOB, RESTRAIN_CARRY, REMOVE_FROM_PARTY_NO_CONSENT, IN_VISION, REDUCE_HP, INVITED, MAKE_NOISE, STARTS_COMBAT, CHANGE_CLASS
         , PRODUCE_FOOD, PRODUCE_WOOD, PRODUCE_STONE, PRODUCE_METAL, DEPOSIT_RESOURCE, REMOVE_REGION_CORRUPTION, CLEAR_REGION_FACTION_OWNER, REGION_OWNED_BY_ACTOR_FACTION,
         FACTION_QUEST_DURATION_INCREASE,
@@ -1271,7 +1274,7 @@ public enum GOAP_EFFECT_CONDITION { NONE, REMOVE_TRAIT, HAS_TRAIT, HAS_WOOD, HAS
         DESTROY_REGION_LANDMARK,
         CHARACTER_TO_MINION,
         SEARCH,
-        TAKE_FOOD, TAKE_WOOD, TAKE_STONE, TAKE_METAL, //The process of "take" in this manner is different from simply carrying the poi. In technicality, since the actor will only get an amount from the poi target, the actor will not carry the whole poi instead he/she will create a new poi with the amount that he/she needs while simultaneously reducing that amount from the poi target
+        TAKE_POI, //The process of "take" in this manner is different from simply carrying the poi. In technicality, since the actor will only get an amount from the poi target, the actor will not carry the whole poi instead he/she will create a new poi with the amount that he/she needs while simultaneously reducing that amount from the poi target
 }
 public enum GOAP_EFFECT_TARGET { ACTOR, TARGET, }
 public enum GOAP_PLAN_STATE { IN_PROGRESS, SUCCESS, FAILED, CANCELLED, }
@@ -1370,7 +1373,7 @@ public enum ARTIFACT_TYPE { None, Necronomicon, Chaos_Orb_Artifact, Hermes_Statu
 public enum ABILITY_TAG { NONE, MAGIC, SUPPORT, DEBUFF, CRIME, PHYSICAL, }
 public enum LANDMARK_YIELD_TYPE { SUMMON, ARTIFACT, ABILITY, SKIRMISH, STORY_EVENT, }
 public enum SERIAL_VICTIM_TYPE { NONE, GENDER, RACE, CLASS, TRAIT }
-public enum SPECIAL_OBJECT_TYPE { DEMON_STONE, SPELL_SCROLL, SKILL_SCROLL }
+// public enum SPECIAL_OBJECT_TYPE { DEMON_STONE, SPELL_SCROLL, SKILL_SCROLL }
 public enum WORLD_EVENT { NONE, HARVEST, SLAY_MINION, MINE_SUPPLY, STUDY, PRAY_AT_TEMPLE, DESTROY_DEMONIC_LANDMARK, HOLY_INCANTATION, CORRUPT_CULTIST, DEMONIC_INCANTATION, SEARCHING, CLAIM_REGION, CLEANSE_REGION, INVADE_REGION, ATTACK_DEMONIC_REGION, ATTACK_NON_DEMONIC_REGION }
 public enum DEADLY_SIN_ACTION { SPELL_SOURCE, INSTIGATOR, BUILDER, SABOTEUR, INVADER, FIGHTER, RESEARCHER, }
 public enum WORLD_EVENT_EFFECT { GET_FOOD, GET_SUPPLY, GAIN_POSITIVE_TRAIT, REMOVE_NEGATIVE_TRAIT, EXPLORE, COMBAT, DESTROY_LANDMARK, DIVINE_INTERVENTION_SPEED_UP, CORRUPT_CHARACTER, DIVINE_INTERVENTION_SLOW_DOWN, SEARCHING, CONQUER_REGION, REMOVE_CORRUPTION, INVADE_REGION, ATTACK_DEMONIC_REGION, ATTACK_NON_DEMONIC_REGION }
@@ -1407,14 +1410,14 @@ public static class Extensions {
         System.Type t = typeof(CRIME);
         MemberInfo mi = t.GetMember(sub.ToString()).FirstOrDefault(m => m.GetCustomAttribute(typeof(SubcategoryOf)) != null);
         if (mi == null) throw new System.ArgumentException("Subcategory " + sub + " has no category.");
-        SubcategoryOf subAttr = (SubcategoryOf)mi.GetCustomAttribute(typeof(SubcategoryOf));
+        SubcategoryOf subAttr = (SubcategoryOf) mi.GetCustomAttribute(typeof(SubcategoryOf));
         return subAttr.Category == cat;
     }
     public static CRIME_TYPE GetCategory(this CRIME sub) {
         System.Type t = typeof(CRIME);
         MemberInfo mi = t.GetMember(sub.ToString()).FirstOrDefault(m => m.GetCustomAttribute(typeof(SubcategoryOf)) != null);
         if (mi == null) throw new System.ArgumentException("Subcategory " + sub + " has no category.");
-        SubcategoryOf subAttr = (SubcategoryOf)mi.GetCustomAttribute(typeof(SubcategoryOf));
+        SubcategoryOf subAttr = (SubcategoryOf) mi.GetCustomAttribute(typeof(SubcategoryOf));
         return subAttr.Category;
     }
     public static bool IsLessThan(this CRIME_TYPE sub, CRIME_TYPE other) {
@@ -1448,8 +1451,8 @@ public static class Extensions {
             case STRUCTURE_TYPE.THE_EYE:
             case STRUCTURE_TYPE.THE_NEEDLES:
             case STRUCTURE_TYPE.OCEAN:
-            // case STRUCTURE_TYPE.CAVE:
-            // case STRUCTURE_TYPE.MONSTER_LAIR:
+                // case STRUCTURE_TYPE.CAVE:
+                // case STRUCTURE_TYPE.MONSTER_LAIR:
                 return true;
             default:
                 return false;
@@ -1646,31 +1649,31 @@ public static class Extensions {
     }
     #endregion
 
-    #region Tokens
-    public static bool CanBeCraftedBy(this SPECIAL_TOKEN type, Character character) {
-        if (TokenManager.Instance.itemData.ContainsKey(type)) {
-            ItemData data = TokenManager.Instance.itemData[type];
-            if (data.canBeCraftedBy == null) {
-                return true;
-            }
-            for (int i = 0; i < data.canBeCraftedBy.Length; i++) {
-                if (character.traitContainer.HasTrait(data.canBeCraftedBy[i])) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        return true;
-    }
-    public static bool CreatesObjectWhenDropped(this SPECIAL_TOKEN type) {
-        switch (type) {
-            case SPECIAL_TOKEN.WATER_BUCKET:
-                return false;
-            default:
-                return true;
-        }
-    }
-    #endregion
+    //#region Tokens
+    //public static bool CanBeCraftedBy(this SPECIAL_TOKEN type, Character character) {
+    //    if (TokenManager.Instance.itemData.ContainsKey(type)) {
+    //        ItemData data = TokenManager.Instance.itemData[type];
+    //        if (data.canBeCraftedBy == null) {
+    //            return true;
+    //        }
+    //        for (int i = 0; i < data.canBeCraftedBy.Length; i++) {
+    //            if (character.traitContainer.HasTrait(data.canBeCraftedBy[i])) {
+    //                return true;
+    //            }
+    //        }
+    //        return false;
+    //    }
+    //    return true;
+    //}
+    //public static bool CreatesObjectWhenDropped(this SPECIAL_TOKEN type) {
+    //    switch (type) {
+    //        case SPECIAL_TOKEN.WATER_BUCKET:
+    //            return false;
+    //        default:
+    //            return true;
+    //    }
+    //}
+    //#endregion
 
     #region Furniture
     public static TILE_OBJECT_TYPE ConvertFurnitureToTileObject(this FURNITURE_TYPE type) {
@@ -1685,10 +1688,10 @@ public static class Extensions {
             return false;
         }
         TileObjectData data = TileObjectDB.GetTileObjectData(type);
-        if (string.IsNullOrEmpty(data.neededTraitType)) {
+        if (data.neededTraitTypes == null || data.neededTraitTypes.Length <= 0) {
             return true;
         }
-        return character.traitContainer.HasTrait(data.neededTraitType);
+        return character.traitContainer.HasTrait(data.neededTraitTypes);
     }
     #endregion
 

@@ -19,9 +19,10 @@ public class ReactionComponent {
             ReactTo(targetTileObject as Character, ref debugLog);
         } else if (targetTileObject.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
             ReactTo(targetTileObject as TileObject, ref debugLog);
-        } else if (targetTileObject.poiType == POINT_OF_INTEREST_TYPE.ITEM) {
-            ReactTo(targetTileObject as SpecialToken, ref debugLog);
-        }
+        } 
+        // else if (targetTileObject.poiType == POINT_OF_INTEREST_TYPE.ITEM) {
+        //     ReactTo(targetTileObject as SpecialToken, ref debugLog);
+        // }
         if (owner.minion != null || owner is Summon) {
             //Minions or Summons cannot react to its own traits
             return;
@@ -113,8 +114,8 @@ public class ReactionComponent {
             throw new Exception(GameManager.Instance.TodayLogString() + owner.name + " witnessed event " + node.action.goapName + " by " + node.actor.name + " with state " + node.currentStateName + " but it does not have a description log!");
         }
         IPointOfInterest target = node.poiTarget;
-        if(node.poiTarget is SpecialToken && node.action.goapType == INTERACTION_TYPE.STEAL) {
-            SpecialToken item = node.poiTarget as SpecialToken;
+        if(node.poiTarget is TileObject && node.action.goapType == INTERACTION_TYPE.STEAL) {
+            TileObject item = node.poiTarget as TileObject;
             if(item.carriedByCharacter != null) {
                 target = item.carriedByCharacter;
             }
@@ -389,34 +390,34 @@ public class ReactionComponent {
             }
         }
     }
-    private void ReactTo(SpecialToken targetItem, ref string debugLog) {
-        if (owner.minion != null || owner is Summon) {
-            //Minions or Summons cannot react to items
-            return;
-        }
-        debugLog += owner.name + " is reacting to " + targetItem.nameWithID;
-        if (!owner.hasSeenFire) {
-            if (targetItem.traitContainer.HasTrait("Burning")
-                && targetItem.gridTileLocation != null
-                && targetItem.gridTileLocation.IsPartOfSettlement(owner.homeSettlement)
-                && !owner.traitContainer.HasTrait("Pyrophobic")) {
-                debugLog += "\n-Target is Burning and Character is not Pyrophobic";
-                owner.SetHasSeenFire(true);
-                owner.homeSettlement.settlementJobTriggerComponent.TriggerDouseFire();
-                for (int i = 0; i < owner.homeSettlement.availableJobs.Count; i++) {
-                    JobQueueItem job = owner.homeSettlement.availableJobs[i];
-                    if (job.jobType == JOB_TYPE.DOUSE_FIRE) {
-                        if (job.assignedCharacter == null && owner.jobQueue.CanJobBeAddedToQueue(job)) {
-                            owner.jobQueue.AddJobInQueue(job);
-                        } else {
-                            owner.combatComponent.Flight(targetItem);
-                        }
-                        return;
-                    }
-                }
-            }
-        }
-    }
+    // private void ReactTo(SpecialToken targetItem, ref string debugLog) {
+    //     if (owner.minion != null || owner is Summon) {
+    //         //Minions or Summons cannot react to items
+    //         return;
+    //     }
+    //     debugLog += owner.name + " is reacting to " + targetItem.nameWithID;
+    //     if (!owner.hasSeenFire) {
+    //         if (targetItem.traitContainer.HasTrait("Burning")
+    //             && targetItem.gridTileLocation != null
+    //             && targetItem.gridTileLocation.IsPartOfSettlement(owner.homeSettlement)
+    //             && !owner.traitContainer.HasTrait("Pyrophobic")) {
+    //             debugLog += "\n-Target is Burning and Character is not Pyrophobic";
+    //             owner.SetHasSeenFire(true);
+    //             owner.homeSettlement.settlementJobTriggerComponent.TriggerDouseFire();
+    //             for (int i = 0; i < owner.homeSettlement.availableJobs.Count; i++) {
+    //                 JobQueueItem job = owner.homeSettlement.availableJobs[i];
+    //                 if (job.jobType == JOB_TYPE.DOUSE_FIRE) {
+    //                     if (job.assignedCharacter == null && owner.jobQueue.CanJobBeAddedToQueue(job)) {
+    //                         owner.jobQueue.AddJobInQueue(job);
+    //                     } else {
+    //                         owner.combatComponent.Flight(targetItem);
+    //                     }
+    //                     return;
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
     #endregion
 
     #region General

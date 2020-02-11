@@ -123,7 +123,7 @@ public class Party {
         }
         _isDead = true;
         //For now, when a party dies and there still members besides the owner of this party, kick them out of the party first before applying death
-        RemoveCarriedPOI();
+        owner.UncarryPOI();
         //Settlement deathLocation = this.specificLocation;
         //LocationStructure deathStructure = owner.currentStructure;
         //this.specificLocation?.RemoveCharacterFromLocation(this);
@@ -165,7 +165,7 @@ public class Party {
     private bool AddTileObject(TileObject tileObject) {
         if (carriedPOI == null) {
             carriedPOI = tileObject;
-            tileObject.SetIsBeingCarriedBy(owner);
+            // tileObject.SetIsBeingCarriedBy(owner);
             if (tileObject.gridTileLocation != null) {
                 tileObject.gridTileLocation.structure.RemovePOIWithoutDestroying(tileObject);
             }
@@ -216,94 +216,76 @@ public class Party {
         return false;
     }
     public void RemovePOI(IPointOfInterest poi, bool addToLocation = true, LocationGridTile dropLocation = null) {
-        if (poi is Character) {
-            RemoveCharacter(poi as Character, addToLocation, dropLocation);
-        } else if (poi is TileObject) {
-            RemoveTileObject(poi as TileObject, addToLocation, dropLocation);
+        if (IsPOICarried(poi)) {
+            if (poi is Character) {
+                RemoveCharacter(poi as Character, addToLocation, dropLocation);
+            } else if (poi is TileObject) {
+                RemoveTileObject(poi as TileObject, addToLocation, dropLocation);
+            }
         }
     }
     private void RemoveTileObject(TileObject tileObject, bool addToLocation, LocationGridTile dropLocation) {
-        if (IsPOICarried(tileObject)) {
-            carriedPOI = null;
-            tileObject.SetIsBeingCarriedBy(null);
-            if (addToLocation) {
-                //tileObject.areaMapVisual.collisionTrigger.SetMainColliderState(true);
-                if (dropLocation == null) {
-                    if (_owner.gridTileLocation.isOccupied) {
-                        LocationGridTile chosenTile = _owner.gridTileLocation.GetRandomUnoccupiedNeighbor();
-                        if (chosenTile != null) {
-                            _owner.gridTileLocation.structure.AddPOI(tileObject, chosenTile);
-                        } else {
-                            Debug.LogWarning(GameManager.Instance.TodayLogString() + tileObject.name + " is being dropped by " + _owner.name + " but there is no unoccupied neighbor tile including the tile he/she is standing on. Default behavior is to drop character on the tile he/she is standing on regardless if it is unoccupied or not.");
-                            _owner.gridTileLocation.structure.AddPOI(tileObject);
-                        }
+        carriedPOI = null;
+        // tileObject.SetIsBeingCarriedBy(null);
+        if (addToLocation) {
+            //tileObject.areaMapVisual.collisionTrigger.SetMainColliderState(true);
+            if (dropLocation == null) {
+                if (_owner.gridTileLocation.isOccupied) {
+                    LocationGridTile chosenTile = _owner.gridTileLocation.GetRandomUnoccupiedNeighbor();
+                    if (chosenTile != null) {
+                        _owner.gridTileLocation.structure.AddPOI(tileObject, chosenTile);
                     } else {
-                        _owner.gridTileLocation.structure.AddPOI(tileObject, _owner.gridTileLocation);
+                        Debug.LogWarning(GameManager.Instance.TodayLogString() + tileObject.name + " is being dropped by " + _owner.name + " but there is no unoccupied neighbor tile including the tile he/she is standing on. Default behavior is to drop character on the tile he/she is standing on regardless if it is unoccupied or not.");
+                        _owner.gridTileLocation.structure.AddPOI(tileObject);
                     }
                 } else {
-                    _owner.gridTileLocation.structure.AddPOI(tileObject, dropLocation);
+                    _owner.gridTileLocation.structure.AddPOI(tileObject, _owner.gridTileLocation);
                 }
             } else {
-                if (tileObject.gridTileLocation != null) {
-                    tileObject.gridTileLocation.structure.RemovePOI(tileObject);
-                } else if (tileObject.mapVisual != null) {
-                    tileObject.OnDestroyPOI();
-                }
+                _owner.gridTileLocation.structure.AddPOI(tileObject, dropLocation);
             }
-            if(tileObject.mapVisual != null) {
-                tileObject.mapVisual.transform.eulerAngles = Vector3.zero;
+        } else {
+            if (tileObject.gridTileLocation != null) {
+                tileObject.gridTileLocation.structure.RemovePOI(tileObject);
+            } else if (tileObject.mapVisual != null) {
+                tileObject.OnDestroyPOI();
             }
-            //character.ownParty.icon.transform.position = this.specificLocation.coreTile.transform.position;
-            //Messenger.Broadcast(Signals.CHARACTER_LEFT_PARTY, character, this);
         }
+        if(tileObject.mapVisual != null) {
+            tileObject.mapVisual.transform.eulerAngles = Vector3.zero;
+        }
+        //character.ownParty.icon.transform.position = this.specificLocation.coreTile.transform.position;
+        //Messenger.Broadcast(Signals.CHARACTER_LEFT_PARTY, character, this);
     }
     private void RemoveCharacter(Character character, bool addToLocation, LocationGridTile dropLocation) {
         if(_owner == character) {
             return;
         }
-        if (IsPOICarried(character)) {
-            //LocationGridTile gridTile = _owner.gridTileLocation.GetNearestUnoccupiedTileFromThis();
-            //_owner.specificLocation.AddCharacterToLocation(character);
-            carriedPOI = null;
-            character.OnRemovedFromParty();
-            if (dropLocation == null) {
-                if (_owner.gridTileLocation.isOccupied) {
-                    LocationGridTile chosenTile = _owner.gridTileLocation.GetRandomUnoccupiedNeighbor();
-                    if (chosenTile != null) {
-                        character.marker.PlaceMarkerAt(chosenTile, addToLocation);
-                    } else {
-                        Debug.LogWarning(GameManager.Instance.TodayLogString() + character.name + " is being dropped by " + _owner.name + " but there is no unoccupied neighbor tile including the tile he/she is standing on. Default behavior is to drop character on the tile he/she is standing on regardless if it is unoccupied or not.");
-                        character.marker.PlaceMarkerAt(_owner.gridTileLocation, addToLocation);
-                    }
+        //LocationGridTile gridTile = _owner.gridTileLocation.GetNearestUnoccupiedTileFromThis();
+        //_owner.specificLocation.AddCharacterToLocation(character);
+        carriedPOI = null;
+        character.OnRemovedFromParty();
+        if (dropLocation == null) {
+            if (_owner.gridTileLocation.isOccupied) {
+                LocationGridTile chosenTile = _owner.gridTileLocation.GetRandomUnoccupiedNeighbor();
+                if (chosenTile != null) {
+                    character.marker.PlaceMarkerAt(chosenTile, addToLocation);
                 } else {
+                    Debug.LogWarning(GameManager.Instance.TodayLogString() + character.name + " is being dropped by " + _owner.name + " but there is no unoccupied neighbor tile including the tile he/she is standing on. Default behavior is to drop character on the tile he/she is standing on regardless if it is unoccupied or not.");
                     character.marker.PlaceMarkerAt(_owner.gridTileLocation, addToLocation);
                 }
             } else {
-                character.marker.PlaceMarkerAt(dropLocation, addToLocation);
+                character.marker.PlaceMarkerAt(_owner.gridTileLocation, addToLocation);
             }
-
-            character.marker.transform.eulerAngles = Vector3.zero;
-            character.marker.nameLbl.gameObject.SetActive(true);
-
-            character.ownParty.icon.transform.position = owner.currentRegion.coreTile.transform.position;
-            Messenger.Broadcast(Signals.CHARACTER_LEFT_PARTY, character, this);
+        } else {
+            character.marker.PlaceMarkerAt(dropLocation, addToLocation);
         }
-    }
-    /// <summary>
-    /// Remove every character from this party, except the owner.
-    /// </summary>
-    public void RemoveCarriedPOI(bool addToLocation = true, LocationGridTile dropLocation = null) {
-        if(carriedPOI != null) {
-            RemovePOI(carriedPOI, addToLocation, dropLocation);
-        }
-        //if (_characters.Count > 1) {
-        //    for (int i = 0; i < _characters.Count; i++) {
-        //        if (_characters[i].id != _owner.id) {
-        //            RemoveCharacter(_characters[i]);
-        //            i--;
-        //        }
-        //    }
-        //}
+
+        character.marker.transform.eulerAngles = Vector3.zero;
+        character.marker.nameLbl.gameObject.SetActive(true);
+
+        character.ownParty.icon.transform.position = owner.currentRegion.coreTile.transform.position;
+        Messenger.Broadcast(Signals.CHARACTER_LEFT_PARTY, character, this);
     }
     public bool IsPOICarried(IPointOfInterest poi) {
         return carriedPOI == poi;

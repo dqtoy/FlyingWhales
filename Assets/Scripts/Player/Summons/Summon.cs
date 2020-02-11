@@ -103,7 +103,7 @@ public class Summon : Character, IWorldObject {
             //    currentActionNode.StopActionNode(false);
             //}
             if (currentSettlement != null && isHoldingItem) {
-                DropAllTokens(currentStructure, deathTile, true);
+                DropAllItems(deathTile);
             }
             //if (ownParty.specificLocation != null && isHoldingItem) {
             //    DropAllTokens(ownParty.specificLocation, currentStructure, deathTile, true);
@@ -112,8 +112,9 @@ public class Summon : Character, IWorldObject {
             //clear traits that need to be removed
             traitsNeededToBeRemoved.Clear();
 
-            if (!IsInOwnParty()) {
-                currentParty.RemovePOI(this);
+            Character carrier = isBeingCarriedBy;
+            if (carrier != null) {
+                carrier.UncarryPOI(this);
             }
             ownParty.PartyDeath();
             currentRegion?.RemoveCharacterFromLocation(this);

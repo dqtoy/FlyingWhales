@@ -14,8 +14,9 @@ public class LocationStructure {
     public List<Character> charactersHere { get; private set; }
     public ILocation location { get; private set; }
     public Settlement settlementLocation { get; private set; }
-    public List<SpecialToken> itemsInStructure { get; private set; }
+    // public List<SpecialToken> itemsInStructure { get; private set; }
     public HashSet<IPointOfInterest> pointsOfInterest { get; private set; }
+    public Dictionary<TILE_OBJECT_TYPE, List<TileObject>> groupedTileObjects { get; private set; }
     public POI_STATE state { get; private set; }
     public LocationStructureObject structureObj {get; private set;}
     public BuildSpotTileObject occupiedBuildSpot { get; private set; }
@@ -35,8 +36,9 @@ public class LocationStructure {
         name = $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString())} {id.ToString()}";
         this.location = location;
         charactersHere = new List<Character>();
-        itemsInStructure = new List<SpecialToken>();
+        // itemsInStructure = new List<SpecialToken>();
         pointsOfInterest = new HashSet<IPointOfInterest>();
+        groupedTileObjects = new Dictionary<TILE_OBJECT_TYPE, List<TileObject>>();
         tiles = new List<LocationGridTile>();
         unoccupiedTiles = new List<LocationGridTile>();
         SubscribeListeners();
@@ -47,8 +49,9 @@ public class LocationStructure {
         structureType = data.structureType;
         name = data.name;
         charactersHere = new List<Character>();
-        itemsInStructure = new List<SpecialToken>();
+        // itemsInStructure = new List<SpecialToken>();
         pointsOfInterest = new HashSet<IPointOfInterest>();
+        groupedTileObjects = new Dictionary<TILE_OBJECT_TYPE, List<TileObject>>();
         tiles = new List<LocationGridTile>();
         SubscribeListeners();
     }
@@ -97,46 +100,42 @@ public class LocationStructure {
     }
     #endregion
 
-    #region Items/Special Tokens
-    public void AddItem(SpecialToken token, LocationGridTile gridLocation = null) {
-        if (!itemsInStructure.Contains(token)) {
-            itemsInStructure.Add(token);
-            token.SetStructureLocation(this);
-            if(AddPOI(token, gridLocation)) {
-                if (token.gridTileLocation.buildSpotOwner.hexTileOwner != null 
-                    && token.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile != null) {
-                    token.SetOwner(token.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile.owner);
-                    token.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile?.OnItemAddedToLocation(token, this);
-                }
-            }
-        }
-    }
-    public void RemoveItem(SpecialToken token, Character removedBy = null) {
-        if (itemsInStructure.Remove(token)) {
-            token.SetStructureLocation(null);
-            LocationGridTile removedFrom = token.gridTileLocation;
-            if (RemovePOI(token, removedBy)) {
-                if (removedFrom.buildSpotOwner.isPartOfParentRegionMap) {
-                    removedFrom.buildSpotOwner.hexTileOwner.settlementOnTile?.OnItemRemovedFromLocation(token, this);    
-                }
-            }
-        }
-    }
-    public void OwnItemsInLocation(Faction owner) {
-        for (int i = 0; i < itemsInStructure.Count; i++) {
-            itemsInStructure[i].SetOwner(owner);
-        }
-    }
-    public int GetItemsOfTypeCount(SPECIAL_TOKEN type) {
-        int count = 0;
-        for (int i = 0; i < itemsInStructure.Count; i++) {
-            if (itemsInStructure[i].specialTokenType == type) {
-                count++;
-            }
-        }
-        return count;
-    }
-    #endregion
+    // #region Items/Special Tokens
+    // public void AddItem(SpecialToken token, LocationGridTile gridLocation = null) {
+    //     if (!itemsInStructure.Contains(token)) {
+    //         itemsInStructure.Add(token);
+    //         token.SetStructureLocation(this);
+    //         if(AddPOI(token, gridLocation)) {
+    //             if (token.gridTileLocation.buildSpotOwner.hexTileOwner != null 
+    //                 && token.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile != null) {
+    //                 token.SetOwner(token.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile.owner);
+    //                 token.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile?.OnItemAddedToLocation(token, this);
+    //             }
+    //         }
+    //     }
+    // }
+    // public void RemoveItem(SpecialToken token, Character removedBy = null) {
+    //     if (itemsInStructure.Remove(token)) {
+    //         token.SetStructureLocation(null);
+    //         LocationGridTile removedFrom = token.gridTileLocation;
+    //         if (RemovePOI(token, removedBy)) {
+    //             if (removedFrom.buildSpotOwner.isPartOfParentRegionMap) {
+    //                 removedFrom.buildSpotOwner.hexTileOwner.settlementOnTile?.OnItemRemovedFromLocation(token, this);    
+    //             }
+    //         }
+    //     }
+    // }
+    //
+    // public int GetItemsOfTypeCount(SPECIAL_TOKEN type) {
+    //     int count = 0;
+    //     for (int i = 0; i < itemsInStructure.Count; i++) {
+    //         if (itemsInStructure[i].specialTokenType == type) {
+    //             count++;
+    //         }
+    //     }
+    //     return count;
+    // }
+    // #endregion
 
     #region Points Of Interest
     public virtual bool AddPOI(IPointOfInterest poi, LocationGridTile tileLocation = null, bool placeObject = true) {
@@ -150,12 +149,34 @@ public class LocationStructure {
                     }
                 }
             }
+            if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+                TileObject tileObject = poi as TileObject;
+                if (groupedTileObjects.ContainsKey(tileObject.tileObjectType)) {
+                    groupedTileObjects[tileObject.tileObjectType].Add(tileObject);
+                } else {
+                    groupedTileObjects.Add(tileObject.tileObjectType, new List<TileObject>() { tileObject });
+                }
+                
+                if (tileObject.gridTileLocation != null && tileObject.gridTileLocation.buildSpotOwner.hexTileOwner != null 
+                    && tileObject.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile != null) {
+                    // tileObject.SetFactionOwner(tileObject.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile.owner);
+                    tileObject.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile?.OnItemAddedToLocation(tileObject, this);
+                }
+            }
             return true;
         }
         return false;
     }
     public virtual bool RemovePOI(IPointOfInterest poi, Character removedBy = null) {
         if (pointsOfInterest.Remove(poi)) {
+            if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+                TileObject tileObject = poi as TileObject;
+                groupedTileObjects[tileObject.tileObjectType].Remove(tileObject);
+                
+                if (poi.gridTileLocation.buildSpotOwner.isPartOfParentRegionMap) {
+                    poi.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile?.OnItemRemovedFromLocation(tileObject, this);    
+                }
+            }
             if (poi.gridTileLocation != null) {
                 //Debug.Log("Removed " + poi.ToString() + " from " + poi.gridTileLocation.ToString() + " at " + this.ToString());
                 if(poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
@@ -171,6 +192,10 @@ public class LocationStructure {
     }
     public virtual bool RemovePOIWithoutDestroying(IPointOfInterest poi) {
         if (pointsOfInterest.Remove(poi)) {
+            if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+                TileObject tileObject = poi as TileObject;
+                groupedTileObjects[tileObject.tileObjectType].Remove(tileObject);
+            }
             if (poi.gridTileLocation != null) {
                 if (poi.poiType != POINT_OF_INTEREST_TYPE.CHARACTER) {
                     location.innerMap.RemoveObjectWithoutDestroying(poi.gridTileLocation);
@@ -253,6 +278,13 @@ public class LocationStructure {
         }
         return null;
     }
+    public int GetTileObjectsOfTypeCount(TILE_OBJECT_TYPE type) {
+        int count = 0;
+        if (groupedTileObjects.ContainsKey(type)) {
+            count = groupedTileObjects[type].Count;
+        }
+        return count;
+    }
     public ResourcePile GetResourcePileObjectWithLowestCount(TILE_OBJECT_TYPE type, bool excludeMaximum = true) {
         ResourcePile chosenPile = null;
         int lowestCount = 0;
@@ -325,6 +357,13 @@ public class LocationStructure {
                 return unoccupiedTiles.Where(x => !x.IsAdjacentTo(typeof(MagicCircle)) && x.tileType != LocationGridTile.Tile_Type.Structure_Entrance).ToList();
         }
     }
+    // public void OwnTileObjectsInLocation(Faction owner) {
+    //     for (int i = 0; i < pointsOfInterest.Count; i++) {
+    //         if (pointsOfInterest[i].poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+    //             (pointsOfInterest[i] as TileObject).SetFactionOwner(owner);
+    //         }
+    //     }
+    // }
     #endregion   
     
     #region Tiles
@@ -406,9 +445,10 @@ public class LocationStructure {
             IPointOfInterest poi = pointsOfInterest.ElementAt(i);
             if (poi is TileObject) {
                 (poi as TileObject).DoCleanup();
-            } else if (poi is SpecialToken) {
-                (poi as SpecialToken).DoCleanup();
-            }
+            } 
+            // else if (poi is SpecialToken) {
+            //     (poi as SpecialToken).DoCleanup();
+            // }
         }
     }
     public void SetSettlementLocation(Settlement settlement) {

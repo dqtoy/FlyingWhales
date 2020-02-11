@@ -16,7 +16,7 @@ public class Carry : GoapAction {
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
         AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.CANNOT_MOVE, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), TargetCannotMove);
-        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.TARGET });
+        AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_POI, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.TARGET });
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
@@ -58,11 +58,11 @@ public class Carry : GoapAction {
    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
-            if(poiTarget is TileObject) {
-                TileObject tileObj = poiTarget as TileObject;
-                return tileObj.isBeingCarriedBy == null && tileObj.gridTileLocation != null;
-            }
-            return actor != poiTarget;
+            // if(poiTarget is TileObject) {
+            //     TileObject tileObj = poiTarget as TileObject;
+            //     return tileObj.isBeingCarriedBy == null && tileObj.gridTileLocation != null;
+            // }
+            return actor != poiTarget && poiTarget.poiType == POINT_OF_INTEREST_TYPE.CHARACTER;
         }
         return false;
     }
@@ -71,7 +71,8 @@ public class Carry : GoapAction {
     #region State Effects
     public void AfterCarrySuccess(ActualGoapNode goapNode) {
         //Character target = goapNode.poiTarget as Character;
-        goapNode.actor.ownParty.AddPOI(goapNode.poiTarget);
+        // goapNode.actor.ownParty.AddPOI(goapNode.poiTarget);
+        goapNode.actor.CarryPOI(goapNode.poiTarget);
     }
     #endregion
 

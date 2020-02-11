@@ -44,7 +44,7 @@ namespace Inner_Maps {
 
         [Header("Tilemap Assets")] 
         public InnerMapAssetManager assetManager;
-        [SerializeField] private ItemAsseteDictionary itemTiles;
+        // [SerializeField] private ItemAsseteDictionary itemTiles;
         [SerializeField] private TileObjectAssetDictionary tileObjectTiles;
         [SerializeField] private WallResourceAssetDictionary wallResourceAssets; //wall assets categorized by resource.
         [SerializeField] private List<TileBase> allTileAssets;
@@ -366,17 +366,19 @@ namespace Inner_Maps {
                 summary = $"{summary}\n\tObject State: {poi.state.ToString()}";
                 summary = $"{summary}\n\tIs Available: {poi.IsAvailable().ToString()}";
 
-                if (poi is TreeObject) {
+                if (poi is TileObject) {
+                    summary += "\n\tCharacter Owner: " + (poi as TileObject).characterOwner?.name ?? "None";
+                    summary += "\n\tFaction Owner: " + (poi as TileObject).factionOwner?.name ?? "None";
+                    
+                    if (poi is TreeObject) {
                     summary = $"{summary}\n\tYield: {(poi as TreeObject).yield.ToString()}";
-                } else if (poi is Ore) {
+                    } else if (poi is Ore) {
                     summary = $"{summary}\n\tYield: {(poi as Ore).yield.ToString()}";
-                } else if (poi is ResourcePile) {
+                    } else if (poi is ResourcePile) {
                     summary = $"{summary}\n\tResource in Pile: {(poi as ResourcePile).resourceInPile.ToString()}";
-                }  else if (poi is Table) {
+                    }  else if (poi is Table) {
                     summary = $"{summary}\n\tFood in Table: {(poi as Table).food.ToString()}";
-                } else if (poi is SpecialToken) {
-                    summary = summary + ($"\n\tCharacter Owner: {(poi as SpecialToken).characterOwner?.name}" ?? "None");
-                    summary = summary + ($"\n\tFaction Owner: {(poi as SpecialToken).factionOwner?.name}" ?? "None");
+                    }
                 }
                 summary = $"{summary}\n\tAdvertised Actions: ";
                 if (poi.advertisedActions.Count > 0) {
@@ -722,6 +724,16 @@ namespace Inner_Maps {
             TILE_OBJECT_TYPE tileObjectType = (TILE_OBJECT_TYPE) System.Enum.Parse(typeof(TILE_OBJECT_TYPE), tileObjectName);
             return tileObjectType;
         }
+        public void LoadInitialSettlementItems(Settlement settlement) {
+            ////Reference: https://trello.com/c/Kuqt3ZSP/2610-put-2-healing-potions-in-the-warehouse-at-start-of-the-game
+            LocationStructure mainStorage = settlement.mainStorage;
+            for (int i = 0; i < 4; i++) {
+                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.HEALING_POTION));
+            }
+            for (int i = 0; i < 2; i++) {
+                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.TOOL));
+            }
+        }
         #endregion
 
         #region Lighting
@@ -762,9 +774,9 @@ namespace Inner_Maps {
         #endregion
 
         #region Assets
-        public Sprite GetItemAsset(SPECIAL_TOKEN itemType) {
-            return itemTiles[itemType];
-        }
+        // public Sprite GetItemAsset(SPECIAL_TOKEN itemType) {
+        //     return itemTiles[itemType];
+        // }
         public Sprite GetTileObjectAsset(TILE_OBJECT_TYPE objectType, POI_STATE state, BIOMES biome, bool corrupted = false) {
             if (corrupted) {
                 //TODO: this is only temporary!

@@ -55,7 +55,7 @@ public class MakeLove : GoapAction {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
         Character targetCharacter = poiTarget as Character;
-        actor.ownParty.RemovePOI(targetCharacter);
+        actor.UncarryPOI(targetCharacter);
         actor.needsComponent.AdjustDoNotGetBored(-1);
         targetCharacter.needsComponent.AdjustDoNotGetBored(-1);
 
@@ -72,7 +72,7 @@ public class MakeLove : GoapAction {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
         Character targetCharacter = poiTarget as Character;
-        actor.ownParty.RemovePOI(targetCharacter);
+        actor.UncarryPOI(targetCharacter);
         actor.needsComponent.AdjustDoNotGetBored(-1);
         targetCharacter.needsComponent.AdjustDoNotGetBored(-1);
 
@@ -101,7 +101,7 @@ public class MakeLove : GoapAction {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
         Character targetCharacter = poiTarget as Character;
-        actor.ownParty.RemovePOI(targetCharacter);
+        actor.UncarryPOI(targetCharacter);
 
         //targetCharacter.traitContainer.RemoveTrait(targetCharacter, "Wooed");
         if (targetCharacter.currentActionNode.action == this) {

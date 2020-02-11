@@ -21961,18 +21961,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 24ddcb401962f704abcf4b44ec0d4a25, type: 3}
---- !u!114 &423395060 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 114107010677338936, guid: 24ddcb401962f704abcf4b44ec0d4a25,
-    type: 3}
-  m_PrefabInstance: {fileID: 423395059}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5d6a3b7a353270949a250ee89fa4add4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!224 &423395061 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 224062650095376438, guid: 24ddcb401962f704abcf4b44ec0d4a25,
@@ -89705,29 +89693,6 @@ MonoBehaviour:
     - data:
       - {fileID: 1052932554014340, guid: b1a8517736a18004f9d35716c6e7dba1, type: 3}
   assetManager: {fileID: 1536722386}
-  itemTiles:
-    m_keys: 000000000100000002000000030000000400000005000000060000000700000008000000090000000a0000000b0000000c0000000d0000000e0000000f00000010000000110000001200000013000000
-    m_values:
-    - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
-    - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
-    - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
-    - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
-    - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
-    - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
-    - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
-    - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
-    - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
-    - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
-    - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
-    - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
-    - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
-    - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
-    - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
-    - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
-    - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
-    - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
-    - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
-    - {fileID: 21300000, guid: b6829437c52ca3f4c8b8bfcf5f89dcef, type: 3}
   tileObjectTiles:
     m_keys: 0000000002000000030000000400000005000000060000000700000008000000090000000b0000000c0000000e0000000f000000100000001100000012000000130000001400000015000000160000001700000018000000190000001a0000001b0000001c0000004b000000460000004900000048000000
     m_values:
@@ -90542,7 +90507,6 @@ MonoBehaviour:
   characterInfoUI: {fileID: 572338040}
   regionInfoUI: {fileID: 867287454}
   tileObjectInfoUI: {fileID: 388044833}
-  itemInfoUI: {fileID: 423395060}
   combatLogUI: {fileID: 0}
   questInfoUI: {fileID: 40351474}
   hexTileInfoUI: {fileID: 342707640}

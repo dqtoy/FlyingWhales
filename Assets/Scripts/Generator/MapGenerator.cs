@@ -126,7 +126,7 @@ public class MapGenerator : MonoBehaviour {
         data.LoadFactions();
         LandmarkManager.Instance.LoadAdditionalAreaData();
         data.LoadCharacters();
-        data.LoadSpecialObjects();
+        // data.LoadSpecialObjects();
         data.LoadTileObjects();
         yield return null;
         data.LoadCharacterRelationships();
@@ -142,7 +142,7 @@ public class MapGenerator : MonoBehaviour {
         LevelLoaderManager.Instance.UpdateLoadingInfo("Starting Game...");
         yield return null;
 
-        TokenManager.Instance.Initialize();
+        // TokenManager.Instance.Initialize();
         //CharacterManager.Instance.GenerateRelationships();
 
         yield return null;

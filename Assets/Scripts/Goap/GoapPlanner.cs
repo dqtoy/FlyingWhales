@@ -164,7 +164,7 @@ public class GoapPlanner {
                     }
                     owner.logComponent.PrintLogIfActive(log);
                 }
-                owner.ownParty.RemoveCarriedPOI();
+                owner.UncarryPOI();
             }
             goapThread.job.CancelJob(false);
         }

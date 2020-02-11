@@ -14,7 +14,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public string name { get; protected set; }
     public int id { get; private set; }
     public TILE_OBJECT_TYPE tileObjectType { get; private set; }
-    public Faction factionOwner { get { return null; } }
+    public Character characterOwner { get; protected set; }
     public List<INTERACTION_TYPE> advertisedActions { get; protected set; }
     public Region currentRegion { get { return gridTileLocation.structure.location.coreTile.region; } }
     public List<string> actionHistory { get; private set; } //list of actions that was done to this object
@@ -23,6 +23,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public bool isSummonedByPlayer { get; protected set; }
     public List<JobQueueItem> allJobsTargetingThis { get; protected set; }
     public List<Character> owners { get; private set; }
+    public Character carriedByCharacter { get; private set; }
     public virtual Character[] users {
         get {
             return slots?.Where(x => x != null && x.user != null).Select(x => x.user).ToArray() ?? null;
@@ -46,7 +47,6 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public virtual LocationGridTile gridTileLocation { get; protected set; }
     public POI_STATE state { get; private set; }
     public LocationGridTile previousTile { get; protected set; }
-    public Character isBeingCarriedBy { get; protected set; }
     public Dictionary<RESOURCE, int> storedResources { get; protected set; }
     protected Dictionary<RESOURCE, int> maxResourceValues { get; set; }
 
@@ -68,6 +68,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public Transform worldObject { get { return mapVisual.transform; } }
     public string nameWithID => ToString();
     public GameObject visualGO => mapVisual.gameObject;
+    public Character isBeingCarriedBy => carriedByCharacter;
+    public Faction factionOwner => characterOwner != null ? characterOwner.faction : null;
     #endregion
 
     protected void Initialize(TILE_OBJECT_TYPE tileObjectType) {
@@ -108,12 +110,14 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         AddAdvertisedAction(INTERACTION_TYPE.POISON);
         AddAdvertisedAction(INTERACTION_TYPE.REMOVE_POISON);
         AddAdvertisedAction(INTERACTION_TYPE.REPAIR);
+        AddAdvertisedAction(INTERACTION_TYPE.SCRAP);
     }
     protected void RemoveCommonAdvertisements() {
         RemoveAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         RemoveAdvertisedAction(INTERACTION_TYPE.POISON);
         RemoveAdvertisedAction(INTERACTION_TYPE.REMOVE_POISON);
         RemoveAdvertisedAction(INTERACTION_TYPE.REPAIR);
+        RemoveAdvertisedAction(INTERACTION_TYPE.SCRAP);
     }
 
     #region Listeners
@@ -631,9 +635,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             owners.AddRange((gridTileLocation.structure as Dwelling).residents);
         }
     }
-    public void SetIsBeingCarriedBy(Character carrier) {
-        isBeingCarriedBy = carrier;
-    }
+    // public void SetIsBeingCarriedBy(Character carrier) {
+    //     isBeingCarriedBy = carrier;
+    // }
     public virtual bool CanBeDamaged() {
         return mapObjectState != MAP_OBJECT_STATE.UNBUILT;
     }
@@ -652,13 +656,56 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
     }
     public bool IsOwnedBy(Character character) {
-        return gridTileLocation != null && character.homeStructure == gridTileLocation.structure;
+        return owners != null && owners.Contains(character);
+        //return gridTileLocation != null && character.homeStructure == gridTileLocation.structure;
+        //return this.characterOwner == character;
     }
     public List<Character> GetOwners() {
-        if(gridTileLocation != null && gridTileLocation.structure is Dwelling) {
-            return (gridTileLocation.structure as Dwelling).residents;
+        //if(gridTileLocation != null && gridTileLocation.structure is Dwelling) {
+        //    return (gridTileLocation.structure as Dwelling).residents;
+        //}
+        //return null;
+        return owners;
+    }
+    // public void SetFactionOwner(Faction factionOwner) {
+    //     this.factionOwner = factionOwner;
+    // }
+    public void SetCharacterOwner(Character characterOwner) {
+        this.characterOwner = characterOwner;
+    }
+    public void SetInventoryOwner(Character character) {
+        Debug.Log($"Set Carried by character of item {this.ToString()} to {(carriedByCharacter?.name ?? "null")}");
+        this.carriedByCharacter = character;
+    }
+    public bool CanBePickedUpNormallyUponVisionBy(Character character) {
+        if (tileObjectType != TILE_OBJECT_TYPE.HEALING_POTION && tileObjectType != TILE_OBJECT_TYPE.TOOL) {
+            return false;
         }
-        return null;
+        if (UtilityScripts.GameUtilities.IsRaceBeast(character.race)) {
+            return false;
+        }
+        if (character.race == RACE.SKELETON) {
+            return false;
+        }
+        if (character.characterClass.className.Equals("Zombie")) {
+            return false;
+        }
+        if (characterOwner == null) {
+            //Patrollers should not pick up items from their main storage structure
+            if (gridTileLocation != null && character.homeSettlement != null && 
+                gridTileLocation.structure == character.homeSettlement.mainStorage) { //&& token.currentRegion == characterThatWillDoJob.homeRegion
+                return false;
+            }
+            //characters should not pick up items if that item is the target of it's current action
+            if (character.currentActionNode != null && character.currentActionNode.poiTarget == this) {
+                return false;
+            }
+            if (advertisedActions.Contains(INTERACTION_TYPE.PICK_UP) == false) {
+                return false;
+            }
+            return true;
+        }
+        return false;
     }
     #endregion
 

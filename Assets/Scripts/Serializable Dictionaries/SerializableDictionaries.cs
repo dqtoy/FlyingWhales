@@ -20,12 +20,12 @@ public class LogReplacerDictionary : SerializableDictionary<string, LOG_IDENTIFI
 public class StringSpriteDictionary : SerializableDictionary<string, Sprite> { }
 [System.Serializable]
 public class FactionEmblemDictionary : SerializableDictionary<int, Sprite> { }
-[System.Serializable]
-public class ItemAsseteDictionary : SerializableDictionary<SPECIAL_TOKEN, Sprite> { }
+// [System.Serializable]
+// public class ItemAsseteDictionary : SerializableDictionary<SPECIAL_TOKEN, Sprite> { }
 [System.Serializable]
 public class TileObjectAssetDictionary : SerializableDictionary<TILE_OBJECT_TYPE, TileObjectTileSetting> { }
-[System.Serializable]
-public class ItemSpriteDictionary : SerializableDictionary<SPECIAL_TOKEN, Sprite> { }
+// [System.Serializable]
+// public class ItemSpriteDictionary : SerializableDictionary<SPECIAL_TOKEN, Sprite> { }
 [System.Serializable]
 public class TileObjectBiomeAssetDictionary : SerializableDictionary<BIOMES, BiomeTileObjectTileSetting> { }
 [System.Serializable]

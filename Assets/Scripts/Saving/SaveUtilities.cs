@@ -27,8 +27,8 @@ public static class SaveUtilities {
     #region POI's
     public static IPointOfInterest GetPOIFromData(POIData data) {
         switch (data.poiType) {
-            case POINT_OF_INTEREST_TYPE.ITEM:
-                return TokenManager.Instance.GetSpecialTokenByID(data.poiID);
+            // case POINT_OF_INTEREST_TYPE.ITEM:
+            //     return TokenManager.Instance.GetSpecialTokenByID(data.poiID);
             case POINT_OF_INTEREST_TYPE.CHARACTER:
                 return CharacterManager.Instance.GetCharacterByID(data.poiID);
             case POINT_OF_INTEREST_TYPE.TILE_OBJECT:

@@ -62,7 +62,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public ActualGoapNode currentActionNode { get; private set; }
     public ActualGoapNode previousCurrentActionNode { get; private set; }
     public Character lastAssaultedCharacter { get; private set; }
-    public List<SpecialToken> items { get; private set; }
+    public List<TileObject> items { get; private set; }
     public JobQueue jobQueue { get; private set; }
     public List<JobQueueItem> allJobsTargetingThis { get; private set; }
     public bool canCombat { get; private set; } //This should only be a getter but since we need to know when the value changes it now has a setter
@@ -319,7 +319,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         _overrideThoughts = new List<string>();
         advertisedActions = new List<INTERACTION_TYPE>();
         stateComponent = new CharacterStateComponent(this);
-        items = new List<SpecialToken>();
+        items = new List<TileObject>();
         jobQueue = new JobQueue(this);
         allJobsTargetingThis = new List<JobQueueItem>();
         traitsNeededToBeRemoved = new List<Trait>();
@@ -331,7 +331,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         actionHistory = new List<string>();
         planner = new GoapPlanner(this);
 
-        items = new List<SpecialToken>();
         SetIsDead(data.isDead);
     }
     public Character() {
@@ -349,7 +348,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
         // combatHistory = new Dictionary<int, Combat>();
         advertisedActions = new List<INTERACTION_TYPE>();
-        items = new List<SpecialToken>();
+        items = new List<TileObject>();
         allJobsTargetingThis = new List<JobQueueItem>();
         traitsNeededToBeRemoved = new List<Trait>();
         onLeaveAreaActions = new List<Action>();
@@ -774,10 +773,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             CancelAllJobs();
 
             if (currentSettlement != null && isHoldingItem) {
-                DropAllTokens(currentStructure, deathTile, true);
+                DropAllItems(deathTile);
             } else {
                 for (int i = 0; i < items.Count; i++) {
-                    if (RemoveToken(i)) {
+                    if (RemoveItem(i)) {
                         i--;
                     }
                 }
@@ -811,8 +810,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //    currentRegion.RemoveCharacterFromLocation(this);
             //}
 
-            if (!IsInOwnParty()) {
-                currentParty.RemovePOI(this);
+            Character carrier = isBeingCarriedBy;
+            if (carrier != null) {
+                carrier.UncarryPOI(this);
             }
             ownParty.PartyDeath();
             currentRegion?.RemoveCharacterFromLocation(this);
@@ -1364,14 +1364,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //}
         //return false;
     }
-    public GoapPlanJob CreateObtainItemJob(SPECIAL_TOKEN item) {
-        GoapEffect goapEffect = new GoapEffect(GOAP_EFFECT_CONDITION.HAS_ITEM, item.ToString(), false, GOAP_EFFECT_TARGET.ACTOR);
-        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.OBTAIN_PERSONAL_ITEM, goapEffect, this, this);
-        jobQueue.AddJobInQueue(job);
-        //Debug.Log(this.name + " created job to obtain item " + item.ToString());
-        //Messenger.Broadcast<string, int, UnityEngine.Events.UnityAction>(Signals.SHOW_DEVELOPER_NOTIFICATION, this.name + " created job to obtain item " + item.ToString(), 5, null);
-        return job;
-    }
+    //public GoapPlanJob CreateObtainItemJob(SPECIAL_TOKEN item) {
+    //    GoapEffect goapEffect = new GoapEffect(GOAP_EFFECT_CONDITION.HAS_ITEM, item.ToString(), false, GOAP_EFFECT_TARGET.ACTOR);
+    //    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.OBTAIN_PERSONAL_ITEM, goapEffect, this, this);
+    //    jobQueue.AddJobInQueue(job);
+    //    //Debug.Log(this.name + " created job to obtain item " + item.ToString());
+    //    //Messenger.Broadcast<string, int, UnityEngine.Events.UnityAction>(Signals.SHOW_DEVELOPER_NOTIFICATION, this.name + " created job to obtain item " + item.ToString(), 5, null);
+    //    return job;
+    //}
     public Character troubledCharacter { get; private set; }
     public void CreateAskForHelpJob(Character troubledCharacter, INTERACTION_TYPE helpType, params object[] otherData) {
         //&& troubledCharacter != this
@@ -1705,7 +1705,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         _faction = newFaction;
         //currentAlterEgo.SetFaction(faction);
         OnChangeFaction();
-        UpdateTokenOwner();
+        // UpdateItemFactionOwner();
         if (_faction != null) {
             Messenger.Broadcast<Character>(Signals.FACTION_SET, this);
         }
@@ -1796,6 +1796,45 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             return true;
         }
         return false;
+    }
+    public void CarryPOI(IPointOfInterest poi, bool changeOwnership = false) {
+        if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+            ownParty.AddPOI(poi);
+        } else if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+            PickUpItem(poi as TileObject, changeOwnership);
+        }
+    }
+    public bool IsPOICarriedOrInInventory(IPointOfInterest poi) {
+        if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+            return HasItem(poi as TileObject);
+        }
+        return ownParty.IsPOICarried(poi);
+    }
+    public void UncarryPOI(IPointOfInterest poi, bool bringBackToInventory = false, bool addToLocation = true, LocationGridTile dropLocation = null) {
+        if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+            ownParty.RemovePOI(poi, addToLocation, dropLocation);
+        } else if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+            TileObject item = poi as TileObject;
+            ownParty.RemovePOI(poi, false);
+            if (!bringBackToInventory) {
+                if (addToLocation) {
+                    DropItem(item, dropLocation);
+                } else {
+                    UnobtainItem(item);
+                }
+            }
+        }
+    }
+    public void UncarryPOI(bool bringBackToInventory = false, bool addToLocation = true, LocationGridTile dropLocation = null) {
+        if(ownParty.isCarryingAnyPOI) {
+            IPointOfInterest poi = ownParty.carriedPOI;
+            UncarryPOI(poi, bringBackToInventory, addToLocation, dropLocation);
+        }
+    }
+    public void ShowItemVisualCarryingPOI(TileObject item) {
+        if (HasItem(item)) {
+            ownParty.AddPOI(item);
+        }
     }
     //public bool HasOtherCharacterInParty() {
     //    return ownParty.characters.Count > 1;
@@ -3462,12 +3501,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "target became a minion");
         CancelAllJobs();
 
-        if (!IsInOwnParty()) {
-            currentParty.RemovePOI(this);
+        Character carrier = isBeingCarriedBy;
+        if (carrier != null) {
+            carrier.UncarryPOI(this);
         }
-        if (ownParty.isCarryingAnyPOI) {
-            ownParty.RemoveCarriedPOI();
-        }
+        // if (ownParty.isCarryingAnyPOI) {
+        //     ownParty.RemovePOI();
+        // }
         ChangeFactionTo(PlayerManager.Instance.player.playerFaction);
         MigrateHomeTo(PlayerManager.Instance.player.playerSettlement);
 
@@ -3820,24 +3860,23 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     #endregion
 
-    #region Token Inventory
-    public bool ObtainTokenFrom(Character target, SpecialToken token, bool changeCharacterOwnership = true) {
-        if (target.UnobtainToken(token)) {
-            ObtainToken(token, changeCharacterOwnership);
-            return true;
-        }
-        return false;
-    }
-    public bool ObtainToken(SpecialToken token, bool changeCharacterOwnership = true) {
-        if (AddToken(token)) {
-            token.SetOwner(this.faction);
-            token.OnObtainToken(this);
-            token.SetCarriedByCharacter(this);
+    #region Inventory
+    //public bool ObtainTokenFrom(Character target, SpecialToken token, bool changeCharacterOwnership = true) {
+    //    if (target.UnobtainToken(token)) {
+    //        ObtainToken(token, changeCharacterOwnership);
+    //        return true;
+    //    }
+    //    return false;
+    //}
+    public bool ObtainItem(TileObject item, bool changeCharacterOwnership = true) {
+        if (AddItem(item)) {
+            // item.SetFactionOwner(this.faction);
+            item.SetInventoryOwner(this);
             if (changeCharacterOwnership) {
-                token.SetCharacterOwner(this);
+                item.SetCharacterOwner(this);
             } else {
-                if (token.characterOwner == null) {
-                    token.SetCharacterOwner(this);
+                if (item.characterOwner == null) {
+                    item.SetCharacterOwner(this);
                 }
             }
             return true;
@@ -3845,187 +3884,223 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return false;
         //token.AdjustQuantity(-1);
     }
-    public bool UnobtainToken(SpecialToken token) {
-        if (RemoveToken(token)) {
-            token.SetCarriedByCharacter(null);
-            token.OnUnobtainToken(this);
+    public bool UnobtainItem(TileObject item) {
+        if (RemoveItem(item)) {
+            item.SetInventoryOwner(null);
             return true;
         }
         return false;
     }
-    public bool ConsumeToken(SpecialToken token) {
-        token.OnConsumeToken(this);
-        if (token.uses <= 0) {
-            return RemoveToken(token);
-        }
-        return false;
-    }
-    private bool AddToken(SpecialToken token) {
-        if (!items.Contains(token)) {
-            items.Add(token);
-            Messenger.Broadcast(Signals.CHARACTER_OBTAINED_ITEM, token, this);
+    public bool UnobtainItem(TILE_OBJECT_TYPE itemType) {
+        TileObject removedItem = RemoveItem(itemType);
+        if (removedItem != null) {
+            removedItem.SetInventoryOwner(null);
             return true;
         }
         return false;
     }
-    private bool RemoveToken(SpecialToken token) {
-        if (items.Remove(token)) {
-            Messenger.Broadcast(Signals.CHARACTER_LOST_ITEM, token, this);
+    //public bool ConsumeToken(SpecialToken token) {
+    //    token.OnConsumeToken(this);
+    //    if (token.uses <= 0) {
+    //        return RemoveToken(token);
+    //    }
+    //    return false;
+    //}
+    private bool AddItem(TileObject item) {
+        if (!items.Contains(item)) {
+            items.Add(item);
+            Messenger.Broadcast(Signals.CHARACTER_OBTAINED_ITEM, item, this);
             return true;
         }
         return false;
     }
-    private bool RemoveToken(int index) {
-        SpecialToken token = items[index];
-        if (token != null) {
+    private bool RemoveItem(TileObject item) {
+        if (items.Remove(item)) {
+            Messenger.Broadcast(Signals.CHARACTER_LOST_ITEM, item, this);
+            return true;
+        }
+        return false;
+    }
+    private TileObject RemoveItem(TILE_OBJECT_TYPE itemType) {
+        TileObject removedItem = null;
+        for (int i = 0; i < items.Count; i++) {
+            if (items[i].tileObjectType == itemType) {
+                removedItem = items[i];
+                RemoveItem(i);
+            }
+        }
+        return removedItem;
+    }
+    private bool RemoveItem(int index) {
+        TileObject item = items[index];
+        if (item != null) {
             items.RemoveAt(index);
-            Messenger.Broadcast(Signals.CHARACTER_LOST_ITEM, token, this);
+            Messenger.Broadcast(Signals.CHARACTER_LOST_ITEM, item, this);
             return true;
         }
         return false;
     }
-    public void DropToken(SpecialToken token, LocationStructure structure, LocationGridTile gridTile = null, bool clearOwner = true) {
-        if (UnobtainToken(token)) {
-            if (token.specialTokenType.CreatesObjectWhenDropped()) {
-                structure.AddItem(token, gridTile);
-                //location.AddSpecialTokenToLocation(token, structure, gridTile);
+    public void DropItem(TileObject item, LocationGridTile gridTile = null, bool clearOwner = true) {
+        if (UnobtainItem(item)) {
+            //if (item.specialTokenType.CreatesObjectWhenDropped()) {
+            //    structure.AddItem(item, gridTile);
+            //    //location.AddSpecialTokenToLocation(token, structure, gridTile);
+            //}
+            LocationGridTile targetTile = gridTile;
+            if (targetTile == null || targetTile.objHere != null) {
+                targetTile = gridTileLocation.GetNearestUnoccupiedTileFromThis();
             }
-            if (clearOwner) {
-                token.SetCharacterOwner(null);
+            if (targetTile != null) {
+                targetTile.structure.AddPOI(item, targetTile);
+                if (clearOwner) {
+                    item.SetCharacterOwner(null);
+                }
+            } else {
+                logComponent.PrintLogErrorIfActive("Cannot drop " + item.nameWithID + " of " + name + " because there is no target tile.");
             }
         }
     }
-    public void DropAllTokens(LocationStructure structure, LocationGridTile tile, bool removeFactionOwner = false) {
+    public void DropAllItems(LocationGridTile tile) { //, bool removeFactionOwner = false
         while (isHoldingItem) {
-            SpecialToken token = items[0];
-            if (UnobtainToken(token)) {
-                if (removeFactionOwner) {
-                    token.SetOwner(null);
+            TileObject item = items[0];
+            if (UnobtainItem(item)) {
+                // if (removeFactionOwner) {
+                //     item.SetFactionOwner(null);
+                // }
+                LocationGridTile targetTile = tile;
+                if (targetTile == null || targetTile.objHere != null) {
+                    targetTile = gridTileLocation.GetNearestUnoccupiedTileFromThis();
                 }
-                if (token.specialTokenType.CreatesObjectWhenDropped()) {
-                    LocationGridTile targetTile = tile.GetNearestUnoccupiedTileFromThis();
-                    targetTile.structure.AddItem(token, targetTile);
-                    //location.AddSpecialTokenToLocation(token, structure, targetTile);
-                    if (structure != homeStructure) {
-                        //if this character drops this at a structure that is not his/her home structure, set the owner of the item to null
-                        token.SetCharacterOwner(null);
-                    }
+                if (targetTile != null) {
+                    targetTile.structure.AddPOI(item, targetTile);
                 } else {
-                    token.SetCharacterOwner(null);
+                    logComponent.PrintLogErrorIfActive("Cannot drop " + item.nameWithID + " of " + name + " because there is no target tile.");
                 }
+                item.SetCharacterOwner(null);
+                //if (item.specialTokenType.CreatesObjectWhenDropped()) {
+                //    LocationGridTile targetTile = tile.GetNearestUnoccupiedTileFromThis();
+                //    targetTile.structure.AddItem(item, targetTile);
+                //    //location.AddSpecialTokenToLocation(token, structure, targetTile);
+                //    if (structure != homeStructure) {
+                //        //if this character drops this at a structure that is not his/her home structure, set the owner of the item to null
+                //        item.SetCharacterOwner(null);
+                //    }
+                //} else {
+                //    item.SetCharacterOwner(null);
+                //}
             }
         }
     }
-    public void PickUpToken(SpecialToken token, bool changeCharacterOwnership = true) {
-        if (token.carriedByCharacter != null) {
-            token.carriedByCharacter.UnobtainToken(token);
+    public void PickUpItem(TileObject item, bool changeCharacterOwnership = true) {
+        if (item.carriedByCharacter != null) {
+            item.carriedByCharacter.UnobtainItem(item);
         }
-        if (ObtainToken(token, changeCharacterOwnership)) {
-            if (token.gridTileLocation != null) {
-                token.gridTileLocation.structure.RemoveItem(token);
-                //token.gridTileLocation.structure.location.RemoveSpecialTokenFromLocation(token);
-            }
+        if (ObtainItem(item, changeCharacterOwnership)) {
+            // if (item.gridTileLocation != null) {
+            //     item.gridTileLocation.structure.RemoveItem(item);
+            // }
         }
     }
-    public void DestroyToken(SpecialToken token) {
-        token.gridTileLocation.structure.RemoveItem(token);
+    public void DestroyItem(TileObject item) {
+        item.structureLocation.RemovePOI(item);
         //token.gridTileLocation.structure.location.RemoveSpecialTokenFromLocation(token);
     }
-    private void UpdateTokenOwner() {
+    // private void UpdateItemFactionOwner() {
+    //     for (int i = 0; i < items.Count; i++) {
+    //         TileObject item = items[i];
+    //         item.SetFactionOwner(this.faction);
+    //     }
+    // }
+    public TileObject GetItem(TileObject item) {
         for (int i = 0; i < items.Count; i++) {
-            SpecialToken token = items[i];
-            token.SetOwner(this.faction);
-        }
-    }
-    public SpecialToken GetToken(SpecialToken token) {
-        for (int i = 0; i < items.Count; i++) {
-            if (items[i] == token) {
+            if (items[i] == item) {
                 return items[i];
             }
         }
         return null;
     }
-    public SpecialToken GetToken(SPECIAL_TOKEN token) {
+    public TileObject GetItem(TILE_OBJECT_TYPE itemType) {
         for (int i = 0; i < items.Count; i++) {
-            if (items[i].specialTokenType == token) {
+            if (items[i].tileObjectType == itemType) {
                 return items[i];
             }
         }
         return null;
     }
-    public SpecialToken GetToken(string tokenName) {
+    public TileObject GetItem(string itemName) {
         for (int i = 0; i < items.Count; i++) {
-            if (items[i].tokenName.ToLower() == tokenName.ToLower()) {
+            if (items[i].name == itemName) {
                 return items[i];
             }
         }
         return null;
     }
-    public List<SpecialToken> GetItemsOwned() {
-        List<SpecialToken> itemsOwned = new List<SpecialToken>();
-        //for (int i = 0; i < homeSettlement.possibleSpecialTokenSpawns.Count; i++) {
-        //    SpecialToken token = homeSettlement.possibleSpecialTokenSpawns[i];
-        //    if (token.characterOwner == this) {
-        //        itemsOwned.Add(token);
-        //    }
-        //}
-        if(homeStructure == null) {
-            logComponent.PrintLogErrorIfActive(name + " error in GetItemsOwned no homestructure!");
-        }
-        for (int i = 0; i < homeStructure.itemsInStructure.Count; i++) {
-            SpecialToken token = homeStructure.itemsInStructure[i];
-            if (token.characterOwner == this) {
-                itemsOwned.Add(token);
-            }
-        }
-        for (int i = 0; i < items.Count; i++) {
-            SpecialToken token = items[i];
-            if (token.characterOwner == this) {
-                itemsOwned.Add(token);
-            }
-        }
-        return itemsOwned;
+    public bool HasItem(TileObject item) {
+        return GetItem(item) != null;
     }
-    public int GetNumOfItemsOwned() {
-        int count = 0;
-        //for (int i = 0; i < homeSettlement.possibleSpecialTokenSpawns.Count; i++) {
-        //    SpecialToken token = homeSettlement.possibleSpecialTokenSpawns[i];
-        //    if (token.characterOwner == this) {
-        //        count++;
-        //    }
-        //}
-        for (int i = 0; i < homeStructure.itemsInStructure.Count; i++) {
-            SpecialToken token = homeStructure.itemsInStructure[i];
-            if (token.characterOwner == this) {
-                count++;
-            }
-        }
-        
-        for (int i = 0; i < items.Count; i++) {
-            SpecialToken token = items[i];
-            if (token.characterOwner == this) {
-                count++;
-            }
-        }
-        return count;
+    public bool HasItem(TILE_OBJECT_TYPE itemType) {
+        return GetItem(itemType) != null;
     }
-    public bool HasTokenInInventory(SPECIAL_TOKEN tokenType) {
-        for (int i = 0; i < items.Count; i++) {
-            if (items[i].specialTokenType == tokenType) {
-                return true;
-            }
-        }
-        return false;
+    public bool HasItem(string itemName) {
+        return GetItem(itemName) != null;
     }
-    public int GetTokenCountInInventory(SPECIAL_TOKEN tokenType) {
-        int count = 0;
-        for (int i = 0; i < items.Count; i++) {
-            if (items[i].specialTokenType == tokenType) {
-                count++;
-            }
-        }
-        return count;
-    }
+    // public List<TileObject> GetItemsOwned() {
+    //     List<TileObject> itemsOwned = new List<TileObject>();
+    //     //for (int i = 0; i < homeSettlement.possibleSpecialTokenSpawns.Count; i++) {
+    //     //    SpecialToken token = homeSettlement.possibleSpecialTokenSpawns[i];
+    //     //    if (token.characterOwner == this) {
+    //     //        itemsOwned.Add(token);
+    //     //    }
+    //     //}
+    //     if(homeStructure == null) {
+    //         logComponent.PrintLogErrorIfActive(name + " error in GetItemsOwned no homestructure!");
+    //     }
+    //     for (int i = 0; i < homeStructure.itemsInStructure.Count; i++) {
+    //         SpecialToken token = homeStructure.itemsInStructure[i];
+    //         if (token.characterOwner == this) {
+    //             itemsOwned.Add(token);
+    //         }
+    //     }
+    //     for (int i = 0; i < items.Count; i++) {
+    //         SpecialToken token = items[i];
+    //         if (token.characterOwner == this) {
+    //             itemsOwned.Add(token);
+    //         }
+    //     }
+    //     return itemsOwned;
+    // }
+    // public int GetNumOfItemsOwned() {
+    //     int count = 0;
+    //     //for (int i = 0; i < homeSettlement.possibleSpecialTokenSpawns.Count; i++) {
+    //     //    SpecialToken token = homeSettlement.possibleSpecialTokenSpawns[i];
+    //     //    if (token.characterOwner == this) {
+    //     //        count++;
+    //     //    }
+    //     //}
+    //     for (int i = 0; i < homeStructure.itemsInStructure.Count; i++) {
+    //         SpecialToken token = homeStructure.itemsInStructure[i];
+    //         if (token.characterOwner == this) {
+    //             count++;
+    //         }
+    //     }
+    //     
+    //     for (int i = 0; i < items.Count; i++) {
+    //         SpecialToken token = items[i];
+    //         if (token.characterOwner == this) {
+    //             count++;
+    //         }
+    //     }
+    //     return count;
+    // }
+    // public int GetTokenCountInInventory(SPECIAL_TOKEN tokenType) {
+    //     int count = 0;
+    //     for (int i = 0; i < items.Count; i++) {
+    //         if (items[i].specialTokenType == tokenType) {
+    //             count++;
+    //         }
+    //     }
+    //     return count;
+    // }
     // public bool HasExtraTokenInInventory(SPECIAL_TOKEN tokenType) {
     //     if (role.IsRequiredItem(tokenType)) {
     //         //if the specified token type is required by this character's role, check if this character has any extras
@@ -4038,21 +4113,21 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //         return HasTokenInInventory(tokenType);
     //     }
     // }
-    public bool OwnsItemOfType(SPECIAL_TOKEN tokenType) {
-        for (int i = 0; i < homeStructure.itemsInStructure.Count; i++) {
-            SpecialToken token = homeStructure.itemsInStructure[i];
-            if (token.characterOwner == this && token.specialTokenType == tokenType) {
-                return true;
-            }
-        }
-        for (int i = 0; i < items.Count; i++) {
-            SpecialToken token = items[i];
-            if (token.characterOwner == this && token.specialTokenType == tokenType) {
-                return true;
-            }
-        }
-        return false;
-    }
+    // public bool OwnsItemOfType(SPECIAL_TOKEN tokenType) {
+    //     for (int i = 0; i < homeStructure.itemsInStructure.Count; i++) {
+    //         SpecialToken token = homeStructure.itemsInStructure[i];
+    //         if (token.characterOwner == this && token.specialTokenType == tokenType) {
+    //             return true;
+    //         }
+    //     }
+    //     for (int i = 0; i < items.Count; i++) {
+    //         SpecialToken token = items[i];
+    //         if (token.characterOwner == this && token.specialTokenType == tokenType) {
+    //             return true;
+    //         }
+    //     }
+    //     return false;
+    // }
     #endregion
 
     #region Share Intel
@@ -4980,7 +5055,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 }
 
                 logComponent.PrintLogIfActive(log);
-                ownParty.RemoveCarriedPOI();
+                UncarryPOI();
             }
         }
         //JobQueueItem job = parentPlan.job;

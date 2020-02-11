@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.WSA;
 using UtilityScripts;
 namespace Traits {
     public class Kleptomaniac : Trait {
@@ -94,23 +96,28 @@ namespace Traits {
                         character.jobQueue.CancelAllJobs(JOB_TYPE.HAPPINESS_RECOVERY);
                     }
 
-                    List<SpecialToken> choices = new List<SpecialToken>();
+                    List<TileObject> choices = new List<TileObject>();
                     for (int i = 0; i < character.currentRegion.charactersAtLocation.Count; i++) {
                         Character otherCharacter = character.currentRegion.charactersAtLocation[i];
                         for (int j = 0; j < otherCharacter.items.Count; j++) {
-                            SpecialToken currItem = otherCharacter.items[j];
+                            TileObject currItem = otherCharacter.items[j];
                             if (CanBeStolen(currItem)) {
                                 choices.Add(currItem);    
                             }
                         }
                     }
+                    
+                    //NOTE: Might be heavy on performance, optimize this!
                     foreach (KeyValuePair<STRUCTURE_TYPE,List<LocationStructure>> pair in character.currentRegion.structures) {
                         for (int i = 0; i < pair.Value.Count; i++) {
                             LocationStructure structure = pair.Value[i];
-                            for (int j = 0; j < structure.itemsInStructure.Count; j++) {
-                                SpecialToken item = structure.itemsInStructure[j];
-                                if (CanBeStolen(item)) {
-                                    choices.Add(item);
+                            for (int j = 0; j < structure.pointsOfInterest.Count; j++) {
+                                IPointOfInterest poi = structure.pointsOfInterest.ElementAt(j);
+                                if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+                                    TileObject item = poi as TileObject;
+                                    if (CanBeStolen(item)) {
+                                        choices.Add(item);
+                                    }
                                 }
                             }
                         }
@@ -168,16 +175,15 @@ namespace Traits {
             }
         }
 
-        private bool CanBeStolen(SpecialToken item) {
+        private bool CanBeStolen(TileObject item) {
             if (item.carriedByCharacter != null) {
                 if (item.carriedByCharacter == this.traitOwner || item.carriedByCharacter.relationshipContainer.IsFriendsWith(this.traitOwner)) {
                     return false;
                 }
                 return true;
             } else {
-                return item.characterOwner != null && item.characterOwner != traitOwner;
+                return item.characterOwner != null && item.characterOwner != traitOwner && item.characterOwner.opinionComponent.IsFriendsWith(this.traitOwner);
             }
-            
         }
     }
 

@@ -343,7 +343,7 @@ public class TheFingersUI : MonoBehaviour {
     }
     #endregion
 
-    #region Action: Force Leave Faction
+    #region Action: Force Join Faction
     public void OnClickForceJoinFaction() {
         List<Character> viableCharacters = new List<Character>();
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {

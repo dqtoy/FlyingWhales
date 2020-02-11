@@ -17,7 +17,7 @@ public class FirstAidCharacter : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_ITEM, SPECIAL_TOKEN.HEALING_POTION.ToString(), false, GOAP_EFFECT_TARGET.ACTOR), HasHealingPotion);
+        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, TILE_OBJECT_TYPE.HEALING_POTION.ToString(), false, GOAP_EFFECT_TARGET.ACTOR), HasHealingPotion);
         AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.REMOVE_TRAIT, "Injured", false, GOAP_EFFECT_TARGET.TARGET));
         AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.REMOVE_TRAIT, "Unconscious", false, GOAP_EFFECT_TARGET.TARGET));
     }
@@ -86,11 +86,12 @@ public class FirstAidCharacter : GoapAction {
         targetCharacter.relationshipContainer.AdjustOpinion(targetCharacter, goapNode.actor, "Base", 3);
         goapNode.poiTarget.traitContainer.RemoveTraitAndStacks(goapNode.poiTarget, "Injured", goapNode.actor);
         goapNode.poiTarget.traitContainer.RemoveTraitAndStacks(goapNode.poiTarget, "Unconscious", goapNode.actor);
-        if (goapNode.actor.HasTokenInInventory(SPECIAL_TOKEN.HEALING_POTION)) {
-            goapNode.actor.ConsumeToken(goapNode.actor.GetToken(SPECIAL_TOKEN.HEALING_POTION));
+        TileObject potion = goapNode.actor.GetItem(TILE_OBJECT_TYPE.HEALING_POTION);
+        if (potion != null) {
+            goapNode.actor.UnobtainItem(potion);
         } else {
-            //the actor does not have a tool, log for now
-            Debug.LogWarning(goapNode.actor.name + " does not have a tool for removing poison! Poison was still removed, but thought you should know.");
+            //the actor does not have a healing potion, log for now
+            goapNode.actor.logComponent.PrintLogErrorIfActive(goapNode.actor.name + " does not have a healing potion for first aid! Injured and Unconscious was still removed, but thought you should know.");
         }
         //**After Effect 3**: Allow movement of Target
         //(poiTarget as Character).marker.pathfindingAI.AdjustDoNotMove(-1);
@@ -99,7 +100,7 @@ public class FirstAidCharacter : GoapAction {
 
     #region Precondition
     private bool HasHealingPotion(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor.HasTokenInInventory(SPECIAL_TOKEN.HEALING_POTION);
+        return actor.HasItem(TILE_OBJECT_TYPE.HEALING_POTION);
     }
     #endregion
 

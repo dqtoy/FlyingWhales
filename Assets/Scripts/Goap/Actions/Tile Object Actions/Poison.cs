@@ -19,7 +19,7 @@ public class Poison : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = SPECIAL_TOKEN.TOOL.ToString(), target = GOAP_EFFECT_TARGET.ACTOR }, HasTool);
+        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_POI, conditionKey = TILE_OBJECT_TYPE.TOOL.ToString(), target = GOAP_EFFECT_TARGET.ACTOR }, HasTool);
         //**Effect 1**: Table - Add Trait (Poisoned)
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT, conditionKey = "Poisoned", target = GOAP_EFFECT_TARGET.TARGET });
     }
@@ -41,12 +41,13 @@ public class Poison : GoapAction {
         if (target is TileObject) {
             TileObject tileObject = target as TileObject;
             targetObjectOwners = tileObject.GetOwners();
-        } else if (target is SpecialToken) {
-            SpecialToken item = target as SpecialToken;
-            if (item.characterOwner != null) {
-                targetObjectOwners = new List<Character>() { item.characterOwner };
-            }
-        }
+        } 
+        // else if (target is SpecialToken) {
+        //     SpecialToken item = target as SpecialToken;
+        //     if (item.characterOwner != null) {
+        //         targetObjectOwners = new List<Character>() { item.characterOwner };
+        //     }
+        // }
 
         if (targetObjectOwners != null && targetObjectOwners.Contains(witness)) {
             if (witness.traitContainer.HasTrait("Coward")) {
@@ -102,9 +103,9 @@ public class Poison : GoapAction {
         //goapNode.descriptionLog.AddToFillers(goapNode.poiTarget.gridTileLocation.structure.location, goapNode.poiTarget.gridTileLocation.structure.GetNameRelativeTo(goapNode.actor), LOG_IDENTIFIER.LANDMARK_1);
         //TODO: currentState.SetIntelReaction(PoisonSuccessReactions);
     }
-    public void AfterPoisonSuccess(ActualGoapNode goapNode) {
-        
-    }
+    // public void AfterPoisonSuccess(ActualGoapNode goapNode) {
+    //     
+    // }
     #endregion
 
     #region Requirement
@@ -133,7 +134,7 @@ public class Poison : GoapAction {
 
     #region Precondition
     private bool HasTool(Character character, IPointOfInterest poiTarget, object[] otherData) {
-        return character.HasTokenInInventory(SPECIAL_TOKEN.TOOL);
+        return character.HasItem(TILE_OBJECT_TYPE.TOOL);
     }
     #endregion
 
