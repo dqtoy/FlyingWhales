@@ -122,9 +122,10 @@ public class Repair : GoapAction {
         if (poiTarget.HasResourceAmount(RESOURCE.WOOD, craftCost)) {
             return true;
         }
-        if (actor.ownParty.isCarryingAnyPOI && actor.ownParty.carriedPOI is ResourcePile) {
-            ResourcePile carriedPile = actor.ownParty.carriedPOI as ResourcePile;
-            return carriedPile.resourceInPile >= craftCost;
+        if (actor.ownParty.isCarryingAnyPOI && actor.ownParty.carriedPOI is WoodPile) {
+            //ResourcePile carriedPile = actor.ownParty.carriedPOI as ResourcePile;
+            //return carriedPile.resourceInPile >= craftCost;
+            return true;
         }
         return false;
         //return actor.supply >= craftCost;

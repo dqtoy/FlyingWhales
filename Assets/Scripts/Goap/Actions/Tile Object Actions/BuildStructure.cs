@@ -62,12 +62,14 @@ public class BuildStructure : GoapAction {
         if (poiTarget.HasResourceAmount(RESOURCE.WOOD, 50)) {
             return true;
         }
-        if (actor.ownParty.isCarryingAnyPOI && actor.ownParty.carriedPOI is ResourcePile) {
-            ResourcePile carriedPile = actor.ownParty.carriedPOI as ResourcePile;
-            return carriedPile.resourceInPile >= 50;
+        //return actor.ownParty.isCarryingAnyPOI && actor.ownParty.carriedPOI is ResourcePile;
+        if (actor.ownParty.isCarryingAnyPOI && actor.ownParty.carriedPOI is WoodPile) {
+            //ResourcePile carriedPile = actor.ownParty.carriedPOI as ResourcePile;
+            //return carriedPile.resourceInPile >= 50;
+            return true;
         }
         return false;
-        //return actor.supply >= 50; //TODO: Change this to be per structure
+        //return actor.HasItem()
     }
     #endregion
 

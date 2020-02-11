@@ -26,21 +26,22 @@ public class DropResource : GoapAction {
         if (target is Table) {
             ee.Add(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Food Pile", false, GOAP_EFFECT_TARGET.TARGET));
         } else {
-            ResourcePile pile = target as ResourcePile;
-            switch (pile.providedResource) {
-                case RESOURCE.FOOD:
-                    ee.Add(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Food Pile", false, GOAP_EFFECT_TARGET.TARGET));
-                    break;
-                case RESOURCE.WOOD:
-                    ee.Add(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Wood Pile", false, GOAP_EFFECT_TARGET.TARGET));
-                    break;
-                case RESOURCE.STONE:
-                    ee.Add(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Stone Pile", false, GOAP_EFFECT_TARGET.TARGET));
-                    break;
-                case RESOURCE.METAL:
-                    ee.Add(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Metal Pile", false, GOAP_EFFECT_TARGET.TARGET));
-                    break;
-            }
+            ee.Add(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, target.name, false, GOAP_EFFECT_TARGET.TARGET));
+            //ResourcePile pile = target as ResourcePile;
+            //switch (pile.providedResource) {
+            //    case RESOURCE.FOOD:
+            //        ee.Add(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Food Pile", false, GOAP_EFFECT_TARGET.TARGET));
+            //        break;
+            //    case RESOURCE.WOOD:
+            //        ee.Add(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Wood Pile", false, GOAP_EFFECT_TARGET.TARGET));
+            //        break;
+            //    case RESOURCE.STONE:
+            //        ee.Add(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Stone Pile", false, GOAP_EFFECT_TARGET.TARGET));
+            //        break;
+            //    case RESOURCE.METAL:
+            //        ee.Add(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Metal Pile", false, GOAP_EFFECT_TARGET.TARGET));
+            //        break;
+            //}
         }
         return ee;
     }
@@ -49,21 +50,22 @@ public class DropResource : GoapAction {
         if (target is Table) {
             p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Food Pile" /*+ (int)otherData[0]*/, false, GOAP_EFFECT_TARGET.ACTOR), HasTakenEnoughAmount));
         } else {
-            ResourcePile pile = target as ResourcePile;
-            switch (pile.providedResource) {
-                case RESOURCE.FOOD:
-                    p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Food Pile" /*+ (int) otherData[0]*/, false, GOAP_EFFECT_TARGET.ACTOR), HasTakenEnoughAmount));
-                    break;
-                case RESOURCE.WOOD:
-                    p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Wood Pile" /*+ (int) otherData[0]*/, false, GOAP_EFFECT_TARGET.ACTOR), HasTakenEnoughAmount));
-                    break;
-                case RESOURCE.STONE:
-                    p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Stone Pile" /*+ (int) otherData[0]*/, false, GOAP_EFFECT_TARGET.ACTOR), HasTakenEnoughAmount));
-                    break;
-                case RESOURCE.METAL:
-                    p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Metal Pile" /*+ (int) otherData[0]*/, false, GOAP_EFFECT_TARGET.ACTOR), HasTakenEnoughAmount));
-                    break;
-            }
+            p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, target.name /*+ (int) otherData[0]*/, false, GOAP_EFFECT_TARGET.ACTOR), HasTakenEnoughAmount));
+            //ResourcePile pile = target as ResourcePile;
+            //switch (pile.providedResource) {
+            //    case RESOURCE.FOOD:
+            //        p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Food Pile" /*+ (int) otherData[0]*/, false, GOAP_EFFECT_TARGET.ACTOR), HasTakenEnoughAmount));
+            //        break;
+            //    case RESOURCE.WOOD:
+            //        p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Wood Pile" /*+ (int) otherData[0]*/, false, GOAP_EFFECT_TARGET.ACTOR), HasTakenEnoughAmount));
+            //        break;
+            //    case RESOURCE.STONE:
+            //        p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Stone Pile" /*+ (int) otherData[0]*/, false, GOAP_EFFECT_TARGET.ACTOR), HasTakenEnoughAmount));
+            //        break;
+            //    case RESOURCE.METAL:
+            //        p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, "Metal Pile" /*+ (int) otherData[0]*/, false, GOAP_EFFECT_TARGET.ACTOR), HasTakenEnoughAmount));
+            //        break;
+            //}
         }
         return p;
     }
@@ -95,7 +97,14 @@ public class DropResource : GoapAction {
 
     #region Preconditions
     private bool HasTakenEnoughAmount(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        if(actor.ownParty.isCarryingAnyPOI && actor.ownParty.carriedPOI is ResourcePile) {
+        //string mustHaveItem = "None";
+        //if(poiTarget is Table) {
+        //    mustHaveItem = "Food Pile";
+        //} else if (poiTarget is ResourcePile) {
+        //    mustHaveItem = poiTarget.name;
+        //}
+        //return actor.HasItem(mustHaveItem);
+        if (actor.ownParty.isCarryingAnyPOI && actor.ownParty.carriedPOI is ResourcePile) {
             return true;
         }
         //if(poiTarget is Table) {

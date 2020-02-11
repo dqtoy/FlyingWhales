@@ -1987,6 +1987,11 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             UncarryPOI(poi, bringBackToInventory, addToLocation, dropLocation);
         }
     }
+    public void ShowItemVisualCarryingPOI(TileObject item) {
+        if (HasItem(item)) {
+            ownParty.AddPOI(item);
+        }
+    }
     //public bool HasOtherCharacterInParty() {
     //    return ownParty.characters.Count > 1;
     //}

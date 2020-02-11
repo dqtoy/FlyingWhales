@@ -7,7 +7,6 @@ using Inner_Maps;
 public class TakeResource : GoapAction {
     public TakeResource() : base(INTERACTION_TYPE.TAKE_RESOURCE) {
         actionIconString = GoapActionStateDB.Work_Icon;
-        
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, };
     }
@@ -77,7 +76,7 @@ public class TakeResource : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
-            if (poiTarget.gridTileLocation == null) {
+            if (poiTarget.gridTileLocation == null && poiTarget.isBeingCarriedBy != actor) {
                 return false;
             }
             //if (actor.ownParty.isCarryingAnyPOI) {
@@ -99,28 +98,28 @@ public class TakeResource : GoapAction {
     public void PreTakeSuccess(ActualGoapNode goapNode) {
         ResourcePile resourcePile = goapNode.poiTarget as ResourcePile;
         int takenResource;
-        bool hasNeededAmount = false;
+        //bool hasNeededAmount = false;
         if (goapNode.otherData != null) {
-            hasNeededAmount = true;
+            //hasNeededAmount = true;
             takenResource = (int)goapNode.otherData[0];
         } else {
             takenResource = Mathf.Min(20, resourcePile.resourceInPile);
         }
-        int amountAlreadyCarried = 0;
-        ResourcePile carriedResourcePile = null;
-        if (goapNode.actor.ownParty.isCarryingAnyPOI) {
-            IPointOfInterest carriedPOI = goapNode.actor.ownParty.carriedPOI;
-            if (carriedPOI is ResourcePile) {
-                carriedResourcePile = carriedPOI as ResourcePile;
-                if (carriedResourcePile.tileObjectType == resourcePile.tileObjectType) {
-                    amountAlreadyCarried = carriedResourcePile.resourceInPile;
-                }
-            }
-        }
+        //int amountAlreadyCarried = 0;
+        //ResourcePile carriedResourcePile = null;
+        //if (goapNode.actor.ownParty.isCarryingAnyPOI) {
+        //    IPointOfInterest carriedPOI = goapNode.actor.ownParty.carriedPOI;
+        //    if (carriedPOI is ResourcePile) {
+        //        carriedResourcePile = carriedPOI as ResourcePile;
+        //        if (carriedResourcePile.tileObjectType == resourcePile.tileObjectType) {
+        //            amountAlreadyCarried = carriedResourcePile.resourceInPile;
+        //        }
+        //    }
+        //}
 
-        if (hasNeededAmount && takenResource > amountAlreadyCarried) {
-            takenResource -= amountAlreadyCarried;
-        }
+        //if (hasNeededAmount && takenResource > amountAlreadyCarried) {
+        //    takenResource -= amountAlreadyCarried;
+        //}
         if (takenResource > resourcePile.resourceInPile) {
             takenResource = resourcePile.resourceInPile;
         }
@@ -130,29 +129,29 @@ public class TakeResource : GoapAction {
     public void AfterTakeSuccess(ActualGoapNode goapNode) {
         ResourcePile resourcePile = goapNode.poiTarget as ResourcePile;
         int takenResource;
-        bool hasNeededAmount = false;
+        //bool hasNeededAmount = false;
         if (goapNode.otherData != null) {
-            hasNeededAmount = true;
+            //hasNeededAmount = true;
             takenResource = (int)goapNode.otherData[0];
         } else {
             takenResource = Mathf.Min(20, resourcePile.resourceInPile);
         }
 
-        int amountAlreadyCarried = 0;
-        ResourcePile carriedResourcePile = null;
-        if (goapNode.actor.ownParty.isCarryingAnyPOI) {
-            IPointOfInterest carriedPOI = goapNode.actor.ownParty.carriedPOI;
-            if (carriedPOI is ResourcePile) {
-                carriedResourcePile = carriedPOI as ResourcePile;
-                if (carriedResourcePile.tileObjectType == resourcePile.tileObjectType) {
-                    amountAlreadyCarried = carriedResourcePile.resourceInPile;
-                }
-            }
-        }
+        //int amountAlreadyCarried = 0;
+        //ResourcePile carriedResourcePile = null;
+        //if (goapNode.actor.ownParty.isCarryingAnyPOI) {
+        //    IPointOfInterest carriedPOI = goapNode.actor.ownParty.carriedPOI;
+        //    if (carriedPOI is ResourcePile) {
+        //        carriedResourcePile = carriedPOI as ResourcePile;
+        //        if (carriedResourcePile.tileObjectType == resourcePile.tileObjectType) {
+        //            amountAlreadyCarried = carriedResourcePile.resourceInPile;
+        //        }
+        //    }
+        //}
 
-        if(hasNeededAmount && takenResource > amountAlreadyCarried) {
-            takenResource -= amountAlreadyCarried;
-        }
+        //if(hasNeededAmount && takenResource > amountAlreadyCarried) {
+        //    takenResource -= amountAlreadyCarried;
+        //}
         if (takenResource > resourcePile.resourceInPile) {
             takenResource = resourcePile.resourceInPile;
         }
@@ -160,20 +159,20 @@ public class TakeResource : GoapAction {
         //Hence, if it becomes a complication to the game, what we must do is add the new pile to the structure without actually placing the object to the tile, so I think we will have to create a new function wherein we don't actually place the poi on the tile but it will still be added to the list of poi in the structure
         //EDIT: Taking resource does not mean that the character must not be carrying any poi, when the actor takes a resource and it is the same type as the one he/she is carrying, just add the amount, if it is not the same type, replace the carried one with the new type
         //If the actor is not carrying anything, create new object to be carried
-        if(carriedResourcePile != null) {
-            if(carriedResourcePile.tileObjectType != resourcePile.tileObjectType) {
-                goapNode.actor.UncarryPOI();
-                CarryResourcePile(goapNode.actor, resourcePile, takenResource);
-            } else {
-                carriedResourcePile.AdjustResourceInPile(takenResource);
-            }
-        } else {
-            goapNode.actor.UncarryPOI();
-            CarryResourcePile(goapNode.actor, resourcePile, takenResource);
-        }
-
+        //if(carriedResourcePile != null) {
+        //    if(carriedResourcePile.tileObjectType != resourcePile.tileObjectType) {
+        //        goapNode.actor.UncarryPOI(bringBackToInventory: true);
+        //        CarryResourcePile(goapNode.actor, resourcePile, takenResource);
+        //    } else {
+        //        carriedResourcePile.AdjustResourceInPile(takenResource);
+        //    }
+        //} else {
+        //    goapNode.actor.UncarryPOI(bringBackToInventory: true);
+        //    CarryResourcePile(goapNode.actor, resourcePile, takenResource);
+        //}
+        goapNode.actor.UncarryPOI(bringBackToInventory: true);
+        CarryResourcePile(goapNode.actor, resourcePile, takenResource);
         //goapNode.actor.AdjustResource(resourcePile.providedResource, takenResource);
-        resourcePile.AdjustResourceInPile(-takenResource);
 
         //goapNode.descriptionLog.AddToFillers(null, takenResource.ToString(), LOG_IDENTIFIER.STRING_1);
         //goapNode.descriptionLog.AddToFillers(null, Utilities.NormalizeString(resourcePile.providedResource.ToString()), LOG_IDENTIFIER.STRING_2);
@@ -181,17 +180,26 @@ public class TakeResource : GoapAction {
     #endregion
 
     private void CarryResourcePile(Character carrier, ResourcePile pile, int amount) {
-        ResourcePile newPile = InnerMapManager.Instance.CreateNewTileObject<ResourcePile>(pile.tileObjectType);
-        newPile.SetResourceInPile(amount);
+        if (pile.isBeingCarriedBy == null || pile.isBeingCarriedBy != carrier) {
+            ResourcePile newPile = InnerMapManager.Instance.CreateNewTileObject<ResourcePile>(pile.tileObjectType);
+            //newPile.SetResourceInPile(amount);
+            //newPile.SetGridTileLocation(pile.gridTileLocation);
+            //newPile.gridTileLocation.structure.location.AddAwareness(newPile);
+            //newPile.SetGridTileLocation(null);
+            
+            //This can be made into a function in the IPointOfInterest interface
+            newPile.SetGridTileLocation(pile.gridTileLocation);
+            newPile.InitializeMapObject(newPile);
+            newPile.SetPOIState(POI_STATE.ACTIVE);
+            newPile.gridTileLocation.structure.location.AddAwareness(newPile);
+            newPile.SetGridTileLocation(null);
 
-        //This can be made into a function in the IPointOfInterest interface
-        newPile.SetGridTileLocation(pile.gridTileLocation);
-        newPile.InitializeMapObject(newPile);
-        newPile.SetPOIState(POI_STATE.ACTIVE);
-        newPile.gridTileLocation.structure.location.AddAwareness(newPile);
-        newPile.SetGridTileLocation(null);
-
-        // carrier.ownParty.AddPOI(newPile);
-        carrier.CarryPOI(newPile);
+            // carrier.ownParty.AddPOI(newPile);
+            carrier.CarryPOI(newPile);
+            carrier.ShowItemVisualCarryingPOI(newPile);
+            pile.AdjustResourceInPile(-amount);
+        } else {
+            carrier.ShowItemVisualCarryingPOI(pile);
+        }
     }
 }

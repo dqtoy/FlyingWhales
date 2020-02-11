@@ -76,9 +76,10 @@ public class CraftTileObject : GoapAction {
         if (poiTarget.HasResourceAmount(RESOURCE.WOOD, cost)) {
             return true;
         }
-        if (actor.ownParty.isCarryingAnyPOI && actor.ownParty.carriedPOI is ResourcePile) {
-            ResourcePile carriedPile = actor.ownParty.carriedPOI as ResourcePile;
-            return carriedPile.resourceInPile >= cost;
+        if (actor.ownParty.isCarryingAnyPOI && actor.ownParty.carriedPOI is WoodPile) {
+            //ResourcePile carriedPile = actor.ownParty.carriedPOI as ResourcePile;
+            //return carriedPile.resourceInPile >= cost;
+            return true;
         }
         return false;
         //return actor.supply >= TileObjectDB.GetTileObjectData((poiTarget as TileObject).tileObjectType).constructionCost;

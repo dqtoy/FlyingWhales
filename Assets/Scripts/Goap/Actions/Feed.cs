@@ -202,9 +202,9 @@ public class Feed : GoapAction {
         if (poiTarget.HasResourceAmount(RESOURCE.FOOD, 12)) {
             return true;
         }
-        if (actor.ownParty.isCarryingAnyPOI && actor.ownParty.carriedPOI is ResourcePile) {
-            ResourcePile carriedPile = actor.ownParty.carriedPOI as ResourcePile;
-            return carriedPile.resourceInPile >= 12;
+        if (actor.ownParty.isCarryingAnyPOI && actor.ownParty.carriedPOI is FoodPile) {
+            //ResourcePile carriedPile = actor.ownParty.carriedPOI as ResourcePile;
+            //return carriedPile.resourceInPile >= 12;
         }
         return false;
         //return actor.supply >= 20;
