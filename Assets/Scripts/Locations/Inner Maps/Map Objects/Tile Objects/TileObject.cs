@@ -681,7 +681,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         if (tileObjectType != TILE_OBJECT_TYPE.HEALING_POTION && tileObjectType != TILE_OBJECT_TYPE.TOOL) {
             return false;
         }
-        if (Utilities.IsRaceBeast(character.race)) {
+        if (UtilityScripts.GameUtilities.IsRaceBeast(character.race)) {
             return false;
         }
         if (character.race == RACE.SKELETON) {

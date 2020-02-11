@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="C:\Users\Mykel Abania\.Rider2019.3\system\extResources" t="IncludeRecursive" />
-    <e p="C:\Users\Mykel Abania\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_FlyingWhales.1985073317.00" t="ExcludeRecursive" />
-    <e p="C:\Users\Mykel Abania\Repositories\FlyingWhales" t="IncludeRecursive">
+    <e p="C:\Users\12myk\.Rider2019.3\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\12myk\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_FlyingWhales.-362142238.00" t="ExcludeRecursive" />
+    <e p="D:\Repositories\FlyingWhales" t="IncludeRecursive">
       <e p="Assembly-CSharp-Editor.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp-firstpass.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
@@ -1473,6 +1473,7 @@
                   <e p="GoddessStatue.cs" t="Include" />
                   <e p="Grave.cs" t="Include" />
                   <e p="Guitar.cs" t="Include" />
+                  <e p="HealingPotion.cs" t="Include" />
                   <e p="Kindling.cs" t="Include" />
                   <e p="MagicCircle.cs" t="Include" />
                   <e p="MetalPile.cs" t="Include" />
@@ -1512,6 +1513,7 @@
                   <e p="TileObjectDB.cs" t="Include" />
                   <e p="TileObjectSlotItem.cs" t="Include" />
                   <e p="Tombstone.cs" t="Include" />
+                  <e p="Tool.cs" t="Include" />
                   <e p="Torch.cs" t="Include" />
                   <e p="TornadoTileObject.cs" t="Include" />
                   <e p="TrainingDummy.cs" t="Include" />
@@ -1599,7 +1601,6 @@
             <e p="StartupManager.cs" t="Include" />
             <e p="TaskManager.cs" t="Include" />
             <e p="TimerHubUI.cs" t="Include" />
-            <e p="TokenManager.cs" t="Include" />
             <e p="TraitManager.cs" t="Include" />
             <e p="UIManager.cs" t="Include" />
             <e p="WorldConfigManager.cs" t="Include" />
@@ -1692,7 +1693,6 @@
             <e p="Player.cs" t="Include" />
             <e p="PlayerJobData.cs" t="Include" />
             <e p="SeizeComponent.cs" t="Include" />
-            <e p="SpecialToken.cs" t="Include" />
             <e p="Summons" t="Include">
               <e p="Golem.cs" t="Include" />
               <e p="Incubus.cs" t="Include" />

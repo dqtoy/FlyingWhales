@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.WSA;
 using UtilityScripts;
@@ -111,7 +112,7 @@ namespace Traits {
                         for (int i = 0; i < pair.Value.Count; i++) {
                             LocationStructure structure = pair.Value[i];
                             for (int j = 0; j < structure.pointsOfInterest.Count; j++) {
-                                IPointOfInterest poi = structure.pointsOfInterest[j];
+                                IPointOfInterest poi = structure.pointsOfInterest.ElementAt(j);
                                 if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
                                     TileObject item = poi as TileObject;
                                     if (CanBeStolen(item)) {

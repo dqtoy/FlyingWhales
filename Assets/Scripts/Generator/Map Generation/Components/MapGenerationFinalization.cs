@@ -39,7 +39,7 @@ public class MapGenerationFinalization : MapGenerationComponent {
 		for (int i = 0; i < LandmarkManager.Instance.allSetttlements.Count; i++) {
 			Settlement settlement = LandmarkManager.Instance.allSetttlements[i];
 			if (settlement.locationType != LOCATION_TYPE.DUNGEON) {
-				TokenManager.Instance.LoadSpecialTokens(settlement);
+				InnerMapManager.Instance.LoadInitialSettlementItems(settlement);
 				yield return null;	
 			}
 		}
