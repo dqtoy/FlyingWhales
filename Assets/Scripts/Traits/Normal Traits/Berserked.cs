@@ -84,7 +84,7 @@ namespace Traits {
                         character.combatComponent.Fight(targetCharacter, isLethal: false);
                     }
                 }
-            } else if (targetPOI is TileObject || targetPOI is SpecialToken) {
+            } else if (targetPOI is TileObject) { // || targetPOI is SpecialToken
                 if (Random.Range(0, 100) < 35) {
                     //character.jobComponent.TriggerDestroy(targetPOI);
                     character.combatComponent.Fight(targetPOI, isLethal: false);

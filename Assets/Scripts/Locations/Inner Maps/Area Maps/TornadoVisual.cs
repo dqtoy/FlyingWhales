@@ -76,7 +76,7 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
         Messenger.AddListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
         Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemovedFromTile);
-        Messenger.AddListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
+        // Messenger.AddListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
         isSpawned = true;
     }
 
@@ -142,7 +142,7 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
         Messenger.RemoveListener<PROGRESSION_SPEED>(Signals.PROGRESSION_SPEED_CHANGED, OnProgressionSpeedChanged);
         Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
         Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemovedFromTile);
-        Messenger.RemoveListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
+        // Messenger.RemoveListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
     }
 
     #region Monobehaviours
@@ -271,8 +271,8 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
     private void OnTileObjectRemovedFromTile(TileObject tileObject, Character removedBy, LocationGridTile removedFrom) {
        RemoveDamageable(tileObject);
     }
-    private void OnItemRemovedFromTile(SpecialToken item, LocationGridTile removedFrom) {
-        RemoveDamageable(item);
-    }
+    // private void OnItemRemovedFromTile(SpecialToken item, LocationGridTile removedFrom) {
+    //     RemoveDamageable(item);
+    // }
     #endregion
 }

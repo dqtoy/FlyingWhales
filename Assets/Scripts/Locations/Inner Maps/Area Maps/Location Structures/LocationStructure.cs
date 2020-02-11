@@ -13,9 +13,12 @@ public class LocationStructure {
     public STRUCTURE_TYPE structureType { get; private set; }
     public List<Character> charactersHere { get; private set; }
     public ILocation location { get; private set; }
-    public Settlement settlementLocation { get; private set; }
-    public List<SpecialToken> itemsInStructure { get; private set; }
-    public HashSet<IPointOfInterest> pointsOfInterest { get; private set; }
+    public Settlement settlementLocation => tiles[0].buildSpotOwner.isPartOfParentRegionMap 
+                                            && tiles[0].buildSpotOwner.hexTileOwner.settlementOnTile != null 
+        ? tiles[0].buildSpotOwner.hexTileOwner.settlementOnTile : null;
+    // public List<SpecialToken> itemsInStructure { get; private set; }
+    public List<IPointOfInterest> pointsOfInterest { get; private set; }
+    public Dictionary<TILE_OBJECT_TYPE, List<TileObject>> groupedTileObjects { get; private set; }
     public POI_STATE state { get; private set; }
     public LocationStructureObject structureObj {get; private set;}
     public BuildSpotTileObject occupiedBuildSpot { get; private set; }
@@ -30,25 +33,27 @@ public class LocationStructure {
     #endregion
 
     public LocationStructure(STRUCTURE_TYPE structureType, ILocation location) {
-        id = UtilityScripts.Utilities.SetID(this);
+        id = Utilities.SetID(this);
         this.structureType = structureType;
-        name = $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString())} {id.ToString()}";
+        name = $"{Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString())} {id.ToString()}";
         this.location = location;
         charactersHere = new List<Character>();
-        itemsInStructure = new List<SpecialToken>();
-        pointsOfInterest = new HashSet<IPointOfInterest>();
+        // itemsInStructure = new List<SpecialToken>();
+        pointsOfInterest = new List<IPointOfInterest>();
+        groupedTileObjects = new Dictionary<TILE_OBJECT_TYPE, List<TileObject>>();
         tiles = new List<LocationGridTile>();
         unoccupiedTiles = new List<LocationGridTile>();
         SubscribeListeners();
     }
     public LocationStructure(ILocation location, SaveDataLocationStructure data) {
         this.location = location;
-        id = UtilityScripts.Utilities.SetID(this, data.id);
+        id = Utilities.SetID(this, data.id);
         structureType = data.structureType;
         name = data.name;
         charactersHere = new List<Character>();
-        itemsInStructure = new List<SpecialToken>();
-        pointsOfInterest = new HashSet<IPointOfInterest>();
+        // itemsInStructure = new List<SpecialToken>();
+        pointsOfInterest = new List<IPointOfInterest>();
+        groupedTileObjects = new Dictionary<TILE_OBJECT_TYPE, List<TileObject>>();
         tiles = new List<LocationGridTile>();
         SubscribeListeners();
     }
@@ -97,46 +102,42 @@ public class LocationStructure {
     }
     #endregion
 
-    #region Items/Special Tokens
-    public void AddItem(SpecialToken token, LocationGridTile gridLocation = null) {
-        if (!itemsInStructure.Contains(token)) {
-            itemsInStructure.Add(token);
-            token.SetStructureLocation(this);
-            if(AddPOI(token, gridLocation)) {
-                if (token.gridTileLocation.buildSpotOwner.hexTileOwner != null 
-                    && token.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile != null) {
-                    token.SetOwner(token.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile.owner);
-                    token.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile?.OnItemAddedToLocation(token, this);
-                }
-            }
-        }
-    }
-    public void RemoveItem(SpecialToken token, Character removedBy = null) {
-        if (itemsInStructure.Remove(token)) {
-            token.SetStructureLocation(null);
-            LocationGridTile removedFrom = token.gridTileLocation;
-            if (RemovePOI(token, removedBy)) {
-                if (removedFrom.buildSpotOwner.isPartOfParentRegionMap) {
-                    removedFrom.buildSpotOwner.hexTileOwner.settlementOnTile?.OnItemRemovedFromLocation(token, this);    
-                }
-            }
-        }
-    }
-    public void OwnItemsInLocation(Faction owner) {
-        for (int i = 0; i < itemsInStructure.Count; i++) {
-            itemsInStructure[i].SetOwner(owner);
-        }
-    }
-    public int GetItemsOfTypeCount(SPECIAL_TOKEN type) {
-        int count = 0;
-        for (int i = 0; i < itemsInStructure.Count; i++) {
-            if (itemsInStructure[i].specialTokenType == type) {
-                count++;
-            }
-        }
-        return count;
-    }
-    #endregion
+    // #region Items/Special Tokens
+    // public void AddItem(SpecialToken token, LocationGridTile gridLocation = null) {
+    //     if (!itemsInStructure.Contains(token)) {
+    //         itemsInStructure.Add(token);
+    //         token.SetStructureLocation(this);
+    //         if(AddPOI(token, gridLocation)) {
+    //             if (token.gridTileLocation.buildSpotOwner.hexTileOwner != null 
+    //                 && token.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile != null) {
+    //                 token.SetOwner(token.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile.owner);
+    //                 token.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile?.OnItemAddedToLocation(token, this);
+    //             }
+    //         }
+    //     }
+    // }
+    // public void RemoveItem(SpecialToken token, Character removedBy = null) {
+    //     if (itemsInStructure.Remove(token)) {
+    //         token.SetStructureLocation(null);
+    //         LocationGridTile removedFrom = token.gridTileLocation;
+    //         if (RemovePOI(token, removedBy)) {
+    //             if (removedFrom.buildSpotOwner.isPartOfParentRegionMap) {
+    //                 removedFrom.buildSpotOwner.hexTileOwner.settlementOnTile?.OnItemRemovedFromLocation(token, this);    
+    //             }
+    //         }
+    //     }
+    // }
+    //
+    // public int GetItemsOfTypeCount(SPECIAL_TOKEN type) {
+    //     int count = 0;
+    //     for (int i = 0; i < itemsInStructure.Count; i++) {
+    //         if (itemsInStructure[i].specialTokenType == type) {
+    //             count++;
+    //         }
+    //     }
+    //     return count;
+    // }
+    // #endregion
 
     #region Points Of Interest
     public virtual bool AddPOI(IPointOfInterest poi, LocationGridTile tileLocation = null, bool placeObject = true) {
@@ -150,12 +151,34 @@ public class LocationStructure {
                     }
                 }
             }
+            if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+                TileObject tileObject = poi as TileObject;
+                if (groupedTileObjects.ContainsKey(tileObject.tileObjectType)) {
+                    groupedTileObjects[tileObject.tileObjectType].Add(tileObject);
+                } else {
+                    groupedTileObjects.Add(tileObject.tileObjectType, new List<TileObject>() { tileObject });
+                }
+                
+                if (tileObject.gridTileLocation != null && tileObject.gridTileLocation.buildSpotOwner.hexTileOwner != null 
+                    && tileObject.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile != null) {
+                    // tileObject.SetFactionOwner(tileObject.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile.owner);
+                    tileObject.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile?.OnItemAddedToLocation(tileObject, this);
+                }
+            }
             return true;
         }
         return false;
     }
     public virtual bool RemovePOI(IPointOfInterest poi, Character removedBy = null) {
         if (pointsOfInterest.Remove(poi)) {
+            if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+                TileObject tileObject = poi as TileObject;
+                groupedTileObjects[tileObject.tileObjectType].Remove(tileObject);
+                
+                if (poi.gridTileLocation.buildSpotOwner.isPartOfParentRegionMap) {
+                    poi.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile?.OnItemRemovedFromLocation(tileObject, this);    
+                }
+            }
             if (poi.gridTileLocation != null) {
                 //Debug.Log("Removed " + poi.ToString() + " from " + poi.gridTileLocation.ToString() + " at " + this.ToString());
                 if(poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
@@ -171,6 +194,10 @@ public class LocationStructure {
     }
     public virtual bool RemovePOIWithoutDestroying(IPointOfInterest poi) {
         if (pointsOfInterest.Remove(poi)) {
+            if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+                TileObject tileObject = poi as TileObject;
+                groupedTileObjects[tileObject.tileObjectType].Remove(tileObject);
+            }
             if (poi.gridTileLocation != null) {
                 if (poi.poiType != POINT_OF_INTEREST_TYPE.CHARACTER) {
                     location.innerMap.RemoveObjectWithoutDestroying(poi.gridTileLocation);
@@ -183,9 +210,8 @@ public class LocationStructure {
     public List<IPointOfInterest> GetPOIsOfType(POINT_OF_INTEREST_TYPE type) {
         List<IPointOfInterest> pois = new List<IPointOfInterest>();
         for (int i = 0; i < pointsOfInterest.Count; i++) {
-            IPointOfInterest poi = pointsOfInterest.ElementAt(i); 
-            if (poi.poiType == type) {
-                pois.Add(poi);
+            if (pointsOfInterest[i].poiType == type) {
+                pois.Add(pointsOfInterest[i]);
             }
         }
         return pois;
@@ -193,9 +219,8 @@ public class LocationStructure {
     public List<TileObject> GetTileObjectsOfType(TILE_OBJECT_TYPE type) {
         List<TileObject> objs = new List<TileObject>();
         for (int i = 0; i < pointsOfInterest.Count; i++) {
-            IPointOfInterest poi = pointsOfInterest.ElementAt(i); 
-            if (poi is TileObject) {
-                TileObject obj = poi as TileObject;
+            if (pointsOfInterest[i] is TileObject) {
+                TileObject obj = pointsOfInterest[i] as TileObject;
                 if (obj.tileObjectType == type) {
                     objs.Add(obj);
                 }
@@ -203,25 +228,11 @@ public class LocationStructure {
         }
         return objs;
     }
-    public bool HasTileObjectOfType(TILE_OBJECT_TYPE type) {
-        List<TileObject> objs = new List<TileObject>();
-        for (int i = 0; i < pointsOfInterest.Count; i++) {
-            IPointOfInterest poi = pointsOfInterest.ElementAt(i); 
-            if (poi is TileObject) {
-                TileObject obj = poi as TileObject;
-                if (obj.tileObjectType == type) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
     public List<T> GetTileObjectsOfType<T>(TILE_OBJECT_TYPE type) where T : TileObject {
         List<T> objs = new List<T>();
         for (int i = 0; i < pointsOfInterest.Count; i++) {
-            IPointOfInterest poi = pointsOfInterest.ElementAt(i); 
-            if (poi is TileObject) {
-                TileObject obj = poi as TileObject;
+            if (pointsOfInterest[i] is TileObject) {
+                TileObject obj = pointsOfInterest[i] as TileObject;
                 if (obj.tileObjectType == type) {
                     objs.Add(obj as T);
                 }
@@ -232,9 +243,8 @@ public class LocationStructure {
     public List<T> GetTileObjectsOfType<T>() where T : TileObject {
         List<T> objs = new List<T>();
         for (int i = 0; i < pointsOfInterest.Count; i++) {
-            IPointOfInterest poi = pointsOfInterest.ElementAt(i); 
-            if (poi is T) {
-                T obj = poi as T;
+            if (pointsOfInterest[i] is T) {
+                T obj = pointsOfInterest[i] as T;
                 objs.Add(obj);
             }
         }
@@ -243,9 +253,8 @@ public class LocationStructure {
     public T GetTileObjectOfType<T>(TILE_OBJECT_TYPE type) where T : TileObject{
         List<TileObject> objs = new List<TileObject>();
         for (int i = 0; i < pointsOfInterest.Count; i++) {
-            IPointOfInterest poi = pointsOfInterest.ElementAt(i); 
-            if (poi is TileObject) {
-                TileObject obj = poi as TileObject;
+            if (pointsOfInterest[i] is TileObject) {
+                TileObject obj = pointsOfInterest[i] as TileObject;
                 if (obj.tileObjectType == type) {
                     return obj as T;
                 }
@@ -253,13 +262,19 @@ public class LocationStructure {
         }
         return null;
     }
+    public int GetTileObjectsOfTypeCount(TILE_OBJECT_TYPE type) {
+        int count = 0;
+        if (groupedTileObjects.ContainsKey(type)) {
+            count = groupedTileObjects[type].Count;
+        }
+        return count;
+    }
     public ResourcePile GetResourcePileObjectWithLowestCount(TILE_OBJECT_TYPE type, bool excludeMaximum = true) {
         ResourcePile chosenPile = null;
         int lowestCount = 0;
         for (int i = 0; i < pointsOfInterest.Count; i++) {
-            IPointOfInterest poi = pointsOfInterest.ElementAt(i); 
-            if (poi is ResourcePile) {
-                ResourcePile obj = poi as ResourcePile;
+            if (pointsOfInterest[i] is ResourcePile) {
+                ResourcePile obj = pointsOfInterest[i] as ResourcePile;
                 if (excludeMaximum && obj.IsAtMaxResource(obj.providedResource)) {
                     continue; //skip
                 }
@@ -325,6 +340,13 @@ public class LocationStructure {
                 return unoccupiedTiles.Where(x => !x.IsAdjacentTo(typeof(MagicCircle)) && x.tileType != LocationGridTile.Tile_Type.Structure_Entrance).ToList();
         }
     }
+    // public void OwnTileObjectsInLocation(Faction owner) {
+    //     for (int i = 0; i < pointsOfInterest.Count; i++) {
+    //         if (pointsOfInterest[i].poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+    //             (pointsOfInterest[i] as TileObject).SetFactionOwner(owner);
+    //         }
+    //     }
+    // }
     #endregion   
     
     #region Tiles
@@ -335,9 +357,6 @@ public class LocationStructure {
                 AddUnoccupiedTile(tile);
             } else {
                 RemoveUnoccupiedTile(tile);
-            }
-            if (structureType != STRUCTURE_TYPE.WILDERNESS && tile.IsPartOfSettlement(out var settlement)) {
-                SetSettlementLocation(settlement);
             }
         }
     }
@@ -388,7 +407,7 @@ public class LocationStructure {
             case STRUCTURE_TYPE.CITY_CENTER:
                 return "the " + location.name + " city center";
             default:
-                return "the " + UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString());
+                return "the " + Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString());
         }
     }
     public List<LocationGridTile> GetOuterTiles() {
@@ -403,16 +422,14 @@ public class LocationStructure {
     }
     public void DoCleanup() {
         for (int i = 0; i < pointsOfInterest.Count; i++) {
-            IPointOfInterest poi = pointsOfInterest.ElementAt(i);
+            IPointOfInterest poi = pointsOfInterest[i];
             if (poi is TileObject) {
                 (poi as TileObject).DoCleanup();
-            } else if (poi is SpecialToken) {
-                (poi as SpecialToken).DoCleanup();
-            }
+            } 
+            // else if (poi is SpecialToken) {
+            //     (poi as SpecialToken).DoCleanup();
+            // }
         }
-    }
-    public void SetSettlementLocation(Settlement settlement) {
-        settlementLocation = settlement;
     }
     #endregion
 
@@ -420,7 +437,7 @@ public class LocationStructure {
     protected List<TileObject> GetTileObjects() {
         List<TileObject> objs = new List<TileObject>();
         for (int i = 0; i < pointsOfInterest.Count; i++) {
-            IPointOfInterest currPOI = pointsOfInterest.ElementAt(i);
+            IPointOfInterest currPOI = pointsOfInterest[i];
             if (currPOI is TileObject) {
                 objs.Add(currPOI as TileObject);
             }
@@ -430,7 +447,7 @@ public class LocationStructure {
     public List<TileObject> GetTileObjectsThatAdvertise(params INTERACTION_TYPE[] types) {
         List<TileObject> objs = new List<TileObject>();
         for (int i = 0; i < pointsOfInterest.Count; i++) {
-            IPointOfInterest currPOI = pointsOfInterest.ElementAt(i);
+            IPointOfInterest currPOI = pointsOfInterest[i];
             if (currPOI is TileObject) {
                 TileObject obj = currPOI as TileObject;
                 if (obj.IsAvailable() && obj.AdvertisesAll(types)) {
@@ -448,9 +465,8 @@ public class LocationStructure {
     }
     public TileObject GetUnoccupiedTileObject(params TILE_OBJECT_TYPE[] type) {
         for (int i = 0; i < pointsOfInterest.Count; i++) {
-            IPointOfInterest poi = pointsOfInterest.ElementAt(i); 
-            if (poi.IsAvailable() && poi is TileObject) {
-                TileObject tileObj = poi as TileObject;
+            if (pointsOfInterest[i].IsAvailable() && pointsOfInterest[i] is TileObject) {
+                TileObject tileObj = pointsOfInterest[i] as TileObject;
                 if (type.Contains(tileObj.tileObjectType) && tileObj.mapObjectState == MAP_OBJECT_STATE.BUILT) {
                     return tileObj;
                 }
@@ -472,15 +488,6 @@ public class LocationStructure {
     #region Destroy
     private void DestroyStructure() {
         Debug.Log($"{GameManager.Instance.TodayLogString()}{ToString()} was destroyed!");
-        
-        if (settlementLocation != null) {
-            Settlement settlement = settlementLocation;
-            JobQueueItem existingRepairJob = settlement.GetJob(JOB_TYPE.REPAIR, occupiedBuildSpot);
-            if (existingRepairJob != null) {
-                settlement.RemoveFromAvailableJobs(existingRepairJob);
-            }    
-        }
-        
         //transfer tiles to either the wilderness or work settlement
         List<LocationGridTile> tilesInStructure = new List<LocationGridTile>(tiles);
         LocationStructure workArea = location.GetRandomStructureOfType(STRUCTURE_TYPE.WORK_AREA);
@@ -493,43 +500,64 @@ public class LocationStructure {
 
             tile.SetStructure(transferTo);
             if (tile.objHere != null) {
+                AddPOI(tile.objHere, tile);
                 // if (tile.objHere is SpecialToken) {
                 //     AddItem(tile.objHere as SpecialToken, tile);
                 // } else {
                 //     AddPOI(tile.objHere, tile);
                 // }
-                RemovePOI(tile.objHere);
             }
-            tile.RevertToPreviousGroundVisual();
-            tile.CreateSeamlessEdgesForTile(location.innerMap);
             tile.SetPreviousGroundVisual(null); //so that the tile will never revert to the structure tile, unless a new structure is put on it.
             tile.genericTileObject.AdjustHP(tile.genericTileObject.maxHP);
         }
+        if (settlementLocation != null) {
+            Settlement settlement = settlementLocation;
+            JobQueueItem existingRepairJob = settlement.GetJob(JOB_TYPE.REPAIR, occupiedBuildSpot);
+            if (existingRepairJob != null) {
+                settlement.RemoveFromAvailableJobs(existingRepairJob);
+            }    
+        }
         
         occupiedBuildSpot.RemoveOccupyingStructure(this);
-        ObjectPoolManager.Instance.DestroyObject(structureObj);
+        ObjectPoolManager.Instance.DestroyObject(structureObj.gameObject);
         location.RemoveStructure(this);
         settlementLocation.RemoveStructure(this);
-        Messenger.Broadcast(Signals.STRUCTURE_OBJECT_REMOVED, this, occupiedBuildSpot.spot);
+        Messenger.Broadcast(Signals.STRUCTURE_OBJECT_REMOVED, this, occupiedBuildSpot);
         SetOccupiedBuildSpot(null);
     }
     private bool CheckIfStructureDestroyed() {
-        //To check if a structure is destroyed, check if 50% of its walls have been destroyed.
-        int neededWallsToBeConsideredValid = Mathf.FloorToInt(structureObj.walls.Length * 0.5f);
-        int intactWalls = 0;
+        string summary = $"Checking if {ToString()} has been destroyed...";
+        //check walls and floors, if all of them are destroyed consider this structure as destroyed
+        bool allObjectsDestroyed = true;
         for (int i = 0; i < structureObj.walls.Length; i++) {
             WallObject wall = structureObj.walls[i];
             if (wall.currentHP > 0) {
                 //wall is not yet destroyed
-                intactWalls++;
+                summary += $"\n{ToString()} still has an intact wall. Not yet destroyed.";
+                allObjectsDestroyed = false;
+                break;
             }
         }
-        if (intactWalls < neededWallsToBeConsideredValid) {
-            //consider structure as destroyed
-            DestroyStructure();
-            return true;
+
+        if (allObjectsDestroyed) {
+            //check floor tiles
+            for (int i = 0; i < tiles.Count; i++) {
+                LocationGridTile tile = tiles[i];
+                if (tile.genericTileObject.currentHP > 0) {
+                    summary += $"\n{ToString()} still has an intact floor. Not yet destroyed.";
+                    allObjectsDestroyed = false;
+                    break;
+                }
+            }
         }
-        return false;
+
+        //if at end of checking, all objects are destroyed, then consider this structure as destroyed
+        if (allObjectsDestroyed) {
+            summary += $"\n{ToString()} has no intact walls or floors. It has been destroyed.";
+            DestroyStructure();
+        }
+        Debug.Log(summary);
+        return allObjectsDestroyed;
     }
     #endregion
 
@@ -564,7 +592,7 @@ public class LocationStructure {
         if (structureType.IsOpenSpace()) {
             return; //do not check for destruction if structure is open space (Wilderness, Work Settlement, Cemetery, etc.)
         }
-        // CheckIfStructureDestroyed();
+        CheckIfStructureDestroyed();
     }
     private void OnStructureDamaged() {
         if (structureType.IsOpenSpace() || structureType.IsSettlementStructure() == false) {

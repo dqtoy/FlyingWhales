@@ -28,9 +28,7 @@ public abstract class ResourcePile : TileObject {
                 gridTileLocation.structure.RemovePOI(this);
             } else if (isBeingCarriedBy != null) {
                 //If amount in pile was reduced to zero and is still being carried, remove from being carried and destroy it
-                if (isBeingCarriedBy.ownParty.IsPOICarried(this)) {
-                    isBeingCarriedBy.ownParty.RemoveCarriedPOI(false);
-                }
+                isBeingCarriedBy.UncarryPOI(this, addToLocation: false);
             }
         }
     }

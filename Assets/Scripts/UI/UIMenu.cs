@@ -83,9 +83,10 @@ public class UIMenu : MonoBehaviour {
                 UIManager.Instance.ShowRegionInfo(data as Region);
             } else if (data is HexTile) {
                 UIManager.Instance.ShowRegionInfo((data as HexTile).region);
-            } else if (data is SpecialToken) {
-                UIManager.Instance.ShowItemInfo(data as SpecialToken);
-            }
+            } 
+            // else if (data is SpecialToken) {
+            //     UIManager.Instance.ShowItemInfo(data as SpecialToken);
+            // }
         }
     }
 

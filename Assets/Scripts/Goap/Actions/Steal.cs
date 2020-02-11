@@ -7,19 +7,19 @@ public class Steal : GoapAction {
 
     public Steal() : base(INTERACTION_TYPE.STEAL) {
         actionIconString = GoapActionStateDB.Steal_Icon;
-        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.ITEM };
+        advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.TILE_OBJECT };
         racesThatCanDoAction = new RACE[] { RACE.HUMANS, RACE.ELVES, RACE.GOBLIN, RACE.FAERY, RACE.SKELETON, };
         isNotificationAnIntel = true;
     }
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.HAS_ITEM, GOAP_EFFECT_TARGET.ACTOR));
+        AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.HAS_POI, GOAP_EFFECT_TARGET.ACTOR));
     }
     protected override List<GoapEffect> GetExpectedEffects(Character actor, IPointOfInterest target, object[] otherData) {
         List <GoapEffect> ee = base.GetExpectedEffects(actor, target, otherData);
-        SpecialToken token = target as SpecialToken;
-        ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_ITEM, conditionKey = token.specialTokenType.ToString(), target = GOAP_EFFECT_TARGET.ACTOR });
+        TileObject item = target as TileObject;
+        ee.Add(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_POI, conditionKey = item.tileObjectType.ToString(), target = GOAP_EFFECT_TARGET.ACTOR });
         return ee;
     }
     public override void Perform(ActualGoapNode goapNode) {
@@ -34,9 +34,9 @@ public class Steal : GoapAction {
             cost += -200;
             costLog += " -200(Kleptomaniac)";
         } else {
-            SpecialToken item = null;
-            if(target is SpecialToken) {
-                item = target as SpecialToken;
+            TileObject item = null;
+            if(target is TileObject) {
+                item = target as TileObject;
             }
             if(item != null && item.characterOwner != null) {
                 string opinionLabel = actor.relationshipContainer.GetOpinionLabel(item.characterOwner);
@@ -50,10 +50,10 @@ public class Steal : GoapAction {
         return cost;
     }
     public override IPointOfInterest GetTargetToGoTo(ActualGoapNode goapNode) {
-        if (goapNode.poiTarget is SpecialToken) {
-            SpecialToken token = goapNode.poiTarget as SpecialToken;
-            if (token.carriedByCharacter != null) {
-                return token.carriedByCharacter; //make the actor follow the character that is carrying the item instead.
+        if (goapNode.poiTarget is TileObject) {
+            TileObject item = goapNode.poiTarget as TileObject;
+            if (item.carriedByCharacter != null) {
+                return item.carriedByCharacter; //make the actor follow the character that is carrying the item instead.
             }
         }
         return base.GetTargetToGoTo(goapNode);
@@ -62,7 +62,7 @@ public class Steal : GoapAction {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
         object[] otherData = node.otherData;
-        SpecialToken token = poiTarget as SpecialToken;
+        TileObject token = poiTarget as TileObject;
         if (token.carriedByCharacter != null) {
             return token.carriedByCharacter.currentStructure;
         }
@@ -94,8 +94,8 @@ public class Steal : GoapAction {
         string response = base.ReactionOfTarget(node);
         Character actor = node.actor;
         IPointOfInterest target = node.poiTarget;
-        if(target is SpecialToken) {
-            Character targetCharacter = (target as SpecialToken).carriedByCharacter;
+        if(target is TileObject) {
+            Character targetCharacter = (target as TileObject).carriedByCharacter;
             if(targetCharacter != null) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, targetCharacter, actor);
                 if (targetCharacter.traitContainer.HasTrait("Hothead") || UnityEngine.Random.Range(0, 100) < 35) {
@@ -112,11 +112,11 @@ public class Steal : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
-            SpecialToken token = poiTarget as SpecialToken;
+            TileObject item = poiTarget as TileObject;
             if (poiTarget.gridTileLocation != null) {
-                return token.characterOwner == null || token.characterOwner != actor;
+                return item.characterOwner == null || item.characterOwner != actor;
             } else {
-                return token.carriedByCharacter != null && (token.characterOwner == null || token.characterOwner != actor);
+                return item.carriedByCharacter != null && (item.characterOwner == null || item.characterOwner != actor);
             }
         }
         return false;
@@ -132,7 +132,7 @@ public class Steal : GoapAction {
     //    //TODO: currentState.SetIntelReaction(State1Reactions);
     //}
     public void AfterStealSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.PickUpToken(goapNode.poiTarget as SpecialToken, false);
+        goapNode.actor.PickUpItem(goapNode.poiTarget as TileObject, false);
         if(goapNode.actor.traitContainer.HasTrait("Kleptomaniac")) {
             goapNode.actor.needsComponent.AdjustHappiness(10);
         }
@@ -199,8 +199,8 @@ public class StealData : GoapActionData {
         }
         if (poiTarget.gridTileLocation != null) {
             //return true;
-            SpecialToken token = poiTarget as SpecialToken;
-            return token.characterOwner == null || token.characterOwner != actor;
+            TileObject item = poiTarget as TileObject;
+            return item.characterOwner == null || item.characterOwner != actor;
         }
         return false;
     }

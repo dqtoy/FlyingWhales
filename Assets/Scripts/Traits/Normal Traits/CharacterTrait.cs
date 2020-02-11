@@ -48,12 +48,12 @@ namespace Traits {
                     }
                 }
             }
-            if (targetPOI is SpecialToken) {
+            if (targetPOI is TileObject) {
                 if (!characterThatWillDoJob.traitContainer.HasTrait("Beast") /*characterThatWillDoJob.role.roleType != CHARACTER_ROLE.BEAST*/) {
-                    SpecialToken token = targetPOI as SpecialToken;
-                    if (token.CanBePickedUpNormallyUponVisionBy(characterThatWillDoJob)
+                    TileObject item = targetPOI as TileObject;
+                    if (item.CanBePickedUpNormallyUponVisionBy(characterThatWillDoJob)
                     && !characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.PICK_UP)) {
-                        GoapPlanJob pickUpJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.PICK_UP, token, characterThatWillDoJob);
+                        GoapPlanJob pickUpJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.PICK_UP, item, characterThatWillDoJob);
                         characterThatWillDoJob.jobQueue.AddJobInQueue(pickUpJob);
                         return true;
                     }

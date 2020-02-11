@@ -69,7 +69,7 @@ namespace Traits {
                     character.AdjustIgnoreHostilities(1);
                     //character.CancelAllJobsAndPlansExceptNeedsRecovery();
                 }
-                character.ownParty.RemoveCarriedPOI();
+                character.UncarryPOI();
                 character.ForceCancelAllJobsTargettingThisCharacter(JOB_TYPE.KNOCKOUT);
             }
             if (trait.name == "Abducted" || trait.name == "Restrained") {

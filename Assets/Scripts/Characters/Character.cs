@@ -14,7 +14,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     protected string _name;
     protected string _firstName;
-    protected string _surName;
     protected int _id;
     protected float _actRate;
     protected bool _isDead;
@@ -62,7 +61,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public ActualGoapNode currentActionNode { get; private set; }
     public ActualGoapNode previousCurrentActionNode { get; private set; }
     public Character lastAssaultedCharacter { get; private set; }
-    public List<SpecialToken> items { get; private set; }
+    public List<TileObject> items { get; private set; }
     public JobQueue jobQueue { get; private set; }
     public List<JobQueueItem> allJobsTargetingThis { get; private set; }
     public bool canCombat { get; private set; } //This should only be a getter but since we need to know when the value changes it now has a setter
@@ -132,7 +131,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public BuildStructureComponent buildStructureComponent { get; private set; }
     public CharacterStateComponent stateComponent { get; private set; }
     public NonActionEventsComponent nonActionEventsComponent { get; private set; }
-    [Obsolete("opinionComponent is obsolete and has been moved to the BaseRelationshipContainer")]
     public OpinionComponent opinionComponent { get; private set; }
     public InterruptComponent interruptComponent { get; private set; }
     public BehaviourComponent behaviourComponent { get; private set; }
@@ -143,9 +141,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public CombatComponent combatComponent { get; private set; }
 
     #region getters / setters
-    public override string relatableName => _firstName;
     public virtual string name => _firstName;
-    public string fullname => $"{_firstName} {_surName}";
     public string nameWithID => name;
     public string raceClassName {
         get {
@@ -153,12 +149,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //     return Utilities.NormalizeStringUpperCaseFirstLetterOnly(race.ToString()) + " " + role.name;
             // }
             //if(role.name == characterClass.className) {
-            return UtilityScripts.GameUtilities.GetNormalizedRaceAdjective(race) + " " + characterClass.className;
+            return Utilities.GetNormalizedRaceAdjective(race) + " " + characterClass.className;
             //}
             //return Utilities.GetNormalizedRaceAdjective(race) + " " + role.name + " " + characterClass.className;
         }
     }
-    public override int id => _id;
+    public int id => _id;
     public bool isDead => this._isDead;
     public bool isFactionless { //is the character part of the neutral faction? or no faction?
         get {
@@ -183,7 +179,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public bool isAtHomeRegion => currentRegion == homeRegion && !currentParty.icon.isTravellingOutside;
     public bool isPartOfHomeFaction => homeRegion != null && faction != null && homeRegion.IsFactionHere(faction); //is this character part of the faction that owns his home settlement
     //public bool isFlirting => _isFlirting;
-    public override GENDER gender => _gender;
+    public GENDER gender => _gender;
     public RACE race => _raceSetting.race;
     public CharacterClass characterClass => _characterClass;
     public RaceSetting raceSetting => _raceSetting;
@@ -281,45 +277,73 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public JobTriggerComponent jobTriggerComponent => jobComponent;
     public GameObject visualGO => marker.gameObject;
     #endregion
-    
-    public Character(string className, RACE race, GENDER gender) : this() {
-        _id = UtilityScripts.Utilities.SetID(this);
+
+    // public Character(CharacterRole role, RACE race, GENDER gender) : this() {
+    //     _id = Utilities.SetID(this);
+    //     _gender = gender;
+    //     RaceSetting raceSetting = RaceManager.Instance.racesDictionary[race.ToString()];
+    //     _raceSetting = raceSetting.CreateNewCopy();
+    //     // AssignRole(role, false);
+    //     AssignClassByRole(role, true);
+    //     //_characterClass = CharacterManager.Instance.CreateNewCharacterClass(GetClassForRole(role));
+    //     //originalClassName = _characterClass.className;
+    //     SetName(RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender));
+    //     GenerateSexuality();
+    //     StartingLevel();
+    //     //InitializeAlterEgos();
+    //     visuals = new CharacterVisuals(this);
+    // }
+    public Character(CharacterRole role, string className, RACE race, GENDER gender) : this() {
+        _id = Utilities.SetID(this);
         _gender = gender;
         RaceSetting raceSetting = RaceManager.Instance.racesDictionary[race.ToString()];
         _raceSetting = raceSetting.CreateNewCopy();
+        // AssignRole(role, false);
         AssignClass(className, true);
-        SetName(RandomNameGenerator.GenerateRandomName(_raceSetting.race, _gender));
+        //_characterClass = CharacterManager.Instance.CreateNewCharacterClass(className);
+        //originalClassName = _characterClass.className;
+        SetName(RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender));
         GenerateSexuality();
         StartingLevel();
+        //InitializeAlterEgos();
         visuals = new CharacterVisuals(this);
     }
-    public Character(string className, RACE race, GENDER gender, SEXUALITY sexuality, int id = -1) : this() {
-        _id = id == -1 ? UtilityScripts.Utilities.SetID(this) : id;
+    public Character(CharacterRole role, string className, RACE race, GENDER gender, SEXUALITY sexuality) : this() {
+        _id = Utilities.SetID(this);
         _gender = gender;
         RaceSetting raceSetting = RaceManager.Instance.racesDictionary[race.ToString()];
         _raceSetting = raceSetting.CreateNewCopy();
+        // AssignRole(role, false);
         AssignClass(className, true);
-        SetName(RandomNameGenerator.GenerateRandomName(_raceSetting.race, _gender));
+        //_characterClass = CharacterManager.Instance.CreateNewCharacterClass(className);
+        //originalClassName = _characterClass.className;
+        SetName(RandomNameGenerator.Instance.GenerateRandomName(_raceSetting.race, _gender));
         SetSexuality(sexuality);
         StartingLevel();
+        //InitializeAlterEgos();
         visuals = new CharacterVisuals(this);
     }
     public Character(SaveDataCharacter data) {
-        _id = UtilityScripts.Utilities.SetID(this, data.id);
+        _id = Utilities.SetID(this, data.id);
         _gender = data.gender;
         SetSexuality(data.sexuality);
         AssignClass(data.className, true);
+        //_characterClass = CharacterManager.Instance.CreateNewCharacterClass(data.className);
         RaceSetting raceSetting = RaceManager.Instance.racesDictionary[data.race.ToString()];
         _raceSetting = raceSetting.CreateNewCopy();
+        // AssignRole(CharacterManager.Instance.GetRoleByRoleType(data.roleType), false);
         SetName(data.name);
         visuals = new CharacterVisuals(data);
-        
+
+        //currentAlterEgoName = data.currentAlterEgoName;
+        //originalClassName = data.originalClassName;
         isStoppedByOtherCharacter = data.isStoppedByOtherCharacter;
 
+        // combatHistory = new Dictionary<int, Combat>();
         _overrideThoughts = new List<string>();
         advertisedActions = new List<INTERACTION_TYPE>();
         stateComponent = new CharacterStateComponent(this);
-        items = new List<SpecialToken>();
+        items = new List<TileObject>();
         jobQueue = new JobQueue(this);
         allJobsTargetingThis = new List<JobQueueItem>();
         traitsNeededToBeRemoved = new List<Trait>();
@@ -331,7 +355,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         actionHistory = new List<string>();
         planner = new GoapPlanner(this);
 
-        items = new List<SpecialToken>();
+        //alterEgos = new Dictionary<string, AlterEgoData>();
         SetIsDead(data.isDead);
     }
     public Character() {
@@ -349,7 +373,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
         // combatHistory = new Dictionary<int, Combat>();
         advertisedActions = new List<INTERACTION_TYPE>();
-        items = new List<SpecialToken>();
+        items = new List<TileObject>();
         allJobsTargetingThis = new List<JobQueueItem>();
         traitsNeededToBeRemoved = new List<Trait>();
         onLeaveAreaActions = new List<Action>();
@@ -580,7 +604,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     #region Sexuality
     private void GenerateSexuality() {
-        if (UtilityScripts.GameUtilities.IsRaceBeast(race)) {
+        if (Utilities.IsRaceBeast(race)) {
             //For beasts:
             //100 % straight
             sexuality = SEXUALITY.STRAIGHT;
@@ -617,7 +641,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         } else {
             destroyedAt.RemoveCharacterHere(this);
         }
-        ObjectPoolManager.Instance.DestroyObject(marker);
+        ObjectPoolManager.Instance.DestroyObject(marker.gameObject);
         SetCharacterMarker(null);
         Messenger.Broadcast(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, this as IPointOfInterest);
     }
@@ -774,10 +798,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             CancelAllJobs();
 
             if (currentSettlement != null && isHoldingItem) {
-                DropAllTokens(currentStructure, deathTile, true);
+                DropAllItems(deathTile);
             } else {
                 for (int i = 0; i < items.Count; i++) {
-                    if (RemoveToken(i)) {
+                    if (RemoveItem(i)) {
                         i--;
                     }
                 }
@@ -811,8 +835,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //    currentRegion.RemoveCharacterFromLocation(this);
             //}
 
-            if (!IsInOwnParty()) {
-                currentParty.RemovePOI(this);
+            Character carrier = isBeingCarriedBy;
+            if (carrier != null) {
+                carrier.UncarryPOI(this);
             }
             ownParty.PartyDeath();
             currentRegion?.RemoveCharacterFromLocation(this);
@@ -896,7 +921,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             } else {
                 deathLog = _deathLog;
             }
-            deathStr = UtilityScripts.Utilities.LogReplacer(deathLog);
+            deathStr = Utilities.LogReplacer(deathLog);
             Messenger.Broadcast(Signals.CHARACTER_DEATH, this);
 
             //for (int i = 0; i < traitContainer.allTraits.Count; i++) {
@@ -937,7 +962,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #region Character Class
     public virtual string GetClassForRole(CharacterRole role) {
         if (role == CharacterRole.BEAST) {
-            return UtilityScripts.GameUtilities.GetRespectiveBeastClassNameFromByRace(race);
+            return Utilities.GetRespectiveBeastClassNameFromByRace(race);
         } else {
             string className = CharacterManager.Instance.GetRandomClassByIdentifier(role.classNameOrIdentifier);
             if (className != string.Empty) {
@@ -946,6 +971,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 return role.classNameOrIdentifier;
             }
         }
+    }
+    public void AssignClassByRole(CharacterRole role, bool isInitial = false) {
+        AssignClass(GetClassForRole(role), isInitial);
     }
     public void RemoveClass() {
         if (_characterClass == null) { return; }
@@ -1162,6 +1190,24 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 log += ": did not create a job!";
             }
         }
+
+        POIRelationshipData relData = relationshipContainer.GetRelationshipDataWith(targetCharacter) as POIRelationshipData;
+        if (relData != null) {
+            relData.OnSeeCharacter(targetCharacter, this);
+        }
+
+        //log += "\nChecking relationship traits...";
+        //for (int i = 0; i < relationshipTraits.Count; i++) {
+        //    if (relationshipTraits[i].targetCharacter == targetCharacter) {
+        //        log += "\n- " + relationshipTraits[i].name;
+        //        if (relationshipTraits[i].CreateJobsOnEnterVisionBasedOnTrait(this, this)) {
+        //            hasCreatedJob = true;
+        //            log += ": created a job!";
+        //        } else {
+        //            log += ": did not create a job!";
+        //        }
+        //    }
+        //}
         logComponent.PrintLogIfActive(log);
         return hasCreatedJob;
     }
@@ -1364,13 +1410,123 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //}
         //return false;
     }
-    public GoapPlanJob CreateObtainItemJob(SPECIAL_TOKEN item) {
-        GoapEffect goapEffect = new GoapEffect(GOAP_EFFECT_CONDITION.HAS_ITEM, item.ToString(), false, GOAP_EFFECT_TARGET.ACTOR);
-        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.OBTAIN_PERSONAL_ITEM, goapEffect, this, this);
-        jobQueue.AddJobInQueue(job);
-        //Debug.Log(this.name + " created job to obtain item " + item.ToString());
-        //Messenger.Broadcast<string, int, UnityEngine.Events.UnityAction>(Signals.SHOW_DEVELOPER_NOTIFICATION, this.name + " created job to obtain item " + item.ToString(), 5, null);
-        return job;
+    //public GoapPlanJob CreateObtainItemJob(SPECIAL_TOKEN item) {
+    //    GoapEffect goapEffect = new GoapEffect(GOAP_EFFECT_CONDITION.HAS_ITEM, item.ToString(), false, GOAP_EFFECT_TARGET.ACTOR);
+    //    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.OBTAIN_PERSONAL_ITEM, goapEffect, this, this);
+    //    jobQueue.AddJobInQueue(job);
+    //    //Debug.Log(this.name + " created job to obtain item " + item.ToString());
+    //    //Messenger.Broadcast<string, int, UnityEngine.Events.UnityAction>(Signals.SHOW_DEVELOPER_NOTIFICATION, this.name + " created job to obtain item " + item.ToString(), 5, null);
+    //    return job;
+    //}
+    public void CreatePersonalJobs() {
+        bool hasCreatedJob = false;
+
+        //build furniture job
+        // if (!hasCreatedJob && isAtHomeRegion && homeSettlement != null && currentStructure is Dwelling) {
+        //     IDwelling dwelling = currentStructure as IDwelling;
+        //     if (dwelling.HasUnoccupiedFurnitureSpot()) { //&& advertisedActions.Contains(INTERACTION_TYPE.CRAFT_TILE_OBJECT)
+        //         if (UnityEngine.Random.Range(0, 100) < 10) { //if the dwelling has a facility deficit(facility at 0) or if chance is met.
+        //             FACILITY_TYPE mostNeededFacility = dwelling.GetMostNeededValidFacility();
+        //             if (mostNeededFacility != FACILITY_TYPE.NONE) {
+        //                 List<LocationGridTile> validSpots = dwelling.GetUnoccupiedFurnitureSpotsThatCanProvide(mostNeededFacility);
+        //                 if(validSpots != null && validSpots.Count > 0) {
+        //                     LocationGridTile chosenTile = validSpots[UnityEngine.Random.Range(0, validSpots.Count)];
+        //                     FURNITURE_TYPE furnitureToCreate = chosenTile.GetFurnitureThatCanProvide(mostNeededFacility);
+        //                     TILE_OBJECT_TYPE tileObj = furnitureToCreate.ConvertFurnitureToTileObject();
+        //
+        //                     //create new unbuilt furniture on spot, and target that in the job
+        //                     TileObject furniture = InnerMapManager.Instance.CreateNewTileObject<TileObject>(tileObj);
+        //                     dwelling.AddPOI(furniture, chosenTile);
+        //                     furniture.SetMapObjectState(MAP_OBJECT_STATE.UNBUILT);
+        //                     Debug.Log($"Created new unbuilt {furniture.name} at {chosenTile}");
+        //
+        //                     if (tileObj.CanBeCraftedBy(this)) { //check first if the character can build that specific type of furniture
+        //                         if (jobQueue.HasJob(JOB_TYPE.CRAFT_OBJECT, furniture) == false) {
+        //                             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, furniture, this);
+        //                             job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(furniture.tileObjectType).constructionCost });
+        //                             job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoCraftFurnitureJob);
+        //                             jobQueue.AddJobInQueue(job);
+        //                             Debug.Log($"{GameManager.Instance.TodayLogString()}{job.ToString()} was added to {this.name}'s jobqueue");
+        //                         }
+        //                     } else {
+        //                     //furniture cannot be crafted by this character, post a job on the settlement
+        //                     if (homeSettlement.HasJob(JOB_TYPE.CRAFT_OBJECT, furniture) == false) {
+        //                         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CRAFT_OBJECT, INTERACTION_TYPE.CRAFT_TILE_OBJECT, furniture, homeSettlement);
+        //                             job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TileObjectDB.GetTileObjectData(furniture.tileObjectType).constructionCost });
+        //                             job.SetCanTakeThisJobChecker(InteractionManager.Instance.CanDoCraftFurnitureJob);
+        //                         homeSettlement.AddToAvailableJobs(job);
+        //                         }
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
+
+        //Obtain Item job
+        //if the character is part of a Faction and he doesnt have an Obtain Item Job in his personal job queue, 
+        //there is a 10% chance that the character will create a Obtain Item Job if he has less than four items owned 
+        //(sum from items in his inventory and in his home whose owner is this character). 
+        //Reduce this chance by 3% for every item he owns (disregard stolen items)
+        //NOTE: If he already has all items he needs, he doesnt need to do this job anymore.
+        // if (!isFactionless && !jobQueue.HasJob(JOB_TYPE.OBTAIN_PERSONAL_ITEM) && !role.HasNeededItems(this) && isAtHomeRegion) {
+        //     int numOfItemsOwned = GetNumOfItemsOwned();
+        //     if (numOfItemsOwned < 4) {
+        //         //string obtainSummary = name + " will roll to obtain item.";
+        //         int chance = 10 - (3 * numOfItemsOwned);
+        //         chance = Mathf.Max(0, chance);
+        //         int roll = UnityEngine.Random.Range(0, 100);
+        //         //obtainSummary += "\nChance to create job is " + chance.ToString() + ". Roll is " + roll.ToString();
+        //         if (roll < chance) {
+        //             SPECIAL_TOKEN itemToObtain;
+        //             if (role.TryGetNeededItem(this, out itemToObtain)) {
+        //                 CreateObtainItemJob(itemToObtain);
+        //                 hasCreatedJob = true;
+        //                 //obtainSummary += "\nCreated job to obtain " + itemToObtain.ToString();
+        //             } else {
+        //                 //obtainSummary += "\nDoes not have any needed items.";
+        //             }
+        //         }
+        //         //Debug.Log(obtainSummary);
+        //     }
+        // }
+
+        //Undermine Enemy Job
+        // List<Character> enemyCharacters = opinionComponent.GetEnemyCharacters();
+        // if (!hasCreatedJob && enemyCharacters.Count > 0) {
+        //     int chance = UnityEngine.Random.Range(0, 100);
+        //     int value = 3;
+        //     CHARACTER_MOOD currentMood = currentMoodType;
+        //     if (currentMood == CHARACTER_MOOD.DARK) {
+        //         value += 1;
+        //     } else if (currentMood == CHARACTER_MOOD.GOOD) {
+        //         value -= 1;
+        //     } else if (currentMood == CHARACTER_MOOD.GREAT) {
+        //         value -= 3;
+        //     }
+        //     if (chance < value) {
+        //         Character chosenCharacter = null;
+        //         while (chosenCharacter == null && enemyCharacters.Count > 0) {
+        //             int index = UnityEngine.Random.Range(0, enemyCharacters.Count);
+        //             Character character = enemyCharacters[index];
+        //             if (character.HasJobTargetingThis(JOB_TYPE.UNDERMINE_ENEMY) || jobQueue.HasJob(JOB_TYPE.UNDERMINE_ENEMY, character)) {
+        //                 enemyCharacters.RemoveAt(index);
+        //             } else {
+        //                 chosenCharacter = character;
+        //             }
+        //         }
+        //         if (chosenCharacter != null) {
+        //             hasCreatedJob = CreateUndermineJobOnly(chosenCharacter, "idle");
+        //             //GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob("Undermine Enemy", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = chosenCharacter });
+        //             //job.SetCancelOnFail(true);
+        //             //job.SetCannotOverrideJob(true);
+        //             ////GameManager.Instance.SetPausedState(true);
+        //             //Debug.LogWarning(GameManager.Instance.TodayLogString() + "Added an UNDERMINE ENEMY Job to " + this.name + " with target " + chosenCharacter.name);
+        //             //jobQueue.AddJobInQueue(job);
+        //             //hasCreatedJob = true;
+        //         }
+        //     }
+        // }
     }
     public Character troubledCharacter { get; private set; }
     public void CreateAskForHelpJob(Character troubledCharacter, INTERACTION_TYPE helpType, params object[] otherData) {
@@ -1378,12 +1534,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (troubledCharacter != null) {
             this.troubledCharacter = troubledCharacter;
             Character targetCharacter = null;
-            List<Character> positiveCharacters = relationshipContainer.GetCharactersWithPositiveOpinion();
+            List<Character> positiveCharacters = opinionComponent.GetCharactersWithPositiveOpinion();
             positiveCharacters.Remove(troubledCharacter);
             if (positiveCharacters.Count > 0) {
                 targetCharacter = positiveCharacters[UnityEngine.Random.Range(0, positiveCharacters.Count)];
             } else {
-                List<Character> nonEnemyCharacters = relationshipContainer.GetCharactersWithNeutralOpinion();
+                List<Character> nonEnemyCharacters = opinionComponent.GetCharactersWithNeutralOpinion();
                 nonEnemyCharacters.Remove(troubledCharacter);
                 if (nonEnemyCharacters.Count > 0) {
                     targetCharacter = nonEnemyCharacters[UnityEngine.Random.Range(0, nonEnemyCharacters.Count)];
@@ -1410,12 +1566,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (troubledCharacter != null && troubledCharacter != this) {
             this.troubledCharacter = troubledCharacter;
             Character targetCharacter = null;
-            List<Character> positiveCharacters = relationshipContainer.GetCharactersWithPositiveOpinion();
+            List<Character> positiveCharacters = opinionComponent.GetCharactersWithPositiveOpinion();
             positiveCharacters.Remove(troubledCharacter);
             if (positiveCharacters.Count > 0) {
                 targetCharacter = positiveCharacters[UnityEngine.Random.Range(0, positiveCharacters.Count)];
             } else {
-                List<Character> nonEnemyCharacters = relationshipContainer.GetCharactersWithNeutralOpinion();
+                List<Character> nonEnemyCharacters = opinionComponent.GetCharactersWithNeutralOpinion();
                 nonEnemyCharacters.Remove(troubledCharacter);
                 if (nonEnemyCharacters.Count > 0) {
                     targetCharacter = nonEnemyCharacters[UnityEngine.Random.Range(0, nonEnemyCharacters.Count)];
@@ -1705,7 +1861,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         _faction = newFaction;
         //currentAlterEgo.SetFaction(faction);
         OnChangeFaction();
-        UpdateTokenOwner();
+        // UpdateItemFactionOwner();
         if (_faction != null) {
             Messenger.Broadcast<Character>(Signals.FACTION_SET, this);
         }
@@ -1796,6 +1952,45 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             return true;
         }
         return false;
+    }
+    public void CarryPOI(IPointOfInterest poi, bool changeOwnership = false) {
+        if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+            ownParty.AddPOI(poi);
+        } else if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+            PickUpItem(poi as TileObject, changeOwnership);
+        }
+    }
+    public bool IsPOICarriedOrInInventory(IPointOfInterest poi) {
+        if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+            return HasItem(poi as TileObject);
+        }
+        return ownParty.IsPOICarried(poi);
+    }
+    public void UncarryPOI(IPointOfInterest poi, bool bringBackToInventory = false, bool addToLocation = true, LocationGridTile dropLocation = null) {
+        if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+            ownParty.RemovePOI(poi, addToLocation, dropLocation);
+        } else if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+            TileObject item = poi as TileObject;
+            ownParty.RemovePOI(poi, false);
+            if (!bringBackToInventory) {
+                if (addToLocation) {
+                    DropItem(item, dropLocation);
+                } else {
+                    UnobtainItem(item);
+                }
+            }
+        }
+    }
+    public void UncarryPOI(bool bringBackToInventory = false, bool addToLocation = true, LocationGridTile dropLocation = null) {
+        if(ownParty.isCarryingAnyPOI) {
+            IPointOfInterest poi = ownParty.carriedPOI;
+            UncarryPOI(poi, bringBackToInventory, addToLocation, dropLocation);
+        }
+    }
+    public void ShowItemVisualCarryingPOI(TileObject item) {
+        if (HasItem(item)) {
+            ownParty.AddPOI(item);
+        }
     }
     //public bool HasOtherCharacterInParty() {
     //    return ownParty.characters.Count > 1;
@@ -2035,12 +2230,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void SetName(string newName) {
         _name = newName;
-        string[] split = _name.Split(' '); 
-        _firstName = split[0];
-        if (split.Length > 1) {
-            _surName = split[1];    
-        }
-        RandomNameGenerator.RemoveNameAsAvailable(this.gender, this.race, newName);
+        _firstName = _name.Split(' ')[0];
+        RandomNameGenerator.Instance.RemoveNameAsAvailable(this.gender, this.race, newName);
     }
     public void CenterOnCharacter() {
         if (marker != null) {
@@ -2081,7 +2272,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
 
     public void OnOtherCharacterDied(Character characterThatDied) {
         if (characterThatDied.id != this.id) {
-            string opinionLabel = relationshipContainer.GetOpinionLabel(characterThatDied);
+            string opinionLabel = opinionComponent.GetOpinionLabel(characterThatDied);
             if (opinionLabel == OpinionComponent.Friend) {
                 needsComponent.AdjustHope(-5f);
             } else if (opinionLabel == OpinionComponent.Close_Friend) {
@@ -2337,7 +2528,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         if (minion != null) {
             if (minion.busyReasonLog != null) {
                 log = minion.busyReasonLog;
-                return UtilityScripts.Utilities.LogReplacer(minion.busyReasonLog);
+                return Utilities.LogReplacer(minion.busyReasonLog);
             } else {
                 return $"{name} is ready to do your bidding.";
             }
@@ -2346,20 +2537,20 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //Interrupt
         if (interruptComponent.isInterrupted && interruptComponent.thoughtBubbleLog != null) {
             log = interruptComponent.thoughtBubbleLog;
-            return UtilityScripts.Utilities.LogReplacer(interruptComponent.thoughtBubbleLog);
+            return Utilities.LogReplacer(interruptComponent.thoughtBubbleLog);
         }
 
         //Action
         if (currentActionNode != null) {
             Log currentLog = currentActionNode.GetCurrentLog();
             log = currentLog;
-            return UtilityScripts.Utilities.LogReplacer(currentLog);
+            return Utilities.LogReplacer(currentLog);
         }
 
         //Character State
         if (stateComponent.currentState != null) {
             log = stateComponent.currentState.thoughtBubbleLog;
-            return UtilityScripts.Utilities.LogReplacer(stateComponent.currentState.thoughtBubbleLog);
+            return Utilities.LogReplacer(stateComponent.currentState.thoughtBubbleLog);
         }
         //fleeing
         if (marker != null && marker.hasFleePath) {
@@ -2587,10 +2778,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 if (targetCombatState.currentClosestHostile != null && targetCombatState.currentClosestHostile != this) {
                     if (targetCombatState.currentClosestHostile is Character) {
                         Character currentHostileOfTargetCharacter = targetCombatState.currentClosestHostile as Character;
-                        RELATIONSHIP_EFFECT relEffectTowardsTargetOfCombat = relationshipContainer.GetRelationshipEffectWith(currentHostileOfTargetCharacter);
+                        RELATIONSHIP_EFFECT relEffectTowardsTargetOfCombat = opinionComponent.GetRelationshipEffectWith(currentHostileOfTargetCharacter);
                         if (relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.POSITIVE) {
                             if (!targetCombatState.allCharactersThatDegradedRel.Contains(this)) {
-                                relationshipContainer.AdjustOpinion(this, targetCharacter, "Base", -10);
+                                opinionComponent.AdjustOpinion(targetCharacter, "Base", -10);
                                 targetCombatState.AddCharacterThatDegradedRel(this);
                             }
                         }
@@ -2608,7 +2799,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                                 }
                             }
                             if (currentHostileOfTargetCharacter.faction == faction) {
-                                RELATIONSHIP_EFFECT relEffectTowardsTarget = relationshipContainer.GetRelationshipEffectWith(targetCharacter);
+                                RELATIONSHIP_EFFECT relEffectTowardsTarget = opinionComponent.GetRelationshipEffectWith(targetCharacter);
 
                                 if (relEffectTowardsTarget == RELATIONSHIP_EFFECT.POSITIVE) {
                                     if (relEffectTowardsTargetOfCombat == RELATIONSHIP_EFFECT.POSITIVE) {
@@ -2625,7 +2816,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                                                 joinLog.AddToFillers(this, this.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                                                 joinLog.AddToFillers(targetCombatState.currentClosestHostile, targetCombatState.currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                                                 joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.CHARACTER_3);
-                                                joinLog.AddToFillers(null, this.relationshipContainer.GetRelationshipNameWith(targetCharacter), LOG_IDENTIFIER.STRING_1);
+                                                joinLog.AddToFillers(null, this.opinionComponent.GetRelationshipNameWith(targetCharacter), LOG_IDENTIFIER.STRING_1);
                                                 joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
                                                 PlayerManager.Instance.player.ShowNotificationFrom(this, joinLog);
                                             //}
@@ -3462,12 +3653,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "target became a minion");
         CancelAllJobs();
 
-        if (!IsInOwnParty()) {
-            currentParty.RemovePOI(this);
+        Character carrier = isBeingCarriedBy;
+        if (carrier != null) {
+            carrier.UncarryPOI(this);
         }
-        if (ownParty.isCarryingAnyPOI) {
-            ownParty.RemoveCarriedPOI();
-        }
+        // if (ownParty.isCarryingAnyPOI) {
+        //     ownParty.RemovePOI();
+        // }
         ChangeFactionTo(PlayerManager.Instance.player.playerFaction);
         MigrateHomeTo(PlayerManager.Instance.player.playerSettlement);
 
@@ -3697,7 +3889,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             log += this.name + " is already dead not planning other idle plans.";
             return log;
         }
-        if (!isFactionless) { }
+        if (!isFactionless) {
+            CreatePersonalJobs();
+        }
         string classIdlePlanLog = behaviourComponent.RunBehaviour();
         log += "\n" + classIdlePlanLog;
         return log;
@@ -3769,7 +3963,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public Character GetDisabledCharacterToCheckOut() {
         //List<Character> charactersWithRel = relationshipContainer.relationships.Keys.Where(x => x is AlterEgoData).Select(x => (x as AlterEgoData).owner).ToList();
-        List<Character> charactersWithRel = relationshipContainer.charactersWithOpinion;
+        List<Character> charactersWithRel = opinionComponent.charactersWithOpinion;
         if (charactersWithRel.Count > 0) {
             List<Character> positiveCharacters = new List<Character>();
             for (int i = 0; i < charactersWithRel.Count; i++) {
@@ -3777,7 +3971,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 if(character.isDead || character.isMissing || homeStructure == character.homeStructure) {
                     continue;
                 }
-                if (relationshipContainer.HasOpinionLabelWithCharacter(character, OpinionComponent.Acquaintance, 
+                if (opinionComponent.HasOpinionLabelWithCharacter(character, OpinionComponent.Acquaintance, 
                     OpinionComponent.Friend, OpinionComponent.Close_Friend)) {
                     if (character.traitContainer.HasTrait("Paralyzed", "Catatonic")) {
                         positiveCharacters.Add(character);
@@ -3803,6 +3997,247 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             SetLastAssaultedCharacter(null);
         }
     }
+    //public bool ChatCharacter(Character targetCharacter, int chatChance) {
+    //    if (targetCharacter.isDead
+    //        || !targetCharacter.canWitness
+    //        || !canWitness
+    //        || targetCharacter.role.roleType == CHARACTER_ROLE.BEAST
+    //        || role.roleType == CHARACTER_ROLE.BEAST
+    //        || targetCharacter.faction == PlayerManager.Instance.player.playerFaction
+    //        || faction == PlayerManager.Instance.player.playerFaction
+    //        || targetCharacter.characterClass.className == "Zombie"
+    //        || characterClass.className == "Zombie"
+    //        || (currentActionNode != null && currentActionNode.actionStatus == ACTION_STATUS.PERFORMING)
+    //        || (targetCharacter.currentActionNode != null && targetCharacter.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING)) {
+    //        return false;
+    //    }
+    //    if (!IsHostileWith(targetCharacter)) {
+    //        int roll = UnityEngine.Random.Range(0, 100);
+    //        int chance = chatChance;
+    //        if (roll < chance) {
+    //            int chatPriority = InteractionManager.Instance.GetInitialPriority(JOB_TYPE.CHAT);
+    //            JobQueueItem currJob = currentJob;
+    //            if (currJob != null) {
+    //                if (chatPriority >= currJob.priority) {
+    //                    return false;
+    //                }
+    //            }
+    //            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.CHAT_CHARACTER], this, targetCharacter, null, 0);
+    //            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, targetCharacter);
+    //            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.CHAT, INTERACTION_TYPE.CHAT_CHARACTER, targetCharacter, this);
+    //            goapPlan.SetDoNotRecalculate(true);
+    //            job.SetCannotBePushedBack(true);
+    //            job.SetAssignedPlan(goapPlan);
+    //            jobQueue.AddJobInQueue(job);
+    //            return true;
+    //            //ChatCharacter chatAction = InteractionManager.Instance.CreateNewGoapInteraction(INTERACTION_TYPE.CHAT_CHARACTER, this, targetCharacter) as ChatCharacter;
+    //            //chatAction.Perform();
+    //        }
+    //    }
+    //    return false;
+    //}
+    public float GetFlirtationWeightWith(Character targetCharacter, IRelationshipData relData, params CHARACTER_MOOD[] moods) {
+        float positiveFlirtationWeight = 0;
+        float negativeFlirtationWeight = 0;
+        for (int i = 0; i < moods.Length; i++) {
+            CHARACTER_MOOD mood = moods[i];
+            switch (mood) {
+                case CHARACTER_MOOD.DARK:
+                    //-100 Weight per Dark Mood
+                    negativeFlirtationWeight -= 100;
+                    break;
+                case CHARACTER_MOOD.BAD:
+                    //-50 Weight per Bad Mood
+                    negativeFlirtationWeight -= 50;
+                    break;
+                case CHARACTER_MOOD.GOOD:
+                    //+10 Weight per Good Mood
+                    positiveFlirtationWeight += 10;
+                    break;
+                case CHARACTER_MOOD.GREAT:
+                    //+30 Weight per Great Mood
+                    positiveFlirtationWeight += 30;
+                    break;
+            }
+        }
+        if (relData != null) {
+            //+10 Weight per previous flirtation
+            //positiveFlirtationWeight += 10 * relData.flirtationCount; //TODO
+        }
+        //x2 all positive modifiers per Drunk
+        if (traitContainer.HasTrait("Drunk")) {
+            positiveFlirtationWeight *= 2;
+        }
+        if (targetCharacter.traitContainer.HasTrait("Drunk")) {
+            positiveFlirtationWeight *= 2;
+        }
+
+        Unfaithful unfaithful = traitContainer.GetNormalTrait<Unfaithful>("Unfaithful");
+        //x0.5 all positive modifiers per negative relationship
+        if (opinionComponent.GetRelationshipEffectWith(targetCharacter) == RELATIONSHIP_EFFECT.NEGATIVE) {
+            positiveFlirtationWeight *= 0.5f;
+        }
+        if (targetCharacter.opinionComponent.GetRelationshipEffectWith(this) == RELATIONSHIP_EFFECT.NEGATIVE) {
+            positiveFlirtationWeight *= 0.5f;
+        }
+        //x0.1 all positive modifiers per sexually incompatible
+        if (!RelationshipManager.Instance.IsSexuallyCompatibleOneSided(this, targetCharacter)) {
+            positiveFlirtationWeight *= 0.1f;
+        }
+        // x6 if initiator is Unfaithful and already has a lover
+        else if (unfaithful != null && (relData == null || !relData.HasRelationship(RELATIONSHIP_TYPE.LOVER))) {
+            positiveFlirtationWeight *= 6f;
+            positiveFlirtationWeight *= unfaithful.affairChanceMultiplier;
+        }
+        if (!RelationshipManager.Instance.IsSexuallyCompatibleOneSided(targetCharacter, this)) {
+            positiveFlirtationWeight *= 0.1f;
+        }
+        bool thisIsUgly = traitContainer.HasTrait("Ugly");
+        bool otherIsUgly = targetCharacter.traitContainer.HasTrait("Ugly");
+        if (thisIsUgly != otherIsUgly) { //if at least one of the characters are ugly
+            positiveFlirtationWeight *= 0.75f;
+        }
+        return positiveFlirtationWeight + negativeFlirtationWeight;
+    }
+    public float GetBecomeLoversWeightWith(Character targetCharacter, IRelationshipData relData, params CHARACTER_MOOD[] moods) {
+        float positiveWeight = 0;
+        float negativeWeight = 0;
+        if (opinionComponent.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.NEGATIVE && targetCharacter.opinionComponent.GetRelationshipEffectWith(this) != RELATIONSHIP_EFFECT.NEGATIVE
+            && relationshipValidator.CanHaveRelationship(this, targetCharacter, RELATIONSHIP_TYPE.LOVER) && targetCharacter.relationshipValidator.CanHaveRelationship(targetCharacter, this, RELATIONSHIP_TYPE.LOVER)
+            && !Utilities.IsRaceBeast(race) && !Utilities.IsRaceBeast(targetCharacter.race)) { //&& role.roleType != CHARACTER_ROLE.BEAST && targetCharacter.role.roleType != CHARACTER_ROLE.BEAST
+            for (int i = 0; i < moods.Length; i++) {
+                CHARACTER_MOOD mood = moods[i];
+                switch (mood) {
+                    case CHARACTER_MOOD.DARK:
+                        //-30 Weight per Dark Mood
+                        negativeWeight -= 30;
+                        break;
+                    case CHARACTER_MOOD.BAD:
+                        //-10 Weight per Bad Mood
+                        negativeWeight -= 10;
+                        break;
+                    case CHARACTER_MOOD.GOOD:
+                        //+5 Weight per Good Mood
+                        positiveWeight += 5;
+                        break;
+                    case CHARACTER_MOOD.GREAT:
+                        //+10 Weight per Great Mood
+                        positiveWeight += 10;
+                        break;
+                }
+            }
+            if (relData != null) {
+                //+30 Weight per previous flirtation
+                //positiveWeight += 30 * relData.flirtationCount;//TODO
+            }
+            //x2 all positive modifiers per Drunk
+            if (traitContainer.HasTrait("Drunk")) {
+                positiveWeight *= 2;
+            }
+            if (targetCharacter.traitContainer.HasTrait("Drunk")) {
+                positiveWeight *= 2;
+            }
+            //x0.1 all positive modifiers per sexually incompatible
+            if (!RelationshipManager.Instance.IsSexuallyCompatibleOneSided(this, targetCharacter)) {
+                positiveWeight *= 0.1f;
+            }
+            if (!RelationshipManager.Instance.IsSexuallyCompatibleOneSided(targetCharacter, this)) {
+                positiveWeight *= 0.1f;
+            }
+            //x0 if a character is a beast
+            //added to initial checking instead.
+
+            bool thisIsUgly = traitContainer.HasTrait("Ugly");
+            bool otherIsUgly = targetCharacter.traitContainer.HasTrait("Ugly");
+            if (thisIsUgly != otherIsUgly) { //if at least one of the characters are ugly
+                positiveWeight *= 0.75f;
+            }
+        }
+        return positiveWeight + negativeWeight;
+    }
+    public float GetBecomeAffairsWeightWith(Character targetCharacter, IRelationshipData relData, params CHARACTER_MOOD[] moods) {
+        //**if they dont have a negative relationship and at least one of them has a lover, they may become affairs**
+        float positiveWeight = 0;
+        float negativeWeight = 0;
+        if (opinionComponent.GetRelationshipEffectWith(targetCharacter) != RELATIONSHIP_EFFECT.NEGATIVE && targetCharacter.opinionComponent.GetRelationshipEffectWith(this) != RELATIONSHIP_EFFECT.NEGATIVE
+            && relationshipValidator.CanHaveRelationship(this, targetCharacter,  RELATIONSHIP_TYPE.AFFAIR) && targetCharacter.relationshipValidator.CanHaveRelationship(targetCharacter, this, RELATIONSHIP_TYPE.AFFAIR)
+            && !Utilities.IsRaceBeast(race) && !Utilities.IsRaceBeast(targetCharacter.race)) { //&& role.roleType != CHARACTER_ROLE.BEAST && targetCharacter.role.roleType != CHARACTER_ROLE.BEAST
+            for (int i = 0; i < moods.Length; i++) {
+                CHARACTER_MOOD mood = moods[i];
+                switch (mood) {
+                    case CHARACTER_MOOD.DARK:
+                        //-30 Weight per Dark Mood
+                        negativeWeight -= 30;
+                        break;
+                    case CHARACTER_MOOD.BAD:
+                        //-10 Weight per Bad Mood
+                        negativeWeight -= 10;
+                        break;
+                    case CHARACTER_MOOD.GOOD:
+                        //+5 Weight per Good Mood
+                        positiveWeight += 5;
+                        break;
+                    case CHARACTER_MOOD.GREAT:
+                        //+10 Weight per Great Mood
+                        positiveWeight += 20;
+                        break;
+                }
+            }
+            if (relData != null) {
+                //+30 Weight per previous flirtation
+                //positiveWeight += 50 * relData.flirtationCount; //TODO
+            }
+            Unfaithful unfaithful = traitContainer.GetNormalTrait<Unfaithful>("Unfaithful");
+            //x2 all positive modifiers per Drunk
+            if (traitContainer.HasTrait("Drunk")) {
+                positiveWeight *= 2.5f;
+            }
+            if (targetCharacter.traitContainer.HasTrait("Drunk")) {
+                positiveWeight *= 2.5f;
+            }
+            //x0.1 all positive modifiers per sexually incompatible
+            if (!RelationshipManager.Instance.IsSexuallyCompatibleOneSided(this, targetCharacter)) {
+                positiveWeight *= 0.1f;
+            }
+            // x4 if initiator is Unfaithful and already has a lover
+            else if (unfaithful != null && (relData == null || !relData.HasRelationship(RELATIONSHIP_TYPE.LOVER))) {
+                positiveWeight *= 4f;
+                positiveWeight *= unfaithful.affairChanceMultiplier;
+            }
+
+            if (!RelationshipManager.Instance.IsSexuallyCompatibleOneSided(targetCharacter, this)) {
+                positiveWeight *= 0.1f;
+            }
+            Relatable lover = relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TYPE.LOVER).FirstOrDefault();
+            //x3 all positive modifiers if character considers lover as Enemy
+            if (lover != null && opinionComponent.IsEnemiesWith(lover as Character)) {
+                positiveWeight *= 3f;
+            }
+            if (relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.RELATIVE)) {
+                positiveWeight *= 0.01f;
+            }
+            if (lover != null && lover is ITraitable && (lover as ITraitable).traitContainer.HasTrait("Ugly")) { //if lover is ugly
+                positiveWeight += positiveWeight * 0.75f;
+            }
+            //x0 if a character has a lover and does not have the Unfaithful trait
+            if ((relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TYPE.LOVER).Count > 0 && !traitContainer.HasTrait("Unfaithful")) 
+                || (targetCharacter.relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TYPE.LOVER).Count > 0 && !targetCharacter.traitContainer.HasTrait("Unfaithful"))) {
+                positiveWeight *= 0;
+                negativeWeight *= 0;
+            }
+            //x0 if a character is a beast
+            //added to initial checking instead.
+        }
+        return positiveWeight + negativeWeight;
+    }
+    //public void EndChatCharacter() {
+    //    SetIsChatting(false);
+    //    //targetCharacter.SetIsChatting(false);
+    //    //SetIsFlirting(false);
+    //    //targetCharacter.SetIsFlirting(false);
+    //    marker.UpdateActionIcon();
+    //    //targetCharacter.marker.UpdateActionIcon();
+    //}
     public void SetIsConversing(bool state) {
         isConversing = state;
         if(marker != null) {
@@ -3820,24 +4255,23 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     #endregion
 
-    #region Token Inventory
-    public bool ObtainTokenFrom(Character target, SpecialToken token, bool changeCharacterOwnership = true) {
-        if (target.UnobtainToken(token)) {
-            ObtainToken(token, changeCharacterOwnership);
-            return true;
-        }
-        return false;
-    }
-    public bool ObtainToken(SpecialToken token, bool changeCharacterOwnership = true) {
-        if (AddToken(token)) {
-            token.SetOwner(this.faction);
-            token.OnObtainToken(this);
-            token.SetCarriedByCharacter(this);
+    #region Inventory
+    //public bool ObtainTokenFrom(Character target, SpecialToken token, bool changeCharacterOwnership = true) {
+    //    if (target.UnobtainToken(token)) {
+    //        ObtainToken(token, changeCharacterOwnership);
+    //        return true;
+    //    }
+    //    return false;
+    //}
+    public bool ObtainItem(TileObject item, bool changeCharacterOwnership = true) {
+        if (AddItem(item)) {
+            // item.SetFactionOwner(this.faction);
+            item.SetInventoryOwner(this);
             if (changeCharacterOwnership) {
-                token.SetCharacterOwner(this);
+                item.SetCharacterOwner(this);
             } else {
-                if (token.characterOwner == null) {
-                    token.SetCharacterOwner(this);
+                if (item.characterOwner == null) {
+                    item.SetCharacterOwner(this);
                 }
             }
             return true;
@@ -3845,187 +4279,223 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return false;
         //token.AdjustQuantity(-1);
     }
-    public bool UnobtainToken(SpecialToken token) {
-        if (RemoveToken(token)) {
-            token.SetCarriedByCharacter(null);
-            token.OnUnobtainToken(this);
+    public bool UnobtainItem(TileObject item) {
+        if (RemoveItem(item)) {
+            item.SetInventoryOwner(null);
             return true;
         }
         return false;
     }
-    public bool ConsumeToken(SpecialToken token) {
-        token.OnConsumeToken(this);
-        if (token.uses <= 0) {
-            return RemoveToken(token);
-        }
-        return false;
-    }
-    private bool AddToken(SpecialToken token) {
-        if (!items.Contains(token)) {
-            items.Add(token);
-            Messenger.Broadcast(Signals.CHARACTER_OBTAINED_ITEM, token, this);
+    public bool UnobtainItem(TILE_OBJECT_TYPE itemType) {
+        TileObject removedItem = RemoveItem(itemType);
+        if (removedItem != null) {
+            removedItem.SetInventoryOwner(null);
             return true;
         }
         return false;
     }
-    private bool RemoveToken(SpecialToken token) {
-        if (items.Remove(token)) {
-            Messenger.Broadcast(Signals.CHARACTER_LOST_ITEM, token, this);
+    //public bool ConsumeToken(SpecialToken token) {
+    //    token.OnConsumeToken(this);
+    //    if (token.uses <= 0) {
+    //        return RemoveToken(token);
+    //    }
+    //    return false;
+    //}
+    private bool AddItem(TileObject item) {
+        if (!items.Contains(item)) {
+            items.Add(item);
+            Messenger.Broadcast(Signals.CHARACTER_OBTAINED_ITEM, item, this);
             return true;
         }
         return false;
     }
-    private bool RemoveToken(int index) {
-        SpecialToken token = items[index];
-        if (token != null) {
+    private bool RemoveItem(TileObject item) {
+        if (items.Remove(item)) {
+            Messenger.Broadcast(Signals.CHARACTER_LOST_ITEM, item, this);
+            return true;
+        }
+        return false;
+    }
+    private TileObject RemoveItem(TILE_OBJECT_TYPE itemType) {
+        TileObject removedItem = null;
+        for (int i = 0; i < items.Count; i++) {
+            if (items[i].tileObjectType == itemType) {
+                removedItem = items[i];
+                RemoveItem(i);
+            }
+        }
+        return removedItem;
+    }
+    private bool RemoveItem(int index) {
+        TileObject item = items[index];
+        if (item != null) {
             items.RemoveAt(index);
-            Messenger.Broadcast(Signals.CHARACTER_LOST_ITEM, token, this);
+            Messenger.Broadcast(Signals.CHARACTER_LOST_ITEM, item, this);
             return true;
         }
         return false;
     }
-    public void DropToken(SpecialToken token, LocationStructure structure, LocationGridTile gridTile = null, bool clearOwner = true) {
-        if (UnobtainToken(token)) {
-            if (token.specialTokenType.CreatesObjectWhenDropped()) {
-                structure.AddItem(token, gridTile);
-                //location.AddSpecialTokenToLocation(token, structure, gridTile);
+    public void DropItem(TileObject item, LocationGridTile gridTile = null, bool clearOwner = true) {
+        if (UnobtainItem(item)) {
+            //if (item.specialTokenType.CreatesObjectWhenDropped()) {
+            //    structure.AddItem(item, gridTile);
+            //    //location.AddSpecialTokenToLocation(token, structure, gridTile);
+            //}
+            LocationGridTile targetTile = gridTile;
+            if (targetTile == null || targetTile.objHere != null) {
+                targetTile = gridTileLocation.GetNearestUnoccupiedTileFromThis();
             }
-            if (clearOwner) {
-                token.SetCharacterOwner(null);
+            if (targetTile != null) {
+                targetTile.structure.AddPOI(item, targetTile);
+                if (clearOwner) {
+                    item.SetCharacterOwner(null);
+                }
+            } else {
+                logComponent.PrintLogErrorIfActive("Cannot drop " + item.nameWithID + " of " + name + " because there is no target tile.");
             }
         }
     }
-    public void DropAllTokens(LocationStructure structure, LocationGridTile tile, bool removeFactionOwner = false) {
+    public void DropAllItems(LocationGridTile tile) { //, bool removeFactionOwner = false
         while (isHoldingItem) {
-            SpecialToken token = items[0];
-            if (UnobtainToken(token)) {
-                if (removeFactionOwner) {
-                    token.SetOwner(null);
+            TileObject item = items[0];
+            if (UnobtainItem(item)) {
+                // if (removeFactionOwner) {
+                //     item.SetFactionOwner(null);
+                // }
+                LocationGridTile targetTile = tile;
+                if (targetTile == null || targetTile.objHere != null) {
+                    targetTile = gridTileLocation.GetNearestUnoccupiedTileFromThis();
                 }
-                if (token.specialTokenType.CreatesObjectWhenDropped()) {
-                    LocationGridTile targetTile = tile.GetNearestUnoccupiedTileFromThis();
-                    targetTile.structure.AddItem(token, targetTile);
-                    //location.AddSpecialTokenToLocation(token, structure, targetTile);
-                    if (structure != homeStructure) {
-                        //if this character drops this at a structure that is not his/her home structure, set the owner of the item to null
-                        token.SetCharacterOwner(null);
-                    }
+                if (targetTile != null) {
+                    targetTile.structure.AddPOI(item, targetTile);
                 } else {
-                    token.SetCharacterOwner(null);
+                    logComponent.PrintLogErrorIfActive("Cannot drop " + item.nameWithID + " of " + name + " because there is no target tile.");
                 }
+                item.SetCharacterOwner(null);
+                //if (item.specialTokenType.CreatesObjectWhenDropped()) {
+                //    LocationGridTile targetTile = tile.GetNearestUnoccupiedTileFromThis();
+                //    targetTile.structure.AddItem(item, targetTile);
+                //    //location.AddSpecialTokenToLocation(token, structure, targetTile);
+                //    if (structure != homeStructure) {
+                //        //if this character drops this at a structure that is not his/her home structure, set the owner of the item to null
+                //        item.SetCharacterOwner(null);
+                //    }
+                //} else {
+                //    item.SetCharacterOwner(null);
+                //}
             }
         }
     }
-    public void PickUpToken(SpecialToken token, bool changeCharacterOwnership = true) {
-        if (token.carriedByCharacter != null) {
-            token.carriedByCharacter.UnobtainToken(token);
+    public void PickUpItem(TileObject item, bool changeCharacterOwnership = true) {
+        if (item.carriedByCharacter != null) {
+            item.carriedByCharacter.UnobtainItem(item);
         }
-        if (ObtainToken(token, changeCharacterOwnership)) {
-            if (token.gridTileLocation != null) {
-                token.gridTileLocation.structure.RemoveItem(token);
-                //token.gridTileLocation.structure.location.RemoveSpecialTokenFromLocation(token);
-            }
+        if (ObtainItem(item, changeCharacterOwnership)) {
+            // if (item.gridTileLocation != null) {
+            //     item.gridTileLocation.structure.RemoveItem(item);
+            // }
         }
     }
-    public void DestroyToken(SpecialToken token) {
-        token.gridTileLocation.structure.RemoveItem(token);
+    public void DestroyItem(TileObject item) {
+        item.structureLocation.RemovePOI(item);
         //token.gridTileLocation.structure.location.RemoveSpecialTokenFromLocation(token);
     }
-    private void UpdateTokenOwner() {
+    // private void UpdateItemFactionOwner() {
+    //     for (int i = 0; i < items.Count; i++) {
+    //         TileObject item = items[i];
+    //         item.SetFactionOwner(this.faction);
+    //     }
+    // }
+    public TileObject GetItem(TileObject item) {
         for (int i = 0; i < items.Count; i++) {
-            SpecialToken token = items[i];
-            token.SetOwner(this.faction);
-        }
-    }
-    public SpecialToken GetToken(SpecialToken token) {
-        for (int i = 0; i < items.Count; i++) {
-            if (items[i] == token) {
+            if (items[i] == item) {
                 return items[i];
             }
         }
         return null;
     }
-    public SpecialToken GetToken(SPECIAL_TOKEN token) {
+    public TileObject GetItem(TILE_OBJECT_TYPE itemType) {
         for (int i = 0; i < items.Count; i++) {
-            if (items[i].specialTokenType == token) {
+            if (items[i].tileObjectType == itemType) {
                 return items[i];
             }
         }
         return null;
     }
-    public SpecialToken GetToken(string tokenName) {
+    public TileObject GetItem(string itemName) {
         for (int i = 0; i < items.Count; i++) {
-            if (items[i].tokenName.ToLower() == tokenName.ToLower()) {
+            if (items[i].name == itemName) {
                 return items[i];
             }
         }
         return null;
     }
-    public List<SpecialToken> GetItemsOwned() {
-        List<SpecialToken> itemsOwned = new List<SpecialToken>();
-        //for (int i = 0; i < homeSettlement.possibleSpecialTokenSpawns.Count; i++) {
-        //    SpecialToken token = homeSettlement.possibleSpecialTokenSpawns[i];
-        //    if (token.characterOwner == this) {
-        //        itemsOwned.Add(token);
-        //    }
-        //}
-        if(homeStructure == null) {
-            logComponent.PrintLogErrorIfActive(name + " error in GetItemsOwned no homestructure!");
-        }
-        for (int i = 0; i < homeStructure.itemsInStructure.Count; i++) {
-            SpecialToken token = homeStructure.itemsInStructure[i];
-            if (token.characterOwner == this) {
-                itemsOwned.Add(token);
-            }
-        }
-        for (int i = 0; i < items.Count; i++) {
-            SpecialToken token = items[i];
-            if (token.characterOwner == this) {
-                itemsOwned.Add(token);
-            }
-        }
-        return itemsOwned;
+    public bool HasItem(TileObject item) {
+        return GetItem(item) != null;
     }
-    public int GetNumOfItemsOwned() {
-        int count = 0;
-        //for (int i = 0; i < homeSettlement.possibleSpecialTokenSpawns.Count; i++) {
-        //    SpecialToken token = homeSettlement.possibleSpecialTokenSpawns[i];
-        //    if (token.characterOwner == this) {
-        //        count++;
-        //    }
-        //}
-        for (int i = 0; i < homeStructure.itemsInStructure.Count; i++) {
-            SpecialToken token = homeStructure.itemsInStructure[i];
-            if (token.characterOwner == this) {
-                count++;
-            }
-        }
-        
-        for (int i = 0; i < items.Count; i++) {
-            SpecialToken token = items[i];
-            if (token.characterOwner == this) {
-                count++;
-            }
-        }
-        return count;
+    public bool HasItem(TILE_OBJECT_TYPE itemType) {
+        return GetItem(itemType) != null;
     }
-    public bool HasTokenInInventory(SPECIAL_TOKEN tokenType) {
-        for (int i = 0; i < items.Count; i++) {
-            if (items[i].specialTokenType == tokenType) {
-                return true;
-            }
-        }
-        return false;
+    public bool HasItem(string itemName) {
+        return GetItem(itemName) != null;
     }
-    public int GetTokenCountInInventory(SPECIAL_TOKEN tokenType) {
-        int count = 0;
-        for (int i = 0; i < items.Count; i++) {
-            if (items[i].specialTokenType == tokenType) {
-                count++;
-            }
-        }
-        return count;
-    }
+    // public List<TileObject> GetItemsOwned() {
+    //     List<TileObject> itemsOwned = new List<TileObject>();
+    //     //for (int i = 0; i < homeSettlement.possibleSpecialTokenSpawns.Count; i++) {
+    //     //    SpecialToken token = homeSettlement.possibleSpecialTokenSpawns[i];
+    //     //    if (token.characterOwner == this) {
+    //     //        itemsOwned.Add(token);
+    //     //    }
+    //     //}
+    //     if(homeStructure == null) {
+    //         logComponent.PrintLogErrorIfActive(name + " error in GetItemsOwned no homestructure!");
+    //     }
+    //     for (int i = 0; i < homeStructure.itemsInStructure.Count; i++) {
+    //         SpecialToken token = homeStructure.itemsInStructure[i];
+    //         if (token.characterOwner == this) {
+    //             itemsOwned.Add(token);
+    //         }
+    //     }
+    //     for (int i = 0; i < items.Count; i++) {
+    //         SpecialToken token = items[i];
+    //         if (token.characterOwner == this) {
+    //             itemsOwned.Add(token);
+    //         }
+    //     }
+    //     return itemsOwned;
+    // }
+    // public int GetNumOfItemsOwned() {
+    //     int count = 0;
+    //     //for (int i = 0; i < homeSettlement.possibleSpecialTokenSpawns.Count; i++) {
+    //     //    SpecialToken token = homeSettlement.possibleSpecialTokenSpawns[i];
+    //     //    if (token.characterOwner == this) {
+    //     //        count++;
+    //     //    }
+    //     //}
+    //     for (int i = 0; i < homeStructure.itemsInStructure.Count; i++) {
+    //         SpecialToken token = homeStructure.itemsInStructure[i];
+    //         if (token.characterOwner == this) {
+    //             count++;
+    //         }
+    //     }
+    //     
+    //     for (int i = 0; i < items.Count; i++) {
+    //         SpecialToken token = items[i];
+    //         if (token.characterOwner == this) {
+    //             count++;
+    //         }
+    //     }
+    //     return count;
+    // }
+    // public int GetTokenCountInInventory(SPECIAL_TOKEN tokenType) {
+    //     int count = 0;
+    //     for (int i = 0; i < items.Count; i++) {
+    //         if (items[i].specialTokenType == tokenType) {
+    //             count++;
+    //         }
+    //     }
+    //     return count;
+    // }
     // public bool HasExtraTokenInInventory(SPECIAL_TOKEN tokenType) {
     //     if (role.IsRequiredItem(tokenType)) {
     //         //if the specified token type is required by this character's role, check if this character has any extras
@@ -4038,21 +4508,21 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     //         return HasTokenInInventory(tokenType);
     //     }
     // }
-    public bool OwnsItemOfType(SPECIAL_TOKEN tokenType) {
-        for (int i = 0; i < homeStructure.itemsInStructure.Count; i++) {
-            SpecialToken token = homeStructure.itemsInStructure[i];
-            if (token.characterOwner == this && token.specialTokenType == tokenType) {
-                return true;
-            }
-        }
-        for (int i = 0; i < items.Count; i++) {
-            SpecialToken token = items[i];
-            if (token.characterOwner == this && token.specialTokenType == tokenType) {
-                return true;
-            }
-        }
-        return false;
-    }
+    // public bool OwnsItemOfType(SPECIAL_TOKEN tokenType) {
+    //     for (int i = 0; i < homeStructure.itemsInStructure.Count; i++) {
+    //         SpecialToken token = homeStructure.itemsInStructure[i];
+    //         if (token.characterOwner == this && token.specialTokenType == tokenType) {
+    //             return true;
+    //         }
+    //     }
+    //     for (int i = 0; i < items.Count; i++) {
+    //         SpecialToken token = items[i];
+    //         if (token.characterOwner == this && token.specialTokenType == tokenType) {
+    //             return true;
+    //         }
+    //     }
+    //     return false;
+    // }
     #endregion
 
     #region Share Intel
@@ -4948,7 +5418,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //    }
         //}
         if (currentParty.icon.isTravelling) {
-            if (ReferenceEquals(currentParty.icon.travelLine, null)) {
+            if (currentParty.icon.travelLine == null) {
                 //This means that the actor currently travelling to another tile in tilemap
                 marker.StopMovement();
             } else {
@@ -4980,7 +5450,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 }
 
                 logComponent.PrintLogIfActive(log);
-                ownParty.RemoveCarriedPOI();
+                UncarryPOI();
             }
         }
         //JobQueueItem job = parentPlan.job;
@@ -5868,7 +6338,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     private void OnCharacterMissing(Character missingCharacter) {
         if(missingCharacter != this) {
-            string opinionLabel = relationshipContainer.GetOpinionLabel(missingCharacter);
+            string opinionLabel = opinionComponent.GetOpinionLabel(missingCharacter);
             if(opinionLabel == OpinionComponent.Friend) {
                 needsComponent.AdjustHope(-5f);
             }else if (opinionLabel == OpinionComponent.Close_Friend) {
@@ -5878,7 +6348,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     private void OnCharacterNoLongerMissing(Character missingCharacter) {
         if (missingCharacter != this) {
-            string opinionLabel = relationshipContainer.GetOpinionLabel(missingCharacter);
+            string opinionLabel = opinionComponent.GetOpinionLabel(missingCharacter);
             if (opinionLabel == OpinionComponent.Friend) {
                 needsComponent.AdjustHope(5f);
             } else if (opinionLabel == OpinionComponent.Close_Friend) {

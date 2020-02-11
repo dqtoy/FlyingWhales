@@ -203,8 +203,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.REMOVE_STATUS, goapEffect, _owner, _owner.homeSettlement);
 			job.SetCanTakeThisJobChecker((Character character, JobQueueItem jqi) => CanTakeRemoveStatus(character, job, trait));
 			job.SetStillApplicableChecker(() => IsRemoveStatusJobStillApplicable(_owner, job, trait));
-			job.AddOtherData(INTERACTION_TYPE.CRAFT_ITEM, new object[] { SPECIAL_TOKEN.HEALING_POTION });
-			job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TokenManager.Instance.itemData[SPECIAL_TOKEN.HEALING_POTION].craftCost });
+			// job.AddOtherData(INTERACTION_TYPE.CRAFT_TILE_OBJECT, new object[] { TILE_OBJECT_TYPE.HEALING_POTION });
+			// job.AddOtherData(INTERACTION_TYPE.TAKE_RESOURCE, new object[] { TokenManager.Instance.itemData[SPECIAL_TOKEN.HEALING_POTION].craftCost });
 			_owner.homeSettlement.AddToAvailableJobs(job);
 		}
 	}

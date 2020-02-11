@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Inner_Maps;
 using UnityEngine;  
 using Traits;
+using UnityEngine.WSA;
 
 public class DepositResourcePile : GoapAction {
     public DepositResourcePile() : base(INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE) {
@@ -14,7 +15,7 @@ public class DepositResourcePile : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.IN_PARTY, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), IsResourcePileCarried);
+        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), IsCarriedOrInInventory);
         AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.DEPOSIT_RESOURCE, string.Empty, false, GOAP_EFFECT_TARGET.TARGET));
         //AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.HAS_FOOD, GOAP_EFFECT_TARGET.TARGET));
         //AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.HAS_WOOD, GOAP_EFFECT_TARGET.TARGET));
@@ -108,14 +109,14 @@ public class DepositResourcePile : GoapAction {
         base.OnStopWhileStarted(node);
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
-        actor.ownParty.RemovePOI(poiTarget, dropLocation: actor.gridTileLocation);
+        actor.UncarryPOI(poiTarget, dropLocation: actor.gridTileLocation);
     }
     public override void OnStopWhilePerforming(ActualGoapNode node) {
         base.OnStopWhilePerforming(node);
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
         Character targetCharacter = poiTarget as Character;
-        actor.ownParty.RemovePOI(poiTarget);
+        actor.UncarryPOI(poiTarget);
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
         Character actor = node.actor;
@@ -155,8 +156,8 @@ public class DepositResourcePile : GoapAction {
     //private bool IsActorFoodEnough(Character actor, IPointOfInterest poiTarget, object[] otherData) {
     //    return actor.food > 0;
     //}
-    private bool IsResourcePileCarried(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return actor.ownParty.IsPOICarried(poiTarget);
+    private bool IsCarriedOrInInventory(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        return actor.IsPOICarriedOrInInventory(poiTarget);
     }
     #endregion
 
@@ -217,12 +218,12 @@ public class DepositResourcePile : GoapAction {
                     pileToBeDepositTo.SetMapObjectState(MAP_OBJECT_STATE.BUILT);
                 }
                 pileToBeDepositTo.AdjustResourceInPile(poiTarget.resourceInPile);
-                actor.ownParty.RemovePOI(poiTarget, false);
+                actor.UncarryPOI(poiTarget, addToLocation: false);
             } else {
-                actor.ownParty.RemovePOI(poiTarget);
+                actor.UncarryPOI(poiTarget);
             }
         } else {
-            actor.ownParty.RemovePOI(poiTarget);
+            actor.UncarryPOI(poiTarget);
         }
     }
     #endregion

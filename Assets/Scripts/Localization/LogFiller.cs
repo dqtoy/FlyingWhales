@@ -39,13 +39,16 @@ public struct SaveDataLogFiller {
             } else if (filler.obj is Faction) {
                 objID = (filler.obj as Faction).id;
                 objIdentifier = "faction";
-            } else if (filler.obj is SpecialToken) {
-                objID = (filler.obj as SpecialToken).id;
-                objIdentifier = "item";
-            } else if (filler.obj is SpecialObject) {
-                objID = (filler.obj as SpecialObject).id;
-                objIdentifier = "special object";
-            } else if (filler.obj is TileObject) {
+            } 
+            // else if (filler.obj is SpecialToken) {
+            //     objID = (filler.obj as SpecialToken).id;
+            //     objIdentifier = "item";
+            // }
+            // else if (filler.obj is SpecialObject) {
+            //     objID = (filler.obj as SpecialObject).id;
+            //     objIdentifier = "special object";
+            // } 
+            else if (filler.obj is TileObject) {
                 objID = (filler.obj as TileObject).id;
                 objIdentifier = "tile object";
                 objTileObjectType = (filler.obj as TileObject).tileObjectType;
@@ -77,11 +80,13 @@ public struct SaveDataLogFiller {
                 tempFiller.obj = LandmarkManager.Instance.GetLandmarkByID(objID);
             } else if (objIdentifier == "faction") {
                 tempFiller.obj = FactionManager.Instance.GetFactionBasedOnID(objID);
-            } else if (objIdentifier == "item") {
-                tempFiller.obj = TokenManager.Instance.GetSpecialTokenByID(objID);
-            } else if (objIdentifier == "special object") {
-                tempFiller.obj = TokenManager.Instance.GetSpecialObjectByID(objID);
-            } else if (objIdentifier == "tile object") {
+            } 
+            // else if (objIdentifier == "item") {
+            //     tempFiller.obj = TokenManager.Instance.GetSpecialTokenByID(objID);
+            // } else if (objIdentifier == "special object") {
+            //     tempFiller.obj = TokenManager.Instance.GetSpecialObjectByID(objID);
+            // }
+            else if (objIdentifier == "tile object") {
                 tempFiller.obj = InnerMapManager.Instance.GetTileObject(objTileObjectType, objID);
             }
             filler = tempFiller;

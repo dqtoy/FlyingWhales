@@ -84,11 +84,11 @@ public class IgniteData : SpellData {
         }
         return base.CanPerformAbilityTowards(tileObject);
     }
-    public override bool CanPerformAbilityTowards(SpecialToken item) {
-        if (item.gridTileLocation == null || item.gridTileLocation.genericTileObject.traitContainer.HasTrait("Burning")) {
-            return false;
-        }
-        return base.CanPerformAbilityTowards(item);
-    }
+    // public override bool CanPerformAbilityTowards(SpecialToken item) {
+    //     if (item.gridTileLocation == null || item.gridTileLocation.genericTileObject.traitContainer.HasTrait("Burning")) {
+    //         return false;
+    //     }
+    //     return base.CanPerformAbilityTowards(item);
+    // }
     #endregion
 }

@@ -74,14 +74,16 @@ public class ExplosionData : SpellData {
                         continue; //object was destroyed, do not add burning trait
                     }
                 }
-            } else if (flammable is SpecialToken) {
-                SpecialToken token = flammable as SpecialToken;
-                GameManager.Instance.CreateExplodeEffectAt(token.gridTileLocation);
-                token.AdjustHP(-token.currentHP);
-                if (token.gridTileLocation == null) {
-                    continue; //object was destroyed, do not add burning trait
-                }
-            } else if (flammable is Character) {
+            }
+            // else if (flammable is SpecialToken) {
+            //     SpecialToken token = flammable as SpecialToken;
+            //     GameManager.Instance.CreateExplodeEffectAt(token.gridTileLocation);
+            //     token.AdjustHP(-token.currentHP);
+            //     if (token.gridTileLocation == null) {
+            //         continue; //object was destroyed, do not add burning trait
+            //     }
+            // }
+            else if (flammable is Character) {
                 Character character = flammable as Character;
                 GameManager.Instance.CreateExplodeEffectAt(character.gridTileLocation);
                 character.AdjustHP(-(int)(character.maxHP * 0.4f), true);

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Inner_Maps;
 using UnityEngine;
 using Traits;
 using UnityEngine.Assertions;
@@ -154,7 +155,7 @@ public class DouseFireState : CharacterState {
         }
     }
     private bool HasWater() {
-        return stateComponent.character.GetToken(SPECIAL_TOKEN.WATER_BUCKET) != null;
+        return stateComponent.character.HasItem(TILE_OBJECT_TYPE.WATER_BUCKET);
     }
     private bool NeedsWater() {
         return !stateComponent.character.traitContainer.HasTrait("Elemental Master");
@@ -187,7 +188,7 @@ public class DouseFireState : CharacterState {
         return false;
     }
     private void ObtainWater() {
-        stateComponent.character.ObtainToken(TokenManager.Instance.CreateSpecialToken(SPECIAL_TOKEN.WATER_BUCKET));
+        stateComponent.character.ObtainItem(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.WATER_BUCKET));
         isFetchingWater = false; 
     }
     private void DouseNearestFire() {
@@ -227,10 +228,10 @@ public class DouseFireState : CharacterState {
     private void DouseFire() {
         currentTarget.traitContainer.RemoveTrait(currentTarget, "Burning", removedBy: this.stateComponent.character);
         if (NeedsWater()) {
-            SpecialToken water = this.stateComponent.character.GetToken(SPECIAL_TOKEN.WATER_BUCKET);
+            TileObject water = this.stateComponent.character.GetItem(TILE_OBJECT_TYPE.WATER_BUCKET);
             if (water != null) {
                 //Reduce water count by 1.
-                this.stateComponent.character.ConsumeToken(water);
+                this.stateComponent.character.UnobtainItem(water);
             }
             currentTarget.traitContainer.AddTrait(currentTarget, "Wet", this.stateComponent.character);    
         }

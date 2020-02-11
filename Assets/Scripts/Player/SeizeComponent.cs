@@ -25,7 +25,7 @@ public class SeizeComponent {
         // }
         if (seizedPOI == null) {
             if(poi.isBeingCarriedBy != null) {
-                poi.isBeingCarriedBy.ownParty.RemoveCarriedPOI();
+                poi.isBeingCarriedBy.UncarryPOI();
             }
             if (poi.gridTileLocation != null) {
                 poi.OnSeizePOI();

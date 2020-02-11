@@ -24,7 +24,7 @@ public class Projectile : MonoBehaviour {
         Messenger.RemoveListener<Party>(Signals.PARTY_STARTED_TRAVELLING, OnCharacterAreaTravelling);
         Messenger.RemoveListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
-        Messenger.RemoveListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
+        // Messenger.RemoveListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
     }
     #endregion
 
@@ -41,9 +41,10 @@ public class Projectile : MonoBehaviour {
             Messenger.AddListener<Character>(Signals.CHARACTER_DEATH, OnCharacterDied);
         } else if (targetObject is TileObject) {
             Messenger.AddListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemoved);
-        } else if (targetObject is SpecialToken) {
-            Messenger.AddListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
-        }
+        } 
+        // else if (targetObject is SpecialToken) {
+        //     Messenger.AddListener<SpecialToken, LocationGridTile>(Signals.ITEM_REMOVED_FROM_TILE, OnItemRemovedFromTile);
+        // }
 
         Messenger.AddListener<bool>(Signals.PAUSED, OnGamePaused);
     }
@@ -103,11 +104,11 @@ public class Projectile : MonoBehaviour {
             DestroyProjectile();
         }
     }
-    private void OnItemRemovedFromTile(SpecialToken item, LocationGridTile removedFrom) {
-        if (item == targetObject) {
-            DestroyProjectile();
-        }
-    }
+    // private void OnItemRemovedFromTile(SpecialToken item, LocationGridTile removedFrom) {
+    //     if (item == targetObject) {
+    //         DestroyProjectile();
+    //     }
+    // }
     #endregion
 
 

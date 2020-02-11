@@ -23,7 +23,7 @@ public class Initializer : MonoBehaviour {
 
         InteractionManager.Instance.Initialize();
 
-        TokenManager.Instance.Initialize();
+        // TokenManager.Instance.Initialize();
         JobManager.Instance.Initialize();
         PlayerUI.Instance.Initialize();
         RandomNameGenerator.Initialize();

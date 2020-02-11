@@ -39,11 +39,12 @@ namespace Traits {
                     tile.parentMap.eastEdgeTilemap.SetColor(tile.localPlace, burntColor);
                     tile.parentMap.westEdgeTilemap.SetColor(tile.localPlace, burntColor);
                 } 
-            } else if (addedTo is SpecialToken) {
-                SpecialToken token = addedTo as SpecialToken;
-                token.SetPOIState(POI_STATE.INACTIVE);
-                token.mapVisual.SetColor(burntColor);
-            }
+            } 
+            // else if (addedTo is SpecialToken) {
+            //     SpecialToken token = addedTo as SpecialToken;
+            //     token.SetPOIState(POI_STATE.INACTIVE);
+            //     token.mapVisual.SetColor(burntColor);
+            // }
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
@@ -62,11 +63,12 @@ namespace Traits {
                     tile.parentMap.eastEdgeTilemap.SetColor(tile.localPlace, Color.white);
                     tile.parentMap.westEdgeTilemap.SetColor(tile.localPlace, Color.white);
                 }
-            } else if (removedFrom is SpecialToken) {
-                SpecialToken token = removedFrom as SpecialToken;
-                token.SetPOIState(POI_STATE.ACTIVE);
-                token.mapVisual.SetColor(Color.white);
-            }
+            } 
+            // else if (removedFrom is SpecialToken) {
+            //     SpecialToken token = removedFrom as SpecialToken;
+            //     token.SetPOIState(POI_STATE.ACTIVE);
+            //     token.mapVisual.SetColor(Color.white);
+            // }
         }
         public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {
             if (traitOwner is TileObject) {

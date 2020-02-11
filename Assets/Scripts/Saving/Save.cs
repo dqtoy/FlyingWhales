@@ -16,7 +16,7 @@ public class Save {
     public List<SaveDataFaction> factionSaves;
     public List<SaveDataCharacter> characterSaves;
     public List<SaveDataTileObject> tileObjectSaves;
-    public List<SaveDataSpecialObject> specialObjectSaves;
+    // public List<SaveDataSpecialObject> specialObjectSaves;
     public List<SaveDataAreaInnerTileMap> areaMapSaves;
     public List<SaveDataNotification> notificationSaves;
 
@@ -323,26 +323,26 @@ public class Save {
         }
     }
 
-    public void SaveSpecialObjects(List<SpecialObject> specialObjects) {
-        specialObjectSaves = new List<SaveDataSpecialObject>();
-        for (int i = 0; i < specialObjects.Count; i++) {
-            SpecialObject currSpecialObject = specialObjects[i];
-            SaveDataSpecialObject data = null;
-            System.Type type = System.Type.GetType("SaveData" + currSpecialObject.GetType().ToString());
-            if (type != null) {
-                data = System.Activator.CreateInstance(type) as SaveDataSpecialObject;
-            } else {
-                data = new SaveDataSpecialObject();
-            }
-            data.Save(currSpecialObject);
-            specialObjectSaves.Add(data);
-        }
-    }
-    public void LoadSpecialObjects() {
-        for (int i = 0; i < specialObjectSaves.Count; i++) {
-            specialObjectSaves[i].Load();
-        }
-    }
+    // public void SaveSpecialObjects(List<SpecialObject> specialObjects) {
+    //     specialObjectSaves = new List<SaveDataSpecialObject>();
+    //     for (int i = 0; i < specialObjects.Count; i++) {
+    //         SpecialObject currSpecialObject = specialObjects[i];
+    //         SaveDataSpecialObject data = null;
+    //         System.Type type = System.Type.GetType("SaveData" + currSpecialObject.GetType().ToString());
+    //         if (type != null) {
+    //             data = System.Activator.CreateInstance(type) as SaveDataSpecialObject;
+    //         } else {
+    //             data = new SaveDataSpecialObject();
+    //         }
+    //         data.Save(currSpecialObject);
+    //         specialObjectSaves.Add(data);
+    //     }
+    // }
+    // public void LoadSpecialObjects() {
+    //     for (int i = 0; i < specialObjectSaves.Count; i++) {
+    //         specialObjectSaves[i].Load();
+    //     }
+    // }
 
     public void SaveAreaMaps(List<AreaInnerTileMap> areaMaps) {
         areaMapSaves = new List<SaveDataAreaInnerTileMap>();

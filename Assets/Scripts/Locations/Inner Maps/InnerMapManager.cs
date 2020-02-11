@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using Inner_Maps;
 using UnityEngine;
-using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
@@ -44,7 +43,7 @@ namespace Inner_Maps {
 
         [Header("Tilemap Assets")] 
         public InnerMapAssetManager assetManager;
-        [SerializeField] private ItemAsseteDictionary itemTiles;
+        // [SerializeField] private ItemAsseteDictionary itemTiles;
         [SerializeField] private TileObjectAssetDictionary tileObjectTiles;
         [SerializeField] private WallResourceAssetDictionary wallResourceAssets; //wall assets categorized by resource.
         [SerializeField] private List<TileBase> allTileAssets;
@@ -57,11 +56,11 @@ namespace Inner_Maps {
         
         //this specifies what light intensity is to be used while inside the specific range in ticks
         private readonly Dictionary<int, float> lightSettings = new Dictionary<int, float>() { 
-// #if UNITY_EDITOR
-//             { 228, 1f }, { 61, 1.8f }
-// #else
+#if UNITY_EDITOR
+            { 228, 1f }, { 61, 1.8f }
+#else
             { 228, 0.3f }, { 61, 0.8f }
-// #endif
+#endif
         };
         public Dictionary<TILE_OBJECT_TYPE, List<TileObject>> allTileObjects { get; private set; }
         public InnerTileMap currentlyShowingMap { get; private set; }
@@ -124,8 +123,12 @@ namespace Inner_Maps {
         /// </summary>
         /// <param name="location"></param>
         public void TryShowLocationMap(ILocation location) {
-            Assert.IsNotNull(location.innerMap, $"{location.name} does not have a generated inner map");
-            ShowInnerMap(location);
+            if (location.innerMap != null) {
+                //show existing map
+                ShowInnerMap(location);
+            } else {
+                throw new System.Exception($"{location.name} does not have a generated inner map");
+            }
         }
         public void ShowInnerMap(ILocation location, bool centerCameraOnMapCenter = true, bool instantCenter = true) {
             if (location.locationType == LOCATION_TYPE.DEMONIC_INTRUSION) {
@@ -330,100 +333,99 @@ namespace Inner_Maps {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             HexTile hexTile = tile.buildSpotOwner.hexTileOwner;
             string summary = tile.localPlace.ToString();
-            summary = $"{summary}\n<b>HexTile:</b>{(hexTile?.ToString() ?? "None")}";
-            summary = $"{summary}\n<b>Local Location:</b>{tile.localLocation.ToString()}";
-            summary = $"{summary} <b>World Location:</b>{tile.worldLocation.ToString()}";
-            summary = $"{summary} <b>Centered World Location:</b>{tile.centeredWorldLocation.ToString()}";
-            summary = $"{summary} <b>Ground Type:</b>{tile.groundType.ToString()}";
-            summary = $"{summary} <b>Is Occupied:</b>{tile.isOccupied.ToString()}";
-            summary = $"{summary} <b>Tile Type:</b>{tile.tileType.ToString()}";
-            summary = $"{summary} <b>Tile State:</b>{tile.tileState.ToString()}";
-            summary = $"{summary} <b>Reserved Tile Object Type:</b>{tile.reservedObjectType.ToString()}";
-            summary = $"{summary} <b>Previous Tile Asset:</b>{(tile.previousGroundVisual?.name ?? "Null")}";
-            summary =
-                $"{summary} <b>Current Tile Asset:</b>{(tile.parentTileMap.GetSprite(tile.localPlace)?.name ?? "Null")}";
+            summary += "\n<b>HexTile:</b>" + (hexTile?.ToString() ?? "None");
+            summary += "\n<b>Local Location:</b>" + tile.localLocation;
+            summary += " <b>World Location:</b>" + tile.worldLocation;
+            summary += " <b>Centered World Location:</b>" + tile.centeredWorldLocation;
+            summary += " <b>Ground Type:</b>" + tile.groundType;
+            summary += " <b>Is Occupied:</b>" + tile.isOccupied;
+            summary += " <b>Tile Type:</b>" + tile.tileType;
+            summary += " <b>Tile State:</b>" + tile.tileState;
+            summary += " <b>Reserved Tile Object Type:</b>" + tile.reservedObjectType;
+            summary += " <b>Previous Tile Asset:</b>" + (tile.previousGroundVisual?.name ?? "Null");
+            summary += " <b>Current Tile Asset:</b>" + (tile.parentTileMap.GetSprite(tile.localPlace)?.name ?? "Null");
             if (tile.hasFurnitureSpot) {
-                summary = $"{summary} <b>Furniture Spot:</b>{tile.furnitureSpot.ToString()}";
+                summary += " <b>Furniture Spot:</b>" + tile.furnitureSpot;
             }
-            summary = $"{summary}\nTile Traits: ";
+            summary += "\nTile Traits: ";
             if (tile.genericTileObject != null && tile.normalTraits.Count > 0) {
-                summary = $"{summary}\n";
+                summary += "\n";
                 for (int i = 0; i < tile.normalTraits.Count; i++) {
-                    summary = $"{summary}|{tile.normalTraits[i].name}|";
+                    summary += "|" + tile.normalTraits[i].name + "|";
                 }
 
             } else {
-                summary = $"{summary}None";
+                summary += "None";
             }
 
             IPointOfInterest poi = tile.objHere;
             if (poi == null) {
                 poi = tile.genericTileObject;
             }
-            summary = summary + ($"\nContent: {poi}" ?? "None");
+            summary += "\nContent: " + poi ?? "None";
             if (poi != null) {
-                summary = $"{summary}\nHP: {poi.currentHP.ToString()}/{poi.maxHP.ToString()}";
-                summary = $"{summary}\n\tObject State: {poi.state.ToString()}";
-                summary = $"{summary}\n\tIs Available: {poi.IsAvailable().ToString()}";
+                summary += "\nHP: " + poi.currentHP + "/" + poi.maxHP;
+                summary += "\n\tObject State: " + poi.state;
+                summary += "\n\tIs Available: " + poi.IsAvailable();
 
-                if (poi is TreeObject) {
-                    summary = $"{summary}\n\tYield: {(poi as TreeObject).yield.ToString()}";
-                } else if (poi is Ore) {
-                    summary = $"{summary}\n\tYield: {(poi as Ore).yield.ToString()}";
-                } else if (poi is ResourcePile) {
-                    summary = $"{summary}\n\tResource in Pile: {(poi as ResourcePile).resourceInPile.ToString()}";
-                }  else if (poi is Table) {
-                    summary = $"{summary}\n\tFood in Table: {(poi as Table).food.ToString()}";
-                } else if (poi is SpecialToken) {
-                    summary = summary + ($"\n\tCharacter Owner: {(poi as SpecialToken).characterOwner?.name}" ?? "None");
-                    summary = summary + ($"\n\tFaction Owner: {(poi as SpecialToken).factionOwner?.name}" ?? "None");
+                if (poi is TileObject) {
+                    summary += "\n\tCharacter Owner: " + (poi as TileObject).characterOwner?.name ?? "None";
+                    summary += "\n\tFaction Owner: " + (poi as TileObject).factionOwner?.name ?? "None";
+                    
+                    if (poi is TreeObject) {
+                        summary += "\n\tYield: " + (poi as TreeObject).yield;
+                    } else if (poi is Ore) {
+                        summary += "\n\tYield: " + (poi as Ore).yield;
+                    } else if (poi is ResourcePile) {
+                        summary += "\n\tResource in Pile: " + (poi as ResourcePile).resourceInPile;
+                    }  else if (poi is Table) {
+                        summary += "\n\tFood in Table: " + (poi as Table).food;
+                    }
                 }
-                summary = $"{summary}\n\tAdvertised Actions: ";
+                summary += "\n\tAdvertised Actions: ";
                 if (poi.advertisedActions.Count > 0) {
                     for (int i = 0; i < poi.advertisedActions.Count; i++) {
-                        summary = $"{summary}|{poi.advertisedActions[i].ToString()}|";
+                        summary += "|" + poi.advertisedActions[i] + "|";
                     }
                 } else {
-                    summary = $"{summary}None";
+                    summary += "None";
                 }
-                summary = $"{summary}\n\tObject Traits: ";
+                summary += "\n\tObject Traits: ";
                 if (poi.traitContainer.allTraits.Count > 0) {
                     for (int i = 0; i < poi.traitContainer.allTraits.Count; i++) {
-                        summary =
-                            $"{summary}\n\t\t- {poi.traitContainer.allTraits[i].name} - {poi.traitContainer.allTraits[i].GetTestingData()}";
+                        summary += "\n\t\t- " + poi.traitContainer.allTraits[i].name + " - " + poi.traitContainer.allTraits[i].GetTestingData();
                     }
                 } else {
-                    summary = $"{summary}None";
+                    summary += "None";
                 }
-                summary = $"{summary}\n\tJobs Targeting this: ";
+                summary += "\n\tJobs Targeting this: ";
                 if (poi.allJobsTargetingThis.Count > 0) {
                     for (int i = 0; i < poi.allJobsTargetingThis.Count; i++) {
-                        summary = $"{summary}\n\t\t- {poi.allJobsTargetingThis[i]}";
+                        summary += "\n\t\t- " + poi.allJobsTargetingThis[i];
                     }
                 } else {
-                    summary = $"{summary}None";
+                    summary += "None";
                 }
             }
             if (tile.structure != null) {
-                summary =
-                    $"{summary}\nStructure: {tile.structure}, Tiles: {tile.structure.tiles.Count.ToString()}, Has Owner: {tile.structure.IsOccupied().ToString()}";
-                summary = $"{summary}\nCharacters at {tile.structure}: ";
+                summary += "\nStructure: " + tile.structure + ", Tiles: " + tile.structure.tiles.Count.ToString() + ", Has Owner: " + tile.structure.IsOccupied();
+                summary += "\nCharacters at " + tile.structure + ": ";
                 if (tile.structure.charactersHere.Count > 0) {
                     for (int i = 0; i < tile.structure.charactersHere.Count; i++) {
                         Character currCharacter = tile.structure.charactersHere[i];
                         if (character == currCharacter) {
-                            summary = $"{summary}\n<b>{currCharacter.name}</b>";
-                            summary = $"{summary}\n\t{GetCharacterHoverData(currCharacter)}\n";
+                            summary += "\n<b>" + currCharacter.name + "</b>";
+                            summary += "\n\t" + GetCharacterHoverData(currCharacter) + "\n";
                         } else {
-                            summary = $"{summary}{currCharacter.name},";
+                            summary += currCharacter.name + ",";
                         }
                     }
                 } else {
-                    summary = $"{summary}None";
+                    summary += "None";
                 }
             
             } else {
-                summary = $"{summary}\nStructure: None";
+                summary += "\nStructure: None";
             }
             UIManager.Instance.ShowSmallInfo(summary);
 #else
@@ -439,79 +441,97 @@ namespace Inner_Maps {
             UIManager.Instance.ShowSmallInfo(summary);
         }
         private string GetCharacterHoverData(Character character) {
-            string summary = $"Character: {character.name}";
-            summary = $"{summary}\n<b>Mood:</b>{character.moodComponent.moodState.ToString()}";
-            summary = $"{summary} <b>Supply:</b>{character.supply.ToString()}";
-            summary = $"{summary} <b>Can Move:</b>{character.canMove.ToString()}";
-            summary = $"{summary} <b>Can Witness:</b>{character.canWitness.ToString()}";
-            summary = $"{summary} <b>Can Be Attacked:</b>{character.canBeAtttacked.ToString()}";
-            summary = $"{summary} <b>Move Speed:</b>{character.marker.pathfindingAI.speed.ToString()}";
-            summary = $"{summary} <b>Attack Range:</b>{character.characterClass.attackRange.ToString()}";
-            summary = $"{summary} <b>Attack Speed:</b>{character.attackSpeed.ToString()}";
-            summary = $"{summary} <b>Target POI:</b>{(character.marker.targetPOI?.name ?? "None")}";
-            summary =
-                $"{summary} <b>Base Structure:</b>{(character.trapStructure.structure != null ? character.trapStructure.structure.ToString() : "None")}";
-
-            summary = $"{summary}\n\tDestination Tile: ";
+            Character activeCharacter = UIManager.Instance.characterInfoUI.activeCharacter;
+            string summary = "Character: " + character.name;
+            summary += "\n<b>Mood:</b>" + character.moodComponent.moodState;
+            summary += " <b>Supply:</b>" + character.supply;
+            summary += " <b>Can Move:</b>" + character.canMove;
+            summary += " <b>Can Witness:</b>" + character.canWitness;
+            summary += " <b>Can Be Attacked:</b>" + character.canBeAtttacked;
+            summary += " <b>Move Speed:</b>" + character.marker.pathfindingAI.speed;
+            summary += " <b>Attack Range:</b>" + character.characterClass.attackRange;
+            summary += " <b>Attack Speed:</b>" + character.attackSpeed;
+            summary += " <b>Target POI:</b>" + (character.marker.targetPOI?.name ?? "None");
+            summary += " <b>Base Structure:</b>" + (character.trapStructure.structure != null ? character.trapStructure.structure.ToString() : "None");
+            //if (activeCharacter != null && activeCharacter != character) {
+            //    summary += "\n\tOpinion of " + activeCharacter.name + ":";
+            //    if (activeCharacter.opinionComponent.HasOpinion(character)) {
+            //        Dictionary<string, int> opinion = activeCharacter.opinionComponent.GetOpinion(character);
+            //        foreach (KeyValuePair<string, int> kvp in opinion) {
+            //            summary += "\n\t\t" + kvp.Key + ": " + kvp.Value;
+            //        }
+            //    } else {
+            //        summary += " None";
+            //    }
+            //}
+            summary += "\n\tDestination Tile: ";
             if (character.marker.destinationTile == null) {
-                summary = $"{summary}None";
+                summary += "None";
             } else {
-                summary =
-                    $"{summary}{character.marker.destinationTile} at {character.marker.destinationTile.parentMap.location.name}";
+                summary += character.marker.destinationTile + " at " + character.marker.destinationTile.parentMap.location.name;
             }
-            summary = $"{summary}\n\tPOI's in Vision: ";
+            summary += "\n\tPOI's in Vision: ";
             if (character.marker.inVisionPOIs.Count > 0) {
                 for (int i = 0; i < character.marker.inVisionPOIs.Count; i++) {
                     IPointOfInterest poi = character.marker.inVisionPOIs[i];
-                    summary = $"{summary}{poi}, ";
+                    summary += poi.ToString() + ", ";
                 }
             } else {
-                summary = $"{summary}None";
+                summary += "None";
             }
-            summary = $"{summary}\n\tCharacters in Vision: ";
+            summary += "\n\tCharacters in Vision: ";
             if (character.marker.inVisionCharacters.Count > 0) {
                 for (int i = 0; i < character.marker.inVisionCharacters.Count; i++) {
                     Character poi = character.marker.inVisionCharacters.ElementAt(i);
-                    summary = $"{summary}{poi.name}, ";
+                    summary += poi.name + ", ";
                 }
             } else {
-                summary = $"{summary}None";
+                summary += "None";
             }
-            summary = $"{summary}\n\tPOI's in Range but different structures: ";
+            summary += "\n\tPOI's in Range but different structures: ";
             if (character.marker.visionCollision.poisInRangeButDiffStructure.Count > 0) {
                 for (int i = 0; i < character.marker.visionCollision.poisInRangeButDiffStructure.Count; i++) {
                     IPointOfInterest poi = character.marker.visionCollision.poisInRangeButDiffStructure[i];
-                    summary = $"{summary}{poi}, ";
+                    summary += poi.ToString() + ", ";
                 }
             } else {
-                summary = $"{summary}None";
+                summary += "None";
             }
-            summary = $"{summary}\n\tHostiles in Range: ";
+            summary += "\n\tHostiles in Range: ";
             if (character.combatComponent.hostilesInRange.Count > 0) {
                 for (int i = 0; i < character.combatComponent.hostilesInRange.Count; i++) {
                     IPointOfInterest poi = character.combatComponent.hostilesInRange[i];
-                    summary = $"{summary}{poi.name}, ";
+                    summary += poi.name + ", ";
                 }
             } else {
-                summary = $"{summary}None";
+                summary += "None";
             }
-            summary = $"{summary}\n\tAvoid in Range: ";
+            summary += "\n\tAvoid in Range: ";
             if (character.combatComponent.avoidInRange.Count > 0) {
                 for (int i = 0; i < character.combatComponent.avoidInRange.Count; i++) {
                     IPointOfInterest poi = character.combatComponent.avoidInRange[i];
-                    summary = $"{summary}{poi.name}, ";
+                    summary += poi.name + ", ";
                 }
             } else {
-                summary = $"{summary}None";
+                summary += "None";
             }
-            summary = $"{summary}\n\tPersonal Job Queue: ";
+            //summary += "\n\tTerrifying Characters: ";
+            //if (character.marker.terrifyingObjects.Count > 0) {
+            //    for (int i = 0; i < character.marker.terrifyingObjects.Count; i++) {
+            //        IPointOfInterest currObj = character.marker.terrifyingObjects[i];
+            //        summary += currObj.name + ", ";
+            //    }
+            //} else {
+            //    summary += "None";
+            //}
+            summary += "\n\tPersonal Job Queue: ";
             if (character.jobQueue.jobsInQueue.Count > 0) {
                 for (int i = 0; i < character.jobQueue.jobsInQueue.Count; i++) {
                     JobQueueItem poi = character.jobQueue.jobsInQueue[i];
-                    summary = $"{summary}{poi}, ";
+                    summary += poi + ", ";
                 }
             } else {
-                summary = $"{summary}None";
+                summary += "None";
             }
             return summary;
         }
@@ -704,7 +724,7 @@ namespace Inner_Maps {
             return null;
         }
         public T CreateNewTileObject<T>(TILE_OBJECT_TYPE tileObjectType) where T : TileObject {
-            var typeName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(tileObjectType.ToString());
+            var typeName = Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(tileObjectType.ToString());
             System.Type type = System.Type.GetType(typeName);
             if (type != null) {
                 T obj = System.Activator.CreateInstance(type) as T;
@@ -721,6 +741,16 @@ namespace Inner_Maps {
 
             TILE_OBJECT_TYPE tileObjectType = (TILE_OBJECT_TYPE) System.Enum.Parse(typeof(TILE_OBJECT_TYPE), tileObjectName);
             return tileObjectType;
+        }
+        public void LoadInitialSettlementItems(Settlement settlement) {
+            ////Reference: https://trello.com/c/Kuqt3ZSP/2610-put-2-healing-potions-in-the-warehouse-at-start-of-the-game
+            LocationStructure mainStorage = settlement.mainStorage;
+            for (int i = 0; i < 4; i++) {
+                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.HEALING_POTION));
+            }
+            for (int i = 0; i < 2; i++) {
+                mainStorage.AddPOI(CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.TOOL));
+            }
         }
         #endregion
 
@@ -762,9 +792,9 @@ namespace Inner_Maps {
         #endregion
 
         #region Assets
-        public Sprite GetItemAsset(SPECIAL_TOKEN itemType) {
-            return itemTiles[itemType];
-        }
+        // public Sprite GetItemAsset(SPECIAL_TOKEN itemType) {
+        //     return itemTiles[itemType];
+        // }
         public Sprite GetTileObjectAsset(TILE_OBJECT_TYPE objectType, POI_STATE state, BIOMES biome, bool corrupted = false) {
             if (corrupted) {
                 //TODO: this is only temporary!

@@ -12,8 +12,8 @@ public interface IDwelling {
     List<Character> residents { get; }
     ILocation location { get; }
     Settlement settlementLocation { get; }
-    List<SpecialToken> itemsInStructure { get; }
-    HashSet<IPointOfInterest> pointsOfInterest { get; }
+    // List<SpecialToken> itemsInStructure { get; }
+    List<IPointOfInterest> pointsOfInterest { get; }
     POI_STATE state { get; }
     LocationStructureObject structureObj { get; }
     BuildSpotTileObject occupiedBuildSpot { get; }

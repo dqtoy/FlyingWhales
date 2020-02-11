@@ -50,7 +50,7 @@ public class BuryCharacter : GoapAction {
         return null; //allow normal logic to pick target tile
     }
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.IN_PARTY, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.TARGET }, IsInActorParty);
+        AddPrecondition(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_POI, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.TARGET }, IsCarried);
         AddExpectedEffect(new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.REMOVE_FROM_PARTY, conditionKey = string.Empty, isKeyANumber = false, target = GOAP_EFFECT_TARGET.TARGET });
     }
     public override void Perform(ActualGoapNode goapNode) {
@@ -65,7 +65,7 @@ public class BuryCharacter : GoapAction {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
         Character targetCharacter = poiTarget as Character;
-        actor.ownParty.RemovePOI(targetCharacter, false);
+        actor.UncarryPOI(targetCharacter, addToLocation: false);
         targetCharacter.SetCurrentStructureLocation(targetCharacter.gridTileLocation.structure, false);
     }
     public override GoapActionInvalidity IsInvalid(ActualGoapNode node) {
@@ -95,7 +95,7 @@ public class BuryCharacter : GoapAction {
 
         Character targetCharacter = goapNode.poiTarget as Character;
         //**After Effect 1**: Remove Target from Actor's Party.
-        goapNode.actor.ownParty.RemovePOI(goapNode.poiTarget, false);
+        goapNode.actor.UncarryPOI(goapNode.poiTarget, addToLocation: false);
         //**After Effect 2**: Place a Tombstone tile object in adjacent unoccupied tile, link it with Target.
         LocationGridTile chosenLocation = goapNode.actor.gridTileLocation;
         if (chosenLocation.isOccupied) {
@@ -119,9 +119,10 @@ public class BuryCharacter : GoapAction {
     #endregion
 
     #region Preconditions
-    private bool IsInActorParty(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        Character target = poiTarget as Character;
-        return target.currentParty == actor.currentParty;
+    private bool IsCarried(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        // Character target = poiTarget as Character;
+        // return target.currentParty == actor.currentParty;
+        return actor.IsPOICarriedOrInInventory(poiTarget);
     }
     #endregion
 

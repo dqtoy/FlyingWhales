@@ -21,12 +21,12 @@ public class LogReplacerDictionaryPropertyDrawer : SerializableDictionaryPropert
 public class LocationPortraitDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(FactionEmblemDictionary))]
 public class FactionEmblemDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
-[CustomPropertyDrawer(typeof(ItemAsseteDictionary))]
-public class ItemTileBaseDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+// [CustomPropertyDrawer(typeof(ItemAsseteDictionary))]
+// public class ItemTileBaseDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(TileObjectAssetDictionary))]
 public class TileObjectTileBaseDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
-[CustomPropertyDrawer(typeof(ItemSpriteDictionary))]
-public class ItemSpriteDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+// [CustomPropertyDrawer(typeof(ItemSpriteDictionary))]
+// public class ItemSpriteDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(TileObjectBiomeAssetDictionary))]
 public class TileObjectBiomeAssetDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(TileObjectSlotDictionary))]

@@ -56,11 +56,11 @@ public class SpoilData : SpellData {
         }
         return base.CanPerformAbilityTowards(tileObject);
     }
-    public override bool CanPerformAbilityTowards(SpecialToken item) {
-        if (item.gridTileLocation == null || item.traitContainer.HasTrait("Poisoned", "Robust")) {
-            return false;
-        }
-        return base.CanPerformAbilityTowards(item);
-    }
+    // public override bool CanPerformAbilityTowards(SpecialToken item) {
+    //     if (item.gridTileLocation == null || item.traitContainer.HasTrait("Poisoned", "Robust")) {
+    //         return false;
+    //     }
+    //     return base.CanPerformAbilityTowards(item);
+    // }
     #endregion
 }
