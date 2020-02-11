@@ -31,25 +31,25 @@ public class StrollState : CharacterState {
             _planDuration++;
         }
     }
-    public override bool OnEnterVisionWith(IPointOfInterest targetPOI) {
-        if (stateComponent.character.faction.isMajorFriendlyNeutral && 
-            stateComponent.character.faction != FactionManager.Instance.zombieFaction &&
-            !UtilityScripts.GameUtilities.IsRaceBeast(stateComponent.character.race) && 
-            targetPOI is SpecialToken) {
-            SpecialToken token = targetPOI as SpecialToken;
-            if (token.CanBePickedUpNormallyUponVisionBy(stateComponent.character)) {
-                ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.PICK_UP], stateComponent.character, targetPOI, null, 0);
-                GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, stateComponent.character);
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.PICK_UP, targetPOI, stateComponent.character);
-                goapPlan.SetDoNotRecalculate(true);
-                job.SetCannotBePushedBack(true);
-                job.SetAssignedPlan(goapPlan);
-                stateComponent.character.jobQueue.AddJobInQueue(job);
-                return true;
-            }
-        }
-        return base.OnEnterVisionWith(targetPOI);
-    }
+    //public override bool OnEnterVisionWith(IPointOfInterest targetPOI) {
+    //    if (stateComponent.character.faction.isMajorFriendlyNeutral && 
+    //        stateComponent.character.faction != FactionManager.Instance.zombieFaction &&
+    //        !UtilityScripts.GameUtilities.IsRaceBeast(stateComponent.character.race) && 
+    //        targetPOI is SpecialToken) {
+    //        SpecialToken token = targetPOI as SpecialToken;
+    //        if (token.CanBePickedUpNormallyUponVisionBy(stateComponent.character)) {
+    //            ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.PICK_UP], stateComponent.character, targetPOI, null, 0);
+    //            GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, stateComponent.character);
+    //            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.PICK_UP, targetPOI, stateComponent.character);
+    //            goapPlan.SetDoNotRecalculate(true);
+    //            job.SetCannotBePushedBack(true);
+    //            job.SetAssignedPlan(goapPlan);
+    //            stateComponent.character.jobQueue.AddJobInQueue(job);
+    //            return true;
+    //        }
+    //    }
+    //    return base.OnEnterVisionWith(targetPOI);
+    //}
     #endregion
     private void StartStrollMovement() {
         LocationGridTile target = PickRandomTileToGoTo();
