@@ -31,7 +31,7 @@ namespace Traits {
                 Character character = sourcePOI as Character;
                 //_sourceCharacter.CreateRemoveTraitJob(name);
                 character.AddTraitNeededToBeRemoved(this);
-                character.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, name.ToLower());
+                character.RegisterLog("NonIntel", "add_trait", null, name.ToLower());
                 character.needsComponent.AdjustComfortDecreaseRate(20);
             } else if (sourcePOI is TileObject) {
                 Messenger.AddListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedInteraction);
@@ -42,7 +42,7 @@ namespace Traits {
                 Character character = sourcePOI as Character;
                 //character.CancelAllJobsTargettingThisCharacter(JOB_TYPE.REMOVE_TRAIT, name);
                 character.RemoveTraitNeededToBeRemoved(this);
-                character.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, name.ToLower());
+                character.RegisterLog("NonIntel", "remove_trait", null, name.ToLower());
                 character.needsComponent.AdjustComfortDecreaseRate(-20);
             } else if (sourceCharacter is TileObject) {
                 Messenger.RemoveListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedInteraction);
@@ -108,7 +108,7 @@ namespace Traits {
             log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(sourcePOI, sourcePOI.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             //log.AddLogToInvolvedObjects();
-            character.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, null, false);
+            character.logComponent.RegisterLog(log, null, false);
         }
         private void DeathCharacter(Character character) {
             character.Death();
@@ -116,7 +116,7 @@ namespace Traits {
             log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(sourcePOI, sourcePOI.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             //log.AddLogToInvolvedObjects();
-            character.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, null, false);
+            character.logComponent.RegisterLog(log, null, false);
         }
         private void FlawCharacter(Character character) {
             List<Trait> flawTraits = TraitManager.Instance.GetAllTraitsOfType(TRAIT_TYPE.FLAW);
@@ -129,7 +129,7 @@ namespace Traits {
             log.AddToFillers(sourcePOI, sourcePOI.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             log.AddToFillers(null, chosenFlawTraitName, LOG_IDENTIFIER.STRING_1);
             //log.AddLogToInvolvedObjects();
-            character.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, null, false);
+            character.logComponent.RegisterLog(log, null, false);
 
             character.traitContainer.AddTrait(character, chosenFlawTraitName);
         }
@@ -143,7 +143,7 @@ namespace Traits {
                 log.AddToFillers(sourcePOI, sourcePOI.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                 log.AddToFillers(null, chosenBuffTrait.name, LOG_IDENTIFIER.STRING_1);
                 //log.AddLogToInvolvedObjects();
-                character.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, null, false);
+                character.logComponent.RegisterLog(log, null, false);
 
                 character.traitContainer.RemoveTrait(character, chosenBuffTrait);
             } else {

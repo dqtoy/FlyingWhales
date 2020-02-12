@@ -34,7 +34,7 @@ public class Pestilence : PlayerSpell {
                     log.AddToFillers(currTarget, currTarget.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(newTrait, newTrait.name, LOG_IDENTIFIER.STRING_1);
                     log.AddLogToInvolvedObjects();
-                    PlayerManager.Instance.player.ShowNotification(log);
+                    PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
                 }
             }
             base.ActivateAction(targets[0]);
@@ -118,7 +118,7 @@ public class PestilenceData : SpellData {
         log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(null, "Plagued", LOG_IDENTIFIER.STRING_1);
         log.AddLogToInvolvedObjects();
-        PlayerManager.Instance.player.ShowNotification(log);
+        PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
         if (targetPOI is Character) {
             (targetPOI as Character).interruptComponent.TriggerInterrupt(INTERRUPT.Plagued, targetPOI);
         }

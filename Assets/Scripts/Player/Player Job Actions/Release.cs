@@ -22,7 +22,7 @@ public class Release : PlayerSpell {
             Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_released_character");
             log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddLogToInvolvedObjects();
-            PlayerManager.Instance.player.ShowNotification(log);
+            PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
 
             base.ActivateAction(target);
         }

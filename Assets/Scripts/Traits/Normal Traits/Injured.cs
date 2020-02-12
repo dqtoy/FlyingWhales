@@ -39,7 +39,7 @@ namespace Traits {
                 _sourceCharacter.needsComponent.AdjustComfortDecreaseRate(5);
 
                 if (gainedFromDoing == null) { //TODO: || gainedFromDoing.poiTarget != _sourceCharacter
-                    _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, name.ToLower());
+                    _sourceCharacter.RegisterLog("NonIntel", "add_trait", null, name.ToLower());
                 } else {
                     if (gainedFromDoing.goapType == INTERACTION_TYPE.ASSAULT) {
                         Log addLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "add_trait", gainedFromDoing);
@@ -56,7 +56,7 @@ namespace Traits {
             _sourceCharacter.AdjustSpeedModifier(0.15f);
             _sourceCharacter.RemoveTraitNeededToBeRemoved(this);
             _sourceCharacter.needsComponent.AdjustComfortDecreaseRate(-5);
-            _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, name.ToLower());
+            _sourceCharacter.RegisterLog("NonIntel", "remove_trait", null, name.ToLower());
             base.OnRemoveTrait(sourceCharacter, removedBy);
         }
         //public override bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) {

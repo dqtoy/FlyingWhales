@@ -17,6 +17,7 @@ namespace Interrupts {
             overrideEffectLog.AddToFillers(actor, actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             overrideEffectLog.AddToFillers(actor.homeSettlement, actor.homeSettlement.name, LOG_IDENTIFIER.LANDMARK_1);
             //actor.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+            PlayerManager.Instance.player.ShowNotificationFrom(actor, overrideEffectLog);
             return true;
         }
         #endregion

@@ -513,7 +513,7 @@ namespace Inner_Maps.Location_Structures {
         #endregion
 
         #region Destroy
-        private void DestroyStructure() {
+        protected virtual void DestroyStructure() {
             Debug.Log($"{GameManager.Instance.TodayLogString()}{ToString()} was destroyed!");
         
             if (settlementLocation != null) {

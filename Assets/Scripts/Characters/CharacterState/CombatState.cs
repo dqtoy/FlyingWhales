@@ -506,7 +506,7 @@ public class CombatState : CharacterState {
             fleeLog.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             fleeLog.AddToFillers(objToAvoid, objToAvoid.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             fleeLog.AddToFillers(null, avoidReason, LOG_IDENTIFIER.STRING_1);
-            stateComponent.character.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(fleeLog, null, false);
+            stateComponent.character.logComponent.RegisterLog(fleeLog, null, false);
         }
     }
 
@@ -523,7 +523,7 @@ public class CombatState : CharacterState {
             Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "new_combat_target");
             log.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(currentClosestHostile, currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            stateComponent.character.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, null, false);
+            stateComponent.character.logComponent.RegisterLog(log, null, false);
         }
     }
     private void SetClosestHostile(IPointOfInterest poi) {
@@ -533,7 +533,7 @@ public class CombatState : CharacterState {
             Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "new_combat_target");
             log.AddToFillers(stateComponent.character, stateComponent.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(currentClosestHostile, currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            stateComponent.character.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, null, false);
+            stateComponent.character.logComponent.RegisterLog(log, null, false);
         }
     }
     //Will be constantly checked every frame

@@ -278,7 +278,7 @@ public class NonActionEventsComponent {
         }
         log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        owner.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+        owner.logComponent.RegisterLog(log, onlyClickedCharacter: false);
 
         if (relationship == RELATIONSHIP_TYPE.LOVER) {
             //**Effect 1**: Actor - Remove Lover relationship with Character 2

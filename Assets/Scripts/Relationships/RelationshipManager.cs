@@ -400,7 +400,8 @@ public class RelationshipManager : MonoBehaviour {
         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "rel_degrade");
         log.AddToFillers(target, target.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(actor, actor.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        PlayerManager.Instance.player.ShowNotificationFrom(log, target, actor);
+        log.AddLogToInvolvedObjects();
+        // PlayerManager.Instance.player.ShowNotificationFrom(log, target, actor);
         hasDegraded = true;
         
         // string summary = "Relationship degradation between " + actorAlterEgo.owner.name + " and " + target.name;

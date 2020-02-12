@@ -40,7 +40,7 @@ namespace Traits {
                 //_sourceCharacter.CreateRemoveTraitJob(name);
                 _sourceCharacter.AddTraitNeededToBeRemoved(this);
                 if (gainedFromDoing == null) { //TODO: || gainedFromDoing.poiTarget != _sourceCharacter
-                    _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, name.ToLower());
+                    _sourceCharacter.RegisterLog("NonIntel", "add_trait", null, name.ToLower());
                 } else {
                     Log addLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "add_trait");
                     addLog.AddToFillers(_sourceCharacter, _sourceCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -56,7 +56,7 @@ namespace Traits {
         public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
             _sourceCharacter.needsComponent.AdjustDoNotGetTired(-1);
             _sourceCharacter.RemoveTraitNeededToBeRemoved(this);
-            _sourceCharacter.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, name.ToLower());
+            _sourceCharacter.RegisterLog("NonIntel", "remove_trait", null, name.ToLower());
             base.OnRemoveTrait(sourceCharacter, removedBy);
         }
         public override bool OnDeath(Character character) {

@@ -118,7 +118,7 @@ public class InterruptComponent {
             } else {
                 owner.logComponent.AddHistory(_currentEffectLog);
             }
-            PlayerManager.Instance.player.ShowNotificationFrom(owner, _currentEffectLog);
+            // PlayerManager.Instance.player.ShowNotificationFrom(owner, _currentEffectLog);
         }
         //if (LocalizationManager.Instance.HasLocalizedValue("Interrupt", currentInterrupt.name, "effect")) {
         //    Log effectLog = new Log(GameManager.Instance.Today(), "Interrupt", currentInterrupt.name, "effect");

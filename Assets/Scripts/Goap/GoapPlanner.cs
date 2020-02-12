@@ -143,7 +143,7 @@ public class GoapPlanner {
                     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "cancel_job_no_plan");
                     log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(null, goapThread.job.GetJobDetailString(), LOG_IDENTIFIER.STRING_1);
-                    owner.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log);
+                    owner.logComponent.RegisterLog(log);
                 }
                 if (goapThread.job.originalOwner.ownerType != JOB_OWNER.CHARACTER) {
                     goapThread.job.AddBlacklistedCharacter(owner);

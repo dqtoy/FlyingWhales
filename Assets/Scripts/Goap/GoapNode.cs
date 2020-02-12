@@ -596,21 +596,12 @@ public class ActualGoapNode {
                 //if (descriptionLog != null) {
                 //    AddArrangedLog("description", descriptionLog, null);
                 //}
-                bool showPopup = false;
-                if (action.showNotification) {
-                    // if (action.shouldIntelNotificationOnlyIfActorIsActive) {
-                    //     showPopup = PlayerManager.Instance.player.ShouldShowNotificationFrom(actor, true);
-                    // } else {
-                    //     showPopup = PlayerManager.Instance.player.ShouldShowNotificationFrom(actor, descriptionLog);
-                    // }
-                    showPopup = PlayerManager.Instance.player.ShouldShowNotificationFrom(actor, descriptionLog);
-                }
-                if (showPopup) {
-                    if (!action.isNotificationAnIntel) {
-                        Messenger.Broadcast(Signals.SHOW_PLAYER_NOTIFICATION, descriptionLog);
-                    } else {
-                        Messenger.Broadcast(Signals.SHOW_INTEL_NOTIFICATION, InteractionManager.Instance.CreateNewIntel(this));
-                    }
+                if (!action.isNotificationAnIntel) {
+                    // PlayerManager.Instance.player.ShowNotificationFrom(descriptionLog, actor);
+                    // Messenger.Broadcast(Signals.SHOW_PLAYER_NOTIFICATION, descriptionLog);
+                } else {
+                    PlayerManager.Instance.player.ShowNotificationFrom(actor, InteractionManager.Instance.CreateNewIntel(this));
+                    // Messenger.Broadcast(Signals.SHOW_INTEL_NOTIFICATION, InteractionManager.Instance.CreateNewIntel(this));
                 }
                 descriptionLog.AddLogToInvolvedObjects();
                 //for (int i = 0; i < arrangedLogs.Count; i++) {
@@ -619,7 +610,6 @@ public class ActualGoapNode {
                 //}
             }
         }
-
         GoapActionState currentState = action.states[currentStateName];
         ActionResult(currentState);
 

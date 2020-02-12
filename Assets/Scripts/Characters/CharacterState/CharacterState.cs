@@ -261,7 +261,7 @@ public class CharacterState {
             //}
             log.AddLogToInvolvedObjects();
 
-            PlayerManager.Instance.player.ShowNotificationFrom(log, stateComponent.character, false);
+            // PlayerManager.Instance.player.ShowNotificationFrom(log, stateComponent.character, false);
         }
     }
     private void CreateTravellingThoughtBubbleLog(Settlement targetLocation) {

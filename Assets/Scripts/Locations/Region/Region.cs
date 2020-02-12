@@ -28,6 +28,7 @@ public class Region : ILocation {
     public RegionTileObject regionTileObject { get; private set; }
     public HexTile[,] hexTileMap { get; private set; }
     public LocationStructure mainStorage { get; private set; }
+    public bool canShowNotifications { get; private set; }
     public Dictionary<POINT_OF_INTEREST_TYPE, List<IPointOfInterest>> awareness { get; }
 
     private RegionInnerTileMap _regionInnerTileMap; //inner map of the region, this should only be used if this region does not have an settlement. 
@@ -661,6 +662,12 @@ public class Region : ILocation {
     //}
     public bool IsRequiredByLocation(TileObject item) {
         return false;
+    }
+    public void AllowNotifications() {
+        canShowNotifications = true;
+    }
+    public void BlockNotifications() {
+        canShowNotifications = false;
     }
     public bool IsSameCoreLocationAs(ILocation location) {
         return location.coreTile == this.coreTile;

@@ -894,7 +894,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 //AddHistory(deathLog);
                 deathLog.AddLogToInvolvedObjects();
                 //specificLocation.AddHistory(deathLog);
-                PlayerManager.Instance.player.ShowNotification(deathLog);
+                PlayerManager.Instance.player.ShowNotificationFrom(this, deathLog);
             } else {
                 deathLog = _deathLog;
             }
@@ -1255,255 +1255,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         // log.AddToFillers(null, currentMoodType.ToString().ToLower(), LOG_IDENTIFIER.STRING_1);
         logComponent.AddHistory(log);
 
-        PlayerManager.Instance.player.ShowNotificationFrom(log, this, false);
+        // PlayerManager.Instance.player.ShowNotificationFrom(log, this, false);
         return true;
-
-        //WeightedDictionary<string> undermineWeights = new WeightedDictionary<string>();
-        //undermineWeights.AddElement("negative trait", 50);
-
-        //bool hasFriend = false;
-        //List<Log> crimeMemories = null;
-        //for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
-        //    Character currCharacter = CharacterManager.Instance.allCharacters[i];
-        //    if (currCharacter != targetCharacter && currCharacter != this) {
-        //        if (currCharacter.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TRAIT.FRIEND)) {
-        //            hasFriend = true;
-        //            break;
-        //        }
-        //    }
-        //}
-        //if (hasFriend) {
-        //    int dayTo = GameManager.days;
-        //    int dayFrom = dayTo - 3;
-        //    if (dayFrom < 1) {
-        //        dayFrom = 1;
-        //    }
-        //    crimeMemories = GetCrimeMemories(dayFrom, dayTo, targetCharacter);
-        //    if (crimeMemories.Count > 0) {
-        //        undermineWeights.AddElement("destroy friendship", 20);
-        //    }
-        //}
-
-        //bool hasLoverOrParamour = false;
-        //List<Log> affairMemoriesInvolvingRumoredCharacter = null;
-        //for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
-        //    Character currCharacter = CharacterManager.Instance.allCharacters[i];
-        //    if (currCharacter != targetCharacter && currCharacter != this) {
-        //        if (currCharacter.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TRAIT.LOVER) 
-        //            || currCharacter.relationshipContainer.HasRelationshipWith(targetCharacter.currentAlterEgo, RELATIONSHIP_TRAIT.AFFAIR)) {
-        //            hasLoverOrParamour = true;
-        //            break;
-        //        }
-        //    }
-        //}
-        //if (hasLoverOrParamour) {
-        //    List<Character> loversOrAffairs = targetCharacter.relationshipContainer.GetRelatablesWithRelationship(RELATIONSHIP_TRAIT.LOVER, RELATIONSHIP_TRAIT.AFFAIR).Select(x => (x as AlterEgoData).owner).ToList(); //TODO: Revise this
-        //    Character chosenLoverOrParamour = loversOrAffairs[UnityEngine.Random.Range(0, loversOrAffairs.Count)];
-        //    if(chosenLoverOrParamour != null) {
-        //        int dayTo = GameManager.days;
-        //        int dayFrom = dayTo - 3;
-        //        if (dayFrom < 1) {
-        //            dayFrom = 1;
-        //        }
-        //        List<Log> memories = GetWitnessOrInformedMemories(dayFrom, dayTo, targetCharacter);
-        //        affairMemoriesInvolvingRumoredCharacter = new List<Log>();
-        //        for (int i = 0; i < memories.Count; i++) {
-        //            Log memory = memories[i];
-        //            //if the event means Character 2 flirted, asked to make love or made love with another character other than Target, include it
-        //            if (memory.goapAction.actor != chosenLoverOrParamour && !memory.goapAction.IsTarget(chosenLoverOrParamour)) {
-        //                if (memory.goapAction.goapType == INTERACTION_TYPE.CHAT_CHARACTER) {
-        //                    ChatCharacter chatAction = memory.goapAction as ChatCharacter;
-        //                    if (chatAction.chatResult == "flirt") {
-        //                        affairMemoriesInvolvingRumoredCharacter.Add(memory);
-
-        //                    }
-        //                } else if (memory.goapAction.goapType == INTERACTION_TYPE.MAKE_LOVE) {
-        //                    affairMemoriesInvolvingRumoredCharacter.Add(memory);
-        //                } else if (memory.goapAction.goapType == INTERACTION_TYPE.INVITE) {
-        //                    if(memory.goapAction.actor == targetCharacter) {
-        //                        affairMemoriesInvolvingRumoredCharacter.Add(memory);
-        //                    }else if (memory.goapAction.IsTarget(targetCharacter) && memory.goapAction.currentState.name == "Invite Success") {
-        //                        affairMemoriesInvolvingRumoredCharacter.Add(memory);
-        //                    }
-        //                }
-        //            }
-        //        }
-        //        if(affairMemoriesInvolvingRumoredCharacter.Count > 0) {
-        //            undermineWeights.AddElement("destroy love", 20);
-        //        }
-        //    }
-        //}
-
-        //if (undermineWeights.Count > 0) {
-        //    string result = undermineWeights.PickRandomElementGivenWeights();
-        //    GoapPlanJob job = null;
-        //    if (result == "negative trait") {
-        //        job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.UNDERMINE_ENEMY, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = targetCharacter });
-        //    } else if (result == "destroy friendship") {
-        //        job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.UNDERMINE_ENEMY, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TARGET_REMOVE_RELATIONSHIP, conditionKey = "Friend", targetPOI = targetCharacter },
-        //            new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.NONE, new object[] { targetCharacter, crimeMemories } }, });
-        //    } else if (result == "destroy love") {
-        //        job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.UNDERMINE_ENEMY, new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.TARGET_REMOVE_RELATIONSHIP, conditionKey = "Lover", targetPOI = targetCharacter },
-        //            new Dictionary<INTERACTION_TYPE, object[]>() { { INTERACTION_TYPE.NONE, new object[] { targetCharacter, affairMemoriesInvolvingRumoredCharacter } }, });
-        //    }
-
-        //    //job.SetCannotOverrideJob(true);
-        //    Debug.LogWarning(GameManager.Instance.TodayLogString() + "Added an UNDERMINE ENEMY Job: " + result + " to " + this.name + " with target " + targetCharacter.name);
-        //    //job.SetWillImmediatelyBeDoneAfterReceivingPlan(true);
-        //    jobQueue.AddJobInQueue(job, false);
-        //    //if (processJobQueue) {
-        //    //    jobQueue.ProcessFirstJobInQueue(this);
-        //    //}
-
-        //    Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", reason + "_and_undermine");
-        //    log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        //    log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        //    log.AddToFillers(null, currentMoodType.ToString().ToLower(), LOG_IDENTIFIER.STRING_1);
-        //    AddHistory(log);
-
-        //    PlayerManager.Instance.player.ShowNotificationFrom(log, this, false);
-        //    return true;
-        //}
-        //return false;
     }
-    //public GoapPlanJob CreateObtainItemJob(SPECIAL_TOKEN item) {
-    //    GoapEffect goapEffect = new GoapEffect(GOAP_EFFECT_CONDITION.HAS_ITEM, item.ToString(), false, GOAP_EFFECT_TARGET.ACTOR);
-    //    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.OBTAIN_PERSONAL_ITEM, goapEffect, this, this);
-    //    jobQueue.AddJobInQueue(job);
-    //    //Debug.Log(this.name + " created job to obtain item " + item.ToString());
-    //    //Messenger.Broadcast<string, int, UnityEngine.Events.UnityAction>(Signals.SHOW_DEVELOPER_NOTIFICATION, this.name + " created job to obtain item " + item.ToString(), 5, null);
-    //    return job;
-    //}
-    public Character troubledCharacter { get; private set; }
-    public void CreateAskForHelpJob(Character troubledCharacter, INTERACTION_TYPE helpType, params object[] otherData) {
-        //&& troubledCharacter != this
-        if (troubledCharacter != null) {
-            this.troubledCharacter = troubledCharacter;
-            Character targetCharacter = null;
-            List<Character> positiveCharacters = relationshipContainer.GetCharactersWithPositiveOpinion();
-            positiveCharacters.Remove(troubledCharacter);
-            if (positiveCharacters.Count > 0) {
-                targetCharacter = positiveCharacters[UnityEngine.Random.Range(0, positiveCharacters.Count)];
-            } else {
-                List<Character> nonEnemyCharacters = relationshipContainer.GetCharactersWithNeutralOpinion();
-                nonEnemyCharacters.Remove(troubledCharacter);
-                if (nonEnemyCharacters.Count > 0) {
-                    targetCharacter = nonEnemyCharacters[UnityEngine.Random.Range(0, nonEnemyCharacters.Count)];
-                }
-            }
-            if (targetCharacter != null) {
-                JOB_TYPE jobType = (JOB_TYPE) Enum.Parse(typeof(JOB_TYPE), "ASK_FOR_HELP_" + helpType.ToString());
-                INTERACTION_TYPE interactionType = (INTERACTION_TYPE) Enum.Parse(typeof(INTERACTION_TYPE), "ASK_FOR_HELP_" + helpType.ToString());
-                GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(jobType, interactionType, targetCharacter, this);
-                job.AddOtherData(interactionType, otherData);
-                jobQueue.AddJobInQueue(job);
-            } else {
-                RegisterLogAndShowNotifToThisCharacterOnly("Generic", "ask_for_help_fail", troubledCharacter, troubledCharacter.name);
-            }
-        } else {
-            if (troubledCharacter == null) {
-                logComponent.PrintLogErrorIfActive(name + " cannot create ask for help save character job because troubled character is null!");
-            } else {
-                logComponent.PrintLogErrorIfActive(name + " cannot create ask for help save character job for " + troubledCharacter.name);
-            }
-        }
-    }
-    private void CreateAskForHelpSaveCharacterJob(Character troubledCharacter) {
-        if (troubledCharacter != null && troubledCharacter != this) {
-            this.troubledCharacter = troubledCharacter;
-            Character targetCharacter = null;
-            List<Character> positiveCharacters = relationshipContainer.GetCharactersWithPositiveOpinion();
-            positiveCharacters.Remove(troubledCharacter);
-            if (positiveCharacters.Count > 0) {
-                targetCharacter = positiveCharacters[UnityEngine.Random.Range(0, positiveCharacters.Count)];
-            } else {
-                List<Character> nonEnemyCharacters = relationshipContainer.GetCharactersWithNeutralOpinion();
-                nonEnemyCharacters.Remove(troubledCharacter);
-                if (nonEnemyCharacters.Count > 0) {
-                    targetCharacter = nonEnemyCharacters[UnityEngine.Random.Range(0, nonEnemyCharacters.Count)];
-                }
-            }
-            // if (targetCharacter != null) {
-            //     GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ASK_FOR_HELP_SAVE_CHARACTER, INTERACTION_TYPE.ASK_FOR_HELP_SAVE_CHARACTER, targetCharacter, this);
-            //     jobQueue.AddJobInQueue(job);
-            // } else {
-            //     RegisterLogAndShowNotifToThisCharacterOnly("Generic", "ask_for_help_fail", troubledCharacter, troubledCharacter.name);
-            // }
-        } else {
-            if (troubledCharacter == null) {
-                logComponent.PrintLogErrorIfActive(name + " cannot create ask for help save character job because troubled character is null!");
-            } else {
-                logComponent.PrintLogErrorIfActive(name + " cannot create ask for help save character job for " + troubledCharacter.name);
-            }
-        }
-    }
-    //public void CreateSaveCharacterJob(Character targetCharacter) {
-    //    if (targetCharacter != null && targetCharacter != this) {
-    //        string log = name + " is creating save character job for " + targetCharacter.name;
-    //        if (role.roleType == CHARACTER_ROLE.CIVILIAN || role.roleType == CHARACTER_ROLE.NOBLE
-    //            || role.roleType == CHARACTER_ROLE.LEADER) {
-    //            CreateAskForHelpSaveCharacterJob(targetCharacter);
-    //            log += "\n" + name + " is either a Civilian/Leader/Noble and cannot save a character, thus, will try to ask for help.";
-    //            return;
-    //        }
-    //        if (!targetCharacter.HasJobTargettingThis(JOB_TYPE.SAVE_CHARACTER)) {
-    //            GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.APPREHEND, INTERACTION_TYPE.DROP, targetCharacter, new Dictionary<INTERACTION_TYPE, object[]>() {
-    //                { INTERACTION_TYPE.DROP, new object[] { specificLocation.prison } }
-    //            }, this);
-    //            jobQueue.AddJobInQueue(job);
-    //            log += "\n" + name + " created save character job.";
-    //            //return job;
-    //        } else {
-    //            log += "\n" + targetCharacter.name + " is already being saved by someone.";
-    //        }
-    //        PrintLogIfActive(log);
-    //    } else {
-    //        if (targetCharacter == null) {
-    //            Debug.LogError(name + " cannot create save character job because troubled character is null!");
-    //        } else {
-    //            Debug.LogError(name + " cannot create save character job for " + targetCharacter.name);
-    //        }
-    //    }
-    //    //return null;
-    //}
-
-    //public GoapPlanJob CreateBreakupJob(Character targetCharacter) {
-    //    if (jobQueue.HasJob(JOB_TYPE.BREAK_UP, targetCharacter)) {
-    //        return null; //already has break up job targetting targetCharacter
-    //    }
-    //    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.BREAK_UP, INTERACTION_TYPE.BREAK_UP, targetCharacter, this);
-    //    jobQueue.AddJobInQueue(job);
-    //    return job;
-    //}
-    //public void CancelAllJobsAndPlansExceptNeedsRecovery(string reason = "") {
-    //    AdjustIsWaitingForInteraction(1);
-    //    for (int i = 0; i < jobQueue.jobsInQueue.Count; i++) {
-    //        if (jobQueue.jobsInQueue[i].jobType.IsNeedsTypeJob()) {
-    //            continue;
-    //        }
-    //        if (jobQueue.CancelJob(jobQueue.jobsInQueue[i])) {
-    //            i--;
-    //        }
-    //    }
-    //    if (homeSettlement != null) {
-    //        homeSettlement.jobQueue.UnassignAllJobsTakenBy(this);
-    //    }
-    //}
-
-    //    StopCurrentAction(false, reason: reason);
-    //    for (int i = 0; i < allGoapPlans.Count; i++) {
-    //        if(allGoapPlans[i].job != null && allGoapPlans[i].job.jobType.IsNeedsTypeJob()) {
-    //            if (JustDropPlan(allGoapPlans[i])) {
-    //                i--;
-    //            }
-    //        } else {
-    //            if (DropPlan(allGoapPlans[i])) {
-    //                i--;
-    //            }
-    //        }
-    //    }
-    //    AdjustIsWaitingForInteraction(-1);
-    //}
     public void CancelAllJobs(string reason = "") {
         //AdjustIsWaitingForInteraction(1);
         //StopCurrentActionNode(reason: reason);
@@ -1546,39 +1300,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
     }
-    //public void CancelAllPlans(string reason = "") {
-    //    StopCurrentAction(false, reason: reason);
-    //    for (int i = 0; i < allGoapPlans.Count; i++) {
-    //        if (DropPlan(allGoapPlans[i])) {
-    //            i--;
-    //        }
-    //    }
-    //}
-    //public void CancelAllJobsAndPlansExcept(string reason = "", params JOB_TYPE[] job) {
-    //    //List<JOB_TYPE> exceptions = job.ToList();
-    //    AdjustIsWaitingForInteraction(1);
-    //    currentActionNode.StopActionNode(reason: reason);
-    //    for (int i = 0; i < jobQueue.jobsInQueue.Count; i++) {
-    //        JobQueueItem item = jobQueue.jobsInQueue[i];
-    //        if (!job.Contains(item.jobType)) {
-    //            if (item.CancelJob()) {
-    //                i--;
-    //            }
-    //        }
-    //    }
-    //    //homeSettlement.jobQueue.UnassignAllJobsTakenBy(this);
-
-    //    //StopCurrentAction(false, reason: reason);
-    //    //for (int i = 0; i < allGoapPlans.Count; i++) {
-    //    //    GoapPlan currPlan = allGoapPlans[i];
-    //    //    if (currPlan.job == null || !exceptions.Contains(currPlan.job.jobType)) {
-    //    //        if (DropPlan(allGoapPlans[i])) {
-    //    //            i--;
-    //    //        }
-    //    //    }
-    //    //}
-    //    AdjustIsWaitingForInteraction(-1);
-    //}
     public bool CanCurrentJobBeOverriddenByJob(JobQueueItem job) {
         return false;
         ////GENERAL RULE: Plans/States that have no jobs are always the lowest priority
@@ -2287,15 +2008,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     /// (Characters that can normally be manipulated by the player)
     /// </summary>
     /// <returns></returns>
-    public bool IsNPCCharacter() {
+    public bool IsNPC() {
         return (this is Summon) == false && minion == null;
     }
     #endregion    
 
     #region History/Logs
-
     //Add log to this character and show notif of that log only if this character is clicked or tracked, otherwise, add log only
-    public void RegisterLogAndShowNotifToThisCharacterOnly(string fileName, string key, object target = null, string targetName = "", ActualGoapNode node = null, bool onlyClickedCharacter = true) {
+    public void RegisterLog(string fileName, string key, object target = null, string targetName = "", ActualGoapNode node = null, bool onlyClickedCharacter = true) {
         if (!GameManager.Instance.gameHasStarted) {
             return;
         }
@@ -2308,7 +2028,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             addLog.AddToFillers(target, targetName, LOG_IDENTIFIER.TARGET_CHARACTER);
         }
         addLog.AddLogToInvolvedObjects();
-        PlayerManager.Instance.player.ShowNotificationFrom(addLog, this, onlyClickedCharacter);
+        // PlayerManager.Instance.player.ShowNotificationFrom(addLog, this, onlyClickedCharacter);
     }
 
     public virtual void OnActionPerformed(ActualGoapNode node) {
@@ -2672,7 +2392,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                                                 joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.CHARACTER_3);
                                                 joinLog.AddToFillers(null, this.relationshipContainer.GetRelationshipNameWith(targetCharacter), LOG_IDENTIFIER.STRING_1);
                                                 joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
-                                                PlayerManager.Instance.player.ShowNotificationFrom(this, joinLog);
+                                                // PlayerManager.Instance.player.ShowNotificationFrom(this, joinLog);
                                             //}
                                             //combatComponent.ProcessCombatBehavior();
                                         }
@@ -2714,7 +2434,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                                         joinLog.AddToFillers(targetCombatState.currentClosestHostile, targetCombatState.currentClosestHostile.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                                         joinLog.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.CHARACTER_3);
                                         joinLog.AddLogToSpecificObjects(LOG_IDENTIFIER.ACTIVE_CHARACTER, LOG_IDENTIFIER.TARGET_CHARACTER);
-                                        PlayerManager.Instance.player.ShowNotificationFrom(this, joinLog);
+                                        // PlayerManager.Instance.player.ShowNotificationFrom(this, joinLog);
                                     //}
                                     //combatComponent.ProcessCombatBehavior();
                                 }
@@ -5018,7 +4738,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             log.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(null, currentActionNode.action.goapName, LOG_IDENTIFIER.STRING_1);
             log.AddToFillers(null, reason, LOG_IDENTIFIER.STRING_2);
-            logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+            logComponent.RegisterLog(log, onlyClickedCharacter: false);
         }
         //if (actor.currentAction != null && actor.currentAction.parentPlan != null && actor.currentAction.parentPlan.job != null && actor.currentAction == this) {
         //    if (reason != "") {

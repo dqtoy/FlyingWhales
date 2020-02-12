@@ -402,6 +402,9 @@ public partial class LandmarkManager : MonoBehaviour {
             case STRUCTURE_TYPE.TORTURE_CHAMBER:
                 createdStructure = new TortureChamber(location);
                 break;
+            case STRUCTURE_TYPE.THE_EYE:
+                createdStructure = new Inner_Maps.Location_Structures.TheEye(location);
+                break;
             default:
                 createdStructure = new LocationStructure(type, location);
                 break;

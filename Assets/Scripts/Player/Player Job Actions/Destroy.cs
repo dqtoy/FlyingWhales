@@ -21,7 +21,7 @@ public class Destroy : PlayerSpell {
         log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(null, "destroyed", LOG_IDENTIFIER.STRING_1);
         log.AddLogToInvolvedObjects();
-        PlayerManager.Instance.player.ShowNotification(log);
+        PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
     }
 
     //protected override bool ShouldButtonBeInteractable(Character character, IPointOfInterest targetPOI) {
@@ -54,7 +54,7 @@ public class DestroyData : SpellData {
         log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(null, "destroyed", LOG_IDENTIFIER.STRING_1);
         log.AddLogToInvolvedObjects();
-        PlayerManager.Instance.player.ShowNotification(log);
+        PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
     }
     public override bool CanPerformAbilityTowards(TileObject tileObject) {
         if (tileObject.gridTileLocation == null) {

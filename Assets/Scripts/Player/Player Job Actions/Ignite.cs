@@ -29,7 +29,7 @@ public class Ignite : PlayerSpell {
                 tile.genericTileObject.traitContainer.AddTrait(tile.genericTileObject, burning);
             }
             Log log = new Log(GameManager.Instance.Today(), "InterventionAbility", name, "activated");
-            PlayerManager.Instance.player.ShowNotification(log);
+            PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
         }
     }
     public override bool CanTarget(LocationGridTile tile) {
@@ -76,7 +76,7 @@ public class IgniteData : SpellData {
         burning.SetSourceOfBurning(bs, targetPOI);
         targetPOI.traitContainer.AddTrait(targetPOI, burning);
         Log log = new Log(GameManager.Instance.Today(), "InterventionAbility", name, "activated");
-        PlayerManager.Instance.player.ShowNotification(log);
+        PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
     }
     public override bool CanPerformAbilityTowards(TileObject tileObject) {
         if (tileObject.gridTileLocation == null || tileObject.gridTileLocation.genericTileObject.traitContainer.HasTrait("Burning")) {

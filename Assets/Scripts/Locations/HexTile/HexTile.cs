@@ -1212,6 +1212,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         if (landmarkName == "The Pit") {
             return false;
         }
+        if (landmarkName == "The Eye" && region.HasStructure(STRUCTURE_TYPE.THE_EYE)) {
+            return false; //only 1 eye per region.
+        }
         // if(landmarkName == "The Kennel" && !featureComponent.HasFeature(TileFeatureDB.Summons_Feature)) {
         //     return false;
         // }

@@ -83,7 +83,7 @@ public class TheFingersUI : MonoBehaviour {
             log.AddToFillers(newFaction, newFaction.name, LOG_IDENTIFIER.FACTION_1);
             log.AddToFillers(regionLocation, regionLocation.name, LOG_IDENTIFIER.LANDMARK_1);
             log.AddLogToInvolvedObjects();
-            PlayerManager.Instance.player.ShowNotification(log);
+            // PlayerManager.Instance.player.ShowNotificationFrom(log);
 
             //chosenLeader.interruptComponent.TriggerInterrupt(INTERRUPT.Become_Faction_Leader, chosenLeader);
 

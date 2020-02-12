@@ -31,7 +31,7 @@ public class Alcoholic : PlayerSpell {
                     log.AddToFillers(currTarget, currTarget.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(null, "Drunkard", LOG_IDENTIFIER.STRING_1);
                     log.AddLogToInvolvedObjects();
-                    PlayerManager.Instance.player.ShowNotification(log);
+                    PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
                 }
             }
             base.ActivateAction(targets[0]);
@@ -102,7 +102,7 @@ public class AlcoholicData : SpellData {
         log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(null, "Drunkard", LOG_IDENTIFIER.STRING_1);
         log.AddLogToInvolvedObjects();
-        PlayerManager.Instance.player.ShowNotification(log);
+        PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
     }
     public override bool CanPerformAbilityTowards(Character targetCharacter) {
         if (targetCharacter.isDead || targetCharacter.traitContainer.HasTrait("Drunkard")) {

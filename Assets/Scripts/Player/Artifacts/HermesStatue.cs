@@ -38,7 +38,7 @@ public class HermesStatue : Artifact {
                 Log result = new Log(GameManager.Instance.Today(), "Artifact", name, "on_inspect");
                 result.AddToFillers(inspectedBy, inspectedBy.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 result.AddToFillers(chosenRegion, chosenRegion.name, LOG_IDENTIFIER.LANDMARK_1);
-                inspectedBy.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(result, onlyClickedCharacter: false);
+                inspectedBy.logComponent.RegisterLog(result, onlyClickedCharacter: false);
             }
         } else {
             Debug.LogWarning(inspectedBy.name + " inspected an hermes statue, but there were no more settlements to teleport to. Statue is useless.");

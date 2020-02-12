@@ -27,7 +27,7 @@ public class Disable : PlayerSpell {
         log.AddToFillers(targetPOI, targetPOI.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(null, "disabled", LOG_IDENTIFIER.STRING_1);
         log.AddLogToInvolvedObjects();
-        PlayerManager.Instance.player.ShowNotification(log);
+        PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
     }
 
     protected override bool CanPerformActionTowards(IPointOfInterest targetPOI) {

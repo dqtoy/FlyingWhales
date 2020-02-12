@@ -13,7 +13,6 @@ namespace Traits {
             trait.SetGainedFromDoing(gainedFromDoing);
             //trait.SetOnRemoveAction(onRemoveAction);
             trait.AddCharacterResponsibleForTrait(characterResponsible);
-            trait.AddCharacterResponsibleForTrait(characterResponsible);
             ApplyPOITraitInteractions(traitable, trait);
             traitable.traitContainer.SwitchOnTrait(trait.name);
             if (trait.ticksDuration > 0) {

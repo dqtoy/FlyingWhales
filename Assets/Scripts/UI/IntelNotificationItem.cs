@@ -19,7 +19,7 @@ public class IntelNotificationItem : PlayerNotificationItem {
    
     public void GetIntel() {
         PlayerManager.Instance.player.AddIntel(intel);
-        PlayerManager.Instance.player.ShowNotification(new Log(GameManager.Instance.Today(), "Character", "Generic", "intel_stored"));
+        // PlayerManager.Instance.player.ShowNotificationFrom(new Log(GameManager.Instance.Today(), "Character", "Generic", "intel_stored"));
         DeleteNotification();
     }
 

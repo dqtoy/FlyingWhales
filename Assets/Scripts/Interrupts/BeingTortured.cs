@@ -35,7 +35,7 @@ namespace Interrupts {
             log.AddToFillers(randomTorture.fillers);
             log.AddToFillers(null, randomNegativeStatus, LOG_IDENTIFIER.STRING_1);
             log.AddToFillers(null, randomNegativeTrait, LOG_IDENTIFIER.STRING_2);
-            actor.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+            actor.logComponent.RegisterLog(log, onlyClickedCharacter: false);
 
             actor.traitContainer.AddTrait(actor, randomNegativeStatus);
             actor.traitContainer.AddTrait(actor, randomNegativeTrait);

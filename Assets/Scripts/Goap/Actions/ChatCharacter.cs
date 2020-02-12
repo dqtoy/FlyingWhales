@@ -207,12 +207,12 @@ public class ChatCharacter : GoapAction {
         if (goapNode.actor.traitContainer.HasTrait("Angry")) {
             Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "angry_chat");
             log.AddToFillers(goapNode.actor, goapNode.actor.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            goapNode.actor.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+            goapNode.actor.logComponent.RegisterLog(log, onlyClickedCharacter: false);
         }
         if (targetCharacter.traitContainer.HasTrait("Angry")) {
             Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "angry_chat");
             log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            targetCharacter.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+            targetCharacter.logComponent.RegisterLog(log, onlyClickedCharacter: false);
         }
 
         //if (goapNode.actor.traitContainer.GetNormalTrait<Trait>("Hothead") != null) {
