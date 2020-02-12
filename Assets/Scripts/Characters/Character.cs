@@ -4413,6 +4413,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //advertisedActions.Add(INTERACTION_TYPE.TRANSFORM_TO_WOLF_FORM);
         //advertisedActions.Add(INTERACTION_TYPE.REVERT_TO_NORMAL_FORM);
         advertisedActions.Add(INTERACTION_TYPE.CHANGE_CLASS);
+        advertisedActions.Add(INTERACTION_TYPE.STUDY_MONSTER);
         //advertisedActions.Add(INTERACTION_TYPE.ZOMBIE_DEATH);
         //advertisedActions.Add(INTERACTION_TYPE.STAND);
         //advertisedActions.Add(INTERACTION_TYPE.VISIT);

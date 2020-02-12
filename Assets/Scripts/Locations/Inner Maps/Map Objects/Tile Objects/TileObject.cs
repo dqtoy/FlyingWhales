@@ -105,6 +105,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         AddAdvertisedAction(INTERACTION_TYPE.REMOVE_POISON);
         AddAdvertisedAction(INTERACTION_TYPE.REPAIR);
         AddAdvertisedAction(INTERACTION_TYPE.SCRAP);
+        AddAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
     }
     protected void RemoveCommonAdvertisements() {
         RemoveAdvertisedAction(INTERACTION_TYPE.ASSAULT);
@@ -112,6 +113,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         RemoveAdvertisedAction(INTERACTION_TYPE.REMOVE_POISON);
         RemoveAdvertisedAction(INTERACTION_TYPE.REPAIR);
         RemoveAdvertisedAction(INTERACTION_TYPE.SCRAP);
+        RemoveAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
     }
 
     #region Listeners

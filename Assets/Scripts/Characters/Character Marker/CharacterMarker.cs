@@ -162,9 +162,16 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     protected override void OnPointerRightClick(Character poi) {
         base.OnPointerRightClick(poi);
+        Character activeCharacter = UIManager.Instance.characterInfoUI.activeCharacter;
+        if (activeCharacter != null) {
+            if (activeCharacter.minion == null) {
 #if UNITY_EDITOR
-        UIManager.Instance.poiTestingUI.ShowUI(character);
+                UIManager.Instance.poiTestingUI.ShowUI(character);
 #endif
+            } else {
+                UIManager.Instance.minionCommandsUI.ShowUI(character);
+            }
+        }
     }
     protected override void OnPointerEnter(Character poi) {
         base.OnPointerEnter(poi);

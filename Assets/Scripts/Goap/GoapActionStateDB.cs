@@ -374,6 +374,12 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.ROAM, new[]{
             new StateNameAndDuration(){ name = "Roam Success", status = InteractionManager.Goap_State_Success, duration = 3 },
         } },
+        {INTERACTION_TYPE.STUDY_MONSTER, new[]{
+            new StateNameAndDuration(){ name = "Study Success", status = InteractionManager.Goap_State_Success, duration = 3 },
+        } },
+        {INTERACTION_TYPE.DROP_ITEM, new[]{
+            new StateNameAndDuration(){ name = "Drop Success", status = InteractionManager.Goap_State_Success, duration = 1 },
+        } },
     };
 }
 

@@ -100,9 +100,16 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
     }
     protected override void OnPointerRightClick(TileObject poi) {
         base.OnPointerRightClick(poi);
+        Character activeCharacter = UIManager.Instance.characterInfoUI.activeCharacter;
+        if (activeCharacter != null) {
+            if(activeCharacter.minion == null) {
 #if UNITY_EDITOR
-        UIManager.Instance.poiTestingUI.ShowUI(poi);
+                UIManager.Instance.poiTestingUI.ShowUI(poi);
 #endif
+            } else {
+                UIManager.Instance.minionCommandsUI.ShowUI(poi);
+            }
+        }
     }
     protected override void OnPointerEnter(TileObject poi) {
         if (poi.mapObjectState == MAP_OBJECT_STATE.UNBUILT) {

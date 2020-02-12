@@ -12,11 +12,9 @@ public class POITestingUI : MonoBehaviour {
 
     #region Utilities
     public void ShowUI(IPointOfInterest poi) {
-        if (UIManager.Instance.characterInfoUI.activeCharacter != null) {
-            this.poi = poi;
-            UIManager.Instance.PositionTooltip(gameObject, rt, rt);
-            gameObject.SetActive(true);
-        }
+        this.poi = poi;
+        UIManager.Instance.PositionTooltip(gameObject, rt, rt);
+        gameObject.SetActive(true);
     }
     public void ShowUI(LocationGridTile gridTile) {
         if (UIManager.Instance.characterInfoUI.activeCharacter != null) {

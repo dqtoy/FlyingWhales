@@ -116,6 +116,15 @@ namespace Archetype {
             }
             return false;
         }
+        public bool HasMonster(RACE race, string className) {
+            if (monsters == null) { return false; }
+            for (int i = 0; i < monsters.Count; i++) {
+                if (monsters[i].race == race && monsters[i].className == className) {
+                    return true;
+                }
+            }
+            return false;
+        }
         #endregion
 
         #region Demonic Structures

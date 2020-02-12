@@ -39,6 +39,7 @@ public class UIMenu : MonoBehaviour {
             backButton.interactable = UIManager.Instance.GetLastUIMenuHistory() != null;    
         }
         UIManager.Instance.poiTestingUI.HideUI();
+        UIManager.Instance.minionCommandsUI.HideUI();
         _playerActionTarget = _data as IPlayerActionTarget;
         if (_playerActionTarget != null) {
             LoadActions(_playerActionTarget);    

@@ -173,6 +173,7 @@ public class GoapAction : IReactable {
     public virtual string ReactionToActor(Character witness, ActualGoapNode node) { return string.Empty; }
     public virtual string ReactionToTarget(Character witness, ActualGoapNode node) { return string.Empty; }
     public virtual string ReactionOfTarget(ActualGoapNode node) { return string.Empty; }
+    public virtual void OnActionStarted(ActualGoapNode node) { }
     #endregion
 
     #region Utilities

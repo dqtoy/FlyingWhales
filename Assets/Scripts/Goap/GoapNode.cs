@@ -173,6 +173,7 @@ public class ActualGoapNode {
         //parentPlan?.SetPlanState(GOAP_PLAN_STATE.IN_PROGRESS);
         Messenger.Broadcast(Signals.CHARACTER_DOING_ACTION, actor, this);
         actor.marker.UpdateActionIcon();
+        action.OnActionStarted(this);
         //poiTarget.AddTargettedByAction(this);
 
         //Move To Do Action

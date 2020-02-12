@@ -67,9 +67,10 @@ public class UIManager : MonoBehaviour {
     [Header("Options")]
     [SerializeField] private GameObject optionsGO;
 
-    [Space(10)] //FOR TESTING
-    [Header("For Testing")]
+    [Space(10)]
+    [Header("Right Click Commands")]
     public POITestingUI poiTestingUI;
+    public MinionCommandsUI minionCommandsUI;
 
     [Space(10)]
     [Header("Combat")]
@@ -170,6 +171,7 @@ public class UIManager : MonoBehaviour {
     }
     private void HideMenus() {
         poiTestingUI.HideUI();
+        minionCommandsUI.HideUI();
         if (characterInfoUI.isShowing) {
             characterInfoUI.CloseMenu();
         }

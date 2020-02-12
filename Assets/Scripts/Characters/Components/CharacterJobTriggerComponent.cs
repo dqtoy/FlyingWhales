@@ -650,5 +650,22 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    }
 	    return false;
     }
+    public void CreateLearnMonsterJob(Character target) {
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.LEARN_MONSTER, INTERACTION_TYPE.STUDY_MONSTER, target, _owner);
+        _owner.jobQueue.AddJobInQueue(job);
+    }
+    public void CreateTakeArtifactJob(TileObject target, LocationStructure dropLocation) {
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TAKE_ARTIFACT, INTERACTION_TYPE.DROP_ITEM, target, _owner);
+        job.AddOtherData(INTERACTION_TYPE.DROP_ITEM, new object[] { dropLocation });
+        _owner.jobQueue.AddJobInQueue(job);
+    }
+    #endregion
+
+    #region Abduct
+    public void CreateAbductJob(Character target) {
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ABDUCT, INTERACTION_TYPE.DROP, target, _owner);
+        job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { PlayerManager.Instance.player.portalTile.locationGridTiles[0].structure }); //For now drop in portal, this will be changed to Demonic Prison
+        _owner.jobQueue.AddJobInQueue(job);
+    }
     #endregion
 }

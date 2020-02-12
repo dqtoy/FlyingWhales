@@ -31,12 +31,16 @@ public class JobQueue {
         //        }
         //    }
         //}
-        bool isNewJobTopPriority = IsJobTopPriorityWhenAdded(job);
+        bool isNewJobTopPriority = owner.minion != null || IsJobTopPriorityWhenAdded(job);
         if (isNewJobTopPriority) {
             bool isJobQueueEmpty = jobsInQueue.Count <= 0;
             //Push back current top priority first before adding the job
             if (!isJobQueueEmpty) {
-                jobsInQueue[0].PushedBack(job); //This means that the job is inserted as the top most priority
+                if (owner.minion != null) {
+                    jobsInQueue[0].CancelJob(false);
+                } else {
+                    jobsInQueue[0].PushedBack(job); //This means that the job is inserted as the top most priority
+                }
             }
 
             //Insert job in the top of the list
