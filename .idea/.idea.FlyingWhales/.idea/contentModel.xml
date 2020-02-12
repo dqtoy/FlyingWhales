@@ -1346,6 +1346,7 @@
             <e p="Angered.cs" t="Include" />
             <e p="BecomeFactionLeader.cs" t="Include" />
             <e p="BecomeSettlementRuler.cs" t="Include" />
+            <e p="BeingTortured.cs" t="Include" />
             <e p="BreakUp.cs" t="Include" />
             <e p="Chat.cs" t="Include" />
             <e p="Cowering.cs" t="Include" />
@@ -1416,9 +1417,13 @@
                   <e p="CityCenter.cs" t="Include" />
                   <e p="Dwelling.cs" t="Include" />
                   <e p="LocationStructure.cs" t="Include" />
-                  <e p="LocationStructureObject.cs" t="Include" />
+                  <e p="Structure Objects" t="Include">
+                    <e p="LocationStructureObject.cs" t="Include" />
+                    <e p="TortureChamberStructureObject.cs" t="Include" />
+                  </e>
                   <e p="ThePortal.cs" t="Include" />
                   <e p="TheSpire.cs" t="Include" />
+                  <e p="TortureChamber.cs" t="Include" />
                 </e>
                 <e p="LocationStructureSetting.cs" t="Include" />
                 <e p="MeteorFalling.cs" t="Include" />
@@ -1490,6 +1495,7 @@
                   <e p="Grave.cs" t="Include" />
                   <e p="Guitar.cs" t="Include" />
                   <e p="HealingPotion.cs" t="Include" />
+                  <e p="IronMaiden.cs" t="Include" />
                   <e p="Kindling.cs" t="Include" />
                   <e p="MagicCircle.cs" t="Include" />
                   <e p="MetalPile.cs" t="Include" />

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.Assertions;
 namespace Traits {
     /// <summary>
     /// Class used to validate traits for all traitables
@@ -41,6 +41,17 @@ namespace Traits {
             //    }
             //}
             return true;
+        }
+        public static bool CanAddTrait(ITraitable obj, string traitName, ITraitContainer traitContainer) {
+            Trait trait;
+            if (TraitManager.Instance.IsInstancedTrait(traitName)) {
+                trait = TraitManager.Instance.CreateNewInstancedTraitClass(traitName);
+            } else {
+                Assert.IsTrue(TraitManager.Instance.allTraits.ContainsKey(traitName),
+                    $"No key for trait {traitName}");
+                trait = TraitManager.Instance.allTraits[traitName];
+            }
+            return CanAddTrait(obj, trait, traitContainer);
         }
     }
 }

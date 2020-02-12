@@ -78,7 +78,7 @@ namespace Inner_Maps {
         }
         public void LateUpdate() {
             if (GameManager.showAllTilesTooltip) {
-                if (UIManager.Instance.IsMouseOnUI() || IsMouseOnMapObject() || currentlyShowingMap == null) {
+                if (UIManager.Instance.IsMouseOnUI() || currentlyShowingMap == null) {
                     // if (UIManager.Instance.IsSmallInfoShowing() && UIManager.Instance.smallInfoShownFrom == "ShowTileData") {
                     //     UIManager.Instance.HideSmallInfo();
                     // }
@@ -425,13 +425,13 @@ namespace Inner_Maps {
                     summary += "\n\tFaction Owner: " + (poi as TileObject).factionOwner?.name ?? "None";
                     
                     if (poi is TreeObject) {
-                    summary = $"{summary}\n\tYield: {(poi as TreeObject).yield.ToString()}";
+                        summary = $"{summary}\n\tYield: {(poi as TreeObject).yield.ToString()}";
                     } else if (poi is Ore) {
-                    summary = $"{summary}\n\tYield: {(poi as Ore).yield.ToString()}";
+                        summary = $"{summary}\n\tYield: {(poi as Ore).yield.ToString()}";
                     } else if (poi is ResourcePile) {
-                    summary = $"{summary}\n\tResource in Pile: {(poi as ResourcePile).resourceInPile.ToString()}";
+                        summary = $"{summary}\n\tResource in Pile: {(poi as ResourcePile).resourceInPile.ToString()}";
                     }  else if (poi is Table) {
-                    summary = $"{summary}\n\tFood in Table: {(poi as Table).food.ToString()}";
+                        summary = $"{summary}\n\tFood in Table: {(poi as Table).food.ToString()}";
                     }
                 }
                 summary = $"{summary}\n\tAdvertised Actions: ";

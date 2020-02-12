@@ -15,20 +15,24 @@ public class LocationStructureObject : PooledObject {
     public enum Structure_Visual_Mode { Blueprint, Built }
 
     [Header("Tilemaps")]
-    [SerializeField] private Tilemap _groundTileMap;
-    [SerializeField] private Tilemap _detailTileMap;
-    [SerializeField] private TilemapRenderer _groundTileMapRenderer;
-    [SerializeField] private TilemapRenderer _detailTileMapRenderer;
+    [SerializeField] protected Tilemap _groundTileMap;
+    [SerializeField] protected Tilemap _detailTileMap;
+    [SerializeField] protected TilemapRenderer _groundTileMapRenderer;
+    [SerializeField] protected TilemapRenderer _detailTileMapRenderer;
 
     [Header("Template Data")]
-    [SerializeField] private Vector2Int _size;
-    [SerializeField] private Vector3Int _center;
+    [SerializeField] protected Vector2Int _size;
+    [SerializeField] protected Vector3Int _center;
 
     [Header("Objects")]
-    [SerializeField] private Transform _objectsParent;
+    [SerializeField] protected Transform _objectsParent;
 
     [Header("Furniture Spots")]
-    [SerializeField] private Transform _furnitureSpotsParent;
+    [SerializeField] protected Transform _furnitureSpotsParent;
+    
+    [Header("Helpers")]
+    [Tooltip("If this has elements, then only the provided coordinates will be set as part of the actual structure. Otherwise all the tiles inside the ground tilemap will be considered as part of the structure.")]
+    [SerializeField] private List<Vector3Int> predeterminedOccupiedCoordinates;
     
     #region Properties
     private Tilemap[] allTilemaps;
@@ -241,14 +245,18 @@ public class LocationStructureObject : PooledObject {
         BoundsInt bounds = _groundTileMap.cellBounds;
 
         List<Vector3Int> occupiedCoordinates = new List<Vector3Int>();
-        for (int x = bounds.xMin; x < bounds.xMax; x++) {
-            for (int y = bounds.yMin; y < bounds.yMax; y++) {
-                Vector3Int pos = new Vector3Int(x, y, 0);
-                TileBase tb = _groundTileMap.GetTile(pos);
-                if (tb != null) {
-                    occupiedCoordinates.Add(pos);
+        if (predeterminedOccupiedCoordinates != null && predeterminedOccupiedCoordinates.Count > 0) {
+            occupiedCoordinates = predeterminedOccupiedCoordinates;
+        } else {
+            for (int x = bounds.xMin; x < bounds.xMax; x++) {
+                for (int y = bounds.yMin; y < bounds.yMax; y++) {
+                    Vector3Int pos = new Vector3Int(x, y, 0);
+                    TileBase tb = _groundTileMap.GetTile(pos);
+                    if (tb != null) {
+                        occupiedCoordinates.Add(pos);
+                    }
                 }
-            }
+            }    
         }
 
         var localPosition = this.transform.localPosition;
@@ -362,6 +370,7 @@ public class LocationStructureObject : PooledObject {
     }
     #endregion
 
+    #region Helpers
     [Header("Wall Converter")]
     [SerializeField] private Tilemap wallTileMap;
     [SerializeField] private GameObject leftWall;
@@ -472,4 +481,26 @@ public class LocationStructureObject : PooledObject {
         _detailTileMap.enabled = false;
         _detailTileMapRenderer.enabled = false;
     }
+
+    [Header("Predetermine Structure Tiles")] 
+    [SerializeField] private TileBase assetToConsiderAsStructure;
+    [ContextMenu("Predetermine Structure Tiles")]
+    public void PredetermineOccupiedCoordinates() {
+        BoundsInt bounds = _groundTileMap.cellBounds;
+
+        predeterminedOccupiedCoordinates = new List<Vector3Int>();
+        for (int x = bounds.xMin; x < bounds.xMax; x++) {
+            for (int y = bounds.yMin; y < bounds.yMax; y++) {
+                Vector3Int pos = new Vector3Int(x, y, 0);
+                TileBase tb = _groundTileMap.GetTile(pos);
+                if (tb != null && tb == assetToConsiderAsStructure) {
+                    predeterminedOccupiedCoordinates.Add(pos);
+                    _groundTileMap.SetColor(pos, Color.red);
+                }
+            }
+        }    
+        
+    }
+    #endregion
+
 }

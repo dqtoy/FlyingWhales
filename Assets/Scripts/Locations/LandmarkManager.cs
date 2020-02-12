@@ -399,12 +399,16 @@ public partial class LandmarkManager : MonoBehaviour {
             case STRUCTURE_TYPE.THE_SPIRE:
                 createdStructure = new Inner_Maps.Location_Structures.TheSpire(location);
                 break;
+            case STRUCTURE_TYPE.TORTURE_CHAMBER:
+                createdStructure = new TortureChamber(location);
+                break;
             default:
                 createdStructure = new LocationStructure(type, location);
                 break;
         }
         location.AddStructure(createdStructure);
         settlement?.AddStructure(createdStructure);
+        createdStructure.Initialize();
         return createdStructure;
     }
     public LocationStructure LoadStructureAt(ILocation location, SaveDataLocationStructure data) {
@@ -485,6 +489,7 @@ public partial class LandmarkManager : MonoBehaviour {
             if (PlayerTryGetBuildSpotForStructureInTile(lso, tile, innerTileMap, out chosenBuildingSpot)) {
                 BuildSpotTileObject buildSpotTileObject = innerTileMap.GetBuildSpotTileObject(chosenBuildingSpot);
                 innerTileMap.PlaceStructureObjectAt(chosenBuildingSpot, chosenStructurePrefab, structure, buildSpotTileObject);
+                structure.structureObj.RegisterPreplacedObjects(structure, innerTileMap);
             } else {
                 throw new System.Exception(
                     $"Could not find valid building spot for {structure.ToString()} using prefab {chosenStructurePrefab.name}");

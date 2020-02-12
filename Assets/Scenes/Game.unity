@@ -33248,6 +33248,7 @@ MonoBehaviour:
     - Corrupt
     - Build Demonic Structure
     - Animate
+    - Torture
     m_values:
     - {fileID: 21300000, guid: 1ea6d3c87219ca34fbdaeb2464a68bc6, type: 3}
     - {fileID: 21300000, guid: b509b7ae41091354f8a5b5a1f47718ea, type: 3}
@@ -33260,6 +33261,7 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 77e63770c7ecb474c9aa378a33e9e6ee, type: 3}
     - {fileID: 21300000, guid: 8f5344dcd2d2212439068edd05e22193, type: 3}
     - {fileID: 21300000, guid: 425077bbaa6443144a6a7bc4c13caccd, type: 3}
+    - {fileID: 21300000, guid: 623d4fe6fa7f3264d8a883e12f3774f4, type: 3}
   killSummaryToggle: {fileID: 1981778861}
   newMinionUIGO: {fileID: 2032635302}
   newMinionCard: {fileID: 777859330}
@@ -86662,6 +86664,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2080112258}
     m_Modifications:
+    - target: {fileID: 1497639810564476, guid: 5265a95405071234ca6e83f73bf3868d, type: 3}
+      propertyPath: m_Name
+      value: LandmarkManager
+      objectReference: {fileID: 0}
     - target: {fileID: 4032634498680816, guid: 5265a95405071234ca6e83f73bf3868d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -86693,6 +86699,18 @@ PrefabInstance:
     - target: {fileID: 4032634498680816, guid: 5265a95405071234ca6e83f73bf3868d, type: 3}
       propertyPath: m_RootOrder
       value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4032634498680816, guid: 5265a95405071234ca6e83f73bf3868d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4032634498680816, guid: 5265a95405071234ca6e83f73bf3868d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4032634498680816, guid: 5265a95405071234ca6e83f73bf3868d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114602191139862856, guid: 5265a95405071234ca6e83f73bf3868d,
         type: 3}
@@ -89660,7 +89678,7 @@ MonoBehaviour:
     type: 3}
   areaMapLight: {fileID: 450682173}
   structurePrefabs:
-    m_keys: 030000000200000001000000090000000a000000080000000b0000000c0000000d0000000e0000000f0000001000000011000000120000001300000014000000160000001700000018000000190000001a0000001b0000001c0000001d0000001e0000001f0000002000000021000000220000002300000024000000
+    m_keys: 030000000200000001000000090000000a000000080000000b0000000c0000000d0000000e0000000f0000001000000011000000120000001300000014000000160000001700000018000000190000001a0000001b0000001c0000001d0000001e0000001f000000200000002100000022000000230000002400000025000000
     m_values:
     - data:
       - {fileID: 1293362371696982, guid: 191a9e123946de349a254ec4c008d174, type: 3}
@@ -89730,6 +89748,8 @@ MonoBehaviour:
       - {fileID: 1052932554014340, guid: 7b8124ccf8520cd4482d330b8eb45bd0, type: 3}
     - data:
       - {fileID: 1052932554014340, guid: b1a8517736a18004f9d35716c6e7dba1, type: 3}
+    - data:
+      - {fileID: 1908315790109183013, guid: 628045228f7127e47b6cbbcc4aa03a9b, type: 3}
   assetManager: {fileID: 1536722386}
   tileObjectTiles:
     m_keys: 0000000002000000030000000400000005000000060000000700000008000000090000000b0000000c0000000e0000000f000000100000001100000012000000130000001400000015000000160000001700000018000000190000001a0000001b0000001c0000004b0000004600000049000000480000004c0000004d000000
@@ -102197,6 +102217,7 @@ MonoBehaviour:
   MIN_Y: 0
   MAX_Y: 0
   allowZoom: 1
+  cameraPanSpeed: 50
   edgingSpeed: 30
   cameraShake: {fileID: 1713567862}
   cameraControlEnabled: 0

@@ -43,4 +43,10 @@ public class TrapStructure {
         return target.gridTileLocation != null && target.gridTileLocation.structure == forcedStructure;
     }
     #endregion
+
+    #region Utilities
+    public bool IsTrapped() {
+        return forcedStructure != null || structure != null;
+    }
+    #endregion
 }
