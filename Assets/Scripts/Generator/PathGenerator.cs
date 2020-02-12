@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using JetBrains.Annotations;
 
 public class PathGenerator : MonoBehaviour {

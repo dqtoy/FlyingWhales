@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Actionables;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using UnityEngine;
 using Traits;
 using UnityEngine.Assertions;
@@ -268,6 +269,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public float walkSpeed => raceSetting.walkSpeed + (raceSetting.walkSpeed * characterClass.walkSpeedMod);
     public float runSpeed => raceSetting.runSpeed + (raceSetting.runSpeed * characterClass.runSpeedMod);
     public Vector3 worldPosition => marker.transform.position;
+    public Vector2 selectableSize => Vector2Int.one;
     public ProjectileReceiver projectileReceiver => marker.collisionTrigger.projectileReceiver;
     public JOB_OWNER ownerType => JOB_OWNER.CHARACTER;
     public bool isInCombat => stateComponent.currentState != null && stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT;
@@ -6006,6 +6008,16 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void ClearPlayerActions() {
         actions.Clear();
+    }
+    #endregion
+    
+    #region Selectable
+    public bool IsCurrentlySelected() {
+        return UIManager.Instance.characterInfoUI.isShowing &&
+               UIManager.Instance.characterInfoUI.activeCharacter == this;
+    }
+    public void SelectAction() {
+        UIManager.Instance.ShowCharacterInfo(this);
     }
     #endregion
 }

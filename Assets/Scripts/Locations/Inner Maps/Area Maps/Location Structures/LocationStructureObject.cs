@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Tilemaps;
@@ -28,7 +29,7 @@ public class LocationStructureObject : PooledObject {
 
     [Header("Furniture Spots")]
     [SerializeField] private Transform _furnitureSpotsParent;
-
+    
     #region Properties
     private Tilemap[] allTilemaps;
     private WallVisual[] wallVisuals;
@@ -37,16 +38,15 @@ public class LocationStructureObject : PooledObject {
     #endregion
 
     #region Getters
-    public Vector2Int size {
-        get { return _size; }
-    }
+    public Vector2Int size => _size;
+    public Vector3Int center => _center;
     #endregion
 
     #region Monobehaviours
     void Awake() {
         allTilemaps = this.transform.GetComponentsInChildren<Tilemap>();
         wallVisuals = this.transform.GetComponentsInChildren<WallVisual>();
-        _groundTileMap.CompressBounds();
+        // _groundTileMap.CompressBounds();
     }
     #endregion
 
@@ -259,8 +259,8 @@ public class LocationStructureObject : PooledObject {
             Vector3Int gridTileLocation = actualLocation;
 
             //get difference from center
-            int xDiffFromCenter = currCoordinate.x - _center.x;
-            int yDiffFromCenter = currCoordinate.y - _center.y;
+            int xDiffFromCenter = currCoordinate.x - center.x;
+            int yDiffFromCenter = currCoordinate.y - center.y;
             gridTileLocation.x += xDiffFromCenter;
             gridTileLocation.y += yDiffFromCenter;
 
@@ -361,7 +361,7 @@ public class LocationStructureObject : PooledObject {
         Debug.Log($"Player clicked {this.name}");
     }
     #endregion
-    
+
     [Header("Wall Converter")]
     [SerializeField] private Tilemap wallTileMap;
     [SerializeField] private GameObject leftWall;

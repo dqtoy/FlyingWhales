@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using JetBrains.Annotations;
 using UnityEngine.Tilemaps;
 using Unity.Jobs;
 using Unity.Collections;
 using UtilityScripts;
 using Debug = System.Diagnostics.Debug;
+using ThePortal = Inner_Maps.Location_Structures.ThePortal;
 
 public partial class LandmarkManager : MonoBehaviour {
 
@@ -46,7 +48,7 @@ public partial class LandmarkManager : MonoBehaviour {
         allNonPlayerSettlements = new List<Settlement>();
         ConstructLandmarkData();
         LoadLandmarkTypeDictionary();
-        ConstructAnvilResearchData();
+        // ConstructAnvilResearchData();
         ConstructLocationEventsData();
         ConstructRaceStructureRequirements();
     }
@@ -125,16 +127,16 @@ public partial class LandmarkManager : MonoBehaviour {
         return true;
     }
     public BaseLandmark CreateNewLandmarkInstance(HexTile location, LANDMARK_TYPE type) {
-        if (type.IsPlayerLandmark()) {
-            var typeName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(type.ToString());
-            System.Type systemType = System.Type.GetType(typeName);
-            if (systemType != null) {
-                return System.Activator.CreateInstance(systemType, location, type) as BaseLandmark;
-            }
-            return null;
-        } else {
+        // if (type.IsPlayerLandmark()) {
+        //     var typeName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(type.ToString());
+        //     System.Type systemType = System.Type.GetType(typeName);
+        //     if (systemType != null) {
+        //         return System.Activator.CreateInstance(systemType, location, type) as BaseLandmark;
+        //     }
+        //     return null;
+        // } else {
             return new BaseLandmark(location, type);
-        }
+        // }
     }
     public BaseLandmark CreateNewLandmarkInstance(HexTile location, SaveDataLandmark data) {
         if (data.landmarkType.IsPlayerLandmark()) {
@@ -391,6 +393,12 @@ public partial class LandmarkManager : MonoBehaviour {
             case STRUCTURE_TYPE.CITY_CENTER:
                 createdStructure = new CityCenter(location);
                 break;
+            case STRUCTURE_TYPE.THE_PORTAL:
+                createdStructure = new Inner_Maps.Location_Structures.ThePortal(location);
+                break;
+            case STRUCTURE_TYPE.THE_SPIRE:
+                createdStructure = new Inner_Maps.Location_Structures.TheSpire(location);
+                break;
             default:
                 createdStructure = new LocationStructure(type, location);
                 break;
@@ -465,16 +473,16 @@ public partial class LandmarkManager : MonoBehaviour {
     public void CreateStructureObjectForLandmark(BaseLandmark landmark, Settlement settlement) {
         LocationStructure structure = CreateNewStructureAt(landmark.tileLocation.region,
             GetStructureTypeFor(landmark.specificLandmarkType), settlement);
-        PlaceStructureObject(structure, landmark.tileLocation.region.innerMap, landmark.tileLocation);
+        PlayerPlaceStructureObject(structure, landmark.tileLocation.region.innerMap, landmark.tileLocation);
     }
-    private void PlaceStructureObject(LocationStructure structure, InnerTileMap innerTileMap, HexTile tile) {
+    private void PlayerPlaceStructureObject(LocationStructure structure, InnerTileMap innerTileMap, HexTile tile) {
         if (structure.structureType.ShouldBeGeneratedFromTemplate()) {
             List<GameObject> choices =
                 InnerMapManager.Instance.GetStructurePrefabsForStructure(structure.structureType);
             GameObject chosenStructurePrefab = CollectionUtilities.GetRandomElement(choices);
             LocationStructureObject lso = chosenStructurePrefab.GetComponent<LocationStructureObject>();
             BuildingSpot chosenBuildingSpot;
-            if (TryGetBuildSpotForStructureInTile(lso, tile, innerTileMap, out chosenBuildingSpot)) {
+            if (PlayerTryGetBuildSpotForStructureInTile(lso, tile, innerTileMap, out chosenBuildingSpot)) {
                 BuildSpotTileObject buildSpotTileObject = innerTileMap.GetBuildSpotTileObject(chosenBuildingSpot);
                 innerTileMap.PlaceStructureObjectAt(chosenBuildingSpot, chosenStructurePrefab, structure, buildSpotTileObject);
             } else {
@@ -483,11 +491,11 @@ public partial class LandmarkManager : MonoBehaviour {
             }
         }
     }
-    public bool TryGetBuildSpotForStructureInTile(LocationStructureObject structureObject, HexTile currTile, 
+    public bool PlayerTryGetBuildSpotForStructureInTile(LocationStructureObject structureObject, HexTile currTile, 
         InnerTileMap innerTileMap, out BuildingSpot spot) {
         for (int j = 0; j < currTile.ownedBuildSpots.Length; j++) {
             BuildingSpot currSpot = currTile.ownedBuildSpots[j];
-            if (currSpot.isOccupied == false && currSpot.CanFitStructureOnSpot(structureObject, innerTileMap)) {
+            if (currSpot.isOccupied == false && currSpot.CanFitStructureOnSpot(structureObject, innerTileMap, "Player")) {
                 spot = currSpot;
                 return true;
             }
@@ -522,112 +530,112 @@ public partial class LandmarkManager : MonoBehaviour {
     }
     #endregion
 
-    #region The Anvil
-    private void ConstructAnvilResearchData() {
-        anvilResearchData = new Dictionary<string, AnvilResearchData>() {
-            { TheAnvil.Improved_Spells_1,
-                new AnvilResearchData() {
-                    effect = 2,
-                    description = "Increase Spell level to 2.",
-                    manaCost = 150,
-                    durationInHours = 8,
-                    preRequisiteResearch = string.Empty,
-                    researchDoneNotifText = "Spell Level increased!",
-                }
-            },
-            { TheAnvil.Improved_Spells_2,
-                new AnvilResearchData() {
-                    effect = 3,
-                    description = "Increase Spell level to 3.",
-                    manaCost = 300,
-                    durationInHours = 24,
-                    preRequisiteResearch = TheAnvil.Improved_Spells_1,
-                    researchDoneNotifText = "Spell Level increased!",
-                }
-            },
-            { TheAnvil.Improved_Artifacts_1,
-                new AnvilResearchData() {
-                    effect = 2,
-                    description = "Increase Artifact level to 2.",
-                    manaCost = 100,
-                    durationInHours = 4,
-                    preRequisiteResearch = string.Empty,
-                    researchDoneNotifText = "Artifact Level increased!",
-                }
-            },
-            { TheAnvil.Improved_Artifacts_2,
-                new AnvilResearchData() {
-                    effect = 3,
-                    description = "Increase Artifact level to 3.",
-                    manaCost = 200,
-                    durationInHours = 12,
-                    preRequisiteResearch = TheAnvil.Improved_Artifacts_1,
-                    researchDoneNotifText = "Artifact Level increased!",
-                }
-            },
-            { TheAnvil.Improved_Summoning_1,
-                new AnvilResearchData() {
-                    effect = 2,
-                    description = "Increase Summon level to 2.",
-                    manaCost = 100,
-                    durationInHours = 4,
-                    preRequisiteResearch = string.Empty,
-                    researchDoneNotifText = "Summon Level increased!",
-                }
-            },
-            { TheAnvil.Improved_Summoning_2,
-                new AnvilResearchData() {
-                    effect = 3,
-                    description = "Increase Summon level to 3.",
-                    manaCost = 200,
-                    durationInHours = 12,
-                    preRequisiteResearch = TheAnvil.Improved_Summoning_1,
-                    researchDoneNotifText = "Summon Level increased!",
-                }
-            },
-            { TheAnvil.Faster_Invasion,
-                new AnvilResearchData() {
-                    effect = 20,
-                    description = "Invasion is 20% faster.",
-                    manaCost = 200,
-                    durationInHours = 12,
-                    preRequisiteResearch = string.Empty,
-                    researchDoneNotifText = "Invasion rate increased!",
-                }
-            },
-            { TheAnvil.Improved_Construction,
-                new AnvilResearchData() {
-                    effect = 20,
-                    description = "Construction is 20% faster.",
-                    manaCost = 200,
-                    durationInHours = 12,
-                    preRequisiteResearch = string.Empty,
-                    researchDoneNotifText = "Construction rate increased!",
-                }
-            },
-            { TheAnvil.Increased_Mana_Capacity,
-                new AnvilResearchData() {
-                    effect = 600,
-                    description = "Maximum Mana increased to 600.",
-                    manaCost = 200,
-                    durationInHours = 12,
-                    preRequisiteResearch = string.Empty,
-                    researchDoneNotifText = "Maximum mana increased!",
-                }
-            },
-            { TheAnvil.Increased_Mana_Regen,
-                new AnvilResearchData() {
-                    effect = 5,
-                    description = "Mana Regen increased by 5.",
-                    manaCost = 200,
-                    durationInHours = 24,
-                    preRequisiteResearch = string.Empty,
-                    researchDoneNotifText = "Mana regeneration rate increased!",
-                }
-            },
-        };
-    }
-    #endregion
+    // #region The Anvil
+    // private void ConstructAnvilResearchData() {
+    //     anvilResearchData = new Dictionary<string, AnvilResearchData>() {
+    //         { TheAnvil.Improved_Spells_1,
+    //             new AnvilResearchData() {
+    //                 effect = 2,
+    //                 description = "Increase Spell level to 2.",
+    //                 manaCost = 150,
+    //                 durationInHours = 8,
+    //                 preRequisiteResearch = string.Empty,
+    //                 researchDoneNotifText = "Spell Level increased!",
+    //             }
+    //         },
+    //         { TheAnvil.Improved_Spells_2,
+    //             new AnvilResearchData() {
+    //                 effect = 3,
+    //                 description = "Increase Spell level to 3.",
+    //                 manaCost = 300,
+    //                 durationInHours = 24,
+    //                 preRequisiteResearch = TheAnvil.Improved_Spells_1,
+    //                 researchDoneNotifText = "Spell Level increased!",
+    //             }
+    //         },
+    //         { TheAnvil.Improved_Artifacts_1,
+    //             new AnvilResearchData() {
+    //                 effect = 2,
+    //                 description = "Increase Artifact level to 2.",
+    //                 manaCost = 100,
+    //                 durationInHours = 4,
+    //                 preRequisiteResearch = string.Empty,
+    //                 researchDoneNotifText = "Artifact Level increased!",
+    //             }
+    //         },
+    //         { TheAnvil.Improved_Artifacts_2,
+    //             new AnvilResearchData() {
+    //                 effect = 3,
+    //                 description = "Increase Artifact level to 3.",
+    //                 manaCost = 200,
+    //                 durationInHours = 12,
+    //                 preRequisiteResearch = TheAnvil.Improved_Artifacts_1,
+    //                 researchDoneNotifText = "Artifact Level increased!",
+    //             }
+    //         },
+    //         { TheAnvil.Improved_Summoning_1,
+    //             new AnvilResearchData() {
+    //                 effect = 2,
+    //                 description = "Increase Summon level to 2.",
+    //                 manaCost = 100,
+    //                 durationInHours = 4,
+    //                 preRequisiteResearch = string.Empty,
+    //                 researchDoneNotifText = "Summon Level increased!",
+    //             }
+    //         },
+    //         { TheAnvil.Improved_Summoning_2,
+    //             new AnvilResearchData() {
+    //                 effect = 3,
+    //                 description = "Increase Summon level to 3.",
+    //                 manaCost = 200,
+    //                 durationInHours = 12,
+    //                 preRequisiteResearch = TheAnvil.Improved_Summoning_1,
+    //                 researchDoneNotifText = "Summon Level increased!",
+    //             }
+    //         },
+    //         { TheAnvil.Faster_Invasion,
+    //             new AnvilResearchData() {
+    //                 effect = 20,
+    //                 description = "Invasion is 20% faster.",
+    //                 manaCost = 200,
+    //                 durationInHours = 12,
+    //                 preRequisiteResearch = string.Empty,
+    //                 researchDoneNotifText = "Invasion rate increased!",
+    //             }
+    //         },
+    //         { TheAnvil.Improved_Construction,
+    //             new AnvilResearchData() {
+    //                 effect = 20,
+    //                 description = "Construction is 20% faster.",
+    //                 manaCost = 200,
+    //                 durationInHours = 12,
+    //                 preRequisiteResearch = string.Empty,
+    //                 researchDoneNotifText = "Construction rate increased!",
+    //             }
+    //         },
+    //         { TheAnvil.Increased_Mana_Capacity,
+    //             new AnvilResearchData() {
+    //                 effect = 600,
+    //                 description = "Maximum Mana increased to 600.",
+    //                 manaCost = 200,
+    //                 durationInHours = 12,
+    //                 preRequisiteResearch = string.Empty,
+    //                 researchDoneNotifText = "Maximum mana increased!",
+    //             }
+    //         },
+    //         { TheAnvil.Increased_Mana_Regen,
+    //             new AnvilResearchData() {
+    //                 effect = 5,
+    //                 description = "Mana Regen increased by 5.",
+    //                 manaCost = 200,
+    //                 durationInHours = 24,
+    //                 preRequisiteResearch = string.Empty,
+    //                 researchDoneNotifText = "Mana regeneration rate increased!",
+    //             }
+    //         },
+    //     };
+    // }
+    // #endregion
 }
 
 public class Island {

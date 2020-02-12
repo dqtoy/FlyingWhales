@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using BayatGames.SaveGameFree.Types;
+using Inner_Maps.Location_Structures;
 using UnityEngine.Serialization;
 
 [System.Serializable]

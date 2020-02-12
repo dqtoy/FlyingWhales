@@ -537,6 +537,20 @@
           </e>
           <e p="Readme.txt" t="Include" />
         </e>
+        <e p="Demigiant" t="Include">
+          <e p="DOTween" t="Include">
+            <e p="Modules" t="Include">
+              <e p="DOTweenModuleAudio.cs" t="Include" />
+              <e p="DOTweenModulePhysics.cs" t="Include" />
+              <e p="DOTweenModulePhysics2D.cs" t="Include" />
+              <e p="DOTweenModuleSprite.cs" t="Include" />
+              <e p="DOTweenModuleUI.cs" t="Include" />
+              <e p="DOTweenModuleUnityVersion.cs" t="Include" />
+              <e p="DOTweenModuleUtils.cs" t="Include" />
+            </e>
+            <e p="Readme.txt" t="Include" />
+          </e>
+        </e>
         <e p="Editor" t="Include">
           <e p="Steamworks.NET" t="Include">
             <e p="RedistCopy.cs" t="Include" />
@@ -1403,6 +1417,8 @@
                   <e p="Dwelling.cs" t="Include" />
                   <e p="LocationStructure.cs" t="Include" />
                   <e p="LocationStructureObject.cs" t="Include" />
+                  <e p="ThePortal.cs" t="Include" />
+                  <e p="TheSpire.cs" t="Include" />
                 </e>
                 <e p="LocationStructureSetting.cs" t="Include" />
                 <e p="MeteorFalling.cs" t="Include" />
@@ -1639,6 +1655,12 @@
             <e p="SpacialObject.cs" t="Include" />
           </e>
           <e p="Player" t="Include">
+            <e p="Archetypes" t="Include">
+              <e p="Lich.cs" t="Include" />
+              <e p="PlayerArchetype.cs" t="Include" />
+              <e p="PuppetMaster.cs" t="Include" />
+              <e p="Ravager.cs" t="Include" />
+            </e>
             <e p="Artifacts" t="Include">
               <e p="AnkhOfAnubis.cs" t="Include" />
               <e p="Artifact.cs" t="Include" />
@@ -1960,6 +1982,7 @@
             <e p="IntelItem.cs" t="Include" />
             <e p="IntelNotificationItem.cs" t="Include" />
             <e p="InvestigationMinionDraggableItem.cs" t="Include" />
+            <e p="ISelectable.cs" t="Include" />
             <e p="KillCountCharacterItem.cs" t="Include" />
             <e p="LandmarkCharacterItem.cs" t="Include" />
             <e p="LandmarkNameplate.cs" t="Include" />
@@ -2022,11 +2045,13 @@
             <e p="RoleSlotItem.cs" t="Include" />
             <e p="RoleSlotItemDraggable.cs" t="Include" />
             <e p="SecretItem.cs" t="Include" />
+            <e p="Selector.cs" t="Include" />
             <e p="ShareIntelMenu.cs" t="Include" />
             <e p="SkirmishUI.cs" t="Include" />
             <e p="SlotItem.cs" t="Include" />
             <e p="SlotItemDraggable.cs" t="Include" />
             <e p="StringPickerItem.cs" t="Include" />
+            <e p="StructureInfoUI.cs" t="Include" />
             <e p="SummonSlotPickerItem.cs" t="Include" />
             <e p="TheEyeUI.cs" t="Include" />
             <e p="TheFingersUI.cs" t="Include" />

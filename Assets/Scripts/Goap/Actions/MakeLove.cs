@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;  
 using Traits;
 using System.Linq;
+using Inner_Maps.Location_Structures;
 
 public class MakeLove : GoapAction {
 

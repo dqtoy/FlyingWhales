@@ -25,8 +25,9 @@ public class TileObjectInfoUI : UIMenu {
     public override void CloseMenu() {
         base.CloseMenu();
         if(activeTileObject != null && activeTileObject.mapVisual != null) {
-            activeTileObject.mapVisual.UnlockHoverObject();
-            activeTileObject.mapVisual.SetHoverObjectState(false);
+            // activeTileObject.mapVisual.UnlockHoverObject();
+            // activeTileObject.mapVisual.SetHoverObjectState(false);
+            Selector.Instance.Deselect();
             if (InnerMapCameraMove.Instance.target == activeTileObject.mapObjectVisual.transform) {
                 InnerMapCameraMove.Instance.CenterCameraOn(null);
             }
@@ -35,19 +36,21 @@ public class TileObjectInfoUI : UIMenu {
     }
     public override void OpenMenu() {
         TileObject previousTileObject = activeTileObject;
-        if (previousTileObject != null && previousTileObject.mapVisual != null) {
-            previousTileObject.mapVisual.UnlockHoverObject();
-            previousTileObject.mapVisual.SetHoverObjectState(false);    
-        }
+        // if (previousTileObject != null && previousTileObject.mapVisual != null) {
+        //     // previousTileObject.mapVisual.UnlockHoverObject();
+        //     // previousTileObject.mapVisual.SetHoverObjectState(false);
+        //     Selector.Instance.Deselect();
+        // }
         
         activeTileObject = _data as TileObject;
         if(activeTileObject.gridTileLocation != null) {
             bool instantCenter = !InnerMapManager.Instance.IsShowingInnerMap(activeTileObject.currentRegion);
             InnerMapCameraMove.Instance.CenterCameraOn(activeTileObject.mapObjectVisual.gameObject, instantCenter);
         }
-        activeTileObject.mapVisual.SetHoverObjectState(true);
-        activeTileObject.mapVisual.LockHoverObject();
+        // activeTileObject.mapVisual.SetHoverObjectState(true);
+        // activeTileObject.mapVisual.LockHoverObject();
         base.OpenMenu();
+        Selector.Instance.Select(activeTileObject);
         UIManager.Instance.HideObjectPicker();
         UpdateCharactersToggle();
         UpdateTileObjectInfo();

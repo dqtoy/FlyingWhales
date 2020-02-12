@@ -153,8 +153,10 @@ public class CharacterInfoUI : UIMenu {
     #region Overrides
     public override void CloseMenu() {
         base.CloseMenu();
-        if (_activeCharacter != null && _activeCharacter.marker != null && InnerMapCameraMove.Instance.target == _activeCharacter.marker.gameObject.transform) {
-            InnerMapCameraMove.Instance.CenterCameraOn(null);    
+        Selector.Instance.Deselect();
+        if (_activeCharacter != null && ReferenceEquals(_activeCharacter.marker, null) == false 
+            && InnerMapCameraMove.Instance.target == _activeCharacter.marker.gameObject.transform) {
+            InnerMapCameraMove.Instance.CenterCameraOn(null);
         }
         _activeCharacter = null;
     }
@@ -167,6 +169,9 @@ public class CharacterInfoUI : UIMenu {
         }
         if (UIManager.Instance.IsObjectPickerOpen()) {
             UIManager.Instance.HideObjectPicker();
+        }
+        if (_activeCharacter.marker.transform != null) {
+            Selector.Instance.Select(_activeCharacter, _activeCharacter.marker.transform);    
         }
         UpdateCharacterInfo();
         UpdateTraits();

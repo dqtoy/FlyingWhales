@@ -34,7 +34,7 @@ public class TheNeedlesUI : MonoBehaviour {
         Minion minion = (minionObj as Character).minion;
         needles.tileLocation.region.SetAssignedMinion(minion);
         minion.SetAssignedRegion(needles.tileLocation.region);
-        needles.Activate();
+        // needles.Activate();
     }
     #endregion
 

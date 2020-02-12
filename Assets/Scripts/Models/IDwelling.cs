@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 
 public interface IDwelling {
     int id { get; }
@@ -21,7 +22,6 @@ public interface IDwelling {
     //Inner Map
     List<LocationGridTile> tiles { get; }
     List<LocationGridTile> unoccupiedTiles { get; }
-    LocationGridTile entranceTile { get; }
 
     void AddResident(Character character);
     void RemoveResident(Character character);

@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using Actionables;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using Traits;
 
 public class Minion {
@@ -370,10 +371,8 @@ public class Minion {
     #endregion
 
     #region Summoning
-    public void Summon(ThePortal portal) {
+    public void Summon(Inner_Maps.Location_Structures.ThePortal portalStructure) {
         character.CreateMarker();
-        LocationStructure portalStructure =
-            portal.tileLocation.settlementOnTile.GetRandomStructureOfType(STRUCTURE_TYPE.THE_PORTAL);
 
         int minX = portalStructure.tiles.Min(t => t.localPlace.x);
         int maxX = portalStructure.tiles.Max(t => t.localPlace.x);
@@ -387,13 +386,13 @@ public class Minion {
         int centerY = minY + (differenceY / 2);
 
         LocationGridTile centerTile = portalStructure.location.innerMap.map[centerX, centerY];
-        Vector3 pos = centerTile.worldLocation;
+        // Vector3 pos = centerTile.worldLocation;
 
-        character.marker.InitialPlaceMarkerAt(pos, portal.tileLocation.region);
+        character.marker.InitialPlaceMarkerAt(centerTile);
         character.SetIsDead(false);
 
         Vector2Int tileToGoToCoords = new Vector2Int(character.gridTileLocation.localPlace.x, character.gridTileLocation.localPlace.y - 3);
-        LocationGridTile tileToGoTo = portal.tileLocation.region.innerMap.map[tileToGoToCoords.x, tileToGoToCoords.y];
+        LocationGridTile tileToGoTo = portalStructure.location.innerMap.map[tileToGoToCoords.x, tileToGoToCoords.y];
         character.marker.GoTo(tileToGoTo);
         
         PlayerManager.Instance.player.AdjustMana(-EditableValuesManager.Instance.summonMinionManaCost);

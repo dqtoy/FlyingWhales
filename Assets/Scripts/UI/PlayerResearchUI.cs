@@ -12,7 +12,9 @@ public class PlayerResearchUI : MonoBehaviour {
     #region General
     public void OnClickResearch(BaseLandmark landmark) {
         spire = landmark as TheSpire;
-        UIManager.Instance.dualObjectPicker.ShowDualObjectPicker(PlayerManager.Instance.player.minions.Select(x => x.character).ToList(), "Select minion", CanChooseMinion, OnHoverEnterMinion, OnHoverExitMinion, OnChooseMinion, OnConfirmExtract, "Extract");
+        // UIManager.Instance.dualObjectPicker.ShowDualObjectPicker(PlayerManager.Instance.player.minions
+        //     .Select(x => x.character).ToList(), "Select minion", CanChooseMinion, OnHoverEnterMinion,
+        //     OnHoverExitMinion, OnChooseMinion, OnConfirmExtract, "Extract");
     }
     private void OnHoverEnterMinion(Character character) {
         if (!CanChooseMinion(character)) {
@@ -28,22 +30,22 @@ public class PlayerResearchUI : MonoBehaviour {
     private void OnHoverExitMinion(Character character) {
         UIManager.Instance.HideSmallInfo();
     }
-    private void OnConfirmExtract(object minionObj, object abilityObj) {
-        Minion minion = (minionObj as Character).minion;
-        string abilityName = (string)abilityObj;
-        SPELL_TYPE ability = SPELL_TYPE.NONE;
-        for (int i = 0; i < chosenMinion.interventionAbilitiesToResearch.Count; i++) {
-            SPELL_TYPE currAbility = chosenMinion.interventionAbilitiesToResearch[i];
-            if (PlayerManager.Instance.allSpellsData[currAbility].name == abilityName) {
-                ability = currAbility;
-                break;
-            }
-        }
-
-        spire.tileLocation.region.SetAssignedMinion(minion);
-        minion.SetAssignedRegion(spire.tileLocation.region);
-        spire.ExtractInterventionAbility(ability);
-    }
+    // private void OnConfirmExtract(object minionObj, object abilityObj) {
+    //     Minion minion = (minionObj as Character).minion;
+    //     string abilityName = (string)abilityObj;
+    //     SPELL_TYPE ability = SPELL_TYPE.NONE;
+    //     for (int i = 0; i < chosenMinion.interventionAbilitiesToResearch.Count; i++) {
+    //         SPELL_TYPE currAbility = chosenMinion.interventionAbilitiesToResearch[i];
+    //         if (PlayerManager.Instance.allSpellsData[currAbility].name == abilityName) {
+    //             ability = currAbility;
+    //             break;
+    //         }
+    //     }
+    //
+    //     spire.tileLocation.region.SetAssignedMinion(minion);
+    //     minion.SetAssignedRegion(spire.tileLocation.region);
+    //     spire.ExtractInterventionAbility(ability);
+    // }
     #endregion
 
     #region Minion

@@ -99,9 +99,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
         clickedImg.sortingOrder = sortingOrder - 1;
         colorHighlight.sortingOrder = sortingOrder - 1;
         hpBarGO.GetComponent<Canvas>().sortingOrder = sortingOrder;
-        if (UIManager.Instance.characterInfoUI.isShowing) {
-            clickedImg.gameObject.SetActive(UIManager.Instance.characterInfoUI.activeCharacter.id == character.id);
-        }
+        // if (UIManager.Instance.characterInfoUI.isShowing) {
+        //     clickedImg.gameObject.SetActive(UIManager.Instance.characterInfoUI.activeCharacter.id == character.id);
+        // }
         UpdateMarkerVisuals();
         UpdateActionIcon();
 
@@ -374,20 +374,20 @@ public class CharacterMarker : MapObjectVisual<Character> {
 
     #region UI
     private void OnMenuOpened(UIMenu menu) {
-        if (menu is CharacterInfoUI) {
-            if ((menu as CharacterInfoUI).activeCharacter.id == character.id) {
-                clickedImg.gameObject.SetActive(true);
-            } else {
-                clickedImg.gameObject.SetActive(false);
-            }
-
-        }
+        // if (menu is CharacterInfoUI) {
+        //     if ((menu as CharacterInfoUI).activeCharacter.id == character.id) {
+        //         clickedImg.gameObject.SetActive(true);
+        //     } else {
+        //         clickedImg.gameObject.SetActive(false);
+        //     }
+        //
+        // }
     }
     private void OnMenuClosed(UIMenu menu) {
-        if (menu is CharacterInfoUI) {
-            clickedImg.gameObject.SetActive(false);
-            //UnhighlightMarker();
-        }
+        // if (menu is CharacterInfoUI) {
+        //     clickedImg.gameObject.SetActive(false);
+        //     //UnhighlightMarker();
+        // }
     }
     private void OnProgressionSpeedChanged(PROGRESSION_SPEED progSpeed) {
         if (progSpeed == PROGRESSION_SPEED.X1) {
@@ -845,7 +845,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         nameLbl.gameObject.SetActive(state);
         actionIcon.enabled = state;
         hoveredImg.enabled = state;
-        clickedImg.enabled = state;
+        // clickedImg.enabled = state;
     }
     private void UpdateHairVisuals() {
         Sprite hair = CharacterManager.Instance.GetMarkerHairSprite(character.gender);

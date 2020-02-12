@@ -5,6 +5,7 @@ using Actionables;
 using UnityEngine;
 using BayatGames.SaveGameFree.Types;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using Pathfinding;
 using Traits;
 using UnityEngine.Experimental.U2D;
@@ -16,9 +17,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public TILE_OBJECT_TYPE tileObjectType { get; private set; }
     public Character characterOwner { get; protected set; }
     public List<INTERACTION_TYPE> advertisedActions { get; protected set; }
-    public Region currentRegion { get { return gridTileLocation.structure.location.coreTile.region; } }
+    public Region currentRegion => gridTileLocation.structure.location.coreTile.region;
     public List<string> actionHistory { get; private set; } //list of actions that was done to this object
-    public LocationStructure structureLocation { get { return gridTileLocation.structure; } }
+    public LocationStructure structureLocation => gridTileLocation.structure;
     public bool isDisabledByPlayer { get; protected set; }
     public bool isSummonedByPlayer { get; protected set; }
     public List<JobQueueItem> allJobsTargetingThis { get; protected set; }
@@ -53,19 +54,12 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     private bool hasSubscribedToListeners;
     
     #region getters
-    public POINT_OF_INTEREST_TYPE poiType {
-        get { return POINT_OF_INTEREST_TYPE.TILE_OBJECT; }
-    }
-    public Vector3 worldPosition {
-        get { return gridTileLocation.centeredWorldLocation; }
-    }
-    public bool isDead {
-        get { return gridTileLocation == null; } //Consider the object as dead if it no longer has a tile location (has been removed)
-    }
-    public ProjectileReceiver projectileReceiver {
-        get { return mapVisual.collisionTrigger.projectileReceiver; }
-    }
-    public Transform worldObject { get { return mapVisual.transform; } }
+    public POINT_OF_INTEREST_TYPE poiType => POINT_OF_INTEREST_TYPE.TILE_OBJECT;
+    public Vector3 worldPosition => mapVisual.transform.position;
+    public virtual Vector2 selectableSize => Vector2Int.one;
+    public bool isDead => gridTileLocation == null; //Consider the object as dead if it no longer has a tile location (has been removed)
+    public ProjectileReceiver projectileReceiver => mapVisual.collisionTrigger.projectileReceiver;
+    public Transform worldObject => mapVisual.transform;
     public string nameWithID => ToString();
     public GameObject visualGO => mapVisual.gameObject;
     public Character isBeingCarriedBy => carriedByCharacter;
@@ -453,7 +447,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
 
     #region Traits
     public ITraitContainer traitContainer { get; private set; }
-    public TraitProcessor traitProcessor { get { return TraitManager.tileObjectTraitProcessor; } }
+    public TraitProcessor traitProcessor => TraitManager.tileObjectTraitProcessor;
     public void CreateTraitContainer() {
         traitContainer = new TraitContainer();
     }
@@ -861,6 +855,16 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     }
     public void ClearPlayerActions() {
         actions.Clear();
+    }
+    #endregion
+
+    #region Selectable
+    public bool IsCurrentlySelected() {
+        return UIManager.Instance.tileObjectInfoUI.isShowing &&
+               UIManager.Instance.tileObjectInfoUI.activeTileObject == this;
+    }
+    public void SelectAction() {
+        UIManager.Instance.ShowTileObjectInfo(this);
     }
     #endregion
 }

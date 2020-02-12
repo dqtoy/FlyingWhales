@@ -149,7 +149,7 @@ public class InnerMapCameraMove : MonoBehaviour {
         }
     }
     public void CenterCameraOn(GameObject GO, bool instantCenter = false) {
-        if (GO == null) {
+        if (ReferenceEquals(GO, null)) {
             target = null;
         } else {
             if (instantCenter) {
@@ -164,10 +164,7 @@ public class InnerMapCameraMove : MonoBehaviour {
         MoveCamera(pos);
     }
     public void CenterCameraOnTile(HexTile tile) {
-        Vector2 pos = tile.ownedBuildSpots[0].spotItem.transform.position;
-        pos.x += 3.5f;
-        pos.y += 3.5f;
-        MoveCamera(pos);
+        MoveCamera(tile.worldPosition);
     }
     private void ArrowKeysMovement() {
         if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow) ||Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S)) {
