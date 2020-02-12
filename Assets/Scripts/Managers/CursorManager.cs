@@ -33,6 +33,8 @@ public class CursorManager : MonoBehaviour {
     public PointerEventData cursorPointerEventData { get; private set; }
     private LocationGridTile previousHoveredTile;
 
+    public PLAYER_ARCHETYPE selectedArchetype { get; private set; } //Need to move this in the future. Not the best way to store the selected archetype from the main menu scene, but for now this will do since we need an object that is carried to the Game scene
+
     #region Monobehaviours
     private void Awake() {
         if (Instance == null) {
@@ -240,6 +242,9 @@ public class CursorManager : MonoBehaviour {
     }
     public void RevertToPreviousCursor() {
         SetCursorTo(previousCursorType);
+    }
+    public void SetSelectedArchetype(PLAYER_ARCHETYPE archetype) {
+        selectedArchetype = archetype;
     }
 
     #region Click Actions

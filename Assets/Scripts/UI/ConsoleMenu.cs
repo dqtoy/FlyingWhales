@@ -81,6 +81,7 @@ public class ConsoleMenu : UIMenu {
             {"/join_faction", JoinFaction },
             {"/emotion", TriggerEmotion },
             {"/adjust_resource", TriggerEmotion },
+            {"/change_archetype", ChangeArchetype },
         };
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -1268,6 +1269,22 @@ public class ConsoleMenu : UIMenu {
             AddSuccessMessage("Gained new Spell: " + type);
         } else {
             AddErrorMessage("There is no spell of type " + typeParameterString);
+        }
+
+    }
+    private void ChangeArchetype(string[] parameters) {
+        if (parameters.Length != 1) {
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of ChangeArchetype");
+            return;
+        }
+        string typeParameterString = parameters[0];
+        PLAYER_ARCHETYPE type;
+        if (Enum.TryParse(typeParameterString, out type)) {
+            PlayerManager.Instance.player.SetArchetype(type);
+            AddSuccessMessage("Changed Player Archetype to: " + type);
+        } else {
+            AddErrorMessage("There is no archetype " + typeParameterString);
         }
 
     }

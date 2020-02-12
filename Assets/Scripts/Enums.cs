@@ -1385,7 +1385,7 @@ public enum FACTION_IDEOLOGY { INCLUSIVE = 0, EXCLUSIVE = 1, MILITARIST = 2, ECO
 public enum BEHAVIOUR_COMPONENT_ATTRIBUTE { WITHIN_HOME_SETTLEMENT_ONLY, ONCE_PER_DAY, DO_NOT_SKIP_PROCESSING, } //, OUTSIDE_SETTLEMENT_ONLY
 public enum EXCLUSIVE_IDEOLOGY_CATEGORIES { RACE, GENDER, TRAIT, }
 public enum EMOTION { None, Fear, Approval, Embarassment, Disgust, Anger, Betrayal, Concern, Disappointment, Scorn, Sadness, Threatened, Arousal, Disinterest, Despair, Shock, Resentment, Disapproval, Gratefulness, }
-
+public enum PLAYER_ARCHETYPE { Normal, Ravager, Lich, Puppet_Master, }
 /// <summary>
 /// STARTED - actor is moving towards the target but is not yet performing action
 /// PERFORMING - actor arrived at the target and is performing action

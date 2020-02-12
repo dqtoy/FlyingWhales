@@ -13,11 +13,50 @@ public class PlayerManager : MonoBehaviour {
     public const int MAX_LEVEL_COMBAT_ABILITY = 3;
     public const int MAX_LEVEL_INTERVENTION_ABILITY = 3;
     public const int DIVINE_INTERVENTION_DURATION = 2880; //4320;
-    public Player player = null;
+
+    public const string Zap_Action = "Zap";
+    public const string Summon_Minion_Action = "Summon Minion";
+    public const string Poison_Action = "Poison";
+    public const string Ignite_Action = "Ignite";
+    public const string Destroy_Action = "Destroy";
+    public const string Corrupt_Action = "Corrupt";
+    public const string Build_Demonic_Structure_Action = "Build Demonic Structure";
+    public const string Animate_Action = "Animate";
+    public const string Afflict_Action = "Afflict";
+    public const string Seize_Character_Action = "Seize Character";
+    public const string Seize_Object_Action = "Seize Object";
+    public const string Bless_Action = "Bless";
+    public const string Booby_Trap = "Booby Trap";
+
+    public const string Tornado = "Tornado";
+    public const string Meteor = "Meteor";
+    public const string Poison_Cloud = "Poison Cloud";
+    public const string Lightning = "Lightning";
+    public const string Ravenous_Spirit = "Ravenous Spirit";
+    public const string Feeble_Spirit = "Feeble Spirit";
+    public const string Forlorn_Spirit = "Forlorn Spirit";
+    public const string Locust_Swarm = "Locust Swarm";
+    public const string Spawn_Boulder = "Spawn Boulder";
+    public const string Landmine = "Landmine";
+    public const string Manifest_Food = "Manifest Food";
+    public const string Brimstones = "Brimstones";
+    public const string Acid_Rain = "Acid Rain";
+    public const string Rain = "Rain";
+    public const string Heat_Wave = "Heat Wave";
+    public const string Wild_Growth = "Wild Growth";
+    public const string Spider_Rain = "Spider Rain";
+    public const string Blizzard = "Blizzard";
+    public const string Earthquake = "Earthquake";
+    public const string Fertility = "Fertility";
+    public const string Spawn_Bandit_Camp = "Spawn Bandit Camp";
+    public const string Spawn_Monster_Lair = "Spawn Monster Lair";
+    public const string Spawn_Haunted_Grounds = "Spawn Haunted Grounds";
+
+public Player player = null;
     [FormerlySerializedAs("allInterventionAbilities")] public SPELL_TYPE[] allSpellTypes;
     [FormerlySerializedAs("allInterventionAbilitiesData")] public Dictionary<SPELL_TYPE, SpellData> allSpellsData;
     public COMBAT_ABILITY[] allCombatAbilities;
-    public LANDMARK_TYPE[] allLandmarksThatCanBeBuilt;
+    //public LANDMARK_TYPE[] allLandmarksThatCanBeBuilt;
     
     [Header("Job Action Icons")]
     [FormerlySerializedAs("jobActionIcons")] [SerializeField] private StringSpriteDictionary spellIcons;
@@ -50,7 +89,7 @@ public class PlayerManager : MonoBehaviour {
             allSpellsData.Add(allSpellTypes[i], System.Activator.CreateInstance(System.Type.GetType(typeName)) as SpellData);
         }
 
-        allLandmarksThatCanBeBuilt = new LANDMARK_TYPE[] { LANDMARK_TYPE.THE_ANVIL, LANDMARK_TYPE.THE_EYE , LANDMARK_TYPE.THE_KENNEL, LANDMARK_TYPE.THE_CRYPT, LANDMARK_TYPE.THE_SPIRE, LANDMARK_TYPE.THE_NEEDLES, LANDMARK_TYPE.THE_PROFANE, LANDMARK_TYPE.THE_PIT, LANDMARK_TYPE.GOADER };
+        //allLandmarksThatCanBeBuilt = new LANDMARK_TYPE[] { LANDMARK_TYPE.THE_ANVIL, LANDMARK_TYPE.THE_EYE , LANDMARK_TYPE.THE_KENNEL, LANDMARK_TYPE.THE_CRYPT, LANDMARK_TYPE.THE_SPIRE, LANDMARK_TYPE.THE_NEEDLES, LANDMARK_TYPE.THE_PROFANE, LANDMARK_TYPE.THE_PIT, LANDMARK_TYPE.GOADER };
         //Unit Selection
         Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
@@ -58,11 +97,11 @@ public class PlayerManager : MonoBehaviour {
         Messenger.AddListener<Vector3, int, InnerTileMap>(Signals.CREATE_CHAOS_ORBS, CreateChaosOrbsAt);
         Messenger.AddListener<Character, ActualGoapNode>(Signals.CHARACTER_DID_ACTION_SUCCESSFULLY, OnCharacterDidActionSuccess);
     }
-    public void InitializePlayer(BaseLandmark portal, LocationStructure portalStructure) {
+    public void InitializePlayer(BaseLandmark portal, LocationStructure portalStructure, PLAYER_ARCHETYPE archeType) {
         player = new Player();
         player.CreatePlayerFaction();
         player.SetPortalTile(portal.tileLocation);
-        
+        player.SetArchetype(archeType);
         Settlement existingPlayerSettlement = player.CreatePlayerSettlement(portal);
         existingPlayerSettlement.GenerateStructures(portalStructure);
         
@@ -203,6 +242,12 @@ public class PlayerManager : MonoBehaviour {
             }
         }
         return valid;
+    }
+    public SpellData GetSpellData(SPELL_TYPE type) {
+        if (allSpellsData.ContainsKey(type)) {
+            return allSpellsData[type];
+        }
+        throw new System.Exception("No spell data for " + type.ToString());
     }
     public int GetSpellTier(SPELL_TYPE abilityType) {
         if (spellTiers.ContainsKey(abilityType)) {

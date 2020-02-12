@@ -95,7 +95,12 @@ public class PlayerUI : MonoBehaviour {
     [Header("Top Menu")]
     [SerializeField] private Toggle[] topMenuButtons;
     [SerializeField] private CustomDropdownList customDropdownList;
-    private readonly List<string> spellsList = new List<string>() { "Tornado", "Meteor", "Poison Cloud", "Lightning", "Spawn Monster", "Spawn Spike", "Place Trap", "Produce Food" };
+    //private readonly List<string> spellsList = new List<string>() {
+    //    PlayerManager.Tornado, PlayerManager.Meteor, PlayerManager.Poison_Cloud, PlayerManager.Lightning, PlayerManager.Ravenous_Spirit, PlayerManager.Feeble_Spirit
+    //    , PlayerManager.Forlorn_Spirit, PlayerManager.Locust_Swarm, PlayerManager.Spawn_Boulder, PlayerManager.Landmine, PlayerManager.Manifest_Food
+    //    , PlayerManager.Brimstones, PlayerManager.Acid_Rain, PlayerManager.Rain, PlayerManager.Heat_Wave, PlayerManager.Wild_Growth
+    //    , PlayerManager.Spider_Rain, PlayerManager.Blizzard, PlayerManager.Earthquake, PlayerManager.Fertility, PlayerManager.Spawn_Bandit_Camp
+    //    , PlayerManager.Spawn_Monster_Lair, PlayerManager.Spawn_Haunted_Grounds };
     private readonly List<string> factionActionsList = new List<string>() { "Manage Cult", "Meddle" };
 
     [Header("Player Actions")]

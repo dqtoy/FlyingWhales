@@ -11,10 +11,13 @@ public class ThePortal : BaseLandmark {
     public int currentSummonDuration { get; private set; }
     public string minionSummonClassName { get; private set; }
 
+    private List<Character> validMinions;
+
     public ThePortal(HexTile location, LANDMARK_TYPE specificLandmarkType) : base(location, specificLandmarkType) {
         currentMinionToSummonIndex = -1;
+        validMinions = new List<Character>();
         
-        PlayerAction summonMinion = new PlayerAction("Summon Minion", 
+        PlayerAction summonMinion = new PlayerAction(PlayerManager.Summon_Minion_Action, 
             () => PlayerManager.Instance.player.mana >= EditableValuesManager.Instance.summonMinionManaCost, 
             SummonMinion);
         location.AddPlayerAction(summonMinion);
@@ -90,15 +93,25 @@ public class ThePortal : BaseLandmark {
     // }
     
     private void SummonMinion() {
-        List<Character> validMinions = new List<Character>(PlayerManager.Instance.player.minions
-            .Where(x => x.character.currentHP >= x.character.maxHP && x.character.gridTileLocation == null)
-            .Select(x => x.character));
-        UIManager.Instance.ShowClickableObjectPicker(PlayerManager.Instance.player.minions.Select(x => x.character).ToList(),
+        validMinions.Clear();
+        for (int i = 0; i < PlayerManager.Instance.player.minions.Count; i++) {
+            Minion minion = PlayerManager.Instance.player.minions[i];
+            if(minion.character.currentHP >= minion.character.maxHP && minion.character.gridTileLocation == null && !minion.character.isDead) {
+                if (PlayerManager.Instance.player.archetype.CanSummonMinion(minion)) {
+                    validMinions.Add(minion.character);
+                }
+            }
+        }
+        //List<Character> validMinions = new List<Character>(PlayerManager.Instance.player.minions
+        //    .Where(x => x.character.currentHP >= x.character.maxHP && x.character.gridTileLocation == null)
+        //    .Select(x => x.character));
+        UIManager.Instance.ShowClickableObjectPicker(validMinions,
             OnSelectMinion, null, CanSummonMinion, 
             "Choose Minion to Summon", showCover: true);
     }
     private bool CanSummonMinion(Character character) {
-        return character.currentHP >= character.maxHP && character.gridTileLocation == null;
+        //return character.currentHP >= character.maxHP && character.gridTileLocation == null;
+        return true;
     }
     private void OnSelectMinion(object obj) {
         Character character = obj as Character;

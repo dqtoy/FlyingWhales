@@ -294,11 +294,10 @@ public class Summon : Character, IWorldObject {
     #region Player Action Target
     public override void ConstructDefaultActions() {
         actions = new List<PlayerAction>();
-        
-        PlayerAction seizeAction = new PlayerAction("Seize", 
-            () => !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && !this.traitContainer.HasTrait("Leader", "Blessed"), 
-            () => PlayerManager.Instance.player.seizeComponent.SeizePOI(this));
-        
+        PlayerAction seizeAction = new PlayerAction(PlayerManager.Seize_Character_Action,
+        () => !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && !this.traitContainer.HasTrait("Leader", "Blessed"),
+        () => PlayerManager.Instance.player.seizeComponent.SeizePOI(this));
+
         AddPlayerAction(seizeAction);
     }
     #endregion

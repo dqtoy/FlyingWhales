@@ -228,19 +228,8 @@ public class TraitManager : MonoBehaviour {
     /// </summary>
     /// <returns></returns>
     public bool CanStillTriggerFlaws(Character character) {
-        if (character.isDead) {
-            return false;
-        }
-        if (character.faction.isPlayerFaction) {
-            return false;
-        }
-        if (UtilityScripts.GameUtilities.IsRaceBeast(character.race)) { // character.role.roleType == CHARACTER_ROLE.BEAST
-            return false;
-        }
-        if (character is Summon) {
-            return false;
-        }
-        if (character.returnedToLife) {
+        if (!PlayerManager.Instance.player.archetype.canTriggerFlaw || character.isDead || character.faction.isPlayerFaction || UtilityScripts.GameUtilities.IsRaceBeast(character.race) || character is Summon 
+            || character.returnedToLife) {
             return false;
         }
         //if(doNotDisturb > 0) {

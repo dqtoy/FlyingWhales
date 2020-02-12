@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-
 using UnityEngine;
 using System.Linq;
 using Inner_Maps;
 using Traits;
+using Archetype;
 using Random = UnityEngine.Random;
 // ReSharper disable Unity.NoNullPropagation
 
@@ -15,6 +15,7 @@ public class Player : ILeader {
     public const int MAX_MINIONS = 7;
     public readonly int MAX_INTERVENTION_ABILITIES = 4;
 
+    public PlayerArchetype archetype { get; private set; }
     public Faction playerFaction { get; private set; }
     public Settlement playerSettlement { get; private set; }
     public int mana { get; private set; }
@@ -1528,6 +1529,23 @@ public class Player : ILeader {
     public int GetManaCostForInterventionAbility(SPELL_TYPE ability) {
         int tier = PlayerManager.Instance.GetSpellTier(ability);
         return PlayerManager.Instance.GetManaCostForSpell(tier);
+    }
+    #endregion
+
+    #region Archetype
+    public void SetArchetype(PLAYER_ARCHETYPE type) {
+        if(archetype == null || archetype.type != type) {
+            archetype = CreateNewArchetype(type);
+        }
+    }
+    private PlayerArchetype CreateNewArchetype(PLAYER_ARCHETYPE archetype) {
+        string typeName = UtilityScripts.Utilities.NotNormalizedConversionEnumToString(archetype.ToString());
+        System.Type type = System.Type.GetType(typeName);
+        if (type != null) {
+            PlayerArchetype obj = System.Activator.CreateInstance(type) as PlayerArchetype;
+            return obj;
+        }
+        throw new System.Exception("Could not create new archetype " + archetype.ToString() + " because there is no data for it!");
     }
     #endregion
 }
