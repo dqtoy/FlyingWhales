@@ -99,7 +99,7 @@ LightmapSettings:
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 112000002, guid: 9252122cd68805a4891073545c6d21fc,
     type: 2}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -14094,7 +14094,7 @@ GameObject:
   - component: {fileID: 769278726}
   - component: {fileID: 769278725}
   m_Layer: 5
-  m_Name: Archetype (1)
+  m_Name: Puppet Master
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14562,6 +14562,7 @@ GameObject:
   m_Component:
   - component: {fileID: 796296102}
   - component: {fileID: 796296101}
+  - component: {fileID: 796296103}
   m_Layer: 5
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -14626,6 +14627,37 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &796296103
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 796296100}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_RenderShadows: 1
+  m_RequiresDepthTextureOption: 2
+  m_RequiresOpaqueTextureOption: 2
+  m_CameraType: 0
+  m_CameraOutput: 0
+  m_Cameras: []
+  m_RendererIndex: -1
+  m_VolumeLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  m_VolumeTrigger: {fileID: 0}
+  m_RenderPostProcessing: 0
+  m_Antialiasing: 0
+  m_AntialiasingQuality: 2
+  m_StopNaN: 0
+  m_Dithering: 0
+  m_RequiresDepthTexture: 0
+  m_RequiresColorTexture: 0
+  m_Version: 2
 --- !u!1 &810287826
 GameObject:
   m_ObjectHideFlags: 0
@@ -16503,7 +16535,7 @@ GameObject:
   - component: {fileID: 1046637473}
   - component: {fileID: 1046637472}
   m_Layer: 5
-  m_Name: Archetype
+  m_Name: Ravager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -24899,6 +24931,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _horizontalScrollSnap: {fileID: 604413995}
   continueBtn: {fileID: 864275873}
+  archetypeToggles:
+  - {fileID: 1046637472}
+  - {fileID: 769278725}
+  - {fileID: 1927332583}
 --- !u!114 &1895273174
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -25143,7 +25179,7 @@ GameObject:
   - component: {fileID: 1927332584}
   - component: {fileID: 1927332583}
   m_Layer: 5
-  m_Name: Archetype (2)
+  m_Name: Lich
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

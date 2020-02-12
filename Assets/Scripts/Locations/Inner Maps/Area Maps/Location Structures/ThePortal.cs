@@ -5,23 +5,37 @@ using UnityEngine;
 namespace Inner_Maps.Location_Structures {
     public class ThePortal : LocationStructure {
         public override Vector2 selectableSize { get; }
+
+        private List<Character> validMinions;
+
         public ThePortal(ILocation location) : base(STRUCTURE_TYPE.THE_PORTAL, location){
             selectableSize = new Vector2(10f, 10f);
         }
         public override void ConstructDefaultActions() {
             base.ConstructDefaultActions();
-            PlayerAction summonMinion = new PlayerAction("Summon Minion", 
+            validMinions = new List<Character>();
+            PlayerAction summonMinion = new PlayerAction(PlayerManager.Summon_Minion_Action, 
                 () => PlayerManager.Instance.player.mana >= EditableValuesManager.Instance.summonMinionManaCost, 
                 SummonMinion);
             AddPlayerAction(summonMinion);
         }
         private void SummonMinion() {
-            List<Character> validMinions = new List<Character>(PlayerManager.Instance.player.minions
-                .Where(x => x.character.currentHP >= x.character.maxHP && x.character.gridTileLocation == null)
-                .Select(x => x.character));
-            UIManager.Instance.ShowClickableObjectPicker(PlayerManager.Instance.player.minions.Select(x => x.character).ToList(),
+            validMinions.Clear();
+            for (int i = 0; i < PlayerManager.Instance.player.minions.Count; i++) {
+                Minion minion = PlayerManager.Instance.player.minions[i];
+                if(minion.character.currentHP >= minion.character.maxHP && minion.character.gridTileLocation == null) {
+                    if (PlayerManager.Instance.player.archetype.CanSummonMinion(minion)) {
+                        validMinions.Add(minion.character);
+                    }
+                }
+            }
+            //List<Character> validMinions = new List<Character>(PlayerManager.Instance.player.minions
+            //    .Where(x => x.character.currentHP >= x.character.maxHP && x.character.gridTileLocation == null)
+            //    .Select(x => x.character));
+            UIManager.Instance.ShowClickableObjectPicker(validMinions,
                 OnSelectMinion, null, CanSummonMinion, 
                 "Choose Minion to Summon", showCover: true);
+            //PlayerManager.Instance.player.minions.Select(x => x.character).ToList()
         }
         private bool CanSummonMinion(Character character) {
             return character.currentHP >= character.maxHP && character.gridTileLocation == null;

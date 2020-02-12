@@ -103,8 +103,10 @@ public class UIMenu : MonoBehaviour {
         activeActionItems.Clear();
         for (int i = 0; i < target.actions.Count; i++) {
             PlayerAction action = target.actions[i];
-            ActionItem actionItem = AddNewAction(action);
-            actionItem.SetInteractable(action.isActionValidChecker.Invoke() && !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI);
+            if (PlayerManager.Instance.player.archetype.CanDoAction(action.actionName)) {
+                ActionItem actionItem = AddNewAction(action);
+                actionItem.SetInteractable(action.isActionValidChecker.Invoke() && !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI);
+            }
         }
     }
     protected ActionItem AddNewAction(PlayerAction playerAction) {

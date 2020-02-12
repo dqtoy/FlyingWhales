@@ -5702,14 +5702,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public virtual void ConstructDefaultActions() {
         actions = new List<PlayerAction>();
         
-        PlayerAction afflictAction = new PlayerAction("Afflict", 
+        PlayerAction afflictAction = new PlayerAction(PlayerManager.Afflict_Action, 
             () => true,
             UIManager.Instance.characterInfoUI.ShowAfflictUI);
         
-        PlayerAction zapAction = new PlayerAction("Zap", 
-            () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.ZAP].CanPerformAbilityTowards(this), 
+        PlayerAction zapAction = new PlayerAction(PlayerManager.Zap_Action, 
+            () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.ZAP].CanPerformAbilityTowards(this),
             () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.ZAP].ActivateAbility(this));
-        PlayerAction seizeAction = new PlayerAction("Seize", 
+        PlayerAction seizeAction = new PlayerAction(PlayerManager.Seize_Character_Action, 
             () => !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && !this.traitContainer.HasTrait("Leader", "Blessed"), 
             () => PlayerManager.Instance.player.seizeComponent.SeizePOI(this));
         // PlayerAction shareIntelAction = new PlayerAction("Share Intel", () => false, null);

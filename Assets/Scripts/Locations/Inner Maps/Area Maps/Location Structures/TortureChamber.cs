@@ -52,7 +52,7 @@ namespace Inner_Maps.Location_Structures {
             }
         }
         private void AddTortureAction() {
-            PlayerAction tortureAction = new PlayerAction("Torture", () => _currentTortureTarget == null, ChooseTortureTarget);
+            PlayerAction tortureAction = new PlayerAction(PlayerManager.Torture_Action, () => _currentTortureTarget == null, ChooseTortureTarget);
             AddPlayerAction(tortureAction);
         }
         private void ChooseTortureTarget() {

@@ -83,6 +83,7 @@ public class CharacterInfoUI : UIMenu {
     private string normalTextColor = "#CEB67C";
     private string buffTextColor = "#39FF14";
     private string flawTextColor = "#FF073A";
+    private List<string> afflictions;
 
     internal override void Initialize() {
         base.Initialize();
@@ -148,6 +149,8 @@ public class CharacterInfoUI : UIMenu {
         hopeMeter.AddMark(CharacterNeedsComponent.HOPELESS_UPPER_LIMIT/100f, Color.red);
         
         InitializeLogsMenu();
+
+        afflictions = new List<string>();
     }
 
     #region Overrides
@@ -684,12 +687,16 @@ public class CharacterInfoUI : UIMenu {
 
     #region Afflict
     public void ShowAfflictUI() {
-        List<string> afflictions = new List<string>();
-        foreach (SpellData abilityData in PlayerManager.Instance.allSpellsData.Values) {
-            if (abilityData.type == INTERVENTION_ABILITY_TYPE.AFFLICTION) {
-                afflictions.Add(abilityData.name);
-            }
+        afflictions.Clear();
+        List<SPELL_TYPE> afflictionTypes = PlayerManager.Instance.player.archetype.afflictions;
+        for (int i = 0; i < afflictionTypes.Count; i++) {
+            afflictions.Add(PlayerManager.Instance.GetSpellData(afflictionTypes[i]).name);
         }
+        //foreach (SpellData abilityData in PlayerManager.Instance.allSpellsData.Values) {
+        //    if (abilityData.type == INTERVENTION_ABILITY_TYPE.AFFLICTION) {
+        //        afflictions.Add(abilityData.name);
+        //    }
+        //}
         UIManager.Instance.ShowClickableObjectPicker(afflictions, ActivateAffliction, null, CanActivateAffliction, "Select Affliction", identifier: "Intervention Ability", showCover: true, layer: 19);
     }
     private void ActivateAffliction(object o) {

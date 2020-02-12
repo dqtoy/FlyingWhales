@@ -75,6 +75,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     private List<LocationGridTile> corruptedTiles;
     private int _uncorruptibleLandmarkNeighbors = 0; //if 0, can be corrupted, otherwise, cannot be corrupted
     private Dictionary<HEXTILE_DIRECTION, HexTile> _neighbourDirections;
+    private List<string> demonicLandmarksThatCanBeBuilt;
 
     #region getters/setters
     public int id => data.id;
@@ -112,6 +113,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     }
     public void Initialize() {
         featureComponent = new TileFeatureComponent();
+        demonicLandmarksThatCanBeBuilt = new List<string>();
         selectableSize = new Vector2Int(12, 12);
         Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
     }
@@ -808,10 +810,10 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         }
     }
     private void CheckForCorruptAction() {
-        PlayerAction existingCorruptAction = GetPlayerAction("Corrupt");
+        PlayerAction existingCorruptAction = GetPlayerAction(PlayerManager.Corrupt_Action);
         if (CanBeCorrupted()) {
             if (existingCorruptAction == null) {
-                PlayerAction corruptAction = new PlayerAction("Corrupt", CanBeCorrupted, StartPerTickCorruption);
+                PlayerAction corruptAction = new PlayerAction(PlayerManager.Corrupt_Action, CanBeCorrupted, StartPerTickCorruption);
                 AddPlayerAction(corruptAction);
             }
         } else {
@@ -973,9 +975,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         //remove features
         featureComponent.RemoveAllFeaturesExcept(this, TileFeatureDB.Wood_Source_Feature);
         
-        RemovePlayerAction(GetPlayerAction("Corrupt"));
+        RemovePlayerAction(GetPlayerAction(PlayerManager.Corrupt_Action));
         if (CanBuildDemonicStructure()) {
-            PlayerAction buildAction = new PlayerAction("Build Demonic Structure", CanBuildDemonicStructure, OnClickBuild);
+            PlayerAction buildAction = new PlayerAction(PlayerManager.Build_Demonic_Structure_Action, CanBuildDemonicStructure, OnClickBuild);
             AddPlayerAction(buildAction);
         }
     }
@@ -1175,11 +1177,13 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
             PlayerManager.Instance.player.mana >= EditableValuesManager.Instance.buildStructureManaCost;
     }
     private void OnClickBuild() {
-        List<string> landmarkNames = new List<string>();
-        for (int i = 0; i < PlayerManager.Instance.allLandmarksThatCanBeBuilt.Length; i++) {
-            landmarkNames.Add(UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(PlayerManager.Instance.allLandmarksThatCanBeBuilt[i].ToString()));
+        demonicLandmarksThatCanBeBuilt.Clear();
+        //List<string> landmarkNames = new List<string>();
+        List<LANDMARK_TYPE> demonicLandmarkTypes = PlayerManager.Instance.player.archetype.demonicStructures;
+        for (int i = 0; i < demonicLandmarkTypes.Count; i++) {
+            demonicLandmarksThatCanBeBuilt.Add(UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(demonicLandmarkTypes[i].ToString()));
         }
-        UIManager.Instance.dualObjectPicker.ShowDualObjectPicker(PlayerManager.Instance.player.minions.Select(x => x.character).ToList(), landmarkNames,
+        UIManager.Instance.dualObjectPicker.ShowDualObjectPicker(PlayerManager.Instance.player.minions.Select(x => x.character).ToList(), demonicLandmarksThatCanBeBuilt,
             "Choose a minion", "Choose a structure",
             CanChooseMinion, CanChooseLandmark,
             OnHoverEnterMinion, OnHoverLandmarkChoice,

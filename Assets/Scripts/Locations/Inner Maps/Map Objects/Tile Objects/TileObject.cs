@@ -822,17 +822,17 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public void ConstructDefaultActions() {
         actions = new List<PlayerAction>();
         
-        PlayerAction destroyAction = new PlayerAction("Destroy", 
+        PlayerAction destroyAction = new PlayerAction(PlayerManager.Destroy_Action, 
             () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.DESTROY].CanPerformAbilityTowards(this),
             () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.DESTROY].ActivateAbility(this));
-        PlayerAction igniteAction = new PlayerAction("Ignite", 
+        PlayerAction igniteAction = new PlayerAction(PlayerManager.Ignite_Action, 
             () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.IGNITE].CanPerformAbilityTowards(this), 
             () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.IGNITE].ActivateAbility(this));
-        PlayerAction poisonAction = new PlayerAction("Poison", 
+        PlayerAction poisonAction = new PlayerAction(PlayerManager.Poison_Action, 
             () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.SPOIL].CanPerformAbilityTowards(this), 
             () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.SPOIL].ActivateAbility(this));
-        PlayerAction animateAction = new PlayerAction("Animate", () => false, null);
-        PlayerAction seizeAction = new PlayerAction("Seize", 
+        PlayerAction animateAction = new PlayerAction(PlayerManager.Animate_Action, () => false, null);
+        PlayerAction seizeAction = new PlayerAction(PlayerManager.Seize_Object_Action, 
             () => !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && this.mapVisual != null && (this.isBeingCarriedBy != null || this.gridTileLocation != null), 
              () => PlayerManager.Instance.player.seizeComponent.SeizePOI(this));
         
