@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UtilityScripts;
@@ -76,7 +77,7 @@ public class SettlementGeneration : MapGenerationComponent {
 			HexTile currTile = settlement.tiles[i];
 			for (int j = 0; j < currTile.ownedBuildSpots.Length; j++) {
 				BuildingSpot currSpot = currTile.ownedBuildSpots[j];
-				if (currSpot.isOccupied == false && currSpot.CanFitStructureOnSpot(structureObject, settlement.innerMap)) {
+				if (currSpot.isOccupied == false && currSpot.CanFitStructureOnSpot(structureObject, settlement.innerMap, "Player")) {
 					spot = currSpot;
 					return true;
 				}

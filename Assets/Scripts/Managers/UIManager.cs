@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
@@ -196,6 +197,9 @@ public class UIManager : MonoBehaviour {
         if (hexTileInfoUI.isShowing) {
             hexTileInfoUI.CloseMenu();
         }
+        if (structureInfoUI.isShowing) {
+            structureInfoUI.CloseMenu();
+        }
         ClearUIMenuHistory();
     }
     public void AddToUIMenuHistory(object data) {
@@ -243,6 +247,7 @@ public class UIManager : MonoBehaviour {
         UpdateQuestInfo();
         // UpdateItemInfo();
         UpdateHextileInfo();
+        UpdateStructureInfo();
     }
 
     #region World Controls
@@ -821,6 +826,25 @@ public class UIManager : MonoBehaviour {
     public void UpdateHextileInfo() {
         if (hexTileInfoUI.isShowing) {
             hexTileInfoUI.UpdateHexTileInfo();
+        }
+    }
+    #endregion
+    
+    #region Structure Info
+    [Space(10)]
+    [Header("Structure Info")]
+    [SerializeField] public StructureInfoUI structureInfoUI;
+    public void ShowStructureInfo(LocationStructure structure) {
+        if (tempDisableShowInfoUI) {
+            SetTempDisableShowInfoUI(false);
+            return;
+        }
+        structureInfoUI.SetData(structure);
+        structureInfoUI.OpenMenu();
+    }
+    public void UpdateStructureInfo() {
+        if (structureInfoUI.isShowing) {
+            structureInfoUI.UpdateInfo();
         }
     }
     #endregion

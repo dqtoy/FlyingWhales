@@ -228,7 +228,8 @@ public enum LANDMARK_TYPE {
     THE_PIT = 56,
     LUMBERYARD = 57,
     QUARRY = 58,
-    HOUSES
+    HOUSES,
+    TORTURE_CHAMBER
 }
 public enum TECHNOLOGY {
     //Weapon Production
@@ -1009,6 +1010,7 @@ public enum INTERRUPT {
     Plagued,
     Poisoned,
     Mental_Break,
+    Being_Tortured
 }
 
 public enum TRAIT_TYPE {
@@ -1156,6 +1158,7 @@ public enum STRUCTURE_TYPE {
     THE_ANVIL,
     THE_EYE,
     THE_NEEDLES,
+    TORTURE_CHAMBER,
 }
 public enum RELATIONSHIP_TYPE {
     NONE = 0,
@@ -1255,6 +1258,7 @@ public enum TILE_OBJECT_TYPE {
     HEALING_POTION,
     TOOL,
     WATER_BUCKET,
+    IRON_MAIDEN
 }
 public enum POI_STATE {
     ACTIVE,

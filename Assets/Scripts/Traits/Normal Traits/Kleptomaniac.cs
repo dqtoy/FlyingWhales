@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Inner_Maps.Location_Structures;
 using UnityEngine;
 using UnityEngine.WSA;
 using UtilityScripts;

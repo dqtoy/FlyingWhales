@@ -871,7 +871,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ParentPool: {fileID: 0}
-  objectVisual: {fileID: 0}
+  objectVisual: {fileID: 212044654499763036}
   hoverObject: {fileID: 212097248544747360}
   visualsParent: {fileID: 4833690815638556}
   nameLbl: {fileID: 114873295937025758}

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Actionables;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using UnityEngine;
 using Traits;
 using UnityEngine.Assertions;
@@ -268,6 +269,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public float walkSpeed => raceSetting.walkSpeed + (raceSetting.walkSpeed * characterClass.walkSpeedMod);
     public float runSpeed => raceSetting.runSpeed + (raceSetting.runSpeed * characterClass.runSpeedMod);
     public Vector3 worldPosition => marker.transform.position;
+    public Vector2 selectableSize => Vector2Int.one;
     public ProjectileReceiver projectileReceiver => marker.collisionTrigger.projectileReceiver;
     public JOB_OWNER ownerType => JOB_OWNER.CHARACTER;
     public bool isInCombat => stateComponent.currentState != null && stateComponent.currentState.characterState == CHARACTER_STATE.COMBAT;
@@ -1842,28 +1844,29 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #endregion
 
     #region Location
-    public void SetCurrentStructureLocation(LocationStructure currentStructure, bool broadcast = true) {
-        if (currentStructure == this.currentStructure) {
+    public void SetCurrentStructureLocation(LocationStructure newStructure, bool broadcast = true) {
+        if (newStructure == this.currentStructure) {
             return; //ignore change;
         }
         LocationStructure previousStructure = this.currentStructure;
-        _currentStructure = currentStructure;
+        _currentStructure = newStructure;
         //if (marker != null && currentStructure != null) {
         //    marker.RevalidatePOIsInVisionRange(); //when the character changes structures, revalidate pois in range
         //}
-        string summary = string.Empty;
-        if (currentStructure != null) {
-            summary = GameManager.Instance.TodayLogString() + "Arrived at <color=\"green\">" + currentStructure.ToString() + "</color>";
-        } else {
-            summary = GameManager.Instance.TodayLogString() + "Left <color=\"red\">" + previousStructure.ToString() + "</color>";
-        }
+        var summary = newStructure != null ? $"{GameManager.Instance.TodayLogString()}Arrived at <color=\"green\">{newStructure}</color>" 
+            : $"{GameManager.Instance.TodayLogString()}Left <color=\"red\">{previousStructure}</color>";
         locationHistory.Add(summary);
         if (locationHistory.Count > 80) {
             locationHistory.RemoveAt(0);
         }
 
-        if (currentStructure != null && broadcast) {
-            Messenger.Broadcast(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, this, currentStructure);
+        if (broadcast) {
+            if (newStructure != null) {
+                Messenger.Broadcast(Signals.CHARACTER_ARRIVED_AT_STRUCTURE, this, newStructure);
+            }
+            if (previousStructure != null) {
+                Messenger.Broadcast(Signals.CHARACTER_LEFT_STRUCTURE, this, previousStructure);
+            }
         }
     }
     /// <summary>
@@ -2035,11 +2038,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #endregion
 
     #region Utilities
-    public void ChangeGender(GENDER gender) {
-        _gender = gender;
-        Messenger.Broadcast(Signals.GENDER_CHANGED, this, gender);
-    }
-    public bool ChangeRace(RACE race) {
+    private bool ChangeRace(RACE race) {
         if (_raceSetting != null) {
             if (_raceSetting.race == race) {
                 return false; //current race is already the new race, no change
@@ -2048,13 +2047,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 traitContainer.RemoveTrait(this, _raceSetting.traitNames[i]); //Remove traits from race
             }
         }
-        RaceSetting raceSetting = RaceManager.Instance.racesDictionary[race.ToString()];
-        _raceSetting = raceSetting.CreateNewCopy();
+        RaceSetting rs = RaceManager.Instance.racesDictionary[race.ToString()];
+        _raceSetting = rs.CreateNewCopy();
         OnUpdateRace();
         Messenger.Broadcast(Signals.CHARACTER_CHANGED_RACE, this);
         return true;
     }
-    public void OnUpdateRace() {
+    protected void OnUpdateRace() {
         for (int i = 0; i < _raceSetting.traitNames.Length; i++) {
             traitContainer.AddTrait(this, _raceSetting.traitNames[i]);
         }
@@ -2066,7 +2065,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             advertisedActions.Remove(INTERACTION_TYPE.SHARE_INFORMATION);
         }
     }
-    public void ChangeClass(string className) {
+    private void ChangeClass(string className) {
         //string previousClassName = _characterClass.className;
         AssignClass(className);
         //_characterClass = charClass.CreateNewCopy();
@@ -2117,8 +2116,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             CameraMove.Instance.CenterCameraOn(currentRegion.coreTile.gameObject);
         }
     }
-
-    public void OnOtherCharacterDied(Character characterThatDied) {
+    private void OnOtherCharacterDied(Character characterThatDied) {
         if (characterThatDied.id != this.id) {
             string opinionLabel = relationshipContainer.GetOpinionLabel(characterThatDied);
             if (opinionLabel == OpinionComponent.Friend) {
@@ -2283,6 +2281,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void SetHasSeenFire(bool state) {
         hasSeenFire = state;
+    }
+    /// <summary>
+    /// Is this character and NPC?
+    /// (Characters that can normally be manipulated by the player)
+    /// </summary>
+    /// <returns></returns>
+    public bool IsNPCCharacter() {
+        return (this is Summon) == false && minion == null;
     }
     #endregion    
 
@@ -6006,6 +6012,16 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void ClearPlayerActions() {
         actions.Clear();
+    }
+    #endregion
+    
+    #region Selectable
+    public bool IsCurrentlySelected() {
+        return UIManager.Instance.characterInfoUI.isShowing &&
+               UIManager.Instance.characterInfoUI.activeCharacter == this;
+    }
+    public void SelectAction() {
+        UIManager.Instance.ShowCharacterInfo(this);
     }
     #endregion
 }

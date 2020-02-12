@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using EZObjectPools;
 using System;
 using Inner_Maps;
-
+using Inner_Maps.Location_Structures;
 
 public class CharacterAvatar : MonoBehaviour {
 

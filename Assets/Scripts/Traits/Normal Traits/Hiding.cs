@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps.Location_Structures;
 using UnityEngine;
 
 namespace Traits {

@@ -28,6 +28,7 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
     #endregion    
 
     public override void Initialize(TileObject tileObject) {
+        selectable = tileObject;
         this._tornado = tileObject as TornadoTileObject;
         this.transform.localPosition = tileObject.gridTileLocation.centeredLocalLocation;
         this._radius = _tornado.radius;

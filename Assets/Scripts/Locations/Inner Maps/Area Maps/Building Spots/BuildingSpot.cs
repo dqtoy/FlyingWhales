@@ -29,9 +29,9 @@ public class BuildingSpot {
     /// Is this build spot to be considered as part of it's region map ("part" meaning if this spots tiles are valid)
     /// </summary>
     public bool isPartOfParentRegionMap => hexTileOwner != null;
-    public bool canBeBuiltOnByNPC => isPartOfParentRegionMap 
-                                     && hexTileOwner.isCurrentlyBeingCorrupted == false 
-                                     && HasCorruptedTile() == false; //can only be built on if part of region map.
+    public bool canBeBuiltOnByNPC => isPartOfParentRegionMap && hexTileOwner.isCurrentlyBeingCorrupted == false 
+                                    && HasCorruptedTile() == false;
+    public bool canBeBuiltOnByPlayer => isPartOfParentRegionMap && hexTileOwner.isCurrentlyBeingCorrupted == false;
     #endregion
 
     public BuildingSpot(BuildingSpotData data) {
@@ -145,8 +145,8 @@ public class BuildingSpot {
             SetIsOccupied(false);
         }
     }
-    public bool CanFitStructureOnSpot(LocationStructureObject obj, InnerTileMap map) {
-        return map.CanBuildSpotFit(obj, this);
+    public bool CanFitStructureOnSpot(LocationStructureObject obj, InnerTileMap map, string builderIdentifier) {
+        return map.CanBuildSpotFit(obj, this, builderIdentifier);
     }
     /// <summary>
     /// Is this build spot open for the given settlement.
@@ -198,13 +198,19 @@ public class BuildingSpot {
     public void ClearBlueprints() {
         blueprint = null;
     }
-    public Vector3 GetPositionToPlaceStructure(LocationStructureObject structureObj, STRUCTURE_TYPE structureType) {
-        int borderSize = InnerMapManager.BuildingSpotBorderSize;
-
-        if (structureType == STRUCTURE_TYPE.OCEAN) {
-            borderSize = 0;
+    public Vector3 GetPositionToPlaceStructure(LocationStructureObject structureObj) {
+        if (structureObj.IsHorizontallyBig() && structureObj.IsVerticallyBig()) {
+            Vector3 pos = location;
+            pos.x += Mathf.Ceil(structureObj.center.x / 2f) + 0.5f;
+            pos.y += Mathf.Ceil(structureObj.center.y / 2f) + 0.5f;
+            if (structureObj.name.Contains("Portal")) {
+                Debug.Log($"Placing portal at {pos.ToString()}. Location of build spot is {location.ToString()}");
+            }
+            return pos;
         }
         
+        int borderSize = InnerMapManager.BuildingSpotBorderSize;
+
         int maxSizeX = InnerMapManager.BuildingSpotSize.x - (borderSize * 2);
         int maxSizeY = InnerMapManager.BuildingSpotSize.y - (borderSize * 2);
         
@@ -214,8 +220,7 @@ public class BuildingSpot {
         //i.e (if structure occupies 2 spots horizontally then its max size X) = (Building_Spot_Size.x * 2) - (Building_Spot_Border_Size * 2)
         if (structureObj.IsHorizontallyBig()) {
             maxSizeX = (InnerMapManager.BuildingSpotSize.x * 2) - (borderSize * 2);
-        }
-        if (structureObj.IsVerticallyBig()) {
+        } else if (structureObj.IsVerticallyBig()) {
             maxSizeY = (InnerMapManager.BuildingSpotSize.y * 2) - (borderSize * 2);
         }
 
@@ -236,12 +241,17 @@ public class BuildingSpot {
         }
 
         Vector3 randomPos = new Vector3(xPos, yPos, 0);
-        if (structureType == STRUCTURE_TYPE.OCEAN) {
-            randomPos = Vector3.zero;
-        }
         randomPos += centeredLocation;
 
         return randomPos;
+    }
+    public bool CanBeBuiltOnBy(string builderIdentifier) {
+        if (builderIdentifier == "NPC") {
+            return canBeBuiltOnByNPC;
+        } else if (builderIdentifier == "Player") {
+            return canBeBuiltOnByPlayer;
+        }
+        return false;
     }
     #endregion
 

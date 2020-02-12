@@ -1,30 +1,23 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Actionables;
 using Inner_Maps;
 using UnityEngine;
 
+[Obsolete("Player landmarks should no longer be used, use the LocationStructure version instead.")]
 public class ThePortal : BaseLandmark {
-    public int currentMinionToSummonIndex { get; private set; }
-    public int currentSummonTick { get; private set; }
-    public int currentSummonDuration { get; private set; }
-    public string minionSummonClassName { get; private set; }
-
-    private List<Character> validMinions;
 
     public ThePortal(HexTile location, LANDMARK_TYPE specificLandmarkType) : base(location, specificLandmarkType) {
-        currentMinionToSummonIndex = -1;
-        validMinions = new List<Character>();
         
-        PlayerAction summonMinion = new PlayerAction(PlayerManager.Summon_Minion_Action, 
-            () => PlayerManager.Instance.player.mana >= EditableValuesManager.Instance.summonMinionManaCost, 
-            SummonMinion);
-        location.AddPlayerAction(summonMinion);
+        // PlayerAction summonMinion = new PlayerAction("Summon Minion", 
+        //     () => PlayerManager.Instance.player.mana >= EditableValuesManager.Instance.summonMinionManaCost, 
+        //     SummonMinion);
+        // location.AddPlayerAction(summonMinion);
     }
 
     public ThePortal(HexTile location, SaveDataLandmark data) : base(location, data) {
-        currentMinionToSummonIndex = -1;
     }
 
     // public void LoadSummonMinion(SaveDataThePortal data) {
@@ -92,47 +85,29 @@ public class ThePortal : BaseLandmark {
     //     Messenger.Broadcast(Signals.REGION_INFO_UI_UPDATE_APPROPRIATE_CONTENT, tileLocation.region);
     // }
     
-    private void SummonMinion() {
-        validMinions.Clear();
-        for (int i = 0; i < PlayerManager.Instance.player.minions.Count; i++) {
-            Minion minion = PlayerManager.Instance.player.minions[i];
-            if(minion.character.currentHP >= minion.character.maxHP && minion.character.gridTileLocation == null && !minion.character.isDead) {
-                if (PlayerManager.Instance.player.archetype.CanSummonMinion(minion)) {
-                    validMinions.Add(minion.character);
-                }
-            }
-        }
-        //List<Character> validMinions = new List<Character>(PlayerManager.Instance.player.minions
-        //    .Where(x => x.character.currentHP >= x.character.maxHP && x.character.gridTileLocation == null)
-        //    .Select(x => x.character));
-        UIManager.Instance.ShowClickableObjectPicker(validMinions,
-            OnSelectMinion, null, CanSummonMinion, 
-            "Choose Minion to Summon", showCover: true);
-    }
-    private bool CanSummonMinion(Character character) {
-        //return character.currentHP >= character.maxHP && character.gridTileLocation == null;
-        return true;
-    }
-    private void OnSelectMinion(object obj) {
-        Character character = obj as Character;
-        character.minion.Summon(this);
-        UIManager.Instance.HideObjectPicker();
-    }
+    // private void SummonMinion() {
+    //     List<Character> validMinions = new List<Character>(PlayerManager.Instance.player.minions
+    //         .Where(x => x.character.currentHP >= x.character.maxHP && x.character.gridTileLocation == null)
+    //         .Select(x => x.character));
+    //     UIManager.Instance.ShowClickableObjectPicker(PlayerManager.Instance.player.minions.Select(x => x.character).ToList(),
+    //         OnSelectMinion, null, CanSummonMinion, 
+    //         "Choose Minion to Summon", showCover: true);
+    // }
+    // private bool CanSummonMinion(Character character) {
+    //     return character.currentHP >= character.maxHP && character.gridTileLocation == null;
+    // }
+    // private void OnSelectMinion(object obj) {
+    //     Character character = obj as Character;
+    //     character.minion.Summon(this);
+    //     UIManager.Instance.HideObjectPicker();
+    // }
 }
 
 public class SaveDataThePortal : SaveDataLandmark {
-    public int currentMinionToSummonIndex;
-    public int currentSummonTick;
-    public int currentSummonDuration;
-    public string currentSummonClassName;
 
     public override void Save(BaseLandmark landmark) {
         base.Save(landmark);
         ThePortal portal = landmark as ThePortal;
-        currentMinionToSummonIndex = portal.currentMinionToSummonIndex;
-        currentSummonTick = portal.currentSummonTick;
-        currentSummonDuration = portal.currentSummonDuration;
-        currentSummonClassName = portal.minionSummonClassName;
     }
     public override void LoadSpecificLandmarkData(BaseLandmark landmark) {
         base.LoadSpecificLandmarkData(landmark);

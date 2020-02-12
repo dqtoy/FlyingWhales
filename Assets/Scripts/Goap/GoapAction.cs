@@ -5,6 +5,7 @@ using UnityEngine;
 using System.Reflection;
 using System.Linq;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using Traits;
 
 public class GoapAction : IReactable {

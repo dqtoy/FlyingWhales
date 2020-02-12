@@ -66,9 +66,6 @@ public class BaseLandmark {
             _landmarkVisual.UpdateName();
         }
     }
-    public void SetConnectedTile(HexTile connectedTile) {
-        _connectedTile = connectedTile;
-    }
     public void ChangeLandmarkType(LANDMARK_TYPE type) {
         if (this.specificLandmarkType.IsPlayerLandmark()) {
             //if provided landmark type is player landmark, then create a new instance instead.
@@ -81,14 +78,6 @@ public class BaseLandmark {
         //if (type == LANDMARK_TYPE.NONE) {
         //    ObjectPoolManager.Instance.DestroyObject(nameplate.gameObject);
         //}
-    }
-    /// <summary>
-    /// Override the id of this landmark. NOTE: This is only used when a landmark is destroyed and another landmark replaces it.
-    /// So that the saves won't break.
-    /// </summary>
-    /// <param name="id">The id to use.</param>
-    public void OverrideID(int id) {
-        _id = id;
     }
 
     #region Virtuals

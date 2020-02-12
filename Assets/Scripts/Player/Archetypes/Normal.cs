@@ -13,7 +13,7 @@ namespace Archetype {
                 , PlayerManager.Brimstones, PlayerManager.Acid_Rain, PlayerManager.Rain, PlayerManager.Heat_Wave, PlayerManager.Wild_Growth
                 , PlayerManager.Spider_Rain, PlayerManager.Blizzard, PlayerManager.Earthquake, PlayerManager.Fertility, PlayerManager.Spawn_Bandit_Camp
                 , PlayerManager.Spawn_Monster_Lair, PlayerManager.Spawn_Haunted_Grounds };
-            demonicStructures = new List<LANDMARK_TYPE>() { LANDMARK_TYPE.THE_ANVIL, LANDMARK_TYPE.THE_EYE, LANDMARK_TYPE.THE_KENNEL, LANDMARK_TYPE.THE_CRYPT, LANDMARK_TYPE.THE_SPIRE, LANDMARK_TYPE.THE_NEEDLES, LANDMARK_TYPE.THE_PROFANE, LANDMARK_TYPE.THE_PIT, LANDMARK_TYPE.GOADER };
+            demonicStructures = new List<LANDMARK_TYPE>() { LANDMARK_TYPE.THE_ANVIL, LANDMARK_TYPE.THE_EYE, LANDMARK_TYPE.THE_KENNEL, LANDMARK_TYPE.THE_CRYPT, LANDMARK_TYPE.THE_SPIRE, LANDMARK_TYPE.THE_NEEDLES, LANDMARK_TYPE.THE_PROFANE, LANDMARK_TYPE.THE_PIT, LANDMARK_TYPE.GOADER, LANDMARK_TYPE.TORTURE_CHAMBER };
             SetCanTriggerFlaw(true);
             SetCanRemoveTraits(true);
         }

@@ -5,13 +5,14 @@ using PathFind;
 using System.Linq;
 using Actionables;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using JetBrains.Annotations;
 using SpriteGlow;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UtilityScripts;
 
-public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarget {
+public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarget, ISelectable {
 
     public HexTileData data;
     private Settlement _settlementOfTile;
@@ -69,7 +70,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     public bool isCurrentlyBeingCorrupted { get; private set; }
     public List<LocationGridTile> locationGridTiles { get; private set; }
     public Sprite baseSprite { get; private set; }
-    
+    public Vector2 selectableSize { get; private set; }
+
     private List<LocationGridTile> corruptedTiles;
     private int _uncorruptibleLandmarkNeighbors = 0; //if 0, can be corrupted, otherwise, cannot be corrupted
     private Dictionary<HEXTILE_DIRECTION, HexTile> _neighbourDirections;
@@ -91,6 +93,14 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     private GameObject highlightGO => _highlightGO;
     private Dictionary<HEXTILE_DIRECTION, HexTile> neighbourDirections => _neighbourDirections;
     public bool isCorrupted => _isCorrupted;
+    public Vector3 worldPosition {
+        get {
+            Vector2 pos = ownedBuildSpots[0].spotItem.transform.position;
+            pos.x += 3.5f;
+            pos.y += 3.5f;
+            return pos;
+        }
+    }
     #endregion
 
     private void Awake() {
@@ -104,6 +114,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     public void Initialize() {
         featureComponent = new TileFeatureComponent();
         demonicLandmarksThatCanBeBuilt = new List<string>();
+        selectableSize = new Vector2Int(12, 12);
         Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
     }
     private void OnGameLoaded() {
@@ -1227,6 +1238,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
             LandmarkManager.Instance.CreateNewLandmarkOnTile(this, landmarkData.landmarkType, false);
         LandmarkManager.Instance.CreateStructureObjectForLandmark(newLandmark, settlementOnTile);
         PlayerManager.Instance.player.AdjustMana(-EditableValuesManager.Instance.buildStructureManaCost);
+        newLandmark.OnFinishedBuilding();
     }
     #endregion
 
@@ -1263,6 +1275,16 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
                 break;
         }
         return _vertices;
+    }
+    #endregion
+    
+    #region Selectable
+    public bool IsCurrentlySelected() {
+        return UIManager.Instance.hexTileInfoUI.isShowing &&
+               UIManager.Instance.hexTileInfoUI.currentlyShowingHexTile == this;
+    }
+    public void SelectAction() {
+        UIManager.Instance.ShowHexTileInfo(this);
     }
     #endregion
 }

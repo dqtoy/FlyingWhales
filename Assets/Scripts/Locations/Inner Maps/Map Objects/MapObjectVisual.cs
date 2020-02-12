@@ -6,6 +6,7 @@ public abstract class MapObjectVisual<T> : BaseMapObjectVisual where T : IDamage
     public BaseCollisionTrigger<T> collisionTrigger { get; protected set; }
 
     public virtual void Initialize(T obj) {
+        selectable = obj as ISelectable;
         onHoverOverAction = () => OnPointerEnter(obj);
         onHoverExitAction = () => OnPointerExit(obj);
         onLeftClickAction = () => OnPointerLeftClick(obj);

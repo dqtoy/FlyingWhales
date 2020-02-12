@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using UnityEngine;
 
 public class BuildSpotTileObject : TileObject {
@@ -38,7 +39,7 @@ public class BuildSpotTileObject : TileObject {
         for (int i = 0; i < choices.Count; i++) {
             GameObject currPrefab = choices[i];
             LocationStructureObject so = currPrefab.GetComponent<LocationStructureObject>();
-            if (spot.CanFitStructureOnSpot(so, gridTileLocation.parentMap.location.innerMap)) {
+            if (spot.CanFitStructureOnSpot(so, gridTileLocation.parentMap.location.innerMap, "NPC")) {
                 chosenStructurePrefab = currPrefab;
                 break;
             }
@@ -47,7 +48,7 @@ public class BuildSpotTileObject : TileObject {
         if (chosenStructurePrefab != null) {
             GameObject structurePrefab = ObjectPoolManager.Instance.InstantiateObjectFromPool(chosenStructurePrefab.name, Vector3.zero, Quaternion.identity, gridTileLocation.parentMap.structureParent);
             LocationStructureObject structureObject = structurePrefab.GetComponent<LocationStructureObject>();
-            structurePrefab.transform.localPosition = spot.GetPositionToPlaceStructure(structureObject, structureType);
+            structurePrefab.transform.localPosition = spot.GetPositionToPlaceStructure(structureObject);
             
             structureObject.RefreshAllTilemaps();
             List<LocationGridTile> occupiedTiles = structureObject.GetTilesOccupiedByStructure(gridTileLocation.parentMap);

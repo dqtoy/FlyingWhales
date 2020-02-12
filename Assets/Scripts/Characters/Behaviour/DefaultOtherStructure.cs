@@ -14,7 +14,7 @@ public class DefaultOtherStructure : CharacterBehaviourComponent {
                 || character.currentStructure.structureType == STRUCTURE_TYPE.PRISON
                 || character.currentStructure.structureType == STRUCTURE_TYPE.CEMETERY
                 || character.currentStructure.structureType == STRUCTURE_TYPE.CITY_CENTER)
-                && character.trapStructure.structure == null) {
+                && character.trapStructure.IsTrapped() == false) {
             log += "\n-" + character.name + " is in another Dwelling/Inn/Warehouse/Prison/Cemetery/City Center and Base Structure is empty";
             log += "\n-100% chance to return home";
             character.PlanIdleReturnHome();

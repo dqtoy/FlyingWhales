@@ -5,6 +5,7 @@ using System.Linq;
 using Traits;
 using UnityEngine;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using UtilityScripts;
 using Random = UnityEngine.Random;
 

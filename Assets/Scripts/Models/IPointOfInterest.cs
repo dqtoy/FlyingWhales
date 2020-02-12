@@ -4,7 +4,7 @@ using Inner_Maps;
 using UnityEngine;
 using Traits;
 
-public interface IPointOfInterest : ITraitable {
+public interface IPointOfInterest : ITraitable, ISelectable {
     new string name { get; }
     int id { get; } //Be careful with how you handle this since this can duplicate depending on its poiType
     string nameWithID { get; }

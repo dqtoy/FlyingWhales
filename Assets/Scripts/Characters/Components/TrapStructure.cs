@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps.Location_Structures;
 using UnityEngine;
 
 //This class is for characters
@@ -40,6 +41,12 @@ public class TrapStructure {
             return true;
         }
         return target.gridTileLocation != null && target.gridTileLocation.structure == forcedStructure;
+    }
+    #endregion
+
+    #region Utilities
+    public bool IsTrapped() {
+        return forcedStructure != null || structure != null;
     }
     #endregion
 }

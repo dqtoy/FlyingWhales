@@ -1138,10 +1138,10 @@ public class PlayerUI : MonoBehaviour {
         }
     }
     private void ShowSpells() {
-        customDropdownList.ShowDropdown(spellsList, OnClickSpell, CanChooseItem);
+        customDropdownList.ShowDropdown(PlayerManager.Instance.player.archetype.spells, OnClickSpell, CanChooseItem);
     }
     private bool CanChooseItem(string item) {
-        if (item == "Tornado" || item == "Meteor") {
+        if (item == PlayerManager.Tornado || item == PlayerManager.Meteor) {
             return true;
         }
         return false;

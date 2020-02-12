@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using UnityEngine;
 using Traits;
 using UnityEngine.WSA;

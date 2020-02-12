@@ -5,7 +5,7 @@ using Inner_Maps;
 using UnityEngine;
 
 public class BigTreeObject : TreeObject {
-	
+	public override Vector2 selectableSize => new Vector2(1.7f, 1.7f);
 	public BigTreeObject() {
 		advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.CHOP_WOOD, INTERACTION_TYPE.ASSAULT, INTERACTION_TYPE.REPAIR };
 		Initialize(TILE_OBJECT_TYPE.BIG_TREE_OBJECT);
@@ -17,7 +17,7 @@ public class BigTreeObject : TreeObject {
 	}
 
 	public override string ToString() {
-		return "Big Tree " + id.ToString();
+		return $"Big Tree {id.ToString()}";
 	}
 
 	public static bool CanBePlacedOnTile(LocationGridTile tile) {

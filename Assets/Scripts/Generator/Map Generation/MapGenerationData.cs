@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
+using Inner_Maps.Location_Structures;
 using UnityEngine;
 
 /// <summary>

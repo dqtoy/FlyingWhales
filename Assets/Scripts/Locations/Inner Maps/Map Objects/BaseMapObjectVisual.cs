@@ -19,6 +19,7 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
     protected System.Action onRightClickAction;
     public GameObject gameObjectVisual => this.gameObject;
     public Sprite usedSprite => objectVisual.sprite;
+    public ISelectable selectable { get; protected set; }
 
     #region Visuals
     public void SetRotation(float rotation) {
@@ -64,7 +65,7 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
     /// <returns>True or false</returns>
     public abstract bool IsMapObjectMenuVisible();
     public bool IsInvisible() {
-        if (objectVisual != null) {
+        if (ReferenceEquals(objectVisual, null) == false) {
             return Mathf.Approximately(objectVisual.color.a, 0f);    
         }
         return false;

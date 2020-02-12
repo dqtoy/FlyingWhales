@@ -1562,7 +1562,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1813987818208590}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -3.5, y: -3.5, z: 0}
+  m_LocalPosition: {x: -7.5, y: -7.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4327958146881296}
@@ -3549,8 +3549,8 @@ MonoBehaviour:
   _detailTileMap: {fileID: 8195094282542714980}
   _groundTileMapRenderer: {fileID: 3664157343774448910}
   _detailTileMapRenderer: {fileID: 3664157344635471214}
-  _size: {x: 7, y: 7}
-  _center: {x: 3, y: 3, z: 0}
+  _size: {x: 14, y: 14}
+  _center: {x: 7, y: 7, z: 0}
   _objectsParent: {fileID: 4213304009371114}
   _furnitureSpotsParent: {fileID: 0}
   wallTileMap: {fileID: 8195094280245978910}

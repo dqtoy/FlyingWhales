@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using EZObjectPools;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using UnityEngine.Assertions;
 using UnityEngine.UI;
 

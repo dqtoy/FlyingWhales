@@ -8,6 +8,7 @@ using UnityEngine.UI;
 using System.Text.RegularExpressions;
 using System.IO;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using UnityEngine.Events;
 using UtilityScripts;
 

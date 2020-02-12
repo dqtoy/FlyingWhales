@@ -135,6 +135,7 @@ public static class Signals {
     public static string CHARACTER_MIGRATED_HOME = "OnCharacterChangedHome"; //Parameters (Character, Settlement previousHome, Settlement newHome); 
     public static string CHARACTER_CHANGED_RACE = "OnCharacterChangedRace"; //Parameters (Character); 
     public static string CHARACTER_ARRIVED_AT_STRUCTURE = "OnCharacterArrivedAtStructure"; //Parameters (Character, LocationStructure); 
+    public static string CHARACTER_LEFT_STRUCTURE = "OnCharacterLeftStructure"; //Parameters (Character, LocationStructure);
     public static string RELATIONSHIP_ADDED = "OnCharacterGainedRelationship"; //Parameters (Relatable, Relatable)
     public static string RELATIONSHIP_REMOVED = "OnCharacterRemovedRelationship"; //Parameters (Relatable, RELATIONSHIP_TRAIT, Relatable)
     public static string FORCE_CANCEL_ALL_JOBS_TARGETING_POI = "OnForceCancelAllJobsTargetingCharacter"; //Parameters (Character target, string cause)
@@ -542,6 +543,7 @@ public static class Signals {
             new SignalMethod() { methodName = "OnTickEnded", objectType = typeof(Character) },
         }},
     };
+    
     public static bool TryGetMatchingSignalMethod(string eventType, Callback method, out SignalMethod matching) {
         for (int i = 0; i < orderedSignalExecution[eventType].Length; i++) {
             SignalMethod sm = orderedSignalExecution[eventType][i];

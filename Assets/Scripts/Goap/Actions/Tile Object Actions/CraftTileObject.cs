@@ -90,8 +90,10 @@ public class CraftTileObject : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
-            TileObject target = poiTarget as TileObject;
-            return target.mapObjectState == MAP_OBJECT_STATE.UNBUILT;
+            if (poiTarget is TileObject) {
+                TileObject target = poiTarget as TileObject;
+                return target.mapObjectState == MAP_OBJECT_STATE.UNBUILT;    
+            }
         }
         return false;
     }

@@ -48,13 +48,13 @@ public class TheFingersUI : MonoBehaviour {
     }
     private void UpdateCreateButton() {
         createProgress.gameObject.SetActive(false);
-        createBtn.interactable = /*chosenMinion != null &&*/ !fingers.hasBeenActivated && !createNewFactionGO.activeSelf;
-        if (!createBtn.interactable) {
-            if (fingers.hasBeenActivated) {
-                createProgress.gameObject.SetActive(true);
-                createProgress.fillAmount = 0;
-            }
-        }
+        // createBtn.interactable = /*chosenMinion != null &&*/ !fingers.hasBeenActivated && !createNewFactionGO.activeSelf;
+        // if (!createBtn.interactable) {
+        //     if (fingers.hasBeenActivated) {
+        //         createProgress.gameObject.SetActive(true);
+        //         createProgress.fillAmount = 0;
+        //     }
+        // }
     }
     public void OnClickCreateNewFaction() {
         if (CanCreateNewFaction()) {

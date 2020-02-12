@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Inner_Maps;
+using Inner_Maps.Location_Structures;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
@@ -56,13 +57,10 @@ namespace Inner_Maps {
         private string templatePath;
         
         //this specifies what light intensity is to be used while inside the specific range in ticks
-        private readonly Dictionary<int, float> lightSettings = new Dictionary<int, float>() { 
-// #if UNITY_EDITOR
-//             { 228, 1f }, { 61, 1.8f }
-// #else
+        private readonly Dictionary<int, float> lightSettings = new Dictionary<int, float>() {
             { 228, 0.3f }, { 61, 0.8f }
-// #endif
         };
+        private readonly List<RaycastResult> raycastResults = new List<RaycastResult>();
         public Dictionary<TILE_OBJECT_TYPE, List<TileObject>> allTileObjects { get; private set; }
         public InnerTileMap currentlyShowingMap { get; private set; }
         public ILocation currentlyShowingLocation { get; private set; }
@@ -71,6 +69,7 @@ namespace Inner_Maps {
 
         public IPointOfInterest currentlyHoveredPoi { get; private set; }
         public List<LocationGridTile> currentlyHighlightedTiles { get; private set; }
+        private LocationGridTile lastClickedTile;
 
         #region Monobehaviours
         private void Awake() {
@@ -79,7 +78,7 @@ namespace Inner_Maps {
         }
         public void LateUpdate() {
             if (GameManager.showAllTilesTooltip) {
-                if (UIManager.Instance.IsMouseOnUI() || IsMouseOnMapObject() || currentlyShowingMap == null) {
+                if (UIManager.Instance.IsMouseOnUI() || currentlyShowingMap == null) {
                     // if (UIManager.Instance.IsSmallInfoShowing() && UIManager.Instance.smallInfoShownFrom == "ShowTileData") {
                     //     UIManager.Instance.HideSmallInfo();
                     // }
@@ -92,20 +91,75 @@ namespace Inner_Maps {
             }
 
             if (Input.GetMouseButtonDown(0)) {
-                if (UIManager.Instance.IsMouseOnUI() == false && IsMouseOnMapObject() == false && currentlyShowingMap != null) {
+                if (UIManager.Instance.IsMouseOnUI() == false && ReferenceEquals(currentlyShowingMap, null) == false) {
                     LocationGridTile clickedTile = GetTileFromMousePosition();
-                    if (clickedTile.buildSpotOwner.isPartOfParentRegionMap) {
-                      //show hextile info
-                      UIManager.Instance.ShowHexTileInfo(clickedTile.buildSpotOwner.hexTileOwner);
+                    List<ISelectable> selectables = GetSelectablesOnTile(clickedTile);
+                    if (selectables.Count > 0) {
+                        if (lastClickedTile != clickedTile) {
+                            //if last tile that was clicked is not the tile that has been clicked, then instead of 
+                            //looping through the selectables, just select the first one.
+                            selectables[0].SelectAction();  
+                        } else {
+                            ISelectable objToSelect = null;
+                            for (int i = 0; i < selectables.Count; i++) {
+                                ISelectable currentSelectable = selectables[i];
+                                if (currentSelectable.IsCurrentlySelected()) {
+                                    //set next selectable in list to be selected.
+                                    objToSelect = CollectionUtilities.GetNextElementCyclic(selectables, i);
+                                    break;
+                                }
+                            }
+                            if (objToSelect == null) {
+                                objToSelect = selectables[0];
+                            }
+                            objToSelect.SelectAction();    
+                        }
+                        
                     } else {
                         Messenger.Broadcast(Signals.HIDE_MENUS);    
                     }
-                        
+                    lastClickedTile = clickedTile;    
                 }
             }
         }
+        
+        private List<ISelectable> GetSelectablesOnTile(LocationGridTile tile) {
+            List<ISelectable> selectables = new List<ISelectable>();
+            
+            PointerEventData pointer = new PointerEventData(EventSystem.current);
+            pointer.position = Input.mousePosition;
+
+            raycastResults.Clear();
+            EventSystem.current.RaycastAll(pointer, raycastResults);
+
+            if (raycastResults.Count > 0) { 
+                foreach (var go in raycastResults) {
+                    if (go.gameObject.CompareTag("Character Marker") || go.gameObject.CompareTag("Map Object")) {
+                        BaseMapObjectVisual visual = go.gameObject.GetComponent<BaseMapObjectVisual>();
+                        if (visual.IsInvisible()) {
+                            continue; //skip
+                        }
+                        //assume that all objects that have the specified tags have the BaseMapObjectVisual class
+                        if (visual.selectable != null) {
+                            selectables.Add(visual.selectable);    
+                        }
+                    }
+                }
+            }
+            
+            if (tile.structure != null && ReferenceEquals(tile.structure.structureObj, null) == false) {
+                selectables.Add(tile.structure);
+            }
+            // if (tile.IsPartOfSettlement(out var settlement)) {
+            //     selectables.Add(settlement);
+            // }
+            if (tile.buildSpotOwner.isPartOfParentRegionMap) {
+                selectables.Add(tile.buildSpotOwner.hexTileOwner);
+            }
+            return selectables;
+        }
         private void Update() {
-            if (currentlyHoveredPoi != null && currentlyHoveredPoi.mapObjectVisual != null) {
+            if (currentlyHoveredPoi != null && ReferenceEquals(currentlyHoveredPoi.mapObjectVisual, null) == false) {
                 currentlyHoveredPoi.mapObjectVisual.ExecuteHoverEnterAction();    
             }
         }
@@ -371,13 +425,13 @@ namespace Inner_Maps {
                     summary += "\n\tFaction Owner: " + (poi as TileObject).factionOwner?.name ?? "None";
                     
                     if (poi is TreeObject) {
-                    summary = $"{summary}\n\tYield: {(poi as TreeObject).yield.ToString()}";
+                        summary = $"{summary}\n\tYield: {(poi as TreeObject).yield.ToString()}";
                     } else if (poi is Ore) {
-                    summary = $"{summary}\n\tYield: {(poi as Ore).yield.ToString()}";
+                        summary = $"{summary}\n\tYield: {(poi as Ore).yield.ToString()}";
                     } else if (poi is ResourcePile) {
-                    summary = $"{summary}\n\tResource in Pile: {(poi as ResourcePile).resourceInPile.ToString()}";
+                        summary = $"{summary}\n\tResource in Pile: {(poi as ResourcePile).resourceInPile.ToString()}";
                     }  else if (poi is Table) {
-                    summary = $"{summary}\n\tFood in Table: {(poi as Table).food.ToString()}";
+                        summary = $"{summary}\n\tFood in Table: {(poi as Table).food.ToString()}";
                     }
                 }
                 summary = $"{summary}\n\tAdvertised Actions: ";

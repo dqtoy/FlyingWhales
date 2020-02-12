@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using Inner_Maps.Location_Structures;
 using Pathfinding;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -431,7 +432,7 @@ namespace Inner_Maps {
                     List<BuildSpotTileObject> choices = new List<BuildSpotTileObject>();
                     for (int i = 0; i < openSpots.Count; i++) {
                         BuildSpotTileObject buildSpot = openSpots[i];
-                        if (buildSpot.spot.CanFitStructureOnSpot(structureObject, this)) {
+                        if (buildSpot.spot.CanFitStructureOnSpot(structureObject, this, "NPC")) {
                             choices.Add(buildSpot);
                         }
                     }
@@ -475,7 +476,7 @@ namespace Inner_Maps {
             }
             return null;
         }
-        public bool CanBuildSpotFit(LocationStructureObject structureObject, BuildingSpot spot) {
+        public bool CanBuildSpotFit(LocationStructureObject structureObject, BuildingSpot spot, string builderIdentifier = "NPC") {
             bool isHorizontallyBig = structureObject.IsHorizontallyBig();
             bool isVerticallyBig = structureObject.IsVerticallyBig();
             BuildingSpot currSpot = spot;
@@ -484,13 +485,13 @@ namespace Inner_Maps {
                 //only get build spots that do not have any occupied adjacent spots at their top and right
                 bool hasUnoccupiedNorth = currSpot.neighbours.ContainsKey(GridNeighbourDirection.North)
                                           && currSpot.neighbours[GridNeighbourDirection.North].isOccupied == false
-                                          && currSpot.neighbours[GridNeighbourDirection.North].canBeBuiltOnByNPC;
+                                          && currSpot.neighbours[GridNeighbourDirection.North].CanBeBuiltOnBy(builderIdentifier);
                 bool hasUnoccupiedEast = currSpot.neighbours.ContainsKey(GridNeighbourDirection.East)
                                          && currSpot.neighbours[GridNeighbourDirection.East].isOccupied == false
-                                         && currSpot.neighbours[GridNeighbourDirection.East].canBeBuiltOnByNPC;
+                                         && currSpot.neighbours[GridNeighbourDirection.East].CanBeBuiltOnBy(builderIdentifier);
                 bool hasUnoccupiedNorthEast = currSpot.neighbours.ContainsKey(GridNeighbourDirection.North_East)
                                          && currSpot.neighbours[GridNeighbourDirection.North_East].isOccupied == false
-                                         && currSpot.neighbours[GridNeighbourDirection.North_East].canBeBuiltOnByNPC;
+                                         && currSpot.neighbours[GridNeighbourDirection.North_East].CanBeBuiltOnBy(builderIdentifier);
                 if (hasUnoccupiedNorth && hasUnoccupiedEast && hasUnoccupiedNorthEast) {
                     return true;
                 }
@@ -499,7 +500,7 @@ namespace Inner_Maps {
                 //only get build spots that do not have any occupied adjacent spots at their right
                 bool hasUnoccupiedEast = currSpot.neighbours.ContainsKey(GridNeighbourDirection.East) 
                                          && currSpot.neighbours[GridNeighbourDirection.East].isOccupied == false
-                                         && currSpot.neighbours[GridNeighbourDirection.East].canBeBuiltOnByNPC;
+                                         && currSpot.neighbours[GridNeighbourDirection.East].CanBeBuiltOnBy(builderIdentifier);
                 if (hasUnoccupiedEast) {
                     return true;
                 }
@@ -508,7 +509,7 @@ namespace Inner_Maps {
                 //only get build spots that do not have any occupied adjacent spots at their top
                 bool hasUnoccupiedNorth = currSpot.neighbours.ContainsKey(GridNeighbourDirection.North) 
                                           && currSpot.neighbours[GridNeighbourDirection.North].isOccupied == false
-                                          && currSpot.neighbours[GridNeighbourDirection.North].canBeBuiltOnByNPC;
+                                          && currSpot.neighbours[GridNeighbourDirection.North].CanBeBuiltOnBy(builderIdentifier);
                 if (hasUnoccupiedNorth) {
                     return true;
                 }
@@ -526,7 +527,7 @@ namespace Inner_Maps {
             
             GameObject structureGo = ObjectPoolManager.Instance.InstantiateObjectFromPool(structurePrefab.name, Vector3.zero, Quaternion.identity, structureParent);
             LocationStructureObject structureObjectPrefab = structureGo.GetComponent<LocationStructureObject>();
-            structureGo.transform.localPosition = chosenBuildingSpot.GetPositionToPlaceStructure(structureObjectPrefab, structure.structureType);
+            structureGo.transform.localPosition = chosenBuildingSpot.GetPositionToPlaceStructure(structureObjectPrefab);
         
             LocationStructureObject structureObject = structureGo.GetComponent<LocationStructureObject>();
             structureObject.RefreshAllTilemaps();
