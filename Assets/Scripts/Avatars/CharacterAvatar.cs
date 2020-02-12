@@ -208,12 +208,11 @@ public class CharacterAvatar : MonoBehaviour {
         _party.owner.combatComponent.ClearAvoidInRange();
         _party.owner.marker.ClearPOIsInVisionRange();
 
-        //place marker at edge tile of target location
         LocationGridTile entrance = targetLocation.innerMap.GetRandomUnoccupiedEdgeTile();
         _party.owner.marker.PlaceMarkerAt(entrance);
 
         _party.owner.marker.pathfindingAI.SetIsStopMovement(true);
-        //Debug.Log(GameManager.Instance.TodayLogString() + _party.name + " has arrived at " + targetLocation.name + " on " + _party.owner.gridTileLocation.ToString());
+        
         Log arriveLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "arrive_location");
         _party.owner.SetPOIState(POI_STATE.ACTIVE);
         arriveLog.AddToFillers(_party.owner, _party.owner.name, LOG_IDENTIFIER.CHARACTER_LIST_1, false);
@@ -222,16 +221,11 @@ public class CharacterAvatar : MonoBehaviour {
         }
         arriveLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
         arriveLog.AddLogToInvolvedObjects();
-        //if (_party.characters.Count > 0) {
-        //    for (int i = 0; i < _party.characters.Count; i++) {
-        //        Character character = party.characters[i];
-        //        character.SetPOIState(POI_STATE.ACTIVE);
-        //        //character.SetDailyInteractionGenerationTick();
-        //        arriveLog.AddToFillers(character, character.name, LOG_IDENTIFIER.CHARACTER_LIST_1, false);
-        //    }
-        //    arriveLog.AddToFillers(targetLocation, targetLocation.name, LOG_IDENTIFIER.LANDMARK_1);
-        //    arriveLog.AddLogToInvolvedObjects();
-        //}
+
+        if (UtilityScripts.GameUtilities.IsRaceBeast(_party.owner.race) == false || (_party.carriedPOI is Character carriedCharacter 
+            && UtilityScripts.GameUtilities.IsRaceBeast(carriedCharacter.race) == false )) {
+            PlayerManager.Instance.player.ShowNotificationFrom(_party.owner, arriveLog);    
+        }
 
         Messenger.Broadcast(Signals.PARTY_DONE_TRAVELLING, this.party);
         if(onArriveAction != null) {

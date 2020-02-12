@@ -17,10 +17,10 @@ public class AccessMemories : PlayerSpell {
         base.ActivateAction(targetCharacter);
         UIManager.Instance.ShowCharacterInfo(targetCharacter);
 
-        Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_access_memory");
-        log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-        log.AddLogToInvolvedObjects();
-        PlayerManager.Instance.player.ShowNotification(log);
+        // Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_access_memory");
+        // log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        // log.AddLogToInvolvedObjects();
+        // PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
     }
     protected override bool CanPerformActionTowards(Character targetCharacter) {
         return base.CanPerformActionTowards(targetCharacter);

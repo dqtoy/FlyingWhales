@@ -100,8 +100,8 @@ public class Player : ILeader {
     private void AddListeners() {
         AddWinListener();
         //goap
-        Messenger.AddListener<string, ActualGoapNode>(Signals.AFTER_ACTION_STATE_SET, OnAfterActionStateSet);
-        Messenger.AddListener<Character, ActualGoapNode>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
+        // Messenger.AddListener<string, ActualGoapNode>(Signals.AFTER_ACTION_STATE_SET, OnAfterActionStateSet);
+        // Messenger.AddListener<Character, ActualGoapNode>(Signals.CHARACTER_DOING_ACTION, OnCharacterDoingAction);
         Messenger.AddListener<ILocation>(Signals.LOCATION_MAP_OPENED, OnInnerMapOpened);
         Messenger.AddListener<ILocation>(Signals.LOCATION_MAP_CLOSED, OnInnerMapClosed);
 
@@ -485,43 +485,45 @@ public class Player : ILeader {
     //        }
     //    }
     //}
-    /// <summary>
-    /// Listener for when a character starts an action.
-    /// Character will go to target location. <see cref="GoapAction.DoAction"/>
-    /// </summary>
-    /// <param name="character">The character that will do the action.</param>
-    /// <param name="action">The action that will be performed.</param>
-    private void OnCharacterDoingAction(Character character, ActualGoapNode actionNode) {
-        bool showPopup = false;
-        Log log = actionNode.GetCurrentLog();
-        if (actionNode.action.showNotification && log != null) { //TODO: added checking if actor is already at target tile. So that travelling notification won't show if that is the case. && !actionNode.IsActorAtTargetTile() 
-            // if (actionNode.action.shouldIntelNotificationOnlyIfActorIsActive) {
-            //     showPopup = ShouldShowNotificationFrom(actionNode.actor, true);
-            // } else {
-            //     showPopup = ShouldShowNotificationFrom(actionNode.actor, log);
-            // }
-            showPopup = ShouldShowNotificationFrom(actionNode.actor, log);
-        }
-        if (showPopup) {
-            Messenger.Broadcast<Log>(Signals.SHOW_PLAYER_NOTIFICATION, log);
-        }
-    }
-    /// <summary>
-    /// Listener for when an action's state is set. Always means that the character has
-    /// started performing the action.
-    /// </summary>
-    /// <param name="action">The action that is being performed.</param>
-    /// <param name="state">The state that the action is in.</param>
-    private void OnAfterActionStateSet(string stateName, ActualGoapNode actionNode) {
-        bool showPopup = false;
-        Log log = actionNode.GetCurrentLog();
-        if (actionNode.action.showNotification && actionNode.currentState.duration > 0 && log != null) { //added checking for duration because this notification should only show for actions that have durations.
-            showPopup = ShouldShowNotificationFrom(actionNode.actor, log);
-        }
-        if (showPopup) {
-            Messenger.Broadcast<Log>(Signals.SHOW_PLAYER_NOTIFICATION, log);
-        }
-    }
+    
+    // /// <summary>
+    // /// Listener for when a character starts an action.
+    // /// Character will go to target location. <see cref="GoapAction.DoAction"/>
+    // /// </summary>
+    // /// <param name="character">The character that will do the action.</param>
+    // /// <param name="action">The action that will be performed.</param>
+    // private void OnCharacterDoingAction(Character character, ActualGoapNode actionNode) {
+    //     bool showPopup = false;
+    //     Log log = actionNode.GetCurrentLog();
+    //     if (actionNode.action.showNotification && log != null) { //TODO: added checking if actor is already at target tile. So that travelling notification won't show if that is the case. && !actionNode.IsActorAtTargetTile() 
+    //         // if (actionNode.action.shouldIntelNotificationOnlyIfActorIsActive) {
+    //         //     showPopup = ShouldShowNotificationFrom(actionNode.actor, true);
+    //         // } else {
+    //         //     showPopup = ShouldShowNotificationFrom(actionNode.actor, log);
+    //         // }
+    //         showPopup = ShouldShowNotificationFrom(actionNode.actor, log);
+    //     }
+    //     if (showPopup) {
+    //         Messenger.Broadcast<Log>(Signals.SHOW_PLAYER_NOTIFICATION, log);
+    //     }
+    // }
+    // /// <summary>
+    // /// Listener for when an action's state is set. Always means that the character has
+    // /// started performing the action.
+    // /// </summary>
+    // /// <param name="action">The action that is being performed.</param>
+    // /// <param name="state">The state that the action is in.</param>
+    // private void OnAfterActionStateSet(string stateName, ActualGoapNode actionNode) {
+    //     bool showPopup = false;
+    //     Log log = actionNode.GetCurrentLog();
+    //     if (actionNode.action.showNotification && actionNode.currentState.duration > 0 && log != null) { //added checking for duration because this notification should only show for actions that have durations.
+    //         showPopup = ShouldShowNotificationFrom(actionNode.actor, log);
+    //     }
+    //     if (showPopup) {
+    //         ShowNotificationFrom(actionNode.actor, log);
+    //     }
+    // }
+    
     public void SetCurrentActiveIntel(Intel intel) {
         if (currentActiveIntel == intel) {
             //Do not process when setting the same combat ability
@@ -564,7 +566,7 @@ public class Player : ILeader {
             Character character = poi as Character;
             hoverText = string.Empty;
             if(character.traitContainer.HasTrait("Blessed", "Catatonic")) {
-                hoverText = "Blessed/Catatonic characters cannot be targetted.";
+                hoverText = "Blessed/Catatonic characters cannot be targeted.";
                 return false;
             }
             if(!character.faction.isPlayerFaction && !UtilityScripts.GameUtilities.IsRaceBeast(character.race)) { //character.role.roleType != CHARACTER_ROLE.BEAST && character.role.roleType != CHARACTER_ROLE.PLAYER
@@ -576,26 +578,47 @@ public class Player : ILeader {
     #endregion
 
     #region Player Notifications
-    public bool ShouldShowNotificationFrom(Character character, bool onlyClickedCharacter = false) {
-        if (!onlyClickedCharacter && InnerMapCameraMove.Instance.gameObject.activeSelf) { //&& !character.isDead
-            if ((UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == character.id) || (character.marker != null &&  InnerMapCameraMove.Instance.CanSee(character.marker.gameObject))) {
-                return true;
-            }
-        } else if (onlyClickedCharacter && UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == character.id) {
-            return true;
-        }
-        return false;
+    private bool ShouldShowNotificationFrom(ILocation location) {
+        return location.canShowNotifications;
     }
-    public bool ShouldShowNotificationFrom(Character character, Log log) {
+    private bool ShouldShowNotificationFrom(Character character, bool onlyClickedCharacter = false) {
+        // if (!onlyClickedCharacter && InnerMapCameraMove.Instance.gameObject.activeSelf) { //&& !character.isDead
+        //     if ((UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == character.id) || (character.marker != null &&  InnerMapCameraMove.Instance.CanSee(character.marker.gameObject))) {
+        //         return true;
+        //     }
+        // } else if (onlyClickedCharacter && UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == character.id) {
+        //     return true;
+        // }
+        // return false;
+        return character.currentRegion != null && ShouldShowNotificationFrom(character.currentRegion);
+    }
+    private bool ShouldShowNotificationFrom(Character character, Log log) {
         if (ShouldShowNotificationFrom(character)) {
             return true;
         } else {
-            return ShouldShowNotificationFrom(log.fillers.Where(x => x.obj is Character).Select(x => x.obj as Character).ToArray());
+            return ShouldShowNotificationFrom(log.fillers.Where(x => x.obj is Character).Select(x => x.obj as Character).ToArray())
+                || ShouldShowNotificationFrom(log.fillers.Where(x => x.obj is ILocation).Select(x => x.obj as ILocation).ToArray());
+        }
+    }
+    private bool ShouldShowNotificationFrom(ILocation location, Log log) {
+        if (ShouldShowNotificationFrom(location)) {
+            return true;
+        } else {
+            return ShouldShowNotificationFrom(log.fillers.Where(x => x.obj is Character).Select(x => x.obj as Character).ToArray())
+                   || ShouldShowNotificationFrom(log.fillers.Where(x => x.obj is ILocation).Select(x => x.obj as ILocation).ToArray());
         }
     }
     private bool ShouldShowNotificationFrom(Character[] characters) {
         for (int i = 0; i < characters.Length; i++) {
             if (ShouldShowNotificationFrom(characters[i])) {
+                return true;
+            }
+        }
+        return false;
+    }
+    private bool ShouldShowNotificationFrom(ILocation[] locations) {
+        for (int i = 0; i < locations.Length; i++) {
+            if (ShouldShowNotificationFrom(locations[i])) {
                 return true;
             }
         }
@@ -609,8 +632,23 @@ public class Player : ILeader {
         }
         return false;
     }
+    
+    public bool ShowNotificationFrom(ILocation location, Log log) {
+        if (ShouldShowNotificationFrom(location, log)) {
+            ShowNotification(log);
+            return true;
+        }
+        return false;
+    }
     public bool ShowNotificationFrom(Character character, Log log) {
         if (ShouldShowNotificationFrom(character, log)) {
+            ShowNotification(log);
+            return true;
+        }
+        return false;
+    }
+    public bool ShowNotificationFrom(Character character, Intel log) {
+        if (ShouldShowNotificationFrom(character)) {
             ShowNotification(log);
             return true;
         }
@@ -626,8 +664,15 @@ public class Player : ILeader {
             ShowNotification(log);
         }
     }
-    public void ShowNotification(Log log) {
+    public void ShowNotificationFromPlayer(Log log) {
+        ShowNotification(log);
+    }
+    
+    private void ShowNotification(Log log) {
         Messenger.Broadcast<Log>(Signals.SHOW_PLAYER_NOTIFICATION, log);
+    }
+    private void ShowNotification(Intel intel) {
+        Messenger.Broadcast<Intel>(Signals.SHOW_INTEL_NOTIFICATION, intel);
     }
     #endregion
 

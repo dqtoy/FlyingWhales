@@ -35,7 +35,7 @@ namespace Traits {
                 owner.needsComponent.AdjustComfortDecreaseRate(5);
 
                 if (gainedFromDoing == null) {
-                    owner.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, name.ToLower());
+                    owner.RegisterLog("NonIntel", "add_trait", null, name.ToLower());
                 } else {
                     if (gainedFromDoing.goapType == INTERACTION_TYPE.EAT) {
                         Log addLog = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "add_trait", gainedFromDoing);
@@ -43,7 +43,7 @@ namespace Traits {
                         addLog.AddToFillers(this, this.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                         //TODO: gainedFromDoing.states["Eat Poisoned"].AddArrangedLog("sick", addLog, () => PlayerManager.Instance.player.ShowNotificationFrom(addLog, owner, true));
                     } else {
-                        owner.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "add_trait", null, name.ToLower());
+                        owner.RegisterLog("NonIntel", "add_trait", null, name.ToLower());
                     }
                 }
             }
@@ -52,7 +52,7 @@ namespace Traits {
             owner.AdjustSpeedModifier(0.10f);
             owner.RemoveTraitNeededToBeRemoved(this);
             owner.needsComponent.AdjustComfortDecreaseRate(-5);
-            owner.RegisterLogAndShowNotifToThisCharacterOnly("NonIntel", "remove_trait", null, name.ToLower());
+            owner.RegisterLog("NonIntel", "remove_trait", null, name.ToLower());
             base.OnRemoveTrait(sourceCharacter, removedBy);
         }
         protected override void OnChangeLevel() {

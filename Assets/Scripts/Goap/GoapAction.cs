@@ -257,7 +257,7 @@ public class GoapAction : IReactable {
         log.AddToFillers(node.poiTarget, node.poiTarget.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(goapType.ToString()), LOG_IDENTIFIER.STRING_1);
         log.AddLogToInvolvedObjects();
-        PlayerManager.Instance.player.ShowNotificationFrom(node.actor, log);
+        // PlayerManager.Instance.player.ShowNotificationFrom(node.actor, log);
     }
     #endregion
 

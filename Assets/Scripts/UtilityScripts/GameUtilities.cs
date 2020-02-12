@@ -152,22 +152,15 @@ namespace UtilityScripts {
             }
             throw new Exception("No beast class for " + race.ToString() + " Race!");
         }
-        public static List<RACE> beastRaces = new List<RACE>() {
+        private static readonly HashSet<RACE> _beastRaces = new HashSet<RACE>() {
             RACE.DRAGON,
             RACE.WOLF,
             //RACE.BEAST,
             RACE.SPIDER,
             RACE.GOLEM,
         };
-        public static List<RACE> nonBeastRaces = new List<RACE>() {
-            RACE.HUMANS,
-            RACE.ELVES,
-            RACE.GOBLIN,
-            RACE.FAERY,
-            RACE.SKELETON,
-        };
         public static bool IsRaceBeast(RACE race) {
-            return beastRaces.Contains(race);
+            return _beastRaces.Contains(race);
         }
         public static T[] GetComponentsInDirectChildren<T>(GameObject gameObject) {
             int indexer = 0;

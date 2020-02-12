@@ -1421,6 +1421,7 @@
                     <e p="LocationStructureObject.cs" t="Include" />
                     <e p="TortureChamberStructureObject.cs" t="Include" />
                   </e>
+                  <e p="TheEye.cs" t="Include" />
                   <e p="ThePortal.cs" t="Include" />
                   <e p="TheSpire.cs" t="Include" />
                   <e p="TortureChamber.cs" t="Include" />
@@ -2157,20 +2158,6 @@
               <e p="Resources.Designer.cs" t="Include" />
             </e>
             <e p="WeightedName.cs" t="Include" />
-          </e>
-        </e>
-        <e p="StreamingAssets" t="Include">
-          <e p="Story Events" t="Include">
-            <e p="CAVE.xml" t="Include" />
-            <e p="DESERT.xml" t="Include" />
-            <e p="DUNGEON.xml" t="Include" />
-            <e p="FLATLAND.xml" t="Include" />
-            <e p="FOREST.xml" t="Include" />
-            <e p="GRASSLAND.xml" t="Include" />
-            <e p="JUNGLE.xml" t="Include" />
-            <e p="MOUNTAIN.xml" t="Include" />
-            <e p="SNOW.xml" t="Include" />
-            <e p="TUNDRA.xml" t="Include" />
           </e>
         </e>
         <e p="TextMesh Pro" t="Include">

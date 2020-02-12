@@ -123,18 +123,18 @@ public class ProvokeMenu : MonoBehaviour {
             }
         }
 
-        if (succeedUndermine) {
-            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_provoke");
-            log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            log.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-            log.AddLogToInvolvedObjects();
-            PlayerManager.Instance.player.ShowNotification(log);
-        } else {
-            Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_provoke_fail");
-            log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            log.AddLogToInvolvedObjects();
-            PlayerManager.Instance.player.ShowNotification(log);
-        }
+        // if (succeedUndermine) {
+        //     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_provoke");
+        //     log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        //     log.AddToFillers(chosenCharacter, chosenCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        //     log.AddLogToInvolvedObjects();
+        //     PlayerManager.Instance.player.ShowNotification(log);
+        // } else {
+        //     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "player_provoke_fail");
+        //     log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+        //     log.AddLogToInvolvedObjects();
+        //     PlayerManager.Instance.player.ShowNotification(log);
+        // }
     }
 
     public void Close() {

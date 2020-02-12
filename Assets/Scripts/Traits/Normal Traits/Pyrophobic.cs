@@ -1,7 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-
 namespace Traits {
     public class Pyrophobic : Trait {
 
@@ -57,7 +55,7 @@ namespace Traits {
                 debugLog += "\n-Character decided to flee";
                 Log log = new Log(GameManager.Instance.Today(), "Trait", name, "flee");
                 log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                owner.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+                owner.logComponent.RegisterLog(log, onlyClickedCharacter: false);
                 owner.combatComponent.Flight(burningPOI, "pyrophobic");
             } else {
                 debugLog += "\n-Character decided to trigger Cowering interrupt";
@@ -65,30 +63,6 @@ namespace Traits {
             }
             owner.logComponent.PrintLogIfActive(debugLog);
         }
-        public void BeShellshocked(BurningSource source, Character character) {
-            string summary = GameManager.Instance.TodayLogString() + character.name + " saw burning source " + source.ToString();
-            //TODO:
-            //if (character.marker.AddAvoidsInRange(source.objectsOnFire)) {
-            //    summary += "\nStarted fleeing";
-            //    //TODO:character.CancelAllJobsAndPlans();
-            //    Log log = new Log(GameManager.Instance.Today(), "Trait", name, "flee");
-            //    log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            //    log.AddLogToInvolvedObjects();
-            //    PlayerManager.Instance.player.ShowNotificationFrom(character, log);
-            //    character.traitContainer.AddTrait(character, "Shellshocked");
-            //} else {
-            //    summary += "\nDid not flee because already fleeing.";
-            //}
-            Debug.Log(summary);
-        }
-        public void BeCatatonic(BurningSource source, Character character) {
-            Log log = new Log(GameManager.Instance.Today(), "Trait", name, "catatonic");
-            log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-            log.AddLogToInvolvedObjects();
-            PlayerManager.Instance.player.ShowNotificationFrom(character, log);
-            character.traitContainer.AddTrait(character, "Catatonic");
-        }
-
         private void OnObjectStartedBurning(ITraitable poi) {
             //owner.marker.AddTerrifyingObject(poi);
         }

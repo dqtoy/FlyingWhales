@@ -39,7 +39,7 @@ public class PsychopathUI : MonoBehaviour {
         log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         log.AddToFillers(null, "Psychopath", LOG_IDENTIFIER.STRING_1);
         log.AddLogToInvolvedObjects();
-        PlayerManager.Instance.player.ShowNotification(log);
+        // PlayerManager.Instance.player.ShowNotificationFrom(log);
 
        
         //if (requirements2UI.victimType == SERIAL_VICTIM_TYPE.GENDER || requirements2UI.victimType == SERIAL_VICTIM_TYPE.RACE) {

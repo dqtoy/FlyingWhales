@@ -153,7 +153,7 @@ public class Minion {
                 }
                 //will only add death log to history if no death log is provided. NOTE: This assumes that if a death log is provided, it has already been added to this characters history.
                 character.logComponent.AddHistory(deathLog);
-                PlayerManager.Instance.player.ShowNotification(deathLog);
+                PlayerManager.Instance.player.ShowNotificationFrom(character, deathLog);
             } else {
                 deathLog = _deathLog;
             }

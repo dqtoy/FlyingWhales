@@ -33,7 +33,7 @@ public class Spook : PlayerSpell {
                     log.AddToFillers(currTarget, currTarget.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                     log.AddToFillers(null, "spooked", LOG_IDENTIFIER.STRING_1);
                     log.AddLogToInvolvedObjects();
-                    PlayerManager.Instance.player.ShowNotification(log);
+                    PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
                 }
             }
             base.ActivateAction(targets[0]);

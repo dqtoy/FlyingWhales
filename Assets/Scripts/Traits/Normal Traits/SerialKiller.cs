@@ -65,7 +65,7 @@ namespace Traits {
                         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "serial_killer_new_victim");
                         log.AddToFillers(this.character, this.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                         log.AddToFillers(targetVictim, targetVictim.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                        this.character.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+                        this.character.logComponent.RegisterLog(log, onlyClickedCharacter: false);
                         return true;
                     }
                 }
@@ -85,7 +85,7 @@ namespace Traits {
                         Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "serial_killer_new_victim");
                         log.AddToFillers(this.character, this.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                         log.AddToFillers(targetVictim, targetVictim.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-                        this.character.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+                        this.character.logComponent.RegisterLog(log, onlyClickedCharacter: false);
                         break;
                     }
                 }
@@ -107,7 +107,7 @@ namespace Traits {
             log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(null, victim1Requirement.text, LOG_IDENTIFIER.STRING_1);
             log.AddLogToInvolvedObjects();
-            PlayerManager.Instance.player.ShowNotification(log);
+            // PlayerManager.Instance.player.ShowNotification(log);
         }
         public void SetVictimRequirements(SERIAL_VICTIM_TYPE victimFirstType, List<string> victimFirstDesc, SERIAL_VICTIM_TYPE victimSecondType, List<string> victimSecondDesc) {
             SetVictimRequirements(new SerialVictim(victimFirstType, victimFirstDesc, victimSecondType, victimSecondDesc));
@@ -400,7 +400,7 @@ namespace Traits {
             log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddToFillers(targetCharacter, targetCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
             log.AddToFillers(null, negativeTrait.name, LOG_IDENTIFIER.STRING_1);
-            character.logComponent.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
+            character.logComponent.RegisterLog(log, onlyClickedCharacter: false);
         }
 
         #region Opinion

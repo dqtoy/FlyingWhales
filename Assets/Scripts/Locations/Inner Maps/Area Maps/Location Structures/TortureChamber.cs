@@ -59,7 +59,7 @@ namespace Inner_Maps.Location_Structures {
             UIManager.Instance.ShowClickableObjectPicker(charactersHere, StartTorture, null, CanTorture, "Choose Torture Target", showCover: true);
         }
         private bool CanTorture(Character character) {
-            return character.IsNPCCharacter();
+            return character.IsNPC();
         }
         private void StartTorture(object character) {
             Character target = character as Character;

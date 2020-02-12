@@ -19,7 +19,7 @@ public class Spoil : PlayerSpell {
             poison.SetLevel(level);
             targetPOI.traitContainer.AddTrait(targetPOI, poison);
             Log log = new Log(GameManager.Instance.Today(), "InterventionAbility", name, "activated");
-            PlayerManager.Instance.player.ShowNotification(log);
+            PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
         }
     }
     public override bool CanTarget(IPointOfInterest poi, ref string hoverText) {
@@ -48,7 +48,7 @@ public class SpoilData : SpellData {
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         targetPOI.traitContainer.AddTrait(targetPOI, "Poisoned");
         Log log = new Log(GameManager.Instance.Today(), "InterventionAbility", name, "activated");
-        PlayerManager.Instance.player.ShowNotification(log);
+        PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
     }
     public override bool CanPerformAbilityTowards(TileObject tileObject) {
         if (tileObject.gridTileLocation == null || tileObject.traitContainer.HasTrait("Poisoned", "Robust")) {

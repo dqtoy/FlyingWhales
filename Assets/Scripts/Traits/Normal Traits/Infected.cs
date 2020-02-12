@@ -172,7 +172,7 @@ namespace Traits {
                         log.AddToFillers(hitCharacter, hitCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                         log.AddToFillers(hitBy, hitBy.name, LOG_IDENTIFIER.TARGET_CHARACTER);
                         log.AddLogToInvolvedObjects();
-                        PlayerManager.Instance.player.ShowNotification(log);
+                        // PlayerManager.Instance.player.ShowNotification(log);
                         //Debug.Log(GameManager.Instance.TodayLogString() + Utilities.LogReplacer(log));
                     } else {
                         summary += "\n" + hitCharacter.name + " is already a zombie!";

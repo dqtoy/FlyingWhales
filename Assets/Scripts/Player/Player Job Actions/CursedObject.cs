@@ -21,7 +21,7 @@ public class CursedObject : PlayerSpell {
             Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "cursed_object");
             log.AddToFillers(to, to.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             log.AddLogToInvolvedObjects();
-            PlayerManager.Instance.player.ShowNotification(log);
+            PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
 
             base.ActivateAction(targetPOI);
         }

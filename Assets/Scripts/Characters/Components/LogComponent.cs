@@ -57,12 +57,12 @@ public class LogComponent  {
     #endregion
 
     #region Notifications
-    public void RegisterLogAndShowNotifToThisCharacterOnly(Log addLog, GoapAction goapAction = null, bool onlyClickedCharacter = true) {
+    public void RegisterLog(Log addLog, GoapAction goapAction = null, bool onlyClickedCharacter = true) {
         if (!GameManager.Instance.gameHasStarted) {
             return;
         }
         addLog.AddLogToInvolvedObjects();
-        PlayerManager.Instance.player.ShowNotificationFrom(addLog, owner, onlyClickedCharacter);
+        // PlayerManager.Instance.player.ShowNotificationFrom(addLog, owner, onlyClickedCharacter);
     }
     #endregion
 

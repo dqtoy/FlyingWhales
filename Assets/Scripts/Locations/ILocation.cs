@@ -13,6 +13,10 @@ public interface ILocation {
     List<Character> charactersAtLocation { get; }
     Dictionary<STRUCTURE_TYPE, List<LocationStructure>> structures { get; }
     LocationStructure mainStorage { get; }
+    /// <summary>
+    /// Can events that happen at this location be showed as notifications.
+    /// </summary>
+    bool canShowNotifications { get; }
 
     #region Awareness
     bool AddAwareness(IPointOfInterest pointOfInterest);
@@ -41,10 +45,6 @@ public interface ILocation {
     //bool AddSpecialTokenToLocation(SpecialToken token, LocationStructure structure = null, LocationGridTile gridLocation = null);
     //void RemoveSpecialTokenFromLocation(SpecialToken token);
     bool IsRequiredByLocation(TileObject item);
-    /// <summary>
-    /// Does the given location share the same core tile as this location?
-    /// </summary>
-    /// <param name="location">The location to query.</param>
-    /// <returns>True or false</returns>
-    bool IsSameCoreLocationAs(ILocation location);
+    void AllowNotifications();
+    void BlockNotifications();
 }

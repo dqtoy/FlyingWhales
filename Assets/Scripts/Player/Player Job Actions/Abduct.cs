@@ -85,7 +85,7 @@ public class Abduct : PlayerSpell {
         //log.AddToFillers(_targetCharacter, _targetCharacter.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
         //log.AddToFillers(character, character.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         //log.AddLogToInvolvedObjects();
-        //PlayerManager.Instance.player.ShowNotification(log);
+        //PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
         ////_targetCharacter.jobQueue.ProcessFirstJobInQueue(_targetCharacter);
         ////_targetCharacter.StartGOAP(goapEffect, character, GOAP_CATEGORY.REACTION);
     }
