@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Archetype {
     public class PuppetMaster : PlayerArchetype {
         public PuppetMaster() : base(PLAYER_ARCHETYPE.Puppet_Master) {
-            actions = new List<string>() { PlayerManager.Afflict_Action, PlayerManager.Bless_Action, PlayerManager.Zap_Action, PlayerManager.Booby_Trap, };
+            actions = new List<string>() { PlayerManager.Afflict_Action, PlayerManager.Bless_Action, PlayerManager.Zap_Action, PlayerManager.Booby_Trap_Action, PlayerManager.Summon_Minion_Action };
             monsters = new List<RaceClass> { }; //No initial monsters
             demonicStructures = new List<LANDMARK_TYPE>() { LANDMARK_TYPE.THE_EYE, LANDMARK_TYPE.GOADER, };
             minionClasses = new List<string>() { "Lust", "Envy", "Greed", "Gluttony" };

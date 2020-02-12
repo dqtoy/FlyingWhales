@@ -99,7 +99,7 @@ LightmapSettings:
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 112000002, guid: 9252122cd68805a4891073545c6d21fc,
     type: 2}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -24931,7 +24931,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _horizontalScrollSnap: {fileID: 604413995}
   continueBtn: {fileID: 864275873}
-  archetypeToggles: []
+  archetypeToggles:
+  - {fileID: 1046637472}
+  - {fileID: 769278725}
+  - {fileID: 1927332583}
 --- !u!114 &1895273174
 MonoBehaviour:
   m_ObjectHideFlags: 0

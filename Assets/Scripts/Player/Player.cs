@@ -1539,7 +1539,7 @@ public class Player : ILeader {
         }
     }
     private PlayerArchetype CreateNewArchetype(PLAYER_ARCHETYPE archetype) {
-        string typeName = UtilityScripts.Utilities.NotNormalizedConversionEnumToString(archetype.ToString());
+        string typeName = $"Archetype.{ UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(archetype.ToString()) }";
         System.Type type = System.Type.GetType(typeName);
         if (type != null) {
             PlayerArchetype obj = System.Activator.CreateInstance(type) as PlayerArchetype;

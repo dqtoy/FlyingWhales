@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Archetype {
     public class Ravager : PlayerArchetype {
         public Ravager() : base(PLAYER_ARCHETYPE.Ravager) {
-            actions = new List<string>() { PlayerManager.Afflict_Action, PlayerManager.Seize_Object_Action, PlayerManager.Destroy_Action, PlayerManager.Ignite_Action };
+            actions = new List<string>() { PlayerManager.Afflict_Action, PlayerManager.Seize_Object_Action, PlayerManager.Destroy_Action, PlayerManager.Ignite_Action, PlayerManager.Summon_Minion_Action };
             monsters = new List<RaceClass> { new RaceClass(RACE.WOLF, "Ravager"), new RaceClass(RACE.GOLEM, "Golem") };
             demonicStructures = new List<LANDMARK_TYPE>() { LANDMARK_TYPE.THE_PIT, LANDMARK_TYPE.THE_KENNEL, };
             minionClasses = new List<string>() { "Pride", "Envy", "Greed", "Wrath" };
