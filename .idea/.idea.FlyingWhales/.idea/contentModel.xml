@@ -1417,6 +1417,7 @@
                 <e p="BurningSource.cs" t="Include" />
                 <e p="Location Structures" t="Include">
                   <e p="CityCenter.cs" t="Include" />
+                  <e p="DemonicPrison.cs" t="Include" />
                   <e p="Dwelling.cs" t="Include" />
                   <e p="Goader.cs" t="Include" />
                   <e p="LocationStructure.cs" t="Include" />
