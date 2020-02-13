@@ -29,6 +29,7 @@ public class PlayerManager : MonoBehaviour {
     public const string Bless_Action = "Bless";
     public const string Booby_Trap_Action = "Booby Trap";
     public const string Torture_Action = "Torture";
+    public const string Interfere_Action = "Interfere";
 
     public const string Tornado = "Tornado";
     public const string Meteor = "Meteor";

@@ -405,6 +405,9 @@ public partial class LandmarkManager : MonoBehaviour {
             case STRUCTURE_TYPE.THE_EYE:
                 createdStructure = new Inner_Maps.Location_Structures.TheEye(location);
                 break;
+            case STRUCTURE_TYPE.GOADER:
+                createdStructure = new Inner_Maps.Location_Structures.Goader(location);
+                break;
             default:
                 createdStructure = new LocationStructure(type, location);
                 break;

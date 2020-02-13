@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="C:\Users\12myk\.Rider2019.3\system\extResources" t="IncludeRecursive" />
-    <e p="C:\Users\12myk\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_FlyingWhales.-362142238.00" t="ExcludeRecursive" />
-    <e p="D:\Repositories\FlyingWhales" t="IncludeRecursive">
+    <e p="C:\Users\Mykel Abania\.Rider2019.3\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\Mykel Abania\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_FlyingWhales.1985073317.00" t="ExcludeRecursive" />
+    <e p="C:\Users\Mykel Abania\Repositories\FlyingWhales" t="IncludeRecursive">
       <e p="Assembly-CSharp-Editor.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp-firstpass.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
@@ -1225,6 +1225,7 @@
               <e p="DispelMagic.cs" t="Include" />
               <e p="DrinkBlood.cs" t="Include" />
               <e p="Drop.cs" t="Include" />
+              <e p="DropItem.cs" t="Include" />
               <e p="DropResource.cs" t="Include" />
               <e p="Feed.cs" t="Include" />
               <e p="FeelingBrokenhearted.cs" t="Include" />
@@ -1282,6 +1283,7 @@
               <e p="Steal.cs" t="Include" />
               <e p="StealthTransform.cs" t="Include" />
               <e p="Strangle.cs" t="Include" />
+              <e p="StudyMonster.cs" t="Include" />
               <e p="Stumble.cs" t="Include" />
               <e p="TakeResource.cs" t="Include" />
               <e p="Tantrum.cs" t="Include" />
@@ -1416,6 +1418,7 @@
                 <e p="Location Structures" t="Include">
                   <e p="CityCenter.cs" t="Include" />
                   <e p="Dwelling.cs" t="Include" />
+                  <e p="Goader.cs" t="Include" />
                   <e p="LocationStructure.cs" t="Include" />
                   <e p="Structure Objects" t="Include">
                     <e p="LocationStructureObject.cs" t="Include" />
@@ -1664,6 +1667,7 @@
           <e p="Player" t="Include">
             <e p="Archetypes" t="Include">
               <e p="Lich.cs" t="Include" />
+              <e p="Normal.cs" t="Include" />
               <e p="PlayerArchetype.cs" t="Include" />
               <e p="PuppetMaster.cs" t="Include" />
               <e p="Ravager.cs" t="Include" />
@@ -1950,6 +1954,7 @@
             <e p="CombatLogsUI.cs" t="Include" />
             <e p="CombatSlotItem.cs" t="Include" />
             <e p="CombatUI.cs" t="Include" />
+            <e p="Comparers.cs" t="Include" />
             <e p="ConsoleMenu.cs" t="Include" />
             <e p="CustomDDListItem.cs" t="Include" />
             <e p="CustomDropdownList.cs" t="Include" />
@@ -2009,6 +2014,7 @@
             <e p="MinionAbilityChoiceItem.cs" t="Include" />
             <e p="MinionCard.cs" t="Include" />
             <e p="MinionCharacterItem.cs" t="Include" />
+            <e p="MinionCommandsUI.cs" t="Include" />
             <e p="MinionLeaderPicker.cs" t="Include" />
             <e p="MinionPicker.cs" t="Include" />
             <e p="Models" t="Include">
