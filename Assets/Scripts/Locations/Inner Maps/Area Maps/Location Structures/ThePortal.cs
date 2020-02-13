@@ -14,7 +14,7 @@ namespace Inner_Maps.Location_Structures {
         public override void ConstructDefaultActions() {
             base.ConstructDefaultActions();
             validMinions = new List<Character>();
-            PlayerAction summonMinion = new PlayerAction(PlayerManager.Summon_Minion_Action, 
+            PlayerAction summonMinion = new PlayerAction(PlayerDB.Summon_Minion_Action, 
                 () => PlayerManager.Instance.player.mana >= EditableValuesManager.Instance.summonMinionManaCost, 
                 SummonMinion);
             AddPlayerAction(summonMinion);

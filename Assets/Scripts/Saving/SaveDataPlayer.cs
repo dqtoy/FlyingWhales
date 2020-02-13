@@ -42,7 +42,7 @@ public class SaveDataPlayer {
         maxSummonSlots = player.maxSummonSlots;
         maxArtifactSlots = player.maxArtifactSlots;
         //currentDivineInterventionTick = player.currentDivineInterventionTick;
-        minionsToSummon = player.minionsToSummon;
+        // minionsToSummon = player.minionsToSummon;
         constructionRatePercentageModifier = player.constructionRatePercentageModifier;
         //isNotFirstResearch = player.isNotFirstResearch;
 

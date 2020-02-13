@@ -25,7 +25,6 @@ public class SaveDataMinion {
         } else {
             assignedRegionID = -1;
         }
-        interventionAbilitiesToResearch = minion.interventionAbilitiesToResearch;
         spellExtractionCount = minion.spellExtractionCount;
         //unlockedInterventionSlots = minion.unlockedInterventionSlots;
 

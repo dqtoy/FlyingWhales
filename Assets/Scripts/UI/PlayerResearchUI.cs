@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -49,18 +48,9 @@ public class PlayerResearchUI : MonoBehaviour {
     #endregion
 
     #region Minion
-    private void OnChooseMinion(object characterObj) {
-        //populate the second column
-        Minion chosenMinion = (characterObj as Character).minion;
-        this.chosenMinion = chosenMinion;
-        List<string> abilities = new List<string>();
-        for (int i = 0; i < chosenMinion.interventionAbilitiesToResearch.Count; i++) {
-            abilities.Add(PlayerManager.Instance.allSpellsData[chosenMinion.interventionAbilitiesToResearch[i]].name);
-        }
-        UIManager.Instance.dualObjectPicker.PopulateColumn(abilities, CanChooseAbility, OnHoverAbilityChoice, OnHoverExitAbilityChoice, UIManager.Instance.dualObjectPicker.column2ScrollView, UIManager.Instance.dualObjectPicker.column2ToggleGroup, "Choose Ability");
-    }
     private bool CanChooseMinion(Character character) {
-        return !character.minion.isAssigned && character.minion.interventionAbilitiesToResearch.Count > 0 && character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.SPELL_SOURCE);
+        // return !character.minion.isAssigned && character.minion.interventionAbilitiesToResearch.Count > 0 && character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.SPELL_SOURCE);
+        return false;
     }
     #endregion
 
@@ -70,13 +60,13 @@ public class PlayerResearchUI : MonoBehaviour {
     }
     private void OnHoverAbilityChoice(string abilityName) {
         SpellData data = null;
-        for (int i = 0; i < chosenMinion.interventionAbilitiesToResearch.Count; i++) {
-            SPELL_TYPE currAbility = chosenMinion.interventionAbilitiesToResearch[i];
-            if (PlayerManager.Instance.allSpellsData[currAbility].name == abilityName) {
-                data = PlayerManager.Instance.allSpellsData[currAbility];
-                break;
-            }
-        }
+        // for (int i = 0; i < chosenMinion.interventionAbilitiesToResearch.Count; i++) {
+        //     SPELL_TYPE currAbility = chosenMinion.interventionAbilitiesToResearch[i];
+        //     if (PlayerManager.Instance.allSpellsData[currAbility].name == abilityName) {
+        //         data = PlayerManager.Instance.allSpellsData[currAbility];
+        //         break;
+        //     }
+        // }
         if (data != null) {
             string info = data.description;
             if (info != string.Empty) {

@@ -218,7 +218,7 @@ public class TraitManager : MonoBehaviour {
         for (int i = 0; i < character.traitContainer.allTraits.Count; i++) {
             Trait trait = character.traitContainer.allTraits[i];
             if (trait.mutuallyExclusive != null) {
-                allBuffs = CollectionUtilities.RemoveElements(allBuffs, trait.mutuallyExclusive);
+                allBuffs = CollectionUtilities.RemoveElements(ref allBuffs, trait.mutuallyExclusive);
             }
         }
         return allBuffs;

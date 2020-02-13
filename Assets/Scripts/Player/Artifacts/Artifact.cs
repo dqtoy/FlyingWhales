@@ -125,7 +125,7 @@ public class ArtifactSlot {
     
     public void LevelUp() {
         level++;
-        level = Mathf.Clamp(level, 1, PlayerManager.MAX_LEVEL_ARTIFACT);
+        level = Mathf.Clamp(level, 1, PlayerDB.MAX_LEVEL_ARTIFACT);
         if (this.artifact != null) {
             this.artifact.SetLevel(level);
         }
@@ -133,7 +133,7 @@ public class ArtifactSlot {
     }
     public void SetLevel(int amount) {
         level = amount;
-        level = Mathf.Clamp(level, 1, PlayerManager.MAX_LEVEL_ARTIFACT);
+        level = Mathf.Clamp(level, 1, PlayerDB.MAX_LEVEL_ARTIFACT);
         if (this.artifact != null) {
             this.artifact.SetLevel(level);
         }

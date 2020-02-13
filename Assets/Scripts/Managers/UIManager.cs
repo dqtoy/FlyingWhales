@@ -616,10 +616,11 @@ public class UIManager : MonoBehaviour {
 
     #region Object Picker
     public void ShowClickableObjectPicker<T>(List<T> choices, Action<object> onClickAction, IComparer<T> comparer = null
-        , Func<T, bool> validityChecker = null, string title = ""
-        , Action<T> onHoverAction = null, Action<T> onHoverExitAction = null, string identifier = "", bool showCover = false, int layer = 9, bool closable = true) {
+        , Func<T, bool> validityChecker = null, string title = "", Action<T> onHoverAction = null, Action<T> onHoverExitAction = null, 
+        string identifier = "", bool showCover = false, int layer = 9, bool closable = true, Func<string,Sprite> portraitGetter = null) {
 
-        objectPicker.ShowClickable(choices, onClickAction, comparer, validityChecker, title, onHoverAction, onHoverExitAction, identifier, showCover, layer, closable);
+        objectPicker.ShowClickable(choices, onClickAction, comparer, validityChecker, title, onHoverAction,
+            onHoverExitAction, identifier, showCover, layer, closable, portraitGetter);
         //Pause();
         //SetSpeedTogglesState(false);
     }

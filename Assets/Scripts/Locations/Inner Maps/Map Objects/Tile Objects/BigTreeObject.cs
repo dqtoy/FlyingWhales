@@ -24,6 +24,9 @@ public class BigTreeObject : TreeObject {
 		if (tile.isOccupied) {
 			return false;
 		}
+		if (tile.groundType == LocationGridTile.Ground_Type.Bone) {
+			return false;
+		}
 		if (tile.structure != null && tile.structure.structureType.IsOpenSpace() == false) {
 			return false;
 		}

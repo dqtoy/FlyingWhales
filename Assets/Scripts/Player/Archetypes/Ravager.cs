@@ -5,14 +5,14 @@ using UnityEngine;
 namespace Archetype {
     public class Ravager : PlayerArchetype {
         public Ravager() : base(PLAYER_ARCHETYPE.Ravager) {
-            actions = new List<string>() { PlayerManager.Afflict_Action, PlayerManager.Seize_Object_Action, PlayerManager.Destroy_Action, PlayerManager.Ignite_Action, PlayerManager.Summon_Minion_Action };
+            actions = new List<string>() { PlayerDB.Afflict_Action, PlayerDB.Seize_Object_Action, PlayerDB.Destroy_Action, PlayerDB.Ignite_Action, PlayerDB.Summon_Minion_Action, PlayerDB.Corrupt_Action };
             monsters = new List<RaceClass> { new RaceClass(RACE.WOLF, "Ravager"), new RaceClass(RACE.GOLEM, "Golem") };
-            demonicStructures = new List<LANDMARK_TYPE>() { LANDMARK_TYPE.THE_PIT, LANDMARK_TYPE.THE_KENNEL, };
+            demonicStructures = new List<LANDMARK_TYPE>() { LANDMARK_TYPE.THE_PIT, LANDMARK_TYPE.THE_KENNEL };
             minionClasses = new List<string>() { "Pride", "Envy", "Greed", "Wrath" };
             afflictions = new List<SPELL_TYPE>() { }; //No intial afflictions
-            spells = new List<string>() { PlayerManager.Tornado, PlayerManager.Poison_Cloud, PlayerManager.Meteor, PlayerManager.Lightning
-                , PlayerManager.Feeble_Spirit, PlayerManager.Locust_Swarm, PlayerManager.Locust_Swarm, PlayerManager.Spawn_Boulder, PlayerManager.Landmine
-                , PlayerManager.Acid_Rain, PlayerManager.Rain, PlayerManager.Heat_Wave, PlayerManager.Earthquake, PlayerManager.Spawn_Monster_Lair };
+            spells = new List<string>() { PlayerDB.Tornado, PlayerDB.Poison_Cloud, PlayerDB.Meteor, PlayerDB.Lightning
+                , PlayerDB.Feeble_Spirit, PlayerDB.Locust_Swarm, PlayerDB.Locust_Swarm, PlayerDB.Spawn_Boulder, PlayerDB.Landmine
+                , PlayerDB.Acid_Rain, PlayerDB.Rain, PlayerDB.Heat_Wave, PlayerDB.Earthquake, PlayerDB.Spawn_Monster_Lair };
             SetCanTriggerFlaw(false);
             SetCanRemoveTraits(false);
         }

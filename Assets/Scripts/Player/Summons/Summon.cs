@@ -295,7 +295,7 @@ public class Summon : Character, IWorldObject {
     #region Player Action Target
     public override void ConstructDefaultActions() {
         actions = new List<PlayerAction>();
-        PlayerAction seizeAction = new PlayerAction(PlayerManager.Seize_Character_Action,
+        PlayerAction seizeAction = new PlayerAction(PlayerDB.Seize_Character_Action,
         () => !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && !this.traitContainer.HasTrait("Leader", "Blessed"),
         () => PlayerManager.Instance.player.seizeComponent.SeizePOI(this));
 
@@ -337,7 +337,7 @@ public class SummonSlot {
 
     public void LevelUp() {
         level++;
-        level = Mathf.Clamp(level, 1, PlayerManager.MAX_LEVEL_SUMMON);
+        level = Mathf.Clamp(level, 1, PlayerDB.MAX_LEVEL_SUMMON);
         if (this.summon != null) {
             this.summon.SetLevel(level);
         }
@@ -345,7 +345,7 @@ public class SummonSlot {
     }
     public void SetLevel(int amount) {
         level = amount;
-        level = Mathf.Clamp(level, 1, PlayerManager.MAX_LEVEL_SUMMON);
+        level = Mathf.Clamp(level, 1, PlayerDB.MAX_LEVEL_SUMMON);
         if (this.summon != null) {
             this.summon.SetLevel(level);
         }

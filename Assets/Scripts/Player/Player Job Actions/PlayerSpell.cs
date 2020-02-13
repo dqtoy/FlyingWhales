@@ -56,12 +56,12 @@ public class PlayerSpell {
 
     public void LevelUp() {
         level++;
-        level = Mathf.Clamp(level, 1, PlayerManager.MAX_LEVEL_INTERVENTION_ABILITY);
+        level = Mathf.Clamp(level, 1, PlayerDB.MAX_LEVEL_INTERVENTION_ABILITY);
         OnLevelUp();
     }
     public void SetLevel(int amount) {
         level = amount;
-        level = Mathf.Clamp(level, 1, PlayerManager.MAX_LEVEL_INTERVENTION_ABILITY);
+        level = Mathf.Clamp(level, 1, PlayerDB.MAX_LEVEL_INTERVENTION_ABILITY);
         OnLevelUp();
     }
 
@@ -296,7 +296,7 @@ public class PlayerJobActionSlot {
 
     public void LevelUp() {
         level++;
-        level = Mathf.Clamp(level, 1, PlayerManager.MAX_LEVEL_INTERVENTION_ABILITY);
+        level = Mathf.Clamp(level, 1, PlayerDB.MAX_LEVEL_INTERVENTION_ABILITY);
         if (this.ability != null) {
             this.ability.SetLevel(level);
         }
@@ -304,7 +304,7 @@ public class PlayerJobActionSlot {
     }
     public void SetLevel(int amount) {
         level = amount;
-        level = Mathf.Clamp(level, 1, PlayerManager.MAX_LEVEL_INTERVENTION_ABILITY);
+        level = Mathf.Clamp(level, 1, PlayerDB.MAX_LEVEL_INTERVENTION_ABILITY);
         if (this.ability != null) {
             this.ability.SetLevel(level);
         }

@@ -809,10 +809,10 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         }
     }
     private void CheckForCorruptAction() {
-        PlayerAction existingCorruptAction = GetPlayerAction(PlayerManager.Corrupt_Action);
+        PlayerAction existingCorruptAction = GetPlayerAction(PlayerDB.Corrupt_Action);
         if (CanBeCorrupted()) {
             if (existingCorruptAction == null) {
-                PlayerAction corruptAction = new PlayerAction(PlayerManager.Corrupt_Action, CanBeCorrupted, StartPerTickCorruption);
+                PlayerAction corruptAction = new PlayerAction(PlayerDB.Corrupt_Action, CanBeCorrupted, StartPerTickCorruption);
                 AddPlayerAction(corruptAction);
             }
         } else {
@@ -877,9 +877,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         //remove features
         featureComponent.RemoveAllFeaturesExcept(this, TileFeatureDB.Wood_Source_Feature);
         
-        RemovePlayerAction(GetPlayerAction(PlayerManager.Corrupt_Action));
+        RemovePlayerAction(GetPlayerAction(PlayerDB.Corrupt_Action));
         if (CanBuildDemonicStructure()) {
-            PlayerAction buildAction = new PlayerAction(PlayerManager.Build_Demonic_Structure_Action, CanBuildDemonicStructure, OnClickBuild);
+            PlayerAction buildAction = new PlayerAction(PlayerDB.Build_Demonic_Structure_Action, CanBuildDemonicStructure, OnClickBuild);
             AddPlayerAction(buildAction);
         }
     }

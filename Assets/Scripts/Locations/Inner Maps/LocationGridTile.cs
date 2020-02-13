@@ -18,7 +18,7 @@ namespace Inner_Maps {
         public enum Tile_Type { Empty, Wall, Structure_Entrance }
         public enum Tile_State { Empty, Occupied }
         public enum Ground_Type { Soil, Grass, Stone, Snow, Tundra, Cobble, Wood, Snow_Dirt, Water, Cave, Corrupted, 
-            Desert_Grass, Sand, Desert_Stone, Bone, Demon_Stone
+            Desert_Grass, Sand, Desert_Stone, Bone, Demon_Stone, Flesh
         }
         public bool hasDetail { get; set; }
         public InnerTileMap parentMap { get; private set; }
@@ -227,6 +227,8 @@ namespace Inner_Maps {
                     SetGroundType(Ground_Type.Tundra);
                     //override tile to use tundra soil
                     parentMap.groundTilemap.SetTile(localPlace, InnerMapManager.Instance.assetManager.tundraTile);
+                } else if (assetName.Contains("flesh")) {
+                    SetGroundType(Ground_Type.Flesh);
                 }
             }
         }

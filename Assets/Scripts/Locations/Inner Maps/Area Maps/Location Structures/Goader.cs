@@ -39,11 +39,11 @@ namespace Inner_Maps.Location_Structures {
             UIManager.Instance.dualObjectPicker.ShowDualObjectPicker(tabs);
         }
         private void AddInterfereAction() {
-            PlayerAction interfere = new PlayerAction(PlayerManager.Interfere_Action, () => true, ShowInterfereUI);
+            PlayerAction interfere = new PlayerAction(PlayerDB.Interfere_Action, () => true, ShowInterfereUI);
             AddPlayerAction(interfere);
         }
         private void RemoveInterfereAction() {
-            RemovePlayerAction(GetPlayerAction(PlayerManager.Interfere_Action));
+            RemovePlayerAction(GetPlayerAction(PlayerDB.Interfere_Action));
         }
         #endregion
 

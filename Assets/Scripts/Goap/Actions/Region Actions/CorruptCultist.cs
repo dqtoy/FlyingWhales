@@ -24,8 +24,8 @@ public class CorruptCultist : GoapAction {
     public override void AddFillersToLog(Log log, ActualGoapNode node) {
         base.AddFillersToLog(log, node);
         Cultist cultist = node.actor.traitContainer.GetNormalTrait<Cultist>("Cultist");
-        log.AddToFillers(null, cultist.minionData.className, LOG_IDENTIFIER.STRING_1);
-        log.AddToFillers(node.poiTarget.gridTileLocation.parentMap.location.coreTile.region, node.poiTarget.gridTileLocation.parentMap.location.coreTile.region.name, LOG_IDENTIFIER.LANDMARK_1);
+        // log.AddToFillers(null, cultist.minionData.className, LOG_IDENTIFIER.STRING_1);
+        // log.AddToFillers(node.poiTarget.gridTileLocation.parentMap.location.coreTile.region, node.poiTarget.gridTileLocation.parentMap.location.coreTile.region.name, LOG_IDENTIFIER.LANDMARK_1);
     }
     #endregion
 
@@ -45,12 +45,12 @@ public class CorruptCultist : GoapAction {
     #region State Effects
     public void PreCleanseSuccess(ActualGoapNode goapNode) {
         Cultist cultist = goapNode.actor.traitContainer.GetNormalTrait<Cultist>("Cultist");
-        goapNode.descriptionLog.AddToFillers(null, cultist.minionData.className, LOG_IDENTIFIER.STRING_1);
-        goapNode.descriptionLog.AddToFillers(goapNode.poiTarget.gridTileLocation.parentMap.location.coreTile.region, goapNode.poiTarget.gridTileLocation.parentMap.location.coreTile.region.name, LOG_IDENTIFIER.LANDMARK_1);
+        // goapNode.descriptionLog.AddToFillers(null, cultist.minionData.className, LOG_IDENTIFIER.STRING_1);
+        // goapNode.descriptionLog.AddToFillers(goapNode.poiTarget.gridTileLocation.parentMap.location.coreTile.region, goapNode.poiTarget.gridTileLocation.parentMap.location.coreTile.region.name, LOG_IDENTIFIER.LANDMARK_1);
     }
     public void AfterCleanseSuccess(ActualGoapNode goapNode) {
-        Cultist cultist = goapNode.actor.traitContainer.GetNormalTrait<Cultist>("Cultist");
-        goapNode.actor.RecruitAsMinion(cultist.minionData);
+        // Cultist cultist = goapNode.actor.traitContainer.GetNormalTrait<Cultist>("Cultist");
+        // goapNode.actor.RecruitAsMinion(cultist.minionData);
     }
     #endregion
 }
