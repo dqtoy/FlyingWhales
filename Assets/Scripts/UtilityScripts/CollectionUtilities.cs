@@ -66,7 +66,7 @@ namespace UtilityScripts {
             }
             return copy;
         }
-        public static List<T> RemoveElements<T>(List<T> sourceList, List<T> elementsToRemove) {
+        public static List<T> RemoveElements<T>(ref List<T> sourceList, List<T> elementsToRemove) {
             List<T> newList = new List<T>();
             for (int i = 0; i < sourceList.Count; i++) {
                 T currElement = sourceList[i];
@@ -77,7 +77,7 @@ namespace UtilityScripts {
             }
             return newList;
         }
-        public static List<T> RemoveElements<T>(List<T> sourceList, T[] elementsToRemove) {
+        public static List<T> RemoveElements<T>(ref List<T> sourceList, T[] elementsToRemove) {
             List<T> newList = new List<T>();
             for (int i = 0; i < sourceList.Count; i++) {
                 T currElement = sourceList[i];
@@ -109,6 +109,21 @@ namespace UtilityScripts {
         public static T GetRandomElement<T>(IEnumerable<T> list) {
             var enumerable = list.ToList();
             return enumerable.ElementAt(UtilityScripts.Utilities.rng.Next(0, enumerable.Count()));
+        }
+        public static List<T> GetRandomElements<T>(List<T> list, int count) {
+            int elementsToGet = count;
+            if (list.Count < elementsToGet) {
+                //list count is less than needed elements to get, just return the provided list
+                return list;
+            }
+            List<T> randomElements = new List<T>();
+            List<T> choices = new List<T>(list);
+            for (int i = 0; i < elementsToGet; i++) {
+                T chosen = GetRandomElement(choices);
+                choices.Remove(chosen);
+                randomElements.Add(chosen);
+            }
+            return randomElements;
         }
     }
 }

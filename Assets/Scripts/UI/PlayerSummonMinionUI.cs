@@ -13,13 +13,13 @@ public class PlayerSummonMinionUI : MonoBehaviour {
         portal = landmark as ThePortal;
         //show dual object picker, and allow only 1 object to be picked
         //column 1 should contain all minions to be summoned and column 2 should contain the players minions
-        UIManager.Instance.dualObjectPicker.ShowDualObjectPicker(PlayerManager.Instance.player.minions.Select(x => x.character).ToList(), PlayerManager.Instance.player.minionsToSummon.ToList(),
-            "Choose Minion to Help (Optional)", "Choose Minion to Summon",
-            CanChooseMinion, null,
-            OnHoverEnterMinion, OnHoverMinionToSummonChoice,
-            OnHoverExitMinion, OnHoverExitMinionToSummonChoice,
-            ConfirmSummon, "Summon", column1Optional: true
-        );
+        // UIManager.Instance.dualObjectPicker.ShowDualObjectPicker(PlayerManager.Instance.player.minions.Select(x => x.character).ToList(), PlayerManager.Instance.player.minionsToSummon.ToList(),
+        //     "Choose Minion to Help (Optional)", "Choose Minion to Summon",
+        //     CanChooseMinion, null,
+        //     OnHoverEnterMinion, OnHoverMinionToSummonChoice,
+        //     OnHoverExitMinion, OnHoverExitMinionToSummonChoice,
+        //     ConfirmSummon, "Summon", column1Optional: true
+        // );
     }
     private void OnHoverEnterMinion(Character character) {
         if (!CanChooseMinion(character)) {

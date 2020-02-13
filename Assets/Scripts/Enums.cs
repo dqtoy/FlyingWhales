@@ -229,7 +229,8 @@ public enum LANDMARK_TYPE {
     LUMBERYARD = 57,
     QUARRY = 58,
     HOUSES,
-    TORTURE_CHAMBER
+    TORTURE_CHAMBER,
+    DEMONIC_PRISON,
 }
 public enum TECHNOLOGY {
     //Weapon Production
@@ -1157,6 +1158,7 @@ public enum STRUCTURE_TYPE {
     THE_EYE,
     THE_NEEDLES,
     TORTURE_CHAMBER,
+    DEMONIC_PRISON
 }
 public enum RELATIONSHIP_TYPE {
     NONE = 0,

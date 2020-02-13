@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
+<<<<<<< HEAD
     <e p="C:\Users\Ian Chy\.Rider2019.3\system\extResources" t="IncludeRecursive" />
     <e p="C:\Users\Ian Chy\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_FlyingWhales.1495046791.00" t="ExcludeRecursive" />
     <e p="C:\Users\Ian Chy\Documents\FlyingWhales" t="IncludeRecursive">
+=======
+    <e p="C:\Users\Mykel Abania\.Rider2019.3\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\Mykel Abania\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_FlyingWhales.1985073317.00" t="ExcludeRecursive" />
+    <e p="C:\Users\Mykel Abania\Repositories\FlyingWhales" t="IncludeRecursive">
+>>>>>>> c1ac5655f87c9159468829b0deb932c06c8c0641
       <e p="Assembly-CSharp-Editor.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp-firstpass.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
@@ -1417,7 +1423,9 @@
                 <e p="BurningSource.cs" t="Include" />
                 <e p="Location Structures" t="Include">
                   <e p="CityCenter.cs" t="Include" />
+                  <e p="DemonicPrison.cs" t="Include" />
                   <e p="Dwelling.cs" t="Include" />
+                  <e p="Goader.cs" t="Include" />
                   <e p="LocationStructure.cs" t="Include" />
                   <e p="Structure Objects" t="Include">
                     <e p="LocationStructureObject.cs" t="Include" />
@@ -1573,7 +1581,6 @@
                 <e p="HallowedGroundFeature.cs" t="Include" />
                 <e p="InhabitedFeature.cs" t="Include" />
                 <e p="MetalSourceFeature.cs" t="Include" />
-                <e p="SpellFeature.cs" t="Include" />
                 <e p="StoneSourceFeature.cs" t="Include" />
                 <e p="SummonsFeature.cs" t="Include" />
                 <e p="TileFeature.cs" t="Include" />
@@ -1718,6 +1725,7 @@
               <e p="ZombieVirus.cs" t="Include" />
             </e>
             <e p="Player.cs" t="Include" />
+            <e p="PlayerDB.cs" t="Include" />
             <e p="PlayerJobData.cs" t="Include" />
             <e p="SeizeComponent.cs" t="Include" />
             <e p="Summons" t="Include">
@@ -1951,6 +1959,7 @@
             <e p="CombatLogsUI.cs" t="Include" />
             <e p="CombatSlotItem.cs" t="Include" />
             <e p="CombatUI.cs" t="Include" />
+            <e p="Comparers.cs" t="Include" />
             <e p="ConsoleMenu.cs" t="Include" />
             <e p="CustomDDListItem.cs" t="Include" />
             <e p="CustomDropdownList.cs" t="Include" />
@@ -2018,6 +2027,7 @@
             </e>
             <e p="Nameplates" t="Include">
               <e p="CharacterNameplateItem.cs" t="Include" />
+              <e p="EnumNameplateItem.cs" t="Include" />
               <e p="FactionNameplateItem.cs" t="Include" />
               <e p="NameplateItem.cs" t="Include" />
               <e p="StringNameplateItem.cs" t="Include" />

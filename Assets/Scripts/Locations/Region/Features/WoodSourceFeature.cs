@@ -129,7 +129,8 @@ public class WoodSourceFeature : TileFeature {
     }
     private bool CreateNewSmallTree() {
         List<LocationGridTile> choices = owner.locationGridTiles.Where(x => x.isOccupied == false 
-                                                                            && x.structure.structureType.IsOpenSpace()).ToList();
+                                                                            && x.structure.structureType.IsOpenSpace()
+                                                                            && x.groundType != LocationGridTile.Ground_Type.Bone).ToList();
         if (choices.Count > 0) {
             LocationGridTile chosenTile = CollectionUtilities.GetRandomElement(choices);
             chosenTile.structure.AddPOI(InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.TREE_OBJECT),

@@ -19,7 +19,6 @@ public class Minion {
     public Region assignedRegion { get; private set; } //the landmark that this minion is currently invading. NOTE: This is set on both settlement and non settlement landmarks
     public DeadlySin deadlySin => CharacterManager.Instance.GetDeadlySin(_assignedDeadlySinName);
     public bool isAssigned => assignedRegion != null; //true if minion is already assigned somewhere else, maybe in construction or research spells
-    public List<SPELL_TYPE> interventionAbilitiesToResearch { get; private set; } //This is a list not array because the abilities here are consumable
     public int spellExtractionCount { get; private set; } //the number of times a spell was extracted from this minion.
 
     private string _assignedDeadlySinName;
@@ -46,7 +45,6 @@ public class Minion {
         this.character = CharacterManager.Instance.GetCharacterByID(data.characterID);
         this.exp = data.exp;
         traitsToAdd = data.traitsToAdd;
-        interventionAbilitiesToResearch = data.interventionAbilitiesToResearch;
         SetIndexDefaultSort(data.indexDefaultSort);
         character.SetMinion(this);
         character.ownParty.icon.SetVisualState(true);
@@ -56,9 +54,6 @@ public class Minion {
     }
     public void SetAssignedDeadlySinName(string name) {
         _assignedDeadlySinName = name;
-    }
-    public void SetRandomResearchInterventionAbilities(List<SPELL_TYPE> abilities) {
-        interventionAbilitiesToResearch = abilities;
     }
     public void SetPlayerCharacterItem(PlayerCharacterItem item) {
         //character.SetPlayerCharacterItem(item);

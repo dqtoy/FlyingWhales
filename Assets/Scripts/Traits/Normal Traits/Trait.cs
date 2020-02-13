@@ -219,12 +219,12 @@ namespace Traits {
         //}
         public void LevelUp() {
             level++;
-            level = Mathf.Clamp(level, 1, PlayerManager.MAX_LEVEL_INTERVENTION_ABILITY);
+            level = Mathf.Clamp(level, 1, PlayerDB.MAX_LEVEL_INTERVENTION_ABILITY);
             OnChangeLevel();
         }
         public void SetLevel(int amount) {
             level = amount;
-            level = Mathf.Clamp(level, 1, PlayerManager.MAX_LEVEL_INTERVENTION_ABILITY);
+            level = Mathf.Clamp(level, 1, PlayerDB.MAX_LEVEL_INTERVENTION_ABILITY);
             OnChangeLevel();
         }
         public void SetDateEstablished(GameDate date) {

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps;
@@ -7,61 +8,15 @@ using UnityEngine;
 using UnityEngine.Serialization;
 
 public class PlayerManager : MonoBehaviour {
-    public static PlayerManager Instance = null;
-
-    public const int MAX_LEVEL_SUMMON = 3;
-    public const int MAX_LEVEL_ARTIFACT = 3;
-    public const int MAX_LEVEL_COMBAT_ABILITY = 3;
-    public const int MAX_LEVEL_INTERVENTION_ABILITY = 3;
-    public const int DIVINE_INTERVENTION_DURATION = 2880; //4320;
-
-    public const string Zap_Action = "Zap";
-    public const string Summon_Minion_Action = "Summon Minion";
-    public const string Poison_Action = "Poison";
-    public const string Ignite_Action = "Ignite";
-    public const string Destroy_Action = "Destroy";
-    public const string Corrupt_Action = "Corrupt";
-    public const string Build_Demonic_Structure_Action = "Build Demonic Structure";
-    public const string Animate_Action = "Animate";
-    public const string Afflict_Action = "Afflict";
-    public const string Seize_Character_Action = "Seize Character";
-    public const string Seize_Object_Action = "Seize Object";
-    public const string Bless_Action = "Bless";
-    public const string Booby_Trap_Action = "Booby Trap";
-    public const string Torture_Action = "Torture";
-    public const string Stop_Action = "Stop";
-    public const string Return_To_Portal_Action = "Return To Portal";
-
-    public const string Tornado = "Tornado";
-    public const string Meteor = "Meteor";
-    public const string Poison_Cloud = "Poison Cloud";
-    public const string Lightning = "Lightning";
-    public const string Ravenous_Spirit = "Ravenous Spirit";
-    public const string Feeble_Spirit = "Feeble Spirit";
-    public const string Forlorn_Spirit = "Forlorn Spirit";
-    public const string Locust_Swarm = "Locust Swarm";
-    public const string Spawn_Boulder = "Spawn Boulder";
-    public const string Landmine = "Landmine";
-    public const string Manifest_Food = "Manifest Food";
-    public const string Brimstones = "Brimstones";
-    public const string Acid_Rain = "Acid Rain";
-    public const string Rain = "Rain";
-    public const string Heat_Wave = "Heat Wave";
-    public const string Wild_Growth = "Wild Growth";
-    public const string Spider_Rain = "Spider Rain";
-    public const string Blizzard = "Blizzard";
-    public const string Earthquake = "Earthquake";
-    public const string Fertility = "Fertility";
-    public const string Spawn_Bandit_Camp = "Spawn Bandit Camp";
-    public const string Spawn_Monster_Lair = "Spawn Monster Lair";
-    public const string Spawn_Haunted_Grounds = "Spawn Haunted Grounds";
-
-public Player player = null;
+    public static PlayerManager Instance;
+    public Player player;
+    
     [FormerlySerializedAs("allInterventionAbilities")] public SPELL_TYPE[] allSpellTypes;
-    [FormerlySerializedAs("allInterventionAbilitiesData")] public Dictionary<SPELL_TYPE, SpellData> allSpellsData;
+    // [FormerlySerializedAs("allInterventionAbilitiesData")] public Dictionary<SPELL_TYPE, SpellData> allSpellsData;
+    public Dictionary<SPELL_TYPE, SpellData> allSpellsData;
     public COMBAT_ABILITY[] allCombatAbilities;
     //public LANDMARK_TYPE[] allLandmarksThatCanBeBuilt;
-    
+
     [Header("Job Action Icons")]
     [FormerlySerializedAs("jobActionIcons")] [SerializeField] private StringSpriteDictionary spellIcons;
 
@@ -81,24 +36,19 @@ public Player player = null;
         Instance = this;
     }
     public void Initialize() {
-        // , INTERVENTION_ABILITY.CLOAK_OF_INVISIBILITY
-        allSpellTypes = new[] { SPELL_TYPE.ZAP, SPELL_TYPE.RAISE_DEAD, SPELL_TYPE.CANNIBALISM
+        SPELL_TYPE[] allSpellTypes = { SPELL_TYPE.ZAP, SPELL_TYPE.RAISE_DEAD, SPELL_TYPE.CANNIBALISM
             , SPELL_TYPE.LYCANTHROPY, SPELL_TYPE.VAMPIRISM, SPELL_TYPE.KLEPTOMANIA
             , SPELL_TYPE.UNFAITHFULNESS, SPELL_TYPE.ENRAGE, SPELL_TYPE.PROVOKE, SPELL_TYPE.EXPLOSION
             , SPELL_TYPE.IGNITE, SPELL_TYPE.LURE, SPELL_TYPE.CURSED_OBJECT, SPELL_TYPE.SPOIL, SPELL_TYPE.ALCOHOLIC
             , SPELL_TYPE.LULLABY, SPELL_TYPE.AGORAPHOBIA, SPELL_TYPE.PARALYSIS, SPELL_TYPE.RELEASE, SPELL_TYPE.ZOMBIE_VIRUS
-            , SPELL_TYPE.PESTILENCE, SPELL_TYPE.PSYCHOPATHY, SPELL_TYPE.TORNADO , SPELL_TYPE.DESTROY }; //INTERVENTION_ABILITY.JOLT, , INTERVENTION_ABILITY.CLOAK_OF_INVISIBILITY//
-        allCombatAbilities = (COMBAT_ABILITY[]) System.Enum.GetValues(typeof(COMBAT_ABILITY));
+            , SPELL_TYPE.PESTILENCE, SPELL_TYPE.PSYCHOPATHY, SPELL_TYPE.TORNADO , SPELL_TYPE.DESTROY };
 
         allSpellsData = new Dictionary<SPELL_TYPE, SpellData>();
         for (int i = 0; i < allSpellTypes.Length; i++) {
             var typeName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(allSpellTypes[i].ToString()) + "Data";
-            allSpellsData.Add(allSpellTypes[i], System.Activator.CreateInstance(System.Type.GetType(typeName)) as SpellData);
+            allSpellsData.Add(allSpellTypes[i], System.Activator.CreateInstance(System.Type.GetType(typeName) ?? 
+                        throw new Exception($"Problem with creating spell data for {typeName}")) as SpellData);
         }
-
-        //allLandmarksThatCanBeBuilt = new[] { LANDMARK_TYPE.THE_ANVIL, LANDMARK_TYPE.THE_EYE ,
-        //    LANDMARK_TYPE.THE_KENNEL, LANDMARK_TYPE.THE_CRYPT, LANDMARK_TYPE.THE_SPIRE, LANDMARK_TYPE.THE_NEEDLES, 
-        //    LANDMARK_TYPE.THE_PROFANE, LANDMARK_TYPE.THE_PIT, LANDMARK_TYPE.GOADER, LANDMARK_TYPE.TORTURE_CHAMBER };
 
         //Unit Selection
         Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
@@ -241,18 +191,6 @@ public Player player = null;
         }
         return null;
     }
-    public List<SPELL_TYPE> GetInterventionAbilitiesWithTag(ABILITY_TAG tag) {
-        List<SPELL_TYPE> valid = new List<SPELL_TYPE>();
-        SPELL_TYPE[] abilities = allSpellTypes;
-        for (int i = 0; i < abilities.Length; i++) {
-            SPELL_TYPE currAbility = abilities[i];
-            List<ABILITY_TAG> tags = currAbility.GetAbilityTags();
-            if (tags.Contains(tag)) {
-                valid.Add(currAbility);
-            }
-        }
-        return valid;
-    }
     public SpellData GetSpellData(SPELL_TYPE type) {
         if (allSpellsData.ContainsKey(type)) {
             return allSpellsData[type];
@@ -264,39 +202,6 @@ public Player player = null;
             return spellTiers[abilityType];
         }
         return 3;
-    }
-    public SPELL_TYPE GetRandomAbilityByTier(int tier) {
-        List<SPELL_TYPE> abilityTiers = new List<SPELL_TYPE>();
-        for (int i = 0; i < allSpellTypes.Length; i++) {
-            SPELL_TYPE ability = allSpellTypes[i];
-            if (GetSpellTier(ability) == tier) {
-                abilityTiers.Add(ability);
-            }
-        }
-        if (abilityTiers.Count > 0) {
-            return abilityTiers[UnityEngine.Random.Range(0, abilityTiers.Count)];
-        }
-        return SPELL_TYPE.ABDUCT;
-    }
-    public List<SPELL_TYPE> GetAbilitiesByTier(int tier) {
-        List<SPELL_TYPE> abilityTiers = new List<SPELL_TYPE>();
-        for (int i = 0; i < allSpellTypes.Length; i++) {
-            SPELL_TYPE ability = allSpellTypes[i];
-            if (GetSpellTier(ability) == tier) {
-                abilityTiers.Add(ability);
-            }
-        }
-        return abilityTiers;
-    }
-    public List<SPELL_TYPE> GetAllInterventionAbilityByCategory(SPELL_CATEGORY category) {
-        List<SPELL_TYPE> abilities = new List<SPELL_TYPE>();
-        for (int i = 0; i < allSpellTypes.Length; i++) {
-            SPELL_TYPE ability = allSpellTypes[i];
-            if (allSpellsData[ability].category == category) {
-                abilities.Add(ability);
-            }
-        }
-        return abilities;
     }
     #endregion
 

@@ -30,10 +30,11 @@ public class LandmarkStructureGeneration : MapGenerationComponent {
 	private IEnumerator CreateStructureObjectForLandmark(BaseLandmark landmark, MapGenerationData data) {
 		LocationStructure structure = LandmarkManager.Instance.CreateNewStructureAt(landmark.tileLocation.region,
 			LandmarkManager.Instance.GetStructureTypeFor(landmark.specificLandmarkType));
-		 yield return MapGenerator.Instance.StartCoroutine(PlaceInitialStructure(structure, landmark.tileLocation.region.innerMap, landmark.tileLocation));
-		 if (structure.structureType == STRUCTURE_TYPE.THE_PORTAL) {
-			 data.portalStructure = structure;
-		 }
+		if (structure.structureType == STRUCTURE_TYPE.THE_PORTAL) {
+			data.portalStructure = structure;
+			landmark.tileLocation.InstantlyCorruptAllOwnedInnerMapTiles();
+		}
+		yield return MapGenerator.Instance.StartCoroutine(PlaceInitialStructure(structure, landmark.tileLocation.region.innerMap, landmark.tileLocation));
 	}
 
 	private IEnumerator PlaceInitialStructure(LocationStructure structure, InnerTileMap innerTileMap, HexTile tile) {
@@ -70,27 +71,28 @@ public class LandmarkStructureGeneration : MapGenerationComponent {
 		
 		yield return null;
 	}
-	private void MonsterLairCellAutomata(List<LocationGridTile> locationGridTiles, LocationStructure elevationStructure, Region region) {
+	private void MonsterLairCellAutomata(List<LocationGridTile> locationGridTiles, LocationStructure structure, Region region) {
 		// List<LocationGridTile> refinedTiles =
 		// 	locationGridTiles.Where(t => t.HasNeighbourNotInList(locationGridTiles) == false && t.IsAtEdgeOfMap() == false).ToList();
 		
 		LocationGridTile[,] tileMap = CellularAutomataGenerator.ConvertListToGridMap(locationGridTiles);
-		int[,] cellMap = CellularAutomataGenerator.GenerateMap(tileMap, locationGridTiles, 2, 35);
+		int[,] cellMap = CellularAutomataGenerator.GenerateMap(tileMap, locationGridTiles, 2, 30);
 		
-		Assert.IsNotNull(cellMap, $"There was no cellmap generated for elevation structure {elevationStructure.ToString()}");
+		Assert.IsNotNull(cellMap, $"There was no cellmap generated for elevation structure {structure.ToString()}");
 		
 		CellularAutomataGenerator.DrawMap(tileMap, cellMap, InnerMapManager.Instance.assetManager.monsterLairWallTile, 
 			null, 
-			(locationGridTile) => SetAsWall(locationGridTile, elevationStructure, locationGridTiles),
-			(locationGridTile) => SetAsGround(locationGridTile, elevationStructure));
+			(locationGridTile) => SetAsWall(locationGridTile, structure, locationGridTiles),
+			(locationGridTile) => SetAsGround(locationGridTile, structure));
 		
 		
 		//refine further
 		for (int i = 0; i < locationGridTiles.Count; i++) {
 			LocationGridTile tile = locationGridTiles[i];
-			if (tile.HasNeighbourOfType(LocationGridTile.Ground_Type.Bone) == false) {
+			if (tile.HasNeighbourOfType(LocationGridTile.Ground_Type.Flesh) == false) {
 				tile.SetStructureTilemapVisual(null);
 				tile.SetTileType(LocationGridTile.Tile_Type.Empty);
+				tile.SetTileState(LocationGridTile.Tile_State.Empty);
 				tile.RevertToPreviousGroundVisual();
 			}
 		}
@@ -119,7 +121,7 @@ public class LandmarkStructureGeneration : MapGenerationComponent {
 		// }
 		tile.SetTileType(LocationGridTile.Tile_Type.Wall);
 		tile.SetTileState(LocationGridTile.Tile_State.Occupied);
-		tile.SetStructure(structure);
+		// tile.SetStructure(structure);
 	}
 	private void SetAsGround(LocationGridTile tile, LocationStructure structure) {
 		tile.SetStructure(structure);

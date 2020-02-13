@@ -3,8 +3,9 @@
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
@@ -110,6 +111,10 @@ MonoBehaviour:
     m_OverrideSprite: {fileID: 21300000, guid: 1a09cc99941292d42813666ec6ae7dc4, type: 3}
   - m_OriginalSprite: {fileID: 21300000, guid: 8e74b201aeb3e924698de75e1013d828, type: 3}
     m_OverrideSprite: {fileID: 21300000, guid: 0cfda82bbf9a2d341b7420d3440f5dab, type: 3}
+  - m_OriginalSprite: {fileID: 21300000, guid: 3d389f26d927fa64588710c31bc2122a, type: 3}
+    m_OverrideSprite: {fileID: 21300000, guid: 6778423ea012f2a40b096ef95bc614c8, type: 3}
+  - m_OriginalSprite: {fileID: 21300000, guid: d92df7ca83975d94ca8bb44e9c6deb3e, type: 3}
+    m_OverrideSprite: {fileID: 21300000, guid: 8a4e00523b03a054390c914a2d634f84, type: 3}
   m_OverrideTilingRules: []
   m_OverrideDefault:
     m_Enabled: 0

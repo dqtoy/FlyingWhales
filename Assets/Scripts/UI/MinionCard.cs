@@ -133,16 +133,16 @@ public class MinionCard : MonoBehaviour {
     }
 
     public void OnHoverResearchSpell(object obj) {
-        if (obj is string) {
-            int index = System.Int32.Parse((string)obj);
-            SPELL_TYPE spell;
-            if (minion != null) {
-                spell = minion.interventionAbilitiesToResearch[index];
-            } else {
-                spell = minionData.interventionAbilitiesToResearch[index];
-            }
-            UIManager.Instance.ShowSmallInfo(PlayerManager.Instance.allSpellsData[spell].description, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(spell.ToString()));
-        }
+        // if (obj is string) {
+        //     int index = System.Int32.Parse((string)obj);
+        //     SPELL_TYPE spell;
+        //     if (minion != null) {
+        //         spell = minion.interventionAbilitiesToResearch[index];
+        //     } else {
+        //         spell = minionData.interventionAbilitiesToResearch[index];
+        //     }
+        //     UIManager.Instance.ShowSmallInfo(PlayerManager.Instance.allSpellsData[spell].description, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(spell.ToString()));
+        // }
     }
     public void OnHoverExitSpell() {
         UIManager.Instance.HideSmallInfo();

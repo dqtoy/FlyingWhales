@@ -428,172 +428,172 @@ public class PlayerUI : MonoBehaviour {
     #endregion
 
     #region Start Picker
-    private SPELL_TYPE[] startingAbilities;
-    public void ShowStartingMinionPicker() {
-
-        UnsummonedMinionData minion1Data = new UnsummonedMinionData();
-        UnsummonedMinionData minion2Data = new UnsummonedMinionData();
-
-        //string minionName1 = string.Empty;
-        //string minionClassName1 = string.Empty;
-        //COMBAT_ABILITY minionCombatAbilityType1 = COMBAT_ABILITY.FEAR_SPELL;
-
-        //string minionName2 = string.Empty;
-        //string minionClassName2 = string.Empty;
-        //COMBAT_ABILITY minionCombatAbilityType2 = COMBAT_ABILITY.FEAR_SPELL;
-
-        RandomizeTwoStartingMinions(ref minion1Data, ref minion2Data);
-
-        startingMinionCard1.SetMinion(minion1Data);
-        startingMinionCard2.SetMinion(minion2Data);
-        //startingMinionCard3.SetMinion(PlayerManager.Instance.player.CreateNewMinionRandomClass(RACE.DEMON));
-        startingAbilities = new SPELL_TYPE[PlayerManager.Instance.player.MAX_INTERVENTION_ABILITIES];
-        RandomizeStartingAbilities();
-        startingMinionPickerGO.SetActive(true);
-    }
-    public void HideStartingMinionPicker() {
-        startingMinionPickerGO.SetActive(false);
-    }
-    public void Reroll() {
-        UnsummonedMinionData minion1Data = new UnsummonedMinionData();
-        UnsummonedMinionData minion2Data = new UnsummonedMinionData();
-
-        RandomizeTwoStartingMinions(ref minion1Data, ref minion2Data);
-
-        startingMinionCard1.SetMinion(minion1Data);
-        startingMinionCard2.SetMinion(minion2Data);
-    }
+    // private SPELL_TYPE[] startingAbilities;
+    // public void ShowStartingMinionPicker() {
+    //
+    //     UnsummonedMinionData minion1Data = new UnsummonedMinionData();
+    //     UnsummonedMinionData minion2Data = new UnsummonedMinionData();
+    //
+    //     //string minionName1 = string.Empty;
+    //     //string minionClassName1 = string.Empty;
+    //     //COMBAT_ABILITY minionCombatAbilityType1 = COMBAT_ABILITY.FEAR_SPELL;
+    //
+    //     //string minionName2 = string.Empty;
+    //     //string minionClassName2 = string.Empty;
+    //     //COMBAT_ABILITY minionCombatAbilityType2 = COMBAT_ABILITY.FEAR_SPELL;
+    //
+    //     RandomizeTwoStartingMinions(ref minion1Data, ref minion2Data);
+    //
+    //     startingMinionCard1.SetMinion(minion1Data);
+    //     startingMinionCard2.SetMinion(minion2Data);
+    //     //startingMinionCard3.SetMinion(PlayerManager.Instance.player.CreateNewMinionRandomClass(RACE.DEMON));
+    //     startingAbilities = new SPELL_TYPE[PlayerManager.Instance.player.MAX_INTERVENTION_ABILITIES];
+    //     RandomizeStartingAbilities();
+    //     startingMinionPickerGO.SetActive(true);
+    // }
+    // public void HideStartingMinionPicker() {
+    //     startingMinionPickerGO.SetActive(false);
+    // }
+    // public void Reroll() {
+    //     UnsummonedMinionData minion1Data = new UnsummonedMinionData();
+    //     UnsummonedMinionData minion2Data = new UnsummonedMinionData();
+    //
+    //     RandomizeTwoStartingMinions(ref minion1Data, ref minion2Data);
+    //
+    //     startingMinionCard1.SetMinion(minion1Data);
+    //     startingMinionCard2.SetMinion(minion2Data);
+    // }
     //public void Reroll2() {
     //    startingMinionCard2.SetMinion(PlayerManager.Instance.player.CreateNewMinionRandomClass(RACE.DEMON));
     //}
     //public void Reroll3() {
     //    startingMinionCard3.SetMinion(PlayerManager.Instance.player.CreateNewMinionRandomClass(RACE.DEMON));
     //}
-    public void OnClickStartGame() {
-        HideStartingMinionPicker();
-
-        Minion minion1 = PlayerManager.Instance.player.CreateNewMinion(startingMinionCard1.minionData.className, RACE.DEMON, false);
-        Minion minion2 = PlayerManager.Instance.player.CreateNewMinion(startingMinionCard2.minionData.className, RACE.DEMON, false);
-
-        minion1.character.SetName(startingMinionCard1.minionData.minionName);
-        minion2.character.SetName(startingMinionCard2.minionData.minionName);
-
-        minion1.SetCombatAbility(startingMinionCard1.minionData.combatAbility);
-        minion2.SetCombatAbility(startingMinionCard2.minionData.combatAbility);
-
-        minion1.SetRandomResearchInterventionAbilities(startingMinionCard1.minionData.interventionAbilitiesToResearch);
-        minion2.SetRandomResearchInterventionAbilities(startingMinionCard2.minionData.interventionAbilitiesToResearch);
-
-        PlayerManager.Instance.player.AddMinion(minion1);
-        PlayerManager.Instance.player.AddMinion(minion2);
-        //PlayerManager.Instance.player.AddMinion(startingMinionCard3.minion);
-        PlayerManager.Instance.player.SetMinionLeader(minion1);
-        for (int i = 0; i < startingAbilities.Length; i++) {
-            PlayerManager.Instance.player.GainNewInterventionAbility(startingAbilities[i]);
-        }
-        startingAbilities = null;
-        UIManager.Instance.SetSpeedTogglesState(true);
-        //TODO:
-        // for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
-        //     Faction faction = FactionManager.Instance.allFactions[i];
-        //     if (faction.isMajorNonPlayer) {
-        //         faction.CreateAndSetActiveQuest("Divine Intervention", faction.ownedSettlements[0]);
-        //         break;
-        //     }
-        // }
-        
-        
-        // LANDMARK_TYPE[] landmarkTypes = Utilities.GetEnumValues<LANDMARK_TYPE>();
-        // for (int i = 0; i < landmarkTypes.Length; i++) {
-        //     LANDMARK_TYPE type = landmarkTypes[i];
-        //     if (type.IsPlayerLandmark() && type != LANDMARK_TYPE.THE_PORTAL && type != LANDMARK_TYPE.THE_SPIRE) {
-        //         Region region =
-        //             Utilities.GetRandomElement(GridMap.Instance.allRegions.Where(x => x.coreTile.isCorrupted == false && x.owner == null).ToList());
-        //         LandmarkManager.Instance.OwnRegion(PlayerManager.Instance.player.playerFaction, RACE.DEMON, region);
-        //         BaseLandmark landmark = LandmarkManager.Instance.CreateNewLandmarkOnTile(region.coreTile, type, false);
-        //         landmark.OnFinishedBuilding();
-        //     }
-        // }
-        //PlayerManager.Instance.player.StartDivineIntervention();
-        //PlayerManager.Instance.player.StartResearchNewInterventionAbility();
-    }
-    public void TemporarySetMinionLeader(MinionLeaderPicker leaderPicker) {
-        tempCurrentMinionLeaderPicker.imgHighlight.gameObject.SetActive(false);
-        leaderPicker.imgHighlight.gameObject.SetActive(true);
-        tempCurrentMinionLeaderPicker = leaderPicker;
-    }
-    private List<SPELL_TYPE> chosenAbilities;
-    private void RandomizeStartingAbilities() {
-        List<SPELL_TYPE> abilitiesPool = PlayerManager.Instance.allSpellTypes.ToList();
-        chosenAbilities = new List<SPELL_TYPE>();
-
-        while (chosenAbilities.Count != startingAbilityIcons.Length) {
-            SPELL_TYPE randomAbility = abilitiesPool[UnityEngine.Random.Range(0, abilitiesPool.Count)];
-            chosenAbilities.Add(randomAbility);
-            abilitiesPool.Remove(randomAbility);
-        }
-
-        for (int i = 0; i < startingAbilityIcons.Length; i++) {
-            SPELL_TYPE randomAbility = chosenAbilities[i];
-            string abilityName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(randomAbility.ToString());
-            startingAbilityIcons[i].sprite = PlayerManager.Instance.GetJobActionSprite(abilityName);
-            startingAbilityLbls[i].text = abilityName;
-            startingAbilities[i] = randomAbility;
-        }
-    }
-    public void OnHoverStartingSpell(int index) {
-        SPELL_TYPE spell = chosenAbilities[index];
-        UIManager.Instance.ShowSmallInfo(PlayerManager.Instance.allSpellsData[spell].description, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(spell.ToString()));
-    }
-    public void RerollAbilities() {
-        RandomizeStartingAbilities();
-    }
-    public void RandomizeTwoStartingMinions(ref UnsummonedMinionData minion1Data, ref UnsummonedMinionData minion2Data) {
-
-        string minionName1 = RandomNameGenerator.GenerateMinionName();
-        string minionName2 = RandomNameGenerator.GenerateMinionName();
-
-        COMBAT_ABILITY minionCombatAbilityType1 = PlayerManager.Instance.allCombatAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allCombatAbilities.Length)];
-        COMBAT_ABILITY minionCombatAbilityType2 = PlayerManager.Instance.allCombatAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allCombatAbilities.Length)];
-
-        List<string> filteredDeadlySinClasses = new List<string>();
-        foreach (KeyValuePair<string, DeadlySin> kvp in CharacterManager.Instance.deadlySins) {
-            if (kvp.Value.CanDoDeadlySinAction(DEADLY_SIN_ACTION.BUILDER) || kvp.Value.CanDoDeadlySinAction(DEADLY_SIN_ACTION.INVADER)) {
-                filteredDeadlySinClasses.Add(kvp.Key);
-            }
-        }
-
-        int class1Index = UnityEngine.Random.Range(0, filteredDeadlySinClasses.Count);
-        string minionClassName1 = filteredDeadlySinClasses[class1Index];
-        filteredDeadlySinClasses.RemoveAt(class1Index);
-
-        string minionClassName2 = string.Empty;
-        if (CharacterManager.Instance.CanDoDeadlySinAction(minionClassName1, DEADLY_SIN_ACTION.INVADER)
-            && CharacterManager.Instance.CanDoDeadlySinAction(minionClassName1, DEADLY_SIN_ACTION.BUILDER)) {
-            minionClassName2 = CharacterManager.sevenDeadlySinsClassNames[UnityEngine.Random.Range(0, CharacterManager.sevenDeadlySinsClassNames.Length)];
-        } else {
-            if (CharacterManager.Instance.CanDoDeadlySinAction(minionClassName1, DEADLY_SIN_ACTION.INVADER)) {
-                filteredDeadlySinClasses = filteredDeadlySinClasses.Where(x => CharacterManager.Instance.CanDoDeadlySinAction(x, DEADLY_SIN_ACTION.BUILDER)).ToList();
-            } else if (CharacterManager.Instance.CanDoDeadlySinAction(minionClassName1, DEADLY_SIN_ACTION.BUILDER)) {
-                filteredDeadlySinClasses = filteredDeadlySinClasses.Where(x => CharacterManager.Instance.CanDoDeadlySinAction(x, DEADLY_SIN_ACTION.INVADER)).ToList();
-            }
-            minionClassName2 = filteredDeadlySinClasses[UnityEngine.Random.Range(0, filteredDeadlySinClasses.Count)];
-        }
-
-        minion1Data = new UnsummonedMinionData() {
-            minionName = minionName1,
-            className = minionClassName1,
-            combatAbility = minionCombatAbilityType1,
-            interventionAbilitiesToResearch = CharacterManager.Instance.Get3RandomResearchInterventionAbilities(CharacterManager.Instance.GetDeadlySin(minionClassName1)),
-        };
-
-        minion2Data = new UnsummonedMinionData() {
-            minionName = minionName2,
-            className = minionClassName2,
-            combatAbility = minionCombatAbilityType2,
-            interventionAbilitiesToResearch = CharacterManager.Instance.Get3RandomResearchInterventionAbilities(CharacterManager.Instance.GetDeadlySin(minionClassName2)),
-        };
-    }
+    // public void OnClickStartGame() {
+    //     HideStartingMinionPicker();
+    //
+    //     Minion minion1 = PlayerManager.Instance.player.CreateNewMinion(startingMinionCard1.minionData.className, RACE.DEMON, false);
+    //     Minion minion2 = PlayerManager.Instance.player.CreateNewMinion(startingMinionCard2.minionData.className, RACE.DEMON, false);
+    //
+    //     minion1.character.SetName(startingMinionCard1.minionData.minionName);
+    //     minion2.character.SetName(startingMinionCard2.minionData.minionName);
+    //
+    //     minion1.SetCombatAbility(startingMinionCard1.minionData.combatAbility);
+    //     minion2.SetCombatAbility(startingMinionCard2.minionData.combatAbility);
+    //
+    //     minion1.SetRandomResearchInterventionAbilities(startingMinionCard1.minionData.interventionAbilitiesToResearch);
+    //     minion2.SetRandomResearchInterventionAbilities(startingMinionCard2.minionData.interventionAbilitiesToResearch);
+    //
+    //     PlayerManager.Instance.player.AddMinion(minion1);
+    //     PlayerManager.Instance.player.AddMinion(minion2);
+    //     //PlayerManager.Instance.player.AddMinion(startingMinionCard3.minion);
+    //     PlayerManager.Instance.player.SetMinionLeader(minion1);
+    //     for (int i = 0; i < startingAbilities.Length; i++) {
+    //         PlayerManager.Instance.player.GainNewInterventionAbility(startingAbilities[i]);
+    //     }
+    //     startingAbilities = null;
+    //     UIManager.Instance.SetSpeedTogglesState(true);
+    //     //TODO:
+    //     // for (int i = 0; i < FactionManager.Instance.allFactions.Count; i++) {
+    //     //     Faction faction = FactionManager.Instance.allFactions[i];
+    //     //     if (faction.isMajorNonPlayer) {
+    //     //         faction.CreateAndSetActiveQuest("Divine Intervention", faction.ownedSettlements[0]);
+    //     //         break;
+    //     //     }
+    //     // }
+    //     
+    //     
+    //     // LANDMARK_TYPE[] landmarkTypes = Utilities.GetEnumValues<LANDMARK_TYPE>();
+    //     // for (int i = 0; i < landmarkTypes.Length; i++) {
+    //     //     LANDMARK_TYPE type = landmarkTypes[i];
+    //     //     if (type.IsPlayerLandmark() && type != LANDMARK_TYPE.THE_PORTAL && type != LANDMARK_TYPE.THE_SPIRE) {
+    //     //         Region region =
+    //     //             Utilities.GetRandomElement(GridMap.Instance.allRegions.Where(x => x.coreTile.isCorrupted == false && x.owner == null).ToList());
+    //     //         LandmarkManager.Instance.OwnRegion(PlayerManager.Instance.player.playerFaction, RACE.DEMON, region);
+    //     //         BaseLandmark landmark = LandmarkManager.Instance.CreateNewLandmarkOnTile(region.coreTile, type, false);
+    //     //         landmark.OnFinishedBuilding();
+    //     //     }
+    //     // }
+    //     //PlayerManager.Instance.player.StartDivineIntervention();
+    //     //PlayerManager.Instance.player.StartResearchNewInterventionAbility();
+    // }
+    // public void TemporarySetMinionLeader(MinionLeaderPicker leaderPicker) {
+    //     tempCurrentMinionLeaderPicker.imgHighlight.gameObject.SetActive(false);
+    //     leaderPicker.imgHighlight.gameObject.SetActive(true);
+    //     tempCurrentMinionLeaderPicker = leaderPicker;
+    // }
+    // private List<SPELL_TYPE> chosenAbilities;
+    // private void RandomizeStartingAbilities() {
+    //     List<SPELL_TYPE> abilitiesPool = PlayerManager.Instance.allSpellTypes.ToList();
+    //     chosenAbilities = new List<SPELL_TYPE>();
+    //
+    //     while (chosenAbilities.Count != startingAbilityIcons.Length) {
+    //         SPELL_TYPE randomAbility = abilitiesPool[UnityEngine.Random.Range(0, abilitiesPool.Count)];
+    //         chosenAbilities.Add(randomAbility);
+    //         abilitiesPool.Remove(randomAbility);
+    //     }
+    //
+    //     for (int i = 0; i < startingAbilityIcons.Length; i++) {
+    //         SPELL_TYPE randomAbility = chosenAbilities[i];
+    //         string abilityName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(randomAbility.ToString());
+    //         startingAbilityIcons[i].sprite = PlayerManager.Instance.GetJobActionSprite(abilityName);
+    //         startingAbilityLbls[i].text = abilityName;
+    //         startingAbilities[i] = randomAbility;
+    //     }
+    // }
+    // public void OnHoverStartingSpell(int index) {
+    //     SPELL_TYPE spell = chosenAbilities[index];
+    //     UIManager.Instance.ShowSmallInfo(PlayerManager.Instance.allSpellsData[spell].description, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(spell.ToString()));
+    // }
+    // public void RerollAbilities() {
+    //     RandomizeStartingAbilities();
+    // }
+    // public void RandomizeTwoStartingMinions(ref UnsummonedMinionData minion1Data, ref UnsummonedMinionData minion2Data) {
+    //
+    //     string minionName1 = RandomNameGenerator.GenerateMinionName();
+    //     string minionName2 = RandomNameGenerator.GenerateMinionName();
+    //
+    //     COMBAT_ABILITY minionCombatAbilityType1 = PlayerManager.Instance.allCombatAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allCombatAbilities.Length)];
+    //     COMBAT_ABILITY minionCombatAbilityType2 = PlayerManager.Instance.allCombatAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allCombatAbilities.Length)];
+    //
+    //     List<string> filteredDeadlySinClasses = new List<string>();
+    //     foreach (KeyValuePair<string, DeadlySin> kvp in CharacterManager.Instance.deadlySins) {
+    //         if (kvp.Value.CanDoDeadlySinAction(DEADLY_SIN_ACTION.BUILDER) || kvp.Value.CanDoDeadlySinAction(DEADLY_SIN_ACTION.INVADER)) {
+    //             filteredDeadlySinClasses.Add(kvp.Key);
+    //         }
+    //     }
+    //
+    //     int class1Index = UnityEngine.Random.Range(0, filteredDeadlySinClasses.Count);
+    //     string minionClassName1 = filteredDeadlySinClasses[class1Index];
+    //     filteredDeadlySinClasses.RemoveAt(class1Index);
+    //
+    //     string minionClassName2 = string.Empty;
+    //     if (CharacterManager.Instance.CanDoDeadlySinAction(minionClassName1, DEADLY_SIN_ACTION.INVADER)
+    //         && CharacterManager.Instance.CanDoDeadlySinAction(minionClassName1, DEADLY_SIN_ACTION.BUILDER)) {
+    //         minionClassName2 = CharacterManager.sevenDeadlySinsClassNames[UnityEngine.Random.Range(0, CharacterManager.sevenDeadlySinsClassNames.Length)];
+    //     } else {
+    //         if (CharacterManager.Instance.CanDoDeadlySinAction(minionClassName1, DEADLY_SIN_ACTION.INVADER)) {
+    //             filteredDeadlySinClasses = filteredDeadlySinClasses.Where(x => CharacterManager.Instance.CanDoDeadlySinAction(x, DEADLY_SIN_ACTION.BUILDER)).ToList();
+    //         } else if (CharacterManager.Instance.CanDoDeadlySinAction(minionClassName1, DEADLY_SIN_ACTION.BUILDER)) {
+    //             filteredDeadlySinClasses = filteredDeadlySinClasses.Where(x => CharacterManager.Instance.CanDoDeadlySinAction(x, DEADLY_SIN_ACTION.INVADER)).ToList();
+    //         }
+    //         minionClassName2 = filteredDeadlySinClasses[UnityEngine.Random.Range(0, filteredDeadlySinClasses.Count)];
+    //     }
+    //
+    //     minion1Data = new UnsummonedMinionData() {
+    //         minionName = minionName1,
+    //         className = minionClassName1,
+    //         combatAbility = minionCombatAbilityType1,
+    //         interventionAbilitiesToResearch = CharacterManager.Instance.Get3RandomResearchInterventionAbilities(CharacterManager.Instance.GetDeadlySin(minionClassName1)),
+    //     };
+    //
+    //     minion2Data = new UnsummonedMinionData() {
+    //         minionName = minionName2,
+    //         className = minionClassName2,
+    //         combatAbility = minionCombatAbilityType2,
+    //         interventionAbilitiesToResearch = CharacterManager.Instance.Get3RandomResearchInterventionAbilities(CharacterManager.Instance.GetDeadlySin(minionClassName2)),
+    //     };
+    // }
     #endregion
 
     #region Corruption and Threat
@@ -1141,7 +1141,7 @@ public class PlayerUI : MonoBehaviour {
         customDropdownList.ShowDropdown(PlayerManager.Instance.player.archetype.spells, OnClickSpell, CanChooseItem);
     }
     private bool CanChooseItem(string item) {
-        if (item == PlayerManager.Tornado || item == PlayerManager.Meteor) {
+        if (item == PlayerDB.Tornado || item == PlayerDB.Meteor) {
             return true;
         }
         return false;

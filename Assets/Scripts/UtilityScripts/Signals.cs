@@ -403,6 +403,10 @@ public static class Signals {
     /// </summary>
     public static string PLAYER_ACTION_EXECUTED = "OnPlayerActionExecuted";
     /// <summary>
+    /// parameters (IPlayerActionTarget)
+    /// </summary>
+    public static string RELOAD_PLAYER_ACTIONS = "ReloadPlayerActions";
+    /// <summary>
     /// parameters (PlayerAction, IPlayerActionTarget)
     /// </summary>
     public static string PLAYER_ACTION_ADDED_TO_TARGET = "OnPlayerActionAddedToTarget";
@@ -543,7 +547,6 @@ public static class Signals {
             new SignalMethod() { methodName = "OnTickEnded", objectType = typeof(Character) },
         }},
     };
-    
     public static bool TryGetMatchingSignalMethod(string eventType, Callback method, out SignalMethod matching) {
         for (int i = 0; i < orderedSignalExecution[eventType].Length; i++) {
             SignalMethod sm = orderedSignalExecution[eventType][i];

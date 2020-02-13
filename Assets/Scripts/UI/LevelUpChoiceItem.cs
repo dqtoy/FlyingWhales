@@ -24,7 +24,7 @@ public class LevelUpChoiceItem : PooledObject {
         img.sprite = defaultSprite;
         if (obj is SummonSlot) {
             SummonSlot summonSlot = obj as SummonSlot;
-            toggle.interactable = summonSlot.level < PlayerManager.MAX_LEVEL_SUMMON;
+            toggle.interactable = summonSlot.level < PlayerDB.MAX_LEVEL_SUMMON;
             if (summonSlot.isLocked) {
                 img.sprite = lockedSprite;
             } else if (summonSlot.summon != null) {
@@ -32,7 +32,7 @@ public class LevelUpChoiceItem : PooledObject {
             }
         } else if (obj is ArtifactSlot) {
             ArtifactSlot artifactSlot = obj as ArtifactSlot;
-            toggle.interactable = artifactSlot.level < PlayerManager.MAX_LEVEL_ARTIFACT;
+            toggle.interactable = artifactSlot.level < PlayerDB.MAX_LEVEL_ARTIFACT;
             if (artifactSlot.isLocked) {
                 img.sprite = lockedSprite;
             } else if (artifactSlot.artifact != null) {
@@ -40,11 +40,11 @@ public class LevelUpChoiceItem : PooledObject {
             }
         } else if (obj is PlayerSpell) {
             PlayerSpell interventionAbility = obj as PlayerSpell;
-            toggle.interactable = interventionAbility.level < PlayerManager.MAX_LEVEL_INTERVENTION_ABILITY;
+            toggle.interactable = interventionAbility.level < PlayerDB.MAX_LEVEL_INTERVENTION_ABILITY;
             img.sprite = PlayerManager.Instance.GetJobActionSprite(interventionAbility.name);
         } else if (obj is CombatAbility) {
             CombatAbility combatAbility = obj as CombatAbility;
-            toggle.interactable = combatAbility.lvl < PlayerManager.MAX_LEVEL_COMBAT_ABILITY;
+            toggle.interactable = combatAbility.lvl < PlayerDB.MAX_LEVEL_COMBAT_ABILITY;
             img.sprite = PlayerManager.Instance.GetCombatAbilitySprite(combatAbility.name);
         }
         UpdateTextInfo();

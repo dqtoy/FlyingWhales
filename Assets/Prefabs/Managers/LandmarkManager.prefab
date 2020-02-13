@@ -603,6 +603,25 @@ MonoBehaviour:
       animation: {fileID: 0}
     humansLandmarkTileSprites: []
     elvenLandmarkTileSprites: []
+  - landmarkTypeString: Demonic Prison
+    landmarkType: 61
+    buildDuration: 0
+    description: 
+    connectedTileDirection: 6
+    uniqueTags: 
+    landmarkObjectSprite: {fileID: 21300066, guid: be352ea3d46036640bb6df35b7b4dc2b,
+      type: 3}
+    landmarkTypeIcon: {fileID: 21300000, guid: 1e690ff05cd736e419b2bd4ba662ef95, type: 3}
+    landmarkPortrait: {fileID: 21300000, guid: 3446cbb2f691a6e459dede63d06ba416, type: 3}
+    biomeTileSprites:
+      m_keys: 
+      m_values: []
+    neutralTileSprites:
+    - mainSprite: {fileID: 21300000, guid: 0919fe3d152887f46a5152e78ab4f9dd, type: 3}
+      tintSprite: {fileID: 0}
+      animation: {fileID: 9100000, guid: b447470680d718740b7ffef6eda52099, type: 2}
+    humansLandmarkTileSprites: []
+    elvenLandmarkTileSprites: []
   areaData:
   - locationType: 0
     baseAreaType: 0

@@ -6,15 +6,11 @@ using System.Linq;
 using Inner_Maps;
 using Traits;
 using Archetype;
+using UtilityScripts;
 using Random = UnityEngine.Random;
 // ReSharper disable Unity.NoNullPropagation
 
 public class Player : ILeader {
-
-    private const int MAX_INTEL = 3;
-    public const int MAX_MINIONS = 7;
-    public readonly int MAX_INTERVENTION_ABILITIES = 4;
-
     public PlayerArchetype archetype { get; private set; }
     public Faction playerFaction { get; private set; }
     public Settlement playerSettlement { get; private set; }
@@ -33,14 +29,13 @@ public class Player : ILeader {
     public Intel currentActiveIntel { get; private set; }
     public int maxSummonSlots { get; private set; } //how many summons can the player have
     public int maxArtifactSlots { get; private set; } //how many artifacts can the player have
-    public PlayerJobActionSlot[] interventionAbilitySlots { get; private set; }
-    public UnsummonedMinionData[] minionsToSummon { get; private set; }
+    public PlayerJobActionSlot[] interventionAbilitySlots { get; }
     public HexTile portalTile { get; private set; }
-
     public float constructionRatePercentageModifier { get; private set; }
-
     //Components
-    public SeizeComponent seizeComponent { get; private set; }
+    public SeizeComponent seizeComponent { get; }
+    public List<string> unlearnedSpells { get; }
+    public List<SPELL_TYPE> unlearnedAfflictions { get; }
 
     #region getters/setters
     public int id => -645;
@@ -57,14 +52,14 @@ public class Player : ILeader {
         minions = new List<Minion>();
         summonSlots = new List<SummonSlot>();
         artifacts = new List<Artifact>();
-        interventionAbilitySlots = new PlayerJobActionSlot[MAX_INTERVENTION_ABILITIES];
-        minionsToSummon = new UnsummonedMinionData[3];
+        interventionAbilitySlots = new PlayerJobActionSlot[PlayerDB.MAX_INTERVENTION_ABILITIES];
         maxSummonSlots = 0;
         maxArtifactSlots = 0;
+        unlearnedSpells = new List<string>(PlayerDB.spells);
+        unlearnedAfflictions = new List<SPELL_TYPE>(PlayerDB.afflictions);
         AdjustMana(EditableValuesManager.Instance.startingMana);
         seizeComponent = new SeizeComponent();
         ConstructAllInterventionAbilitySlots();
-        GenerateMinionsToSummon();
         AddListeners();
     }
     public Player(SaveDataPlayer data) {
@@ -72,8 +67,9 @@ public class Player : ILeader {
         minions = new List<Minion>();
         maxSummonSlots = data.maxSummonSlots;
         maxArtifactSlots = data.maxArtifactSlots;
+        unlearnedSpells = new List<string>();
+        unlearnedAfflictions = new List<SPELL_TYPE>();
         mana = data.mana;
-        minionsToSummon = data.minionsToSummon;
         SetConstructionRatePercentageModifier(data.constructionRatePercentageModifier);
         summonSlots = new List<SummonSlot>();
         for (int i = 0; i < summonSlots.Count; i++) {
@@ -179,12 +175,6 @@ public class Player : ILeader {
         InitializeMinion(data, minion);
         return minion;
     }
-    // public Minion CreateNewMinion(RACE race) {
-    //     Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter(CharacterRole.MINION, race, GENDER.MALE, playerFaction, playerSettlement, null), false);
-    //     //minion.character.CreateMarker();
-    //     InitializeMinion(minion);
-    //     return minion;
-    // }
     public Minion CreateNewMinion(string className, RACE race, bool initialize = true) {
         Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter(className, race, GENDER.MALE, playerFaction, playerSettlement), false);
         if (initialize) {
@@ -192,36 +182,12 @@ public class Player : ILeader {
         }
         return minion;
     }
-    public Minion CreateNewMinionRandomClass() {
-        string className = CharacterManager.sevenDeadlySinsClassNames[UnityEngine.Random.Range(0, CharacterManager.sevenDeadlySinsClassNames.Length)];
-        Minion minion = new Minion(CharacterManager.Instance.CreateNewCharacter(className, RACE.DEMON, GENDER.MALE, playerFaction, playerSettlement), false);
-        InitializeMinion(minion);
-        return minion;
-    }
-    private void InitializeMinion(Minion minion) {
-        minion.SetRandomResearchInterventionAbilities(CharacterManager.Instance.Get3RandomResearchInterventionAbilities(minion.deadlySin));
-        minion.SetCombatAbility(PlayerManager.Instance.CreateNewCombatAbility(PlayerManager.Instance.allCombatAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allCombatAbilities.Length)]));
-    }
+    private void InitializeMinion(Minion minion) { }
     private void InitializeMinion(SaveDataMinion data, Minion minion) {
-        //for (int i = 0; i < data.interventionAbilities.Count; i++) {
-        //    data.interventionAbilities[i].Load(minion);
-        //}
         data.combatAbility.Load(minion);
     }
     public void AddMinion(Minion minion, bool showNewMinionUI = false) {
-        //int currentMinionCount = GetCurrentMinionCount();
-        //if(currentMinionCount == minions.Count) {
-        //    //Broadcast minion is full, must be received by a UI that will pop up and let the player whether it will replace or be discarded
-        //    PlayerUI.Instance.replaceUI.ShowReplaceUI(minions.ToList(), minion, ReplaceMinion, RejectMinion);
-        //} else {
-        //    minion.SetIndexDefaultSort(currentMinionCount);
-        //    minions[currentMinionCount] = minion;
-        //    if (showNewMinionUI) {
-        //        PlayerUI.Instance.ShowNewMinionUI(minion);
-        //    }
-        //    PlayerUI.Instance.UpdateRoleSlots();
-        //}
-        if(minions.Count < MAX_MINIONS) {
+        if(minions.Count < PlayerDB.MAX_MINIONS) {
             if (!minions.Contains(minion)) {
                 minions.Add(minion);
                 if (showNewMinionUI) {
@@ -236,22 +202,11 @@ public class Player : ILeader {
     }
     public void RemoveMinion(Minion minion) {
         if (minions.Remove(minion)) {
-            //RearrangeMinions();
-            //PlayerUI.Instance.UpdateRoleSlots();
             if (currentMinionLeader == minion) {
                 SetMinionLeader(null);
             }
             Messenger.Broadcast(Signals.PLAYER_LOST_MINION, minion);
         }
-    }
-    public int GetCurrentMinionCount() {
-        //int count = 0;
-        //for (int i = 0; i < minions.Count; i++) {
-        //    if(minions[i] != null) {
-        //        count++;
-        //    }
-        //}
-        return minions.Count;
     }
     public void SetMinionLeader(Minion minion) {
         currentMinionLeader = minion;
@@ -268,79 +223,10 @@ public class Player : ILeader {
                     SetMinionLeader(minionToBeAdded);
                 }
                 break;
-                //PlayerUI.Instance.UpdateRoleSlots();
             }
         }
     }
     private void RejectMinion(object obj) { }
-    public bool HasMinionWithCombatAbility(COMBAT_ABILITY ability) {
-        for (int i = 0; i < minions.Count; i++) {
-            Minion currMinion = minions[i];
-            if (currMinion != null && currMinion.combatAbility.type == ability) {
-                return true;
-            }
-        }
-        return false;
-    }
-    public Minion GetRandomMinion() {
-        List<Minion> minionChoices = new List<Minion>();
-        for (int i = 0; i < minions.Count; i++) {
-            Minion currMinion = minions[i];
-            if (currMinion != null) {
-                minionChoices.Add(currMinion);
-            }
-        }
-        return minionChoices[UnityEngine.Random.Range(0, minionChoices.Count)];
-    }
-    public void LevelUpAllMinions(int amount) {
-        for (int i = 0; i < minions.Count; i++) {
-            Minion currMinion = minions[i];
-            if (currMinion != null) {
-                currMinion.LevelUp(amount);
-            }
-        }
-    }
-    public void LevelUpAllMinions() {
-        for (int i = 0; i < minions.Count; i++) {
-            Minion currMinion = minions[i];
-            if (currMinion != null) {
-                currMinion.LevelUp();
-            }
-        }
-    }
-    public void GenerateMinionsToSummon() {
-        List<string> choices = CharacterManager.sevenDeadlySinsClassNames.ToList();
-        for (int i = 0; i < minionsToSummon.Length; i++) {
-            int index = UnityEngine.Random.Range(0, choices.Count);
-            UnsummonedMinionData minionData = new UnsummonedMinionData() {
-                minionName = RandomNameGenerator.GenerateMinionName(),
-                className = choices[index],
-                combatAbility = PlayerManager.Instance.allCombatAbilities[UnityEngine.Random.Range(0, PlayerManager.Instance.allCombatAbilities.Length)],
-                interventionAbilitiesToResearch = CharacterManager.Instance.Get3RandomResearchInterventionAbilities(CharacterManager.Instance.GetDeadlySin(choices[index])),
-            };
-            choices.RemoveAt(index);
-            minionsToSummon[i] = minionData;
-        }
-    }
-    public bool HasMinionAssignedTo(LANDMARK_TYPE type) {
-        for (int i = 0; i < minions.Count; i++) {
-            Minion currMinion = minions[i];
-            if (currMinion.isAssigned && currMinion.assignedRegion.mainLandmark.specificLandmarkType == type) {
-                return true;
-            }
-        }
-        return false;
-    }
-    public List<Character> GetMinionsAssignedTo(LANDMARK_TYPE type) {
-        List<Character> validMinions = new List<Character>();
-        for (int i = 0; i < minions.Count; i++) {
-            Minion currMinion = minions[i];
-            if (currMinion.isAssigned && currMinion.assignedRegion.mainLandmark.specificLandmarkType == type) {
-                validMinions.Add(currMinion.character);
-            }
-        }
-        return validMinions;
-    }
     #endregion
 
     #region Win/Lose Conditions
@@ -442,13 +328,13 @@ public class Player : ILeader {
             //    }
             //}
             allIntel.Add(newIntel);
-            if (allIntel.Count > MAX_INTEL) {
+            if (allIntel.Count > PlayerDB.MAX_INTEL) {
                 RemoveIntel(allIntel[0]);
             }
             Messenger.Broadcast(Signals.PLAYER_OBTAINED_INTEL, newIntel);
         }
     }
-    public void RemoveIntel(Intel intel) {
+    private void RemoveIntel(Intel intel) {
         if (allIntel.Remove(intel)) {
             Messenger.Broadcast(Signals.PLAYER_REMOVED_INTEL, intel);
         }
@@ -458,73 +344,6 @@ public class Player : ILeader {
         //    AddIntel(data.allIntel[i].Load());
         //}
     }
-    /// <summary>
-    /// Listener for when a character has finished doing an action.
-    /// </summary>
-    /// <param name="character">The character that finished the action.</param>
-    /// <param name="actionNode">The action that was finished.</param>
-    //private void OnCharacterDidAction(Character character, GoapAction action) {
-    //    for (int i = 0; i < action.currentState.arrangedLogs.Count; i++) {
-    //        if(action.currentState.arrangedLogs[i].notifAction != null) {
-    //            action.currentState.arrangedLogs[i].notifAction();
-    //        } else {
-    //            bool showPopup = false;
-    //            if (action.showIntelNotification) {
-    //                if (action.shouldIntelNotificationOnlyIfActorIsActive) {
-    //                    showPopup = ShouldShowNotificationFrom(character, true);
-    //                } else {
-    //                    showPopup = ShouldShowNotificationFrom(character, action.currentState.descriptionLog);
-    //                }
-    //            }
-    //            if (showPopup) {
-    //                if (!action.isNotificationAnIntel) {
-    //                    Messenger.Broadcast<Log>(Signals.SHOW_PLAYER_NOTIFICATION, action.currentState.descriptionLog);
-    //                } else {
-    //                    Messenger.Broadcast<Intel>(Signals.SHOW_INTEL_NOTIFICATION, InteractionManager.Instance.CreateNewIntel(action, character));
-    //                }
-    //            }
-    //        }
-    //    }
-    //}
-    
-    // /// <summary>
-    // /// Listener for when a character starts an action.
-    // /// Character will go to target location. <see cref="GoapAction.DoAction"/>
-    // /// </summary>
-    // /// <param name="character">The character that will do the action.</param>
-    // /// <param name="action">The action that will be performed.</param>
-    // private void OnCharacterDoingAction(Character character, ActualGoapNode actionNode) {
-    //     bool showPopup = false;
-    //     Log log = actionNode.GetCurrentLog();
-    //     if (actionNode.action.showNotification && log != null) { //TODO: added checking if actor is already at target tile. So that travelling notification won't show if that is the case. && !actionNode.IsActorAtTargetTile() 
-    //         // if (actionNode.action.shouldIntelNotificationOnlyIfActorIsActive) {
-    //         //     showPopup = ShouldShowNotificationFrom(actionNode.actor, true);
-    //         // } else {
-    //         //     showPopup = ShouldShowNotificationFrom(actionNode.actor, log);
-    //         // }
-    //         showPopup = ShouldShowNotificationFrom(actionNode.actor, log);
-    //     }
-    //     if (showPopup) {
-    //         Messenger.Broadcast<Log>(Signals.SHOW_PLAYER_NOTIFICATION, log);
-    //     }
-    // }
-    // /// <summary>
-    // /// Listener for when an action's state is set. Always means that the character has
-    // /// started performing the action.
-    // /// </summary>
-    // /// <param name="action">The action that is being performed.</param>
-    // /// <param name="state">The state that the action is in.</param>
-    // private void OnAfterActionStateSet(string stateName, ActualGoapNode actionNode) {
-    //     bool showPopup = false;
-    //     Log log = actionNode.GetCurrentLog();
-    //     if (actionNode.action.showNotification && actionNode.currentState.duration > 0 && log != null) { //added checking for duration because this notification should only show for actions that have durations.
-    //         showPopup = ShouldShowNotificationFrom(actionNode.actor, log);
-    //     }
-    //     if (showPopup) {
-    //         ShowNotificationFrom(actionNode.actor, log);
-    //     }
-    // }
-    
     public void SetCurrentActiveIntel(Intel intel) {
         if (currentActiveIntel == intel) {
             //Do not process when setting the same combat ability
@@ -725,13 +544,6 @@ public class Player : ILeader {
     #endregion
 
     #region Summons
-    //private void ConstructAllSummonSlots() {
-    //    for (int i = 0; i < summonSlots.Length; i++) {
-    //        if (summonSlots[i] == null) {
-    //            summonSlots[i] = new SummonSlot();
-    //        }
-    //    }
-    //}
     private void GainSummonSlot(bool showUI = true) {
         SummonSlot newSlot = new SummonSlot();
         summonSlots.Add(newSlot);
@@ -950,7 +762,7 @@ public class Player : ILeader {
     }
     public bool AreAllSummonSlotsMaxLevel() {
         for (int i = 0; i < maxSummonSlots; i++) {
-            if (summonSlots[i].level < PlayerManager.MAX_LEVEL_SUMMON) {
+            if (summonSlots[i].level < PlayerDB.MAX_LEVEL_SUMMON) {
                 return false;
             }
         }
@@ -1489,7 +1301,7 @@ public class Player : ILeader {
     }
     public bool AreAllInterventionSlotsMaxLevel() {
         for (int i = 0; i < interventionAbilitySlots.Length; i++) {
-            if (interventionAbilitySlots[i].level < PlayerManager.MAX_LEVEL_INTERVENTION_ABILITY) {
+            if (interventionAbilitySlots[i].level < PlayerDB.MAX_LEVEL_INTERVENTION_ABILITY) {
                 return false;
             }
         }
@@ -1588,6 +1400,12 @@ public class Player : ILeader {
     public void SetArchetype(PLAYER_ARCHETYPE type) {
         if(archetype == null || archetype.type != type) {
             archetype = CreateNewArchetype(type);
+            for (int i = 0; i < archetype.spells.Count; i++) {
+                unlearnedSpells.Remove(archetype.spells[i]);
+            }
+            for (int i = 0; i < archetype.afflictions.Count; i++) {
+                unlearnedAfflictions.Remove(archetype.afflictions[i]);
+            }
         }
     }
     private PlayerArchetype CreateNewArchetype(PLAYER_ARCHETYPE archetype) {
@@ -1598,6 +1416,14 @@ public class Player : ILeader {
             return obj;
         }
         throw new System.Exception("Could not create new archetype " + archetype.ToString() + " because there is no data for it!");
+    }
+    public void LearnSpell(string spellName) {
+        archetype.AddSpell(spellName);
+        unlearnedSpells.Remove(spellName);
+    }
+    public void LearnAffliction(SPELL_TYPE affliction) {
+        archetype.AddAffliction(affliction);
+        unlearnedAfflictions.Remove(affliction);
     }
     #endregion
 }

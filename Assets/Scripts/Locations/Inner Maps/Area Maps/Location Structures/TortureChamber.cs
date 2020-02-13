@@ -44,15 +44,17 @@ namespace Inner_Maps.Location_Structures {
         private void OnCharacterArrivedAtStructure(Character character, LocationStructure structure) {
             if (structure == this) {
                 character.trapStructure.SetForcedStructure(this);
+                character.DecreaseCanTakeJobs();
             }
         }
         private void OnCharacterLeftStructure(Character character, LocationStructure structure) {
             if (structure == this) {
                 character.trapStructure.SetForcedStructure(null);
+                character.IncreaseCanTakeJobs();
             }
         }
         private void AddTortureAction() {
-            PlayerAction tortureAction = new PlayerAction(PlayerManager.Torture_Action, () => _currentTortureTarget == null, ChooseTortureTarget);
+            PlayerAction tortureAction = new PlayerAction(PlayerDB.Torture_Action, () => _currentTortureTarget == null, ChooseTortureTarget);
             AddPlayerAction(tortureAction);
         }
         private void ChooseTortureTarget() {

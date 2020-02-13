@@ -22,6 +22,7 @@ public class UIMenu : MonoBehaviour {
     internal virtual void Initialize() {
         Messenger.AddListener<UIMenu>(Signals.BEFORE_MENU_OPENED, BeforeMenuOpens);
         Messenger.AddListener<PlayerAction>(Signals.PLAYER_ACTION_EXECUTED, OnPlayerActionExecuted);
+        Messenger.AddListener<IPlayerActionTarget>(Signals.RELOAD_PLAYER_ACTIONS, ReloadPlayerActions);
         Messenger.AddListener<PlayerAction, IPlayerActionTarget>(Signals.PLAYER_ACTION_ADDED_TO_TARGET, OnPlayerActionAddedToTarget);
         Messenger.AddListener<PlayerAction, IPlayerActionTarget>(Signals.PLAYER_ACTION_REMOVED_FROM_TARGET, OnPlayerActionRemovedFromTarget);
     }
@@ -143,6 +144,11 @@ public class UIMenu : MonoBehaviour {
     }
     private void OnPlayerActionRemovedFromTarget(PlayerAction playerAction, IPlayerActionTarget actionTarget) {
         if (_playerActionTarget == actionTarget) {
+            LoadActions(actionTarget);
+        }
+    }
+    private void ReloadPlayerActions(IPlayerActionTarget actionTarget) {
+        if (_playerActionTarget == actionTarget && isShowing) {
             LoadActions(actionTarget);
         }
     }

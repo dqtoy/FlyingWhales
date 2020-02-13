@@ -3099,9 +3099,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             traitContainer.AddTrait(this, chosenBuffTraitName);
             Trait buffTrait = traitContainer.GetNormalTrait<Trait>(chosenBuffTraitName);
             if (buffTrait.mutuallyExclusive != null) {
-                buffTraits = CollectionUtilities.RemoveElements(buffTraits, buffTrait.mutuallyExclusive); //update buff traits pool to accomodate new trait
-                neutralTraits = CollectionUtilities.RemoveElements(neutralTraits, buffTrait.mutuallyExclusive); //update neutral traits pool to accomodate new trait
-                flawTraits = CollectionUtilities.RemoveElements(flawTraits, buffTrait.mutuallyExclusive); //update flaw traits pool to accomodate new trait
+                buffTraits = CollectionUtilities.RemoveElements(ref buffTraits, buffTrait.mutuallyExclusive); //update buff traits pool to accomodate new trait
+                neutralTraits = CollectionUtilities.RemoveElements(ref neutralTraits, buffTrait.mutuallyExclusive); //update neutral traits pool to accomodate new trait
+                flawTraits = CollectionUtilities.RemoveElements(ref flawTraits, buffTrait.mutuallyExclusive); //update flaw traits pool to accomodate new trait
             }
 
 
@@ -3134,9 +3134,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             traitContainer.AddTrait(this, chosenBuffOrNeutralTraitName);
             Trait buffOrNeutralTrait = traitContainer.GetNormalTrait<Trait>(chosenBuffOrNeutralTraitName);
             if (buffOrNeutralTrait.mutuallyExclusive != null) {
-                buffTraits = CollectionUtilities.RemoveElements(buffTraits, buffOrNeutralTrait.mutuallyExclusive); //update buff traits pool to accomodate new trait
-                neutralTraits = CollectionUtilities.RemoveElements(neutralTraits, buffOrNeutralTrait.mutuallyExclusive); //update neutral traits pool to accomodate new trait
-                flawTraits = CollectionUtilities.RemoveElements(flawTraits, buffOrNeutralTrait.mutuallyExclusive); //update flaw traits pool to accomodate new trait
+                buffTraits = CollectionUtilities.RemoveElements(ref buffTraits, buffOrNeutralTrait.mutuallyExclusive); //update buff traits pool to accomodate new trait
+                neutralTraits = CollectionUtilities.RemoveElements(ref neutralTraits, buffOrNeutralTrait.mutuallyExclusive); //update neutral traits pool to accomodate new trait
+                flawTraits = CollectionUtilities.RemoveElements(ref flawTraits, buffOrNeutralTrait.mutuallyExclusive); //update flaw traits pool to accomodate new trait
             }
 
 
@@ -3251,13 +3251,12 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         ChangeRace(RACE.DEMON);
         ChangeClass(minionData.className);
         // AssignRole(CharacterRole.MINION);
-        newMinion.SetRandomResearchInterventionAbilities(minionData.interventionAbilitiesToResearch);
         newMinion.SetCombatAbility(minionData.combatAbility);
 
 
         PlayerManager.Instance.player.playerSettlement.region.AddCharacterToLocation(this);
 
-        if (PlayerManager.Instance.player.minions.Count < Player.MAX_MINIONS) {
+        if (PlayerManager.Instance.player.minions.Count < PlayerDB.MAX_MINIONS) {
             PlayerManager.Instance.player.AddMinion(newMinion);
             UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Gained new Minion!", null);
         } else {
@@ -5718,7 +5717,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             PlayerAction afflictAction = new PlayerAction(PlayerManager.Afflict_Action, 
                 () => true,
                 UIManager.Instance.characterInfoUI.ShowAfflictUI);
-        
             PlayerAction zapAction = new PlayerAction(PlayerManager.Zap_Action, 
                 () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.ZAP].CanPerformAbilityTowards(this),
                 () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.ZAP].ActivateAbility(this));
@@ -5726,7 +5724,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                 () => !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && !this.traitContainer.HasTrait("Leader", "Blessed"), 
                 () => PlayerManager.Instance.player.seizeComponent.SeizePOI(this));
             // PlayerAction shareIntelAction = new PlayerAction("Share Intel", () => false, null);
-        
+
             AddPlayerAction(afflictAction);
             AddPlayerAction(zapAction);
             AddPlayerAction(seizeAction);
