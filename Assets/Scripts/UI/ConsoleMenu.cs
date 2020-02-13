@@ -66,7 +66,7 @@ public class ConsoleMenu : UIMenu {
             {"/gain_summon",  GainSummon},
             {"/gain_summon_slot",  GainSummonSlot},
             {"/gain_artifact",  GainArtifact},
-            {"/gain_artifact_slot",  GainArtifactSlot},
+            // {"/gain_artifact_slot",  GainArtifactSlot},
             {"/set_fullness", SetFullness },
             {"/set_tiredness", SetTiredness },
             {"/set_happiness", SetHappiness },
@@ -1227,33 +1227,33 @@ public class ConsoleMenu : UIMenu {
         if (typeParameterString.Equals("All")) {
             ARTIFACT_TYPE[] types = CollectionUtilities.GetEnumValues<ARTIFACT_TYPE>();
             for (int i = 1; i < types.Length; i++) {
-                PlayerManager.Instance.player.GainArtifact(types[i]);
+                PlayerManager.Instance.player.AddArtifact(types[i]);
             }
         } else if (Enum.TryParse(typeParameterString, out type)) {
-            PlayerManager.Instance.player.GainArtifact(type);
+            PlayerManager.Instance.player.AddArtifact(type);
             AddSuccessMessage("Gained new artifact: " + type);
         } else {
             AddErrorMessage("There is no artifact of type " + typeParameterString);
         }
 
     }
-    private void GainArtifactSlot(string[] parameters) {
-        if (parameters.Length != 1) {
-            AddCommandHistory(consoleLbl.text);
-            AddErrorMessage("There was an error in the command format of GainArtifactSlot");
-            return;
-        }
-        string numParameterString = parameters[0];
-        int num;
-        if (int.TryParse(numParameterString, out num)) {
-            for (int i = 0; i < num; i++) {
-                PlayerManager.Instance.player.IncreaseArtifactSlot();
-            }
-            AddSuccessMessage("Gained artifact slot/s: " + num);
-        } else {
-            AddErrorMessage("Cannot parse input: " + numParameterString);
-        }
-    }
+    // private void GainArtifactSlot(string[] parameters) {
+    //     if (parameters.Length != 1) {
+    //         AddCommandHistory(consoleLbl.text);
+    //         AddErrorMessage("There was an error in the command format of GainArtifactSlot");
+    //         return;
+    //     }
+    //     string numParameterString = parameters[0];
+    //     int num;
+    //     if (int.TryParse(numParameterString, out num)) {
+    //         for (int i = 0; i < num; i++) {
+    //             PlayerManager.Instance.player.IncreaseArtifactSlot();
+    //         }
+    //         AddSuccessMessage("Gained artifact slot/s: " + num);
+    //     } else {
+    //         AddErrorMessage("Cannot parse input: " + numParameterString);
+    //     }
+    // }
     #endregion
 
     #region Player

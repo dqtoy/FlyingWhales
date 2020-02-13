@@ -9,6 +9,7 @@ using UnityEngine;
 using Traits;
 using UnityEngine.Assertions;
 using Interrupts;
+using UnityEngine.EventSystems;
 using UtilityScripts;
 
 public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlayerActionTarget {
@@ -5702,22 +5703,34 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public List<PlayerAction> actions { get; protected set; }
     public virtual void ConstructDefaultActions() {
         actions = new List<PlayerAction>();
+
+        if (race == RACE.DEMON) {
+            PlayerAction stopAction = new PlayerAction(PlayerManager.Stop_Action, 
+                () => true,
+                jobComponent.TriggerStopJobs);
+            PlayerAction returnAction = new PlayerAction(PlayerManager.Return_To_Portal_Action, 
+                () => true,
+                () => jobComponent.TriggerReturnPortal());
+            
+            AddPlayerAction(stopAction);
+            AddPlayerAction(returnAction);
+        } else {
+            PlayerAction afflictAction = new PlayerAction(PlayerManager.Afflict_Action, 
+                () => true,
+                UIManager.Instance.characterInfoUI.ShowAfflictUI);
         
-        PlayerAction afflictAction = new PlayerAction(PlayerManager.Afflict_Action, 
-            () => true,
-            UIManager.Instance.characterInfoUI.ShowAfflictUI);
+            PlayerAction zapAction = new PlayerAction(PlayerManager.Zap_Action, 
+                () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.ZAP].CanPerformAbilityTowards(this),
+                () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.ZAP].ActivateAbility(this));
+            PlayerAction seizeAction = new PlayerAction(PlayerManager.Seize_Character_Action, 
+                () => !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && !this.traitContainer.HasTrait("Leader", "Blessed"), 
+                () => PlayerManager.Instance.player.seizeComponent.SeizePOI(this));
+            // PlayerAction shareIntelAction = new PlayerAction("Share Intel", () => false, null);
         
-        PlayerAction zapAction = new PlayerAction(PlayerManager.Zap_Action, 
-            () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.ZAP].CanPerformAbilityTowards(this),
-            () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.ZAP].ActivateAbility(this));
-        PlayerAction seizeAction = new PlayerAction(PlayerManager.Seize_Character_Action, 
-            () => !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI && !this.traitContainer.HasTrait("Leader", "Blessed"), 
-            () => PlayerManager.Instance.player.seizeComponent.SeizePOI(this));
-        // PlayerAction shareIntelAction = new PlayerAction("Share Intel", () => false, null);
-        
-        AddPlayerAction(afflictAction);
-        AddPlayerAction(zapAction);
-        AddPlayerAction(seizeAction);
+            AddPlayerAction(afflictAction);
+            AddPlayerAction(zapAction);
+            AddPlayerAction(seizeAction);
+        }
         // AddPlayerAction(shareIntelAction);
     }
     public void AddPlayerAction(PlayerAction action) {
@@ -5741,8 +5754,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         return UIManager.Instance.characterInfoUI.isShowing &&
                UIManager.Instance.characterInfoUI.activeCharacter == this;
     }
-    public void SelectAction() {
-        UIManager.Instance.ShowCharacterInfo(this);
+    public void LeftSelectAction() {
+        mapObjectVisual.ExecuteClickAction(PointerEventData.InputButton.Left);
+        // UIManager.Instance.ShowCharacterInfo(this);
+    }
+    public void RightSelectAction() {
+        mapObjectVisual.ExecuteClickAction(PointerEventData.InputButton.Right);
+        // UIManager.Instance.ShowCharacterInfo(this);
     }
     #endregion
 }

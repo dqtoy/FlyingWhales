@@ -37,10 +37,15 @@ public class JobQueue {
             //Push back current top priority first before adding the job
             if (!isJobQueueEmpty) {
                 if (owner.minion != null) {
-                    jobsInQueue[0].CancelJob(false);
+                    if (job.jobType == JOB_TYPE.COMBAT) {
+                        jobsInQueue[0].PushedBack(job); //This means that the job is inserted as the top most priority
+                    } else {
+                        CancelAllJobs();
+                    }
                 } else {
                     jobsInQueue[0].PushedBack(job); //This means that the job is inserted as the top most priority
                 }
+                // jobsInQueue[0].PushedBack(job); //This means that the job is inserted as the top most priority
             }
 
             //Insert job in the top of the list

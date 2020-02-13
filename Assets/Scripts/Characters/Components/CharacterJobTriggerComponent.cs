@@ -659,13 +659,38 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         job.AddOtherData(INTERACTION_TYPE.DROP_ITEM, new object[] { dropLocation });
         _owner.jobQueue.AddJobInQueue(job);
     }
+    public void TriggerStopJobs() {
+	    if (_owner.marker != null) {
+		    _owner.marker.StopMovement();
+	    }
+	    _owner.CancelAllJobs();
+    }
     #endregion
 
     #region Abduct
     public void CreateAbductJob(Character target) {
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ABDUCT, INTERACTION_TYPE.DROP, target, _owner);
-        job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { PlayerManager.Instance.player.portalTile.locationGridTiles[0].structure }); //For now drop in portal, this will be changed to Demonic Prison
+        LocationStructure dropLocationStructure = PlayerManager.Instance.player.portalTile.region.GetRandomStructureOfType(STRUCTURE_TYPE.TORTURE_CHAMBER);
+        if (dropLocationStructure != null) {
+	        dropLocationStructure = PlayerManager.Instance.player.portalTile.locationGridTiles[0].structure;
+        }
+        job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { dropLocationStructure }); //For now drop in portal, this will be changed to Demonic Prison
         _owner.jobQueue.AddJobInQueue(job);
+    }
+    #endregion
+    
+    #region Other Characters
+    public void CreateKnockoutJob(Character targetCharacter) {
+	    if (!_owner.jobQueue.HasJob(JOB_TYPE.KNOCKOUT, targetCharacter)) {
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.KNOCKOUT, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Unconscious", false, GOAP_EFFECT_TARGET.TARGET), targetCharacter, _owner);
+		    _owner.jobQueue.AddJobInQueue(job);
+	    }
+    }
+    public void CreateKillJob(Character targetCharacter) {
+	    if (!_owner.jobQueue.HasJob(JOB_TYPE.KILL, targetCharacter)) {
+		    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.KILL, new GoapEffect(GOAP_EFFECT_CONDITION.DEATH, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), targetCharacter, _owner);
+		    _owner.jobQueue.AddJobInQueue(job);
+	    }
     }
     #endregion
 }

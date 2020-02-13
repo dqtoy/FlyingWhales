@@ -54,13 +54,15 @@ public class ReplaceChoiceItem : PooledObject {
             text += "\nLevel: " + summon.level.ToString();
             text += "\nDescription: " + PlayerManager.Instance.player.GetSummonDescription(summon.summonType);
             info.text = text;
-        } else if (obj is Artifact) {
-            Artifact artifact = obj as Artifact;
-            string text = artifact.name;
-            text += "\nLevel: " + artifact.level.ToString();
-            text += "\nDescription: " + PlayerManager.Instance.player.GetArtifactDescription(artifact.type);
-            info.text = text;
-        } else if (obj is PlayerSpell) {
+        } 
+        // else if (obj is Artifact) {
+        //     Artifact artifact = obj as Artifact;
+        //     string text = artifact.name;
+        //     text += "\nLevel: " + artifact.level.ToString();
+        //     text += "\nDescription: " + PlayerManager.Instance.player.GetArtifactDescription(artifact.type);
+        //     info.text = text;
+        // } 
+        else if (obj is PlayerSpell) {
             PlayerSpell action = obj as PlayerSpell;
             string text = action.name;
             text += "\nSlot Level: " + action.level;

@@ -22,7 +22,7 @@ public class Player : ILeader {
     public List<Intel> allIntel { get; private set; }
     public List<Minion> minions { get; private set; }
     public List<SummonSlot> summonSlots { get; private set; }
-    public List<ArtifactSlot> artifactSlots { get; private set; }
+    public List<Artifact> artifacts { get; private set; }
     private int currentCorruptionDuration { get; set; }
     private int currentCorruptionTick { get; set; }
     private bool isTileCurrentlyBeingCorrupted { get; set; }
@@ -56,7 +56,7 @@ public class Player : ILeader {
         allIntel = new List<Intel>();
         minions = new List<Minion>();
         summonSlots = new List<SummonSlot>();
-        artifactSlots = new List<ArtifactSlot>();
+        artifacts = new List<Artifact>();
         interventionAbilitySlots = new PlayerJobActionSlot[MAX_INTERVENTION_ABILITIES];
         minionsToSummon = new UnsummonedMinionData[3];
         maxSummonSlots = 0;
@@ -80,10 +80,10 @@ public class Player : ILeader {
             summonSlots.Add(data.summonSlots[i].Load());
         }
 
-        artifactSlots = new List<ArtifactSlot>();
-        for (int i = 0; i < artifactSlots.Count; i++) {
-            artifactSlots.Add(data.artifactSlots[i].Load());
-        }
+        // artifacts = new List<Artifact>();
+        // for (int i = 0; i < artifacts.Count; i++) {
+        //     artifacts.Add(data.artifactSlots[i].Load());
+        // }
 
         interventionAbilitySlots = new PlayerJobActionSlot[data.interventionAbilitySlots.Count];
         for (int i = 0; i < interventionAbilitySlots.Length; i++) {
@@ -977,246 +977,253 @@ public class Player : ILeader {
     //        }
     //    }
     //}
-    private void GainArtifactSlot(bool showUI = true) {
-        ArtifactSlot newSlot = new ArtifactSlot();
-        artifactSlots.Add(newSlot);
-        //if (showUI) {
-        //    PlayerUI.Instance.ShowGeneralConfirmation("New Artifact Slot", "You gained a new artifact slot!");
-        //}
-        UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "You gained a new artifact slot!", null);
-        Messenger.Broadcast<ArtifactSlot>(Signals.PLAYER_GAINED_ARTIFACT_SLOT, newSlot);
-    }
-    private void LoseArtifactSlot() {
-        ArtifactSlot unusedSlot;
-        if (TryGetUnusedArtifactSlot(out unusedSlot)) {
-            //lose the unused slot.
-            LoseArtifactSlot(unusedSlot, true);
-        } else {
-            //no unused slot, show UI to pick slot to be discarded.
-            UIManager.Instance.ShowClickableObjectPicker(artifactSlots, ShowDiscardArtifactConfirmation, title: "Discard an artifact slot.", showCover: true, layer: 25, closable: false);
-        }
-    }
-    private void LoseArtifactSlot(ArtifactSlot slot, bool showUI = false) {
-        if (artifactSlots.Remove(slot)) {
-            PlayerUI.Instance.ShowGeneralConfirmation("Lost Artifact Slot", "You lost an artifact slot!");
-            Messenger.Broadcast(Signals.PLAYER_LOST_ARTIFACT_SLOT, slot);
-        }
-    }
-    private void ShowDiscardArtifactConfirmation(object s) {
-        ArtifactSlot slot = s as ArtifactSlot;
-        UIManager.Instance.ShowYesNoConfirmation("Discard artifact slot", "Are you sure you want to discard your " + slot.artifact.name + "?", () => OnClickYesDiscardArtifact(slot), layer: 26);
-    }
-    private void OnClickYesDiscardArtifact(ArtifactSlot slot) {
-        LoseArtifactSlot(slot);
-        UIManager.Instance.HideObjectPicker();
-    }
-    public void GainArtifact(ARTIFACT_TYPE type, bool showNewArtifactUI = false) {
-        Artifact newArtifact = PlayerManager.Instance.CreateNewArtifact(type);
-        GainArtifact(newArtifact, showNewArtifactUI);
-    }
-    public void GainArtifact(Artifact artifact, bool showNewArtifactUI = false) {
-        if (maxArtifactSlots == 0) {
-            //no artifact slots yet.
-            PlayerUI.Instance.ShowGeneralConfirmation("New Artifact", "You gained a new artifact but do not yet have an artifact slot! " + artifact.name + " will be discarded.");
-        } else if (GetTotalArtifactCount() < maxArtifactSlots) {
-            AddArtifact(artifact, showNewArtifactUI);
-        } else {
-            Debug.LogWarning("Max artifacts has been reached!");
-            PlayerUI.Instance.replaceUI.ShowReplaceUI(GetAllArtifacts(), artifact, ReplaceArtifact, RejectArtifact);
-        }
-    }
-    public bool HasSpaceForNewArtifact() {
-        return GetTotalArtifactCount() < maxArtifactSlots;
-    }
-    private void ReplaceArtifact(object objToReplace, object objToAdd) {
-        Artifact replace = objToReplace as Artifact;
-        Artifact add = objToAdd as Artifact;
-        RemoveArtifact(replace);
-        AddArtifact(add);
-    }
-    private void RejectArtifact(object rejectedObj) { }
-    public void LoseArtifact(ARTIFACT_TYPE type) {
-        if (GetAvailableArtifactsOfTypeCount(type) > 0) {
-            Artifact artifact = GetArtifactOfType(type);
-            RemoveArtifact(artifact);
-        } else {
-            Debug.LogWarning("Cannot lose artifact " + type.ToString() + " because player has none.");
-        }
-    }
-    private void AddArtifact(Artifact newArtifact, bool showNewArtifactUI = false) {
-        for (int i = 0; i < artifactSlots.Count; i++) {
-            if (artifactSlots[i].artifact == null) {
-                artifactSlots[i].SetArtifact(newArtifact);
-                Messenger.Broadcast<Artifact>(Signals.PLAYER_GAINED_ARTIFACT, newArtifact);
-                if (showNewArtifactUI) {
-                    PlayerUI.Instance.newAbilityUI.ShowNewAbilityUI(currentMinionLeader, newArtifact);
-                }
-                break;
+    // private void GainArtifactSlot(bool showUI = true) {
+    //     ArtifactSlot newSlot = new ArtifactSlot();
+    //     artifacts.Add(newSlot);
+    //     //if (showUI) {
+    //     //    PlayerUI.Instance.ShowGeneralConfirmation("New Artifact Slot", "You gained a new artifact slot!");
+    //     //}
+    //     UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "You gained a new artifact slot!", null);
+    //     Messenger.Broadcast<ArtifactSlot>(Signals.PLAYER_GAINED_ARTIFACT_SLOT, newSlot);
+    // }
+    // private void LoseArtifactSlot() {
+    //     ArtifactSlot unusedSlot;
+    //     if (TryGetUnusedArtifactSlot(out unusedSlot)) {
+    //         //lose the unused slot.
+    //         LoseArtifactSlot(unusedSlot, true);
+    //     } else {
+    //         //no unused slot, show UI to pick slot to be discarded.
+    //         UIManager.Instance.ShowClickableObjectPicker(artifacts, ShowDiscardArtifactConfirmation, title: "Discard an artifact slot.", showCover: true, layer: 25, closable: false);
+    //     }
+    // }
+    // private void LoseArtifactSlot(ArtifactSlot slot, bool showUI = false) {
+    //     if (artifacts.Remove(slot)) {
+    //         PlayerUI.Instance.ShowGeneralConfirmation("Lost Artifact Slot", "You lost an artifact slot!");
+    //         Messenger.Broadcast(Signals.PLAYER_LOST_ARTIFACT_SLOT, slot);
+    //     }
+    // }
+    // private void ShowDiscardArtifactConfirmation(object s) {
+    //     ArtifactSlot slot = s as ArtifactSlot;
+    //     UIManager.Instance.ShowYesNoConfirmation("Discard artifact slot", "Are you sure you want to discard your " + slot.artifact.name + "?", () => OnClickYesDiscardArtifact(slot), layer: 26);
+    // }
+    // private void OnClickYesDiscardArtifact(ArtifactSlot slot) {
+    //     LoseArtifactSlot(slot);
+    //     UIManager.Instance.HideObjectPicker();
+    // }
+    // public void GainArtifact(ARTIFACT_TYPE type, bool showNewArtifactUI = false) {
+    //     Artifact newArtifact = PlayerManager.Instance.CreateNewArtifact(type);
+    //     GainArtifact(newArtifact, showNewArtifactUI);
+    // }
+    // public void GainArtifact(Artifact artifact, bool showNewArtifactUI = false) {
+    //     if (maxArtifactSlots == 0) {
+    //         //no artifact slots yet.
+    //         PlayerUI.Instance.ShowGeneralConfirmation("New Artifact", "You gained a new artifact but do not yet have an artifact slot! " + artifact.name + " will be discarded.");
+    //     } else if (GetTotalArtifactCount() < maxArtifactSlots) {
+    //         AddArtifact(artifact, showNewArtifactUI);
+    //     } else {
+    //         Debug.LogWarning("Max artifacts has been reached!");
+    //         PlayerUI.Instance.replaceUI.ShowReplaceUI(GetAllArtifacts(), artifact, ReplaceArtifact, RejectArtifact);
+    //     }
+    // }
+    // public bool HasSpaceForNewArtifact() {
+    //     return GetTotalArtifactCount() < maxArtifactSlots;
+    // }
+    // private void ReplaceArtifact(object objToReplace, object objToAdd) {
+    //     Artifact replace = objToReplace as Artifact;
+    //     Artifact add = objToAdd as Artifact;
+    //     RemoveArtifact(replace);
+    //     AddArtifact(add);
+    // }
+    // private void RejectArtifact(object rejectedObj) { }
+    // public void LoseArtifact(ARTIFACT_TYPE type) {
+    //     if (GetAvailableArtifactsOfTypeCount(type) > 0) {
+    //         Artifact artifact = GetArtifactOfType(type);
+    //         RemoveArtifact(artifact);
+    //     } else {
+    //         Debug.LogWarning("Cannot lose artifact " + type.ToString() + " because player has none.");
+    //     }
+    // }
+    public void AddArtifact(Artifact newArtifact, bool showNewArtifactUI = false) {
+        if (!HasArtifactOfType(newArtifact.type)) {
+            artifacts.Add(newArtifact);
+            Messenger.Broadcast<Artifact>(Signals.PLAYER_GAINED_ARTIFACT, newArtifact);
+            if (showNewArtifactUI) {
+                PlayerUI.Instance.newAbilityUI.ShowNewAbilityUI(currentMinionLeader, newArtifact);
             }
         }
     }
-    public void RemoveArtifact(Artifact removedArtifact) {
-        for (int i = 0; i < artifactSlots.Count; i++) {
-            if (artifactSlots[i].artifact == removedArtifact) {
-                artifactSlots[i].artifact = null;
-                Messenger.Broadcast<Artifact>(Signals.PLAYER_REMOVED_ARTIFACT, removedArtifact);
-                break;
+    public void AddArtifact(ARTIFACT_TYPE artifactType, bool showNewArtifactUI = false) {
+        if (!HasArtifactOfType(artifactType)) {
+            Artifact newArtifact = PlayerManager.Instance.CreateNewArtifact(artifactType);
+            artifacts.Add(newArtifact);
+            Messenger.Broadcast<Artifact>(Signals.PLAYER_GAINED_ARTIFACT, newArtifact);
+            if (showNewArtifactUI) {
+                PlayerUI.Instance.newAbilityUI.ShowNewAbilityUI(currentMinionLeader, newArtifact);
             }
         }
     }
-    public int GetTotalArtifactCount() {
-        int count = 0;
-        for (int i = 0; i < artifactSlots.Count; i++) {
-            if (artifactSlots[i].artifact != null) {
-                count++;
-            }
+    public bool RemoveArtifact(Artifact removedArtifact) {
+        if (artifacts.Remove(removedArtifact)) {
+            Messenger.Broadcast<Artifact>(Signals.PLAYER_REMOVED_ARTIFACT, removedArtifact);
+            return true;
         }
-        return count;
-    }
-    /// <summary>
-    /// Get number of artifacts that have not been used.
-    /// </summary>
-    public int GetTotalAvailableArtifactCount() {
-        int count = 0;
-        for (int i = 0; i < artifactSlots.Count; i++) {
-            Artifact currArtifact = artifactSlots[i].artifact;
-            if (currArtifact != null && !currArtifact.hasBeenUsed) {
-                count++;
-            }
-        }
-        return count;
-    }
-    public int GetAvailableArtifactsOfTypeCount(ARTIFACT_TYPE type) {
-        int count = 0;
-        for (int i = 0; i < artifactSlots.Count; i++) {
-            Artifact currArtifact = artifactSlots[i].artifact;
-            if (currArtifact != null && currArtifact.type == type && !currArtifact.hasBeenUsed) {
-                count++;
-            }
-        }
-        return count;
-    }
-    public bool TryGetAvailableArtifactOfType(ARTIFACT_TYPE type, out Artifact artifact) {
-        for (int i = 0; i < artifactSlots.Count; i++) {
-            Artifact currArtifact = artifactSlots[i].artifact;
-            if (currArtifact != null && currArtifact.type == type && !currArtifact.hasBeenUsed) {
-                artifact = currArtifact;
-                return true;
-            }
-        }
-        artifact = null;
         return false;
     }
+    public bool HasArtifactOfType(ARTIFACT_TYPE type) {
+        return GetArtifactOfType(type) != null;
+    }
+    // public int GetTotalArtifactCount() {
+    //     int count = 0;
+    //     for (int i = 0; i < artifacts.Count; i++) {
+    //         if (artifacts[i].artifact != null) {
+    //             count++;
+    //         }
+    //     }
+    //     return count;
+    // }
+    // /// <summary>
+    // /// Get number of artifacts that have not been used.
+    // /// </summary>
+    // public int GetTotalAvailableArtifactCount() {
+    //     int count = 0;
+    //     for (int i = 0; i < artifacts.Count; i++) {
+    //         Artifact currArtifact = artifacts[i].artifact;
+    //         if (currArtifact != null && !currArtifact.hasBeenUsed) {
+    //             count++;
+    //         }
+    //     }
+    //     return count;
+    // }
+    // public int GetAvailableArtifactsOfTypeCount(ARTIFACT_TYPE type) {
+    //     int count = 0;
+    //     for (int i = 0; i < artifacts.Count; i++) {
+    //         Artifact currArtifact = artifacts[i].artifact;
+    //         if (currArtifact != null && currArtifact.type == type && !currArtifact.hasBeenUsed) {
+    //             count++;
+    //         }
+    //     }
+    //     return count;
+    // }
+    // public bool TryGetAvailableArtifactOfType(ARTIFACT_TYPE type, out Artifact artifact) {
+    //     for (int i = 0; i < artifacts.Count; i++) {
+    //         Artifact currArtifact = artifacts[i].artifact;
+    //         if (currArtifact != null && currArtifact.type == type && !currArtifact.hasBeenUsed) {
+    //             artifact = currArtifact;
+    //             return true;
+    //         }
+    //     }
+    //     artifact = null;
+    //     return false;
+    // }
     public bool HasArtifact(string artifactName) {
-        //ARTIFACT_TYPE type = (ARTIFACT_TYPE)System.Enum.Parse(typeof(ARTIFACT_TYPE), artifactName);
-        for (int i = 0; i < artifactSlots.Count; i++) {
-            Artifact currArtifact = artifactSlots[i].artifact;
-            if (currArtifact != null && currArtifact.name == artifactName) {
+        for (int i = 0; i < artifacts.Count; i++) {
+            Artifact currArtifact = artifacts[i];
+            if (currArtifact.name == artifactName) {
                 return true;
             }
         }
         return false;
     }
     private Artifact GetArtifactOfType(ARTIFACT_TYPE type) {
-        for (int i = 0; i < artifactSlots.Count; i++) {
-            Artifact currArtifact = artifactSlots[i].artifact;
+        for (int i = 0; i < artifacts.Count; i++) {
+            Artifact currArtifact = artifacts[i];
             if (currArtifact.type == type) {
                 return currArtifact;
             }
         }
         return null;
     }
-    private List<Artifact> GetAllArtifacts() {
-        List<Artifact> all = new List<Artifact>();
-        for (int i = 0; i < artifactSlots.Count; i++) {
-            Artifact currArtifact = artifactSlots[i].artifact;
-            if (currArtifact != null) {
-                all.Add(currArtifact);
-            }
-        }
-        return all;
-    }
-    public string GetArtifactDescription(ARTIFACT_TYPE type) {
-        switch (type) {
-            case ARTIFACT_TYPE.Necronomicon:
-                return "Raises all dead characters in the settlement to attack residents.";
-            case ARTIFACT_TYPE.Chaos_Orb_Artifact:
-                return "Characters that inspect the Chaos Orb may be permanently berserked.";
-            case ARTIFACT_TYPE.Hermes_Statue:
-                return "Characters that inspect this will be teleported to a different settlement. If no other settlement exists, this will be useless.";
-            case ARTIFACT_TYPE.Ankh_Of_Anubis:
-                return "All characters that moves through here may slowly sink and perish. Higher agility means higher chance of escaping. Sand pit has a limited duration upon placing the artifact.";
-            case ARTIFACT_TYPE.Miasma_Emitter:
-                return "Characters will avoid the settlement. If any character gets caught within, they will gain Poisoned status effect. Any objects inside the radius are disabled.";
-            default:
-                return "Summon a " + UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(type.ToString());
-        }
-    }
-    public Artifact GetRandomArtifact() {
-        List<Artifact> choices = GetAllArtifacts();
-        return choices[UnityEngine.Random.Range(0, choices.Count)];
-    }
-    private void ResetArtifacts() {
-        for (int i = 0; i < artifactSlots.Count; i++) {
-            Artifact currArtifact = artifactSlots[i].artifact;
-            if (currArtifact != null) {
-                currArtifact.Reset();
-            }
-        }
-    }
-    public void IncreaseArtifactSlot() {
-        maxArtifactSlots += 1;
-        maxArtifactSlots = Mathf.Max(maxArtifactSlots, 0);
-        //validate if adjusted max artifacts can accomodate current summons
-        if (artifactSlots.Count < maxArtifactSlots) {
-            //add new artifact slot
-            GainArtifactSlot();
-        }
-    }
-    public void DecreaseArtifactSlot() {
-        maxArtifactSlots -= 1;
-        maxArtifactSlots = Mathf.Max(maxArtifactSlots, 0);
-        //validate if adjusted max artifacts can accomodate current summons
-        if (artifactSlots.Count > maxArtifactSlots) {
-            //remove artifact slot
-            LoseArtifactSlot();
-        }
-    }
-    public ArtifactSlot GetArtifactSlotByArtifact(Artifact artifact) {
-        for (int i = 0; i < artifactSlots.Count; i++) {
-            if(artifactSlots[i].artifact == artifact) {
-                return artifactSlots[i];
-            }
-        }
-        return null;
-    }
-    public int GetIndexForArtifactSlot(ArtifactSlot slot) {
-        for (int i = 0; i < artifactSlots.Count; i++) {
-            if (artifactSlots[i] == slot) {
-                return i;
-            }
-        }
-        return 0;
-    }
-    public bool AreAllArtifactSlotsMaxLevel() {
-        for (int i = 0; i < maxArtifactSlots; i++) {
-            if (artifactSlots[i].level < PlayerManager.MAX_LEVEL_ARTIFACT) {
-                return false;
-            }
-        }
-        return true;
-    }
-    private bool TryGetUnusedArtifactSlot(out ArtifactSlot unusedSlot) {
-        for (int i = 0; i < artifactSlots.Count; i++) {
-            ArtifactSlot currSlot = artifactSlots[i];
-            if (currSlot.artifact == null) {
-                unusedSlot = currSlot;
-                return true;
-            }
-        }
-        unusedSlot = null; //no unused slot
-        return false;
-    }
+    // private List<Artifact> GetAllArtifacts() {
+    //     List<Artifact> all = new List<Artifact>();
+    //     for (int i = 0; i < artifacts.Count; i++) {
+    //         Artifact currArtifact = artifacts[i].artifact;
+    //         if (currArtifact != null) {
+    //             all.Add(currArtifact);
+    //         }
+    //     }
+    //     return all;
+    // }
+    // public string GetArtifactDescription(ARTIFACT_TYPE type) {
+    //     switch (type) {
+    //         case ARTIFACT_TYPE.Necronomicon:
+    //             return "Raises all dead characters in the settlement to attack residents.";
+    //         case ARTIFACT_TYPE.Chaos_Orb_Artifact:
+    //             return "Characters that inspect the Chaos Orb may be permanently berserked.";
+    //         case ARTIFACT_TYPE.Hermes_Statue:
+    //             return "Characters that inspect this will be teleported to a different settlement. If no other settlement exists, this will be useless.";
+    //         case ARTIFACT_TYPE.Ankh_Of_Anubis:
+    //             return "All characters that moves through here may slowly sink and perish. Higher agility means higher chance of escaping. Sand pit has a limited duration upon placing the artifact.";
+    //         case ARTIFACT_TYPE.Miasma_Emitter:
+    //             return "Characters will avoid the settlement. If any character gets caught within, they will gain Poisoned status effect. Any objects inside the radius are disabled.";
+    //         default:
+    //             return "Summon a " + UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(type.ToString());
+    //     }
+    // }
+    // public Artifact GetRandomArtifact() {
+    //     List<Artifact> choices = GetAllArtifacts();
+    //     return choices[UnityEngine.Random.Range(0, choices.Count)];
+    // }
+    // private void ResetArtifacts() {
+    //     for (int i = 0; i < artifacts.Count; i++) {
+    //         Artifact currArtifact = artifacts[i].artifact;
+    //         if (currArtifact != null) {
+    //             currArtifact.Reset();
+    //         }
+    //     }
+    // }
+    // public void IncreaseArtifactSlot() {
+    //     maxArtifactSlots += 1;
+    //     maxArtifactSlots = Mathf.Max(maxArtifactSlots, 0);
+    //     //validate if adjusted max artifacts can accomodate current summons
+    //     if (artifacts.Count < maxArtifactSlots) {
+    //         //add new artifact slot
+    //         GainArtifactSlot();
+    //     }
+    // }
+    // public void DecreaseArtifactSlot() {
+    //     maxArtifactSlots -= 1;
+    //     maxArtifactSlots = Mathf.Max(maxArtifactSlots, 0);
+    //     //validate if adjusted max artifacts can accomodate current summons
+    //     if (artifacts.Count > maxArtifactSlots) {
+    //         //remove artifact slot
+    //         LoseArtifactSlot();
+    //     }
+    // }
+    // public ArtifactSlot GetArtifactSlotByArtifact(Artifact artifact) {
+    //     for (int i = 0; i < artifacts.Count; i++) {
+    //         if(artifacts[i].artifact == artifact) {
+    //             return artifacts[i];
+    //         }
+    //     }
+    //     return null;
+    // }
+    // public int GetIndexForArtifactSlot(ArtifactSlot slot) {
+    //     for (int i = 0; i < artifacts.Count; i++) {
+    //         if (artifacts[i] == slot) {
+    //             return i;
+    //         }
+    //     }
+    //     return 0;
+    // }
+    // public bool AreAllArtifactSlotsMaxLevel() {
+    //     for (int i = 0; i < maxArtifactSlots; i++) {
+    //         if (artifacts[i].level < PlayerManager.MAX_LEVEL_ARTIFACT) {
+    //             return false;
+    //         }
+    //     }
+    //     return true;
+    // }
+    // private bool TryGetUnusedArtifactSlot(out ArtifactSlot unusedSlot) {
+    //     for (int i = 0; i < artifacts.Count; i++) {
+    //         ArtifactSlot currSlot = artifacts[i];
+    //         if (currSlot.artifact == null) {
+    //             unusedSlot = currSlot;
+    //             return true;
+    //         }
+    //     }
+    //     unusedSlot = null; //no unused slot
+    //     return false;
+    // }
     #endregion
 
     #region Invasion

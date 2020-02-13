@@ -60,12 +60,12 @@ public class SaveDataPlayer {
             summonSlots.Add(data);
         }
 
-        artifactSlots = new List<SaveDataArtifactSlot>();
-        for (int i = 0; i < player.artifactSlots.Count; i++) {
-            SaveDataArtifactSlot saveDataArtifact = new SaveDataArtifactSlot();
-            saveDataArtifact.Save(player.artifactSlots[i]);
-            artifactSlots.Add(saveDataArtifact);
-        }
+        // artifactSlots = new List<SaveDataArtifactSlot>();
+        // for (int i = 0; i < player.artifacts.Count; i++) {
+        //     SaveDataArtifactSlot saveDataArtifact = new SaveDataArtifactSlot();
+        //     saveDataArtifact.Save(player.artifacts[i]);
+        //     artifactSlots.Add(saveDataArtifact);
+        // }
 
         //currentMinionLeaderID = player.currentMinionLeader.character.id;
 

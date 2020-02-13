@@ -56,8 +56,8 @@ public class LevelUpUI : MonoBehaviour {
                 choices.Add(PlayerManager.Instance.player.summonSlots[i]);
             }
         } else if (identifierToLevelUp.ToLower() == "artifact_slot") {
-            for (int i = 0; i < PlayerManager.Instance.player.artifactSlots.Count; i++) {
-                choices.Add(PlayerManager.Instance.player.artifactSlots[i]);
+            for (int i = 0; i < PlayerManager.Instance.player.artifacts.Count; i++) {
+                choices.Add(PlayerManager.Instance.player.artifacts[i]);
             }
         }
         for (int i = 0; i < choices.Count; i++) {

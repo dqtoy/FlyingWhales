@@ -17,9 +17,9 @@ public class Betrayal : Emotion {
             if (UnityEngine.Random.Range(0, 100) < 50) {
                 int chance = UnityEngine.Random.Range(0, 3);
                 if (chance == 0) {
-                    CreateKnockoutJob(witness, targetCharacter);
+                    witness.jobComponent.CreateKnockoutJob(targetCharacter);
                 } else if (chance == 1) {
-                    CreateKillJob(witness, targetCharacter);
+                    witness.jobComponent.CreateKillJob(targetCharacter);
                 } else if (chance == 2) {
                     witness.CreateUndermineJobOnly(targetCharacter, "provoke");
                 }

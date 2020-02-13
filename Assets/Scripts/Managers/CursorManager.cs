@@ -279,52 +279,51 @@ public class CursorManager : MonoBehaviour {
     public void ClearRightClickActions() {
         rightClickActions.Clear();
     }
-    private readonly List<RaycastResult> raycastResults = new List<RaycastResult>();
-    private void MapVisualClick(PointerEventData.InputButton button) {
-        if (ReferenceEquals(UIManager.Instance, null) == false && (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing())) {
-            return;
-        }
-        PointerEventData pointer = new PointerEventData(EventSystem.current);
-        pointer.position = Input.mousePosition;
-
-        raycastResults.Clear();
-        EventSystem.current.RaycastAll(pointer, raycastResults);
-
-        if (raycastResults.Count > 0) {
-            List<BaseMapObjectVisual> allVisuals = new List<BaseMapObjectVisual>();
-            foreach (var go in raycastResults) {
-                if (go.gameObject.CompareTag("Character Marker") || go.gameObject.CompareTag("Map Object")) {
-                    BaseMapObjectVisual visual = go.gameObject.GetComponent<BaseMapObjectVisual>();
-                    if (visual.IsInvisible()) {
-                        continue; //skip
-                    }
-                    //assume that all objects that have the specified tags have the BaseMapObjectVisual class
-                    allVisuals.Add(visual);
-                }
-            }
-
-
-            if (allVisuals.Count > 0) {
-                bool foundObject = false;
-                BaseMapObjectVisual objToShowMenu = null;
-                for (int i = 0; i < allVisuals.Count; i++) {
-                    BaseMapObjectVisual visual = allVisuals[i];
-                    if (visual.IsMapObjectMenuVisible()) {
-                        //current map object is selected, set the next object in the loop to show its menu
-                        objToShowMenu = CollectionUtilities.GetNextElementCyclic(allVisuals, i);
-                        foundObject = true;
-                        break;
-                    }
-                }
-
-                if (foundObject == false) {
-                    objToShowMenu = allVisuals[0]; //show the first element
-                }
-                objToShowMenu.ExecuteClickAction(button);
-            }
-        }
-    }
- 
+    // private readonly List<RaycastResult> raycastResults = new List<RaycastResult>();
+    // private void MapVisualClick(PointerEventData.InputButton button) {
+    //     if (ReferenceEquals(UIManager.Instance, null) == false && (UIManager.Instance.IsMouseOnUI() || UIManager.Instance.IsConsoleShowing())) {
+    //         return;
+    //     }
+    //     PointerEventData pointer = new PointerEventData(EventSystem.current);
+    //     pointer.position = Input.mousePosition;
+    //
+    //     raycastResults.Clear();
+    //     EventSystem.current.RaycastAll(pointer, raycastResults);
+    //
+    //     if (raycastResults.Count > 0) {
+    //         List<BaseMapObjectVisual> allVisuals = new List<BaseMapObjectVisual>();
+    //         foreach (var go in raycastResults) {
+    //             if (go.gameObject.CompareTag("Character Marker") || go.gameObject.CompareTag("Map Object")) {
+    //                 BaseMapObjectVisual visual = go.gameObject.GetComponent<BaseMapObjectVisual>();
+    //                 if (visual.IsInvisible()) {
+    //                     continue; //skip
+    //                 }
+    //                 //assume that all objects that have the specified tags have the BaseMapObjectVisual class
+    //                 allVisuals.Add(visual);
+    //             }
+    //         }
+    //
+    //
+    //         if (allVisuals.Count > 0) {
+    //             bool foundObject = false;
+    //             BaseMapObjectVisual objToShowMenu = null;
+    //             for (int i = 0; i < allVisuals.Count; i++) {
+    //                 BaseMapObjectVisual visual = allVisuals[i];
+    //                 if (visual.IsMapObjectMenuVisible()) {
+    //                     //current map object is selected, set the next object in the loop to show its menu
+    //                     objToShowMenu = CollectionUtilities.GetNextElementCyclic(allVisuals, i);
+    //                     foundObject = true;
+    //                     break;
+    //                 }
+    //             }
+    //
+    //             if (foundObject == false) {
+    //                 objToShowMenu = allVisuals[0]; //show the first element
+    //             }
+    //             objToShowMenu.ExecuteClickAction(button);
+    //         }
+    //     }
+    // }
     #endregion
 
     #region Effects

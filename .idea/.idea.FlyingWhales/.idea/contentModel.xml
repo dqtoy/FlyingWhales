@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="C:\Users\12myk\.Rider2019.3\system\extResources" t="IncludeRecursive" />
-    <e p="C:\Users\12myk\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_FlyingWhales.-362142238.00" t="ExcludeRecursive" />
-    <e p="D:\Repositories\FlyingWhales" t="IncludeRecursive">
+    <e p="C:\Users\Ian Chy\.Rider2019.3\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\Ian Chy\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_FlyingWhales.1495046791.00" t="ExcludeRecursive" />
+    <e p="C:\Users\Ian Chy\Documents\FlyingWhales" t="IncludeRecursive">
       <e p="Assembly-CSharp-Editor.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp-firstpass.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
@@ -1225,6 +1225,7 @@
               <e p="DispelMagic.cs" t="Include" />
               <e p="DrinkBlood.cs" t="Include" />
               <e p="Drop.cs" t="Include" />
+              <e p="DropItem.cs" t="Include" />
               <e p="DropResource.cs" t="Include" />
               <e p="Feed.cs" t="Include" />
               <e p="FeelingBrokenhearted.cs" t="Include" />
@@ -1282,6 +1283,7 @@
               <e p="Steal.cs" t="Include" />
               <e p="StealthTransform.cs" t="Include" />
               <e p="Strangle.cs" t="Include" />
+              <e p="StudyMonster.cs" t="Include" />
               <e p="Stumble.cs" t="Include" />
               <e p="TakeResource.cs" t="Include" />
               <e p="Tantrum.cs" t="Include" />
@@ -1664,17 +1666,13 @@
           <e p="Player" t="Include">
             <e p="Archetypes" t="Include">
               <e p="Lich.cs" t="Include" />
+              <e p="Normal.cs" t="Include" />
               <e p="PlayerArchetype.cs" t="Include" />
               <e p="PuppetMaster.cs" t="Include" />
               <e p="Ravager.cs" t="Include" />
             </e>
             <e p="Artifacts" t="Include">
-              <e p="AnkhOfAnubis.cs" t="Include" />
               <e p="Artifact.cs" t="Include" />
-              <e p="ChaosOrbArtifact.cs" t="Include" />
-              <e p="HermesStatue.cs" t="Include" />
-              <e p="MiasmaEmitter.cs" t="Include" />
-              <e p="Necronomicon.cs" t="Include" />
             </e>
             <e p="ChaosOrb.cs" t="Include" />
             <e p="Combat Abilities" t="Include">
@@ -1774,6 +1772,9 @@
             <e p="SaveDataWorldEvent.cs" t="Include" />
             <e p="SaveDataWorldObject.cs" t="Include" />
             <e p="SaveUtilities.cs" t="Include" />
+          </e>
+          <e p="Scriptable Object Scripts" t="Include">
+            <e p="ArtifactData.cs" t="Include" />
           </e>
           <e p="Serializable Dictionaries" t="Include">
             <e p="SerializableDictionaries.cs" t="Include" />
@@ -2009,6 +2010,7 @@
             <e p="MinionAbilityChoiceItem.cs" t="Include" />
             <e p="MinionCard.cs" t="Include" />
             <e p="MinionCharacterItem.cs" t="Include" />
+            <e p="MinionCommandsUI.cs" t="Include" />
             <e p="MinionLeaderPicker.cs" t="Include" />
             <e p="MinionPicker.cs" t="Include" />
             <e p="Models" t="Include">

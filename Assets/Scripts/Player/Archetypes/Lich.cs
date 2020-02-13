@@ -5,7 +5,8 @@ using UnityEngine;
 namespace Archetype {
     public class Lich : PlayerArchetype {
         public Lich() : base(PLAYER_ARCHETYPE.Lich) {
-            actions = new List<string>() { PlayerManager.Afflict_Action, PlayerManager.Poison_Action, PlayerManager.Seize_Object_Action, PlayerManager.Animate_Action, PlayerManager.Summon_Minion_Action };
+            actions = new List<string>() { PlayerManager.Afflict_Action, PlayerManager.Poison_Action
+                , PlayerManager.Seize_Object_Action, PlayerManager.Animate_Action, PlayerManager.Summon_Minion_Action, PlayerManager.Stop_Action, PlayerManager.Return_To_Portal_Action };
             monsters = new List<RaceClass> { new RaceClass(RACE.SKELETON, "Archer"), new RaceClass(RACE.SKELETON, "Marauder") };
             demonicStructures = new List<LANDMARK_TYPE>() { LANDMARK_TYPE.THE_PROFANE, LANDMARK_TYPE.THE_KENNEL, LANDMARK_TYPE.TORTURE_CHAMBER };
             minionClasses = new List<string>() { "Pride", "Sloth", "Lust", "Gluttony" };

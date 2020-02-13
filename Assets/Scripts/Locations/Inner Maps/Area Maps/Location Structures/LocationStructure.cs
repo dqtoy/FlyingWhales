@@ -689,8 +689,11 @@ namespace Inner_Maps.Location_Structures {
             return UIManager.Instance.structureInfoUI.isShowing 
                    && UIManager.Instance.structureInfoUI.activeStructure == this;
         }
-        public void SelectAction() {
+        public void LeftSelectAction() {
             UIManager.Instance.ShowStructureInfo(this);
+        }
+        public void RightSelectAction() {
+            //Nothing happens
         }
         #endregion
     }

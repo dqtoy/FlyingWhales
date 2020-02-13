@@ -10,6 +10,7 @@ using Pathfinding;
 using Traits;
 using UnityEngine.Experimental.U2D;
 using UtilityScripts;
+using UnityEngine.EventSystems;
 
 public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPlayerActionTarget {
     public string name { get; protected set; }
@@ -69,7 +70,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     protected void Initialize(TILE_OBJECT_TYPE tileObjectType) {
         id = UtilityScripts.Utilities.SetID(this);
         this.tileObjectType = tileObjectType;
-        name = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(tileObjectType.ToString());
+        name = GenerateName();
         actionHistory = new List<string>();
         allJobsTargetingThis = new List<JobQueueItem>();
         owners = new List<Character>();
@@ -106,6 +107,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         AddAdvertisedAction(INTERACTION_TYPE.REPAIR);
         AddAdvertisedAction(INTERACTION_TYPE.SCRAP);
         AddAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
+        AddAdvertisedAction(INTERACTION_TYPE.PICK_UP);
     }
     protected void RemoveCommonAdvertisements() {
         RemoveAdvertisedAction(INTERACTION_TYPE.ASSAULT);
@@ -114,6 +116,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         RemoveAdvertisedAction(INTERACTION_TYPE.REPAIR);
         RemoveAdvertisedAction(INTERACTION_TYPE.SCRAP);
         RemoveAdvertisedAction(INTERACTION_TYPE.DROP_ITEM);
+        RemoveAdvertisedAction(INTERACTION_TYPE.PICK_UP);
     }
 
     #region Listeners
@@ -312,6 +315,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
         return false;
     }
+    protected virtual string GenerateName() { return UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(tileObjectType.ToString()); }
     #endregion
 
     #region IPointOfInterest
@@ -865,8 +869,12 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         return UIManager.Instance.tileObjectInfoUI.isShowing &&
                UIManager.Instance.tileObjectInfoUI.activeTileObject == this;
     }
-    public void SelectAction() {
-        UIManager.Instance.ShowTileObjectInfo(this);
+    public void LeftSelectAction() {
+        mapObjectVisual.ExecuteClickAction(PointerEventData.InputButton.Left);
+        // UIManager.Instance.ShowTileObjectInfo(this);
+    }
+    public void RightSelectAction() {
+        mapObjectVisual.ExecuteClickAction(PointerEventData.InputButton.Right);
     }
     #endregion
 }

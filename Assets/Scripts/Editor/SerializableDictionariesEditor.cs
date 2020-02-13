@@ -67,5 +67,7 @@ public class TileBaseListStoragePropertyDrawer : SerializableDictionaryStoragePr
 public class LandmarkTypeListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
 [CustomPropertyDrawer(typeof(GameObjectListStorage))]
 public class GameObjectListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
+[CustomPropertyDrawer(typeof(ArtifactDataDictionary))]
+public class ArtifactDataDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 
 

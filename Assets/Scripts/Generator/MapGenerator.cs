@@ -94,7 +94,7 @@ public class MapGenerator : MonoBehaviour {
             }
             Messenger.Broadcast(Signals.GAME_LOADED);
             yield return new WaitForSeconds(1f);
-            PlayerManager.Instance.player.IncreaseArtifactSlot();
+            // PlayerManager.Instance.player.IncreaseArtifactSlot();
             PlayerManager.Instance.player.IncreaseSummonSlot();
             GameManager.Instance.StartProgression();
             //UIManager.Instance.SetSpeedTogglesState(false);

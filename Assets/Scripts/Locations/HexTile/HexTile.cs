@@ -1286,8 +1286,11 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         return UIManager.Instance.hexTileInfoUI.isShowing &&
                UIManager.Instance.hexTileInfoUI.currentlyShowingHexTile == this;
     }
-    public void SelectAction() {
+    public void LeftSelectAction() {
         UIManager.Instance.ShowHexTileInfo(this);
+    }
+    public void RightSelectAction() {
+        //Nothing happens
     }
     #endregion
 }

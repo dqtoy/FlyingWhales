@@ -148,5 +148,20 @@ public class POITestingUI : MonoBehaviour {
         UIManager.Instance.characterInfoUI.activeCharacter.marker.GoTo(this.poi.gridTileLocation/*, notAllowedStructures: _notAllowedStructures*/);
         HideUI();
     }
+    public void AddRandomArtifact() {
+        //STRUCTURE_TYPE[] _notAllowedStructures = new STRUCTURE_TYPE[] { STRUCTURE_TYPE.INN, STRUCTURE_TYPE.DWELLING, STRUCTURE_TYPE.WAREHOUSE, STRUCTURE_TYPE.PRISON };
+        ARTIFACT_TYPE[] types = UtilityScripts.CollectionUtilities.GetEnumValues<ARTIFACT_TYPE>();
+        bool hasAdded = false;
+        while (!hasAdded) {
+            ARTIFACT_TYPE chosenType = types[UnityEngine.Random.Range(0, types.Length)];
+            if (chosenType != ARTIFACT_TYPE.None) {
+                hasAdded = true;
+                LocationGridTile tile = poi.gridTileLocation.GetNearestUnoccupiedTileFromThis();
+                Artifact artifact = PlayerManager.Instance.CreateNewArtifact(chosenType);
+                tile.structure.AddPOI(artifact, tile);
+            }
+        }
+        HideUI();
+    }
     #endregion
 }

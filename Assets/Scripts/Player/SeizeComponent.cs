@@ -78,7 +78,7 @@ public class SeizeComponent {
             //Debug.LogError("Cannot unseize. Not holding seized object");
             return false;
         }
-        if (UIManager.Instance.IsMouseOnUI() || !InnerMapManager.Instance.isAnInnerMapShowing) {
+        if (!InnerMapManager.Instance.isAnInnerMapShowing || UIManager.Instance.IsMouseOnUIOrMapObject()) {
             return false;
         }
         // isPreparingToBeUnseized = false;

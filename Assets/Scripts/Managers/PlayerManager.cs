@@ -29,6 +29,8 @@ public class PlayerManager : MonoBehaviour {
     public const string Bless_Action = "Bless";
     public const string Booby_Trap_Action = "Booby Trap";
     public const string Torture_Action = "Torture";
+    public const string Stop_Action = "Stop";
+    public const string Return_To_Portal_Action = "Return To Portal";
 
     public const string Tornado = "Tornado";
     public const string Meteor = "Meteor";
@@ -72,6 +74,9 @@ public Player player = null;
     [Header("Chaos Orbs")] 
     [SerializeField] private GameObject chaosOrbPrefab;
 
+    [Header("Artifacts")] 
+    public ArtifactDataDictionary artifactDataDictionary;
+    
     private void Awake() {
         Instance = this;
     }
@@ -98,7 +103,7 @@ public Player player = null;
         //Unit Selection
         Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
-        Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressedDown);
+        // Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnKeyPressedDown);
         Messenger.AddListener<Vector3, int, InnerTileMap>(Signals.CREATE_CHAOS_ORBS, CreateChaosOrbsAt);
         Messenger.AddListener<Character, ActualGoapNode>(Signals.CHARACTER_DID_ACTION_SUCCESSFULLY, OnCharacterDidActionSuccess);
     }
@@ -315,20 +320,27 @@ public Player player = null;
 
     #region Artifacts
     public Artifact CreateNewArtifact(ARTIFACT_TYPE artifactType) {
-        Artifact newArtifact = CreateNewArtifactClassFromType(artifactType) as Artifact;
-        return newArtifact;
+        // Artifact newArtifact = CreateNewArtifactClassFromType(artifactType) as Artifact;
+        // return newArtifact;
+        return new Artifact(artifactType);
     }
     public Artifact CreateNewArtifact(SaveDataArtifact data) {
         Artifact newArtifact = CreateNewArtifactClassFromType(data) as Artifact;
         return newArtifact;
     }
     private object CreateNewArtifactClassFromType(ARTIFACT_TYPE artifactType) {
-        var typeName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(artifactType.ToString());
+        var typeName = UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(artifactType.ToString());
         return System.Activator.CreateInstance(System.Type.GetType(typeName));
     }
     private object CreateNewArtifactClassFromType(SaveDataArtifact data) {
-        var typeName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(data.artifactType.ToString());
+        var typeName = UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(data.artifactType.ToString());
         return System.Activator.CreateInstance(System.Type.GetType(typeName), data);
+    }
+    public ArtifactData GetArtifactData(ARTIFACT_TYPE type) {
+        if (artifactDataDictionary.ContainsKey(type)) {
+            return artifactDataDictionary[type];
+        }
+        return null;
     }
     #endregion
 
@@ -365,47 +377,47 @@ public Player player = null;
             DeselectAllUnits();
         }
     }
-    private void OnKeyPressedDown(KeyCode keyCode) {
-        if (selectedUnits.Count > 0) {
-            if (keyCode == KeyCode.Mouse1) {
-                //right click
-                for (int i = 0; i < selectedUnits.Count; i++) {
-                    Character character = selectedUnits[i];
-                    if (!character.CanBeInstructedByPlayer()) {
-                        continue;
-                    }
-                    IPointOfInterest hoveredPOI = InnerMapManager.Instance.currentlyHoveredPoi;
-                    character.StopCurrentActionNode(false, "Stopped by the player");
-                    if (character.stateComponent.currentState != null) {
-                        character.stateComponent.ExitCurrentState();
-                    }
-                    character.combatComponent.ClearHostilesInRange();
-                    character.combatComponent.ClearAvoidInRange();
-                    character.SetIsFollowingPlayerInstruction(false); //need to reset before giving commands
-                    if (hoveredPOI is Character) {
-                        Character target = hoveredPOI as Character;
-                        if (character.IsHostileWith(target) && character.IsCombatReady()) {
-                            character.combatComponent.Fight(target);
-                            character.combatComponent.AddOnProcessCombatAction((combatState) => combatState.SetForcedTarget(target));
-                            //CombatState cs = character.stateComponent.currentState as CombatState;
-                            //if (cs != null) {
-                            //    cs.SetForcedTarget(target);
-                            //} else {
-                            //    throw new System.Exception(character.name + " was instructed to attack " + target.name + " but did not enter combat state!");
-                            //}
-                        } else {
-                            Debug.Log(character.name + " is not combat ready or is not hostile with " + target.name + ". Ignoring command.");
-                        }
-                    } else {
-                        character.marker.GoTo(InnerMapManager.Instance.currentlyShowingMap.worldUiCanvas.worldCamera.ScreenToWorldPoint(Input.mousePosition), () => OnFinishInstructionFromPlayer(character));
-                    }
-                    character.SetIsFollowingPlayerInstruction(true);
-                }
-            } else if (keyCode == KeyCode.Mouse0) {
-                DeselectAllUnits();
-            }
-        }
-    }
+    // private void OnKeyPressedDown(KeyCode keyCode) {
+    //     if (selectedUnits.Count > 0) {
+    //         if (keyCode == KeyCode.Mouse1) {
+    //             //right click
+    //             for (int i = 0; i < selectedUnits.Count; i++) {
+    //                 Character character = selectedUnits[i];
+    //                 if (!character.CanBeInstructedByPlayer()) {
+    //                     continue;
+    //                 }
+    //                 IPointOfInterest hoveredPOI = InnerMapManager.Instance.currentlyHoveredPoi;
+    //                 character.StopCurrentActionNode(false, "Stopped by the player");
+    //                 if (character.stateComponent.currentState != null) {
+    //                     character.stateComponent.ExitCurrentState();
+    //                 }
+    //                 character.combatComponent.ClearHostilesInRange();
+    //                 character.combatComponent.ClearAvoidInRange();
+    //                 character.SetIsFollowingPlayerInstruction(false); //need to reset before giving commands
+    //                 if (hoveredPOI is Character) {
+    //                     Character target = hoveredPOI as Character;
+    //                     if (character.IsHostileWith(target) && character.IsCombatReady()) {
+    //                         character.combatComponent.Fight(target);
+    //                         character.combatComponent.AddOnProcessCombatAction((combatState) => combatState.SetForcedTarget(target));
+    //                         //CombatState cs = character.stateComponent.currentState as CombatState;
+    //                         //if (cs != null) {
+    //                         //    cs.SetForcedTarget(target);
+    //                         //} else {
+    //                         //    throw new System.Exception(character.name + " was instructed to attack " + target.name + " but did not enter combat state!");
+    //                         //}
+    //                     } else {
+    //                         Debug.Log(character.name + " is not combat ready or is not hostile with " + target.name + ". Ignoring command.");
+    //                     }
+    //                 } else {
+    //                     character.marker.GoTo(InnerMapManager.Instance.currentlyShowingMap.worldUiCanvas.worldCamera.ScreenToWorldPoint(Input.mousePosition), () => OnFinishInstructionFromPlayer(character));
+    //                 }
+    //                 character.SetIsFollowingPlayerInstruction(true);
+    //             }
+    //         } else if (keyCode == KeyCode.Mouse0) {
+    //             DeselectAllUnits();
+    //         }
+    //     }
+    // }
     private void OnFinishInstructionFromPlayer(Character character) {
         character.SetIsFollowingPlayerInstruction(false);
     }

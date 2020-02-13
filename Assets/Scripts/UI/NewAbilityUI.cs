@@ -79,17 +79,18 @@ public class NewAbilityUI : MonoBehaviour {
             text += "\nDescription: " + PlayerManager.Instance.player.GetSummonDescription(summon.summonType);
             abilityText.text = text;
             obtainText.gameObject.SetActive(true);
-        } else if (obj is Artifact) {
-            titleText.text = "New Artifact";
-            obtainText.text = "You obtained a new Artifact!";
-            Artifact artifact = obj as Artifact;
-            abilityIcon.sprite = CharacterManager.Instance.GetArtifactSettings(artifact.type).artifactPortrait;
-            string text = artifact.name;
-            text += "\nLevel: " + artifact.level;
-            text += "\nDescription: " + PlayerManager.Instance.player.GetArtifactDescription(artifact.type);
-            abilityText.text = text;
-            obtainText.gameObject.SetActive(true);
         }
+        // else if (obj is Artifact) {
+        //     titleText.text = "New Artifact";
+        //     obtainText.text = "You obtained a new Artifact!";
+        //     Artifact artifact = obj as Artifact;
+        //     abilityIcon.sprite = CharacterManager.Instance.GetArtifactSettings(artifact.type).artifactPortrait;
+        //     string text = artifact.name;
+        //     text += "\nLevel: " + artifact.level;
+        //     text += "\nDescription: " + PlayerManager.Instance.player.GetArtifactDescription(artifact.type);
+        //     abilityText.text = text;
+        //     obtainText.gameObject.SetActive(true);
+        // }
     }
 
     private void Close() {

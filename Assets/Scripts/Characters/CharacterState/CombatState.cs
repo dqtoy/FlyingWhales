@@ -590,7 +590,7 @@ public class CombatState : CharacterState {
         if (!stateComponent.character.marker.CanAttackByAttackSpeed()) {
             //float aspeed = stateComponent.character.marker.attackSpeedMeter;
             summary += "\nCannot attack because of attack speed. Waiting...";
-            stateComponent.character.logComponent.PrintLogIfActive(summary);
+            // stateComponent.character.logComponent.PrintLogIfActive(summary);
             //Debug.Log(summary);
             return;
         }
@@ -599,7 +599,7 @@ public class CombatState : CharacterState {
         stateComponent.character.FaceTarget(currentClosestHostile);
         stateComponent.character.marker.SetAnimationTrigger("Attack");
         isExecutingAttack = true;
-        stateComponent.character.logComponent.PrintLogIfActive(summary);
+        // stateComponent.character.logComponent.PrintLogIfActive(summary);
         //Debug.Log(summary);
     }
     public bool isExecutingAttack;
@@ -633,7 +633,10 @@ public class CombatState : CharacterState {
                 //if the character that was hit is not the actual target of this combat, do not make him/her enter combat state
                 if (damageable == currentClosestHostile) {
                     //When the target is hit and it is still alive, add hostile
-                    hitCharacter.combatComponent.FightOrFlight(stateComponent.character, isLethal: stateComponent.character.combatComponent.IsLethalCombatForTarget(hitCharacter));
+                    if (!hitCharacter.combatComponent.hostilesInRange.Contains(stateComponent.character) &&
+                        !hitCharacter.combatComponent.avoidInRange.Contains(stateComponent.character)) {
+                        hitCharacter.combatComponent.FightOrFlight(stateComponent.character, isLethal: stateComponent.character.combatComponent.IsLethalCombatForTarget(hitCharacter));
+                    }
                     //hitCharacter.combatComponent.AddHostileInRange(stateComponent.character, isLethal: stateComponent.character.combatComponent.IsLethalCombatForTarget(hitCharacter));
                     //also add the hit character as degraded rel, so that when the character that owns this state is hit by the other character because of retaliation, relationship degradation will no longer happen
                     //Reference: https://trello.com/c/mvLDnyBf/2875-retaliation-should-not-trigger-relationship-degradation

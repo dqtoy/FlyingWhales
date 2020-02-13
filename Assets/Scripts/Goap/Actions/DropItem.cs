@@ -24,7 +24,7 @@ public class DropItem : GoapAction {
     public override List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, object[] otherData) {
         List<Precondition> p = new List<Precondition>(base.GetPreconditions(actor, target, otherData));
         p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, target.name, false, GOAP_EFFECT_TARGET.TARGET), IsItemInInventory));
-        return base.GetPreconditions(actor, target, otherData);
+        return p;
     }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);

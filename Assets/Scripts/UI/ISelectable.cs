@@ -13,5 +13,6 @@ public interface ISelectable {
      Vector2 selectableSize { get; }
 
      bool IsCurrentlySelected();
-     void SelectAction();
+     void LeftSelectAction();
+     void RightSelectAction();
 }

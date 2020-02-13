@@ -89,8 +89,9 @@ namespace Inner_Maps {
                     ShowTileData(hoveredTile);
                 }
             }
-
-            if (Input.GetMouseButtonDown(0)) {
+        }
+        private void OnClickMapObject(KeyCode keyCode) {
+            if (keyCode == KeyCode.Mouse0) {
                 if (UIManager.Instance.IsMouseOnUI() == false && ReferenceEquals(currentlyShowingMap, null) == false) {
                     LocationGridTile clickedTile = GetTileFromMousePosition();
                     List<ISelectable> selectables = GetSelectablesOnTile(clickedTile);
@@ -98,7 +99,7 @@ namespace Inner_Maps {
                         if (lastClickedTile != clickedTile) {
                             //if last tile that was clicked is not the tile that has been clicked, then instead of 
                             //looping through the selectables, just select the first one.
-                            selectables[0].SelectAction();  
+                            selectables[0].LeftSelectAction();  
                         } else {
                             ISelectable objToSelect = null;
                             for (int i = 0; i < selectables.Count; i++) {
@@ -112,17 +113,57 @@ namespace Inner_Maps {
                             if (objToSelect == null) {
                                 objToSelect = selectables[0];
                             }
-                            objToSelect.SelectAction();    
+                            objToSelect.LeftSelectAction();    
                         }
-                        
                     } else {
                         Messenger.Broadcast(Signals.HIDE_MENUS);    
                     }
                     lastClickedTile = clickedTile;    
                 }
+            } else if (keyCode == KeyCode.Mouse1) {
+                if (UIManager.Instance.IsMouseOnUI() == false && ReferenceEquals(currentlyShowingMap, null) == false) {
+                    LocationGridTile clickedTile = GetTileFromMousePosition();
+                    ISelectable selectable = GetFirstSelectableOnTile(clickedTile);
+                    if (selectable != null) {
+                        selectable.RightSelectAction();
+                    }
+                }
             }
         }
         
+        private ISelectable GetFirstSelectableOnTile(LocationGridTile tile) {
+            PointerEventData pointer = new PointerEventData(EventSystem.current);
+            pointer.position = Input.mousePosition;
+
+            raycastResults.Clear();
+            EventSystem.current.RaycastAll(pointer, raycastResults);
+
+            if (raycastResults.Count > 0) { 
+                foreach (var go in raycastResults) {
+                    if (go.gameObject.CompareTag("Character Marker") || go.gameObject.CompareTag("Map Object")) {
+                        BaseMapObjectVisual visual = go.gameObject.GetComponent<BaseMapObjectVisual>();
+                        if (visual.IsInvisible()) {
+                            continue; //skip
+                        }
+                        //assume that all objects that have the specified tags have the BaseMapObjectVisual class
+                        if (visual.selectable != null) {
+                            return visual.selectable;
+                        }
+                    }
+                }
+            }
+            
+            if (tile.structure != null && ReferenceEquals(tile.structure.structureObj, null) == false) {
+                return tile.structure;
+            }
+            // if (tile.IsPartOfSettlement(out var settlement)) {
+            //     selectables.Add(settlement);
+            // }
+            if (tile.buildSpotOwner.isPartOfParentRegionMap) {
+                return tile.buildSpotOwner.hexTileOwner;
+            }
+            return null;
+        }
         private List<ISelectable> GetSelectablesOnTile(LocationGridTile tile) {
             List<ISelectable> selectables = new List<ISelectable>();
             
@@ -172,6 +213,7 @@ namespace Inner_Maps {
             mapObjectFactory = new MapVisualFactory();
             InnerMapCameraMove.Instance.Initialize();
             Messenger.AddListener(Signals.TICK_ENDED, CheckForChangeLight);
+            Messenger.AddListener<KeyCode>(Signals.KEY_DOWN, OnClickMapObject);
         }
         /// <summary>
         /// Try and show the settlement map of an settlement. If it does not have one, this will generate one instead.
@@ -249,24 +291,6 @@ namespace Inner_Maps {
         #endregion
 
         #region UI
-        private bool IsMouseOnMapObject() {
-            PointerEventData pointer = new PointerEventData(EventSystem.current);
-            pointer.position = Input.mousePosition;
-
-            List<RaycastResult> raycastResults = new List<RaycastResult>();
-            EventSystem.current.RaycastAll(pointer, raycastResults);
-
-            if (raycastResults.Count > 0) {
-                foreach (var go in raycastResults) {
-                    if (go.gameObject.CompareTag("Character Marker") || go.gameObject.CompareTag("Map Object")) {
-                        //Debug.Log(go.gameObject.name, go.gameObject);
-                        return true;
-                    }
-
-                }
-            }
-            return false;
-        }
         public void HighlightTiles(List<LocationGridTile> tiles) {
             if (tiles != null) {
                 for (int i = 0; i < tiles.Count; i++) {
@@ -831,25 +855,32 @@ namespace Inner_Maps {
         // public Sprite GetItemAsset(SPECIAL_TOKEN itemType) {
         //     return itemTiles[itemType];
         // }
-        public Sprite GetTileObjectAsset(TILE_OBJECT_TYPE objectType, POI_STATE state, BIOMES biome, bool corrupted = false) {
+        public Sprite GetTileObjectAsset(TileObject tileObject, POI_STATE state, BIOMES biome, bool corrupted = false) {
             if (corrupted) {
                 //TODO: this is only temporary!
-                if (objectType == TILE_OBJECT_TYPE.TREE_OBJECT) {
+                if (tileObject.tileObjectType == TILE_OBJECT_TYPE.TREE_OBJECT) {
                     return CollectionUtilities.GetRandomElement(assetManager.corruptedTreeAssets);
-                } else if (objectType == TILE_OBJECT_TYPE.BIG_TREE_OBJECT) {
+                } else if (tileObject.tileObjectType == TILE_OBJECT_TYPE.BIG_TREE_OBJECT) {
                     return CollectionUtilities.GetRandomElement(assetManager.corruptedBigTreeAssets);
                 }
             }
-            
-            if (tileObjectTiles.ContainsKey(objectType)) {
-                TileObjectTileSetting setting = tileObjectTiles[objectType];
-                BiomeTileObjectTileSetting biomeSetting = setting.biomeAssets.ContainsKey(biome) ? setting.biomeAssets[biome] 
-                    : setting.biomeAssets[BIOMES.NONE];
-                if (state == POI_STATE.ACTIVE) {
-                    return biomeSetting.activeTile;
-                } else {
-                    return biomeSetting.inactiveTile;
-                }    
+
+            if (tileObject.tileObjectType == TILE_OBJECT_TYPE.ARTIFACT) {
+                Artifact artifact = tileObject as Artifact;
+                if (PlayerManager.Instance.artifactDataDictionary.ContainsKey(artifact.type)) {
+                    return PlayerManager.Instance.artifactDataDictionary[artifact.type].sprite;
+                }
+            } else {
+                if (tileObjectTiles.ContainsKey(tileObject.tileObjectType)) {
+                    TileObjectTileSetting setting = tileObjectTiles[tileObject.tileObjectType];
+                    BiomeTileObjectTileSetting biomeSetting = setting.biomeAssets.ContainsKey(biome) ? setting.biomeAssets[biome] 
+                        : setting.biomeAssets[BIOMES.NONE];
+                    if (state == POI_STATE.ACTIVE) {
+                        return biomeSetting.activeTile;
+                    } else {
+                        return biomeSetting.inactiveTile;
+                    }    
+                }
             }
             return null;
         }

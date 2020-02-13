@@ -16,6 +16,7 @@ public class MinionCommandsUI : MonoBehaviour {
     public void ShowUI(IPointOfInterest poi) {
         this.targetPOI = poi;
         UIManager.Instance.PositionTooltip(gameObject, rt, rt);
+        ShowButtons(poi);
         gameObject.SetActive(true);
     }
     public void HideUI() {
@@ -83,7 +84,7 @@ public class MinionCommandsUI : MonoBehaviour {
     public void Knockout() {
         if (targetPOI is Character) {
             Character actor = UIManager.Instance.characterInfoUI.activeCharacter;
-            actor.combatComponent.Fight(targetPOI, isLethal: false);
+            actor.jobComponent.CreateKnockoutJob(targetPOI as Character);
         } else {
             Debug.LogError(targetPOI.name + " is not a character!");
         }
@@ -95,7 +96,7 @@ public class MinionCommandsUI : MonoBehaviour {
     public void Kill() {
         if (targetPOI is Character) {
             Character actor = UIManager.Instance.characterInfoUI.activeCharacter;
-            actor.combatComponent.Fight(targetPOI, isLethal: true);
+            actor.jobComponent.CreateKillJob(targetPOI as Character);
         } else {
             Debug.LogError(targetPOI.name + " is not a character!");
         }

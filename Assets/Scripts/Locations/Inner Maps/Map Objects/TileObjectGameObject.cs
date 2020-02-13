@@ -18,10 +18,10 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
         if (tileObject.gridTileLocation != null) {
             isCorrupted = tileObject.gridTileLocation.isCorrupted;
         }
-        SetVisual(InnerMapManager.Instance.GetTileObjectAsset(tileObject.tileObjectType, 
+        SetVisual(InnerMapManager.Instance.GetTileObjectAsset(tileObject, 
             tileObject.state, 
             tileObject.structureLocation.location.coreTile.biomeType,
-            isCorrupted));
+            isCorrupted));  
         collisionTrigger = this.transform.GetComponentInChildren<TileObjectCollisionTrigger>();
         _isMenuShowing = () => IsMenuShowing(tileObject);
         UpdateSortingOrders(tileObject);
@@ -56,7 +56,7 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
         if (tileObject is Bed) {
             UpdateBedVisual(tileObject as Bed); //TODO: Transfer this to it's own object
         } else {
-            SetVisual(InnerMapManager.Instance.GetTileObjectAsset(tileObject.tileObjectType, 
+            SetVisual(InnerMapManager.Instance.GetTileObjectAsset(tileObject, 
                 tileObject.state, 
                 tileObject.structureLocation.location.coreTile.biomeType,
                 tileObject.gridTileLocation?.isCorrupted ?? false));
@@ -67,7 +67,7 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
     private void UpdateBedVisual(Bed bed) {
         int userCount = bed.GetActiveUserCount();
         if (userCount == 0) {
-            SetVisual(InnerMapManager.Instance.GetTileObjectAsset(bed.tileObjectType, 
+            SetVisual(InnerMapManager.Instance.GetTileObjectAsset(bed, 
                 bed.state, 
                 bed.structureLocation.location.coreTile.biomeType,
                 bed.gridTileLocation?.isCorrupted ?? false));

@@ -37,7 +37,7 @@ public class Minion {
         if (!keepData) {
             character.SetName(RandomNameGenerator.GenerateMinionName());
         }
-        RemoveInvalidPlayerActions();
+        // RemoveInvalidPlayerActions();
         character.needsComponent.SetFullnessForcedTick(0);
         character.needsComponent.SetTirednessForcedTick(0);
         character.behaviourComponent.AddBehaviourComponent(typeof(DefaultMinion));
@@ -52,7 +52,7 @@ public class Minion {
         character.ownParty.icon.SetVisualState(true);
         SetAssignedDeadlySinName(character.characterClass.className);
         spellExtractionCount = data.spellExtractionCount;
-        RemoveInvalidPlayerActions();
+        // RemoveInvalidPlayerActions();
     }
     public void SetAssignedDeadlySinName(string name) {
         _assignedDeadlySinName = name;

@@ -1256,7 +1256,8 @@ public enum TILE_OBJECT_TYPE {
     HEALING_POTION,
     TOOL,
     WATER_BUCKET,
-    IRON_MAIDEN
+    IRON_MAIDEN,
+    ARTIFACT,
 }
 public enum POI_STATE {
     ACTIVE,
@@ -1368,7 +1369,7 @@ public enum COMBAT_ABILITY {
 
 public enum TILE_TAG { CAVE, DUNGEON, FOREST, FLATLAND, MOUNTAIN, GRASSLAND, JUNGLE, TUNDRA, SNOW, DESERT, PROTECTIVE_BARRIER, HALLOWED_GROUNDS, }
 public enum SUMMON_TYPE { None, Wolf, Skeleton, Golem, Succubus, Incubus, ThiefSummon, }
-public enum ARTIFACT_TYPE { None, Necronomicon, Chaos_Orb_Artifact, Hermes_Statue, Ankh_Of_Anubis, Miasma_Emitter, }
+public enum ARTIFACT_TYPE { None, Grasping_Hands, Snatching_Hands, Abominable_Heart, Dark_Matter, Looking_Glass, Black_Scripture, False_Gem, Naga_Eyes, Tormented_Chalice, Lightning_Rod }
 public enum ABILITY_TAG { NONE, MAGIC, SUPPORT, DEBUFF, CRIME, PHYSICAL, }
 public enum LANDMARK_YIELD_TYPE { SUMMON, ARTIFACT, ABILITY, SKIRMISH, STORY_EVENT, }
 public enum SERIAL_VICTIM_TYPE { NONE, GENDER, RACE, CLASS, TRAIT }
@@ -1851,6 +1852,9 @@ public static class Extensions {
                 priority = 280;
                 break;
             case JOB_TYPE.OBTAIN_PERSONAL_ITEM:
+            case JOB_TYPE.ABDUCT:
+            case JOB_TYPE.LEARN_MONSTER:
+            case JOB_TYPE.TAKE_ARTIFACT:
                 priority = 260;
                 break;
             case JOB_TYPE.IDLE_RETURN_HOME:
@@ -1865,9 +1869,6 @@ public static class Extensions {
             case JOB_TYPE.RETURN_TERRITORY:
             case JOB_TYPE.RETURN_PORTAL:
             case JOB_TYPE.STAND:
-            case JOB_TYPE.ABDUCT:
-            case JOB_TYPE.LEARN_MONSTER:
-            case JOB_TYPE.TAKE_ARTIFACT:
                 priority = 250;
                 break;
             case JOB_TYPE.COMBINE_STOCKPILE:
@@ -2021,8 +2022,6 @@ public static class Extensions {
     public static bool CanBeSummoned(this ARTIFACT_TYPE type) {
         switch (type) {
             case ARTIFACT_TYPE.None:
-            case ARTIFACT_TYPE.Hermes_Statue:
-            case ARTIFACT_TYPE.Miasma_Emitter:
                 return true;
             default:
                 return false;

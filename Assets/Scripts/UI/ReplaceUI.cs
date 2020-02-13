@@ -76,15 +76,17 @@ public class ReplaceUI : MonoBehaviour {
             text += "\nDescription: " + PlayerManager.Instance.player.GetSummonDescription(summon.summonType);
             otaText.text = text;
             otaImage.gameObject.SetActive(true);
-        } else if (obj is Artifact) {
-            Artifact artifact = obj as Artifact;
-            string text = artifact.name;
-            text += "\nLevel: " + artifact.level.ToString();
-            text += "\nDescription: " + PlayerManager.Instance.player.GetArtifactDescription(artifact.type);
-            otaText.text = text;
-            otaImage.sprite = CharacterManager.Instance.GetArtifactSettings(artifact.type).artifactPortrait;
-            otaImage.gameObject.SetActive(true);
-        } else if (obj is PlayerSpell) {
+        } 
+        // else if (obj is Artifact) {
+        //     Artifact artifact = obj as Artifact;
+        //     string text = artifact.name;
+        //     text += "\nLevel: " + artifact.level.ToString();
+        //     text += "\nDescription: " + PlayerManager.Instance.player.GetArtifactDescription(artifact.type);
+        //     otaText.text = text;
+        //     otaImage.sprite = CharacterManager.Instance.GetArtifactSettings(artifact.type).artifactPortrait;
+        //     otaImage.gameObject.SetActive(true);
+        // } 
+        else if (obj is PlayerSpell) {
             PlayerSpell action = obj as PlayerSpell;
             string text = action.name;
             text += "\nDescription: " + action.description;

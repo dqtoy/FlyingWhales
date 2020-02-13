@@ -98,8 +98,8 @@ public class CombatComponent {
     }
     public bool Fight(IPointOfInterest target, bool isLethal = true) {
         bool hasFought = false;
-        string debugLog = "Triggered FIGHT response for " + owner.name + " against " + target.nameWithID;
         if (!hostilesInRange.Contains(target)) {
+            string debugLog = "Triggered FIGHT response for " + owner.name + " against " + target.nameWithID;
             hostilesInRange.Add(target);
             avoidInRange.Remove(target);
             willProcessCombat = true;
@@ -108,19 +108,19 @@ public class CombatComponent {
             }
             debugLog += "\n" + target.name + " was added to " + owner.name + "'s hostile range!";
             hasFought = true;
+            owner.logComponent.PrintLogIfActive(debugLog);
         }
-        owner.logComponent.PrintLogIfActive(debugLog);
         return hasFought;
     }
     public bool Flight(IPointOfInterest target, string reason = "") {
         bool hasFled = false;
-        string debugLog = "Triggered FLIGHT response for " + owner.name + " against " + target.nameWithID;
         if (hostilesInRange.Remove(target)) {
             if (target.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
                 lethalCharacters.Remove(target as Character);
             }
         }
         if (!avoidInRange.Contains(target)) {
+            string debugLog = "Triggered FLIGHT response for " + owner.name + " against " + target.nameWithID;
             if (owner.marker.inVisionPOIs.Contains(target)) {
                 avoidInRange.Add(target);
                 willProcessCombat = true;
@@ -128,6 +128,7 @@ public class CombatComponent {
                 debugLog += "\n" + target.name + " was added to " + owner.name + "'s avoid range!";
                 hasFled = true;
             }
+            owner.logComponent.PrintLogIfActive(debugLog);
         }
         // if(owner.homeStructure != null && owner.homeStructure != owner.currentStructure) {
         //     debugLog += "\n" + owner.name + " has a home and not in his/her home";
@@ -155,7 +156,6 @@ public class CombatComponent {
         //         }
         //     }
         // }
-        owner.logComponent.PrintLogIfActive(debugLog);
         return hasFled;
     }
     public void FlightAll() {

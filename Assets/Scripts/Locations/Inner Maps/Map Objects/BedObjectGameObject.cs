@@ -11,13 +11,13 @@ public class BedObjectGameObject : MapObjectVisual<Bed> {
 
     public override void Initialize(Bed obj) {
         this.name = obj.ToString();
-        SetVisual(InnerMapManager.Instance.GetTileObjectAsset(obj.tileObjectType, obj.state, obj.structureLocation.location.coreTile.biomeType));
+        SetVisual(InnerMapManager.Instance.GetTileObjectAsset(obj, obj.state, obj.structureLocation.location.coreTile.biomeType));
     }
 
     public override void UpdateTileObjectVisual(Bed bed) {
         int userCount = bed.GetActiveUserCount();
         if (userCount == 0) {
-            SetVisual(InnerMapManager.Instance.GetTileObjectAsset(bed.tileObjectType, bed.state, bed.structureLocation.location.coreTile.biomeType));
+            SetVisual(InnerMapManager.Instance.GetTileObjectAsset(bed, bed.state, bed.structureLocation.location.coreTile.biomeType));
         } else if (userCount == 1) {
             SetVisual(bed1Sleeping);
         } else if (userCount == 2) {

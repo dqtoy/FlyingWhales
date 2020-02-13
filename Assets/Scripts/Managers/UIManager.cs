@@ -564,6 +564,41 @@ public class UIManager : MonoBehaviour {
         }
         return false;
     }
+    public bool IsMouseOnMapObject() {
+        PointerEventData pointer = new PointerEventData(EventSystem.current);
+        pointer.position = Input.mousePosition;
+
+        List<RaycastResult> raycastResults = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(pointer, raycastResults);
+
+        if (raycastResults.Count > 0) {
+            foreach (var go in raycastResults) {
+                if (go.gameObject.CompareTag("Character Marker") || go.gameObject.CompareTag("Map Object")) {
+                    //Debug.Log(go.gameObject.name, go.gameObject);
+                    return true;
+                }
+
+            }
+        }
+        return false;
+    }
+    public bool IsMouseOnUIOrMapObject() {
+        PointerEventData pointer = new PointerEventData(EventSystem.current);
+        pointer.position = Input.mousePosition;
+        List<RaycastResult> raycastResults = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(pointer, raycastResults);
+
+        if (raycastResults.Count > 0) {
+            foreach (var go in raycastResults) {
+                if (go.gameObject.layer == LayerMask.NameToLayer("UI") || go.gameObject.layer == LayerMask.NameToLayer("WorldUI") 
+                    || go.gameObject.CompareTag("Character Marker") || go.gameObject.CompareTag("Map Object")) {
+                    //Debug.Log(go.gameObject.name, go.gameObject);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     public void SetCoverState(bool state, bool blockClicks = true) {
         cover.SetActive(state);
         cover.GetComponent<Image>().raycastTarget = blockClicks;
