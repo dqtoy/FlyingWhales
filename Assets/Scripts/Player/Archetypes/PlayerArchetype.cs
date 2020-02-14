@@ -52,6 +52,7 @@ namespace Archetype {
             if(actions == null) { return; }
             if (!actions.Contains(actionName)) {
                 actions.Add(actionName);
+                Debug.Log($"Action was added to player {actionName}");
             }
         }
         public bool RemoveAction(string actionName) {
@@ -132,6 +133,7 @@ namespace Archetype {
             if (demonicStructures == null) { return; }
             if (!demonicStructures.Contains(type)) {
                 demonicStructures.Add(type);
+                Debug.Log($"Demonic structure was added to player {type.ToString()}");
             }
         }
         public bool RemoveDemonicStructure(LANDMARK_TYPE type) {
@@ -149,5 +151,8 @@ public struct RaceClass {
     public RaceClass(RACE race, string className) {
         this.race = race;
         this.className = className;
+    }
+    public override string ToString() {
+        return $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(race.ToString())} {className}";
     }
 }

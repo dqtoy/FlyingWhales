@@ -31343,6 +31343,8 @@ MonoBehaviour:
     type: 3}
   burningEffectPrefab: {fileID: 1947762124885252, guid: 6c22c7ba9171ba54995acc5cc3820d1e,
     type: 3}
+  bloodPuddleEffectPrefab: {fileID: 9033442248038542139, guid: 46622b224b908ae4ba45c8bfcaf2c617,
+    type: 3}
   pauseTickEnded2: 0
   lastProgressionBeforePausing: 
 --- !u!114 &557822220
@@ -33612,14 +33614,8 @@ MonoBehaviour:
     - Seize Object
     - Interfere
     - Learn Spell
-    - Stop
-    - Return To Portal
-    - Harass
-    - Raid
-    - Invade
-    - End Harass
-    - End Raid
-    - End Invade
+    - Breed Monster
+    - Activate Artifact
     m_values:
     - {fileID: 21300000, guid: 1ea6d3c87219ca34fbdaeb2464a68bc6, type: 3}
     - {fileID: 21300000, guid: b509b7ae41091354f8a5b5a1f47718ea, type: 3}
@@ -33636,14 +33632,8 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 5c1ddd68386fd8b4db5a6b65e6e706de, type: 3}
     - {fileID: 21300000, guid: 175be3da23178ae4096b6cc3d20b459f, type: 3}
     - {fileID: 21300000, guid: 77e63770c7ecb474c9aa378a33e9e6ee, type: 3}
-    - {fileID: 21300000, guid: b509b7ae41091354f8a5b5a1f47718ea, type: 3}
-    - {fileID: 21300000, guid: 5609a9ba1552aa6409aa027ddbcd2ceb, type: 3}
-    - {fileID: 21300000, guid: be6e6d76787bad747acdc647f43942bb, type: 3}
-    - {fileID: 21300000, guid: a85b0710644af4c48a2a7f742a32da7e, type: 3}
-    - {fileID: 21300000, guid: 623d4fe6fa7f3264d8a883e12f3774f4, type: 3}
-    - {fileID: 21300000, guid: be6e6d76787bad747acdc647f43942bb, type: 3}
-    - {fileID: 21300000, guid: a85b0710644af4c48a2a7f742a32da7e, type: 3}
-    - {fileID: 21300000, guid: 623d4fe6fa7f3264d8a883e12f3774f4, type: 3}
+    - {fileID: 21300000, guid: 93474677614318e44b9f22780de3cc73, type: 3}
+    - {fileID: 21300000, guid: 5c1ddd68386fd8b4db5a6b65e6e706de, type: 3}
   killSummaryToggle: {fileID: 1981778861}
   newMinionUIGO: {fileID: 2032635302}
   newMinionCard: {fileID: 777859330}
@@ -63096,12 +63086,15 @@ MonoBehaviour:
     type: 3}
   objectPickerStringItemPrefab: {fileID: 1493052627817880, guid: 6fae4ada810dac340b9dde00ae3d39d4,
     type: 3}
-  objectPickerEnumItemPrefab: {fileID: 0}
+  objectPickerRaceClassItemPrefab: {fileID: 4630698722303704620, guid: 1e3dde9051d9a08439978f2601812de7,
+    type: 3}
+  objectPickerEnumItemPrefab: {fileID: 4630698722303704620, guid: aa4d68a5c4b69114db2642838615fff2,
+    type: 3}
   objectPickerAttackItemPrefab: {fileID: 1281087095607850, guid: a2e8dcf04a730f542b0dbeb63f54d763,
     type: 3}
   objectPickerSummonSlotItemPrefab: {fileID: 1258680708518568, guid: e350f265eb7d8414ba2460f9395da7f9,
     type: 3}
-  objectPickerArtifactSlotItemPrefab: {fileID: 1102394896454670, guid: b2b4cda8a7575964190e55ab7440b29b,
+  objectPickerArtifactItemPrefab: {fileID: 1102394896454670, guid: b2b4cda8a7575964190e55ab7440b29b,
     type: 3}
   titleLbl: {fileID: 967205719}
   cover: {fileID: 641528016}
@@ -91105,7 +91098,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   version: 1
   data:
-    dataString: UEsDBBQAAAgIAABAIex2MOkdNAAAAD0AAAAJACQAbWV0YS5qc29uCgAgAAAAAAABABgAAIA+1d6xnQEAgD7V3rGdAQCAPtXesZ0Bq1YqSy0qzszPU7JSMNEz0jPSUVBKL0osyCgGChiAOKWZKSB2dCyQU1JZkOqXmJsKEagFAFBLAQItABQAAAgIAABAIex2MOkdNAAAAD0AAAAJACQAAAAAAAAAAAAAAAAAAABtZXRhLmpzb24KACAAAAAAAAEAGAAAgD7V3rGdAQCAPtXesZ0BAIA+1d6xnQFQSwUGAAAAAAEAAQBbAAAAfwAAAAAA
+    dataString: UEsDBBQAAAgIAABAIewYDMP1NAAAAD4AAAAJACQAbWV0YS5qc29uCgAgAAAAAAABABgAAIA+1d6xnQEAgD7V3rGdAQCAPtXesZ0Bq1YqSy0qzszPU7JSMNEz1jM00FFQSi9KLMgoBoqAOaWZKSB2dCyQU1JZkOqXmJsKEagFAFBLAQItABQAAAgIAABAIewYDMP1NAAAAD4AAAAJACQAAAAAAAAAAAAAAAAAAABtZXRhLmpzb24KACAAAAAAAAEAGAAAgD7V3rGdAQCAPtXesZ0BAIA+1d6xnQFQSwUGAAAAAAEAAQBbAAAAfwAAAAAA
     upgradeData: 
     file_cachedStartup: {fileID: 0}
     data_cachedStartup: 

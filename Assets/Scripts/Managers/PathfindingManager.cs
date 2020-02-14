@@ -60,6 +60,9 @@ public class PathfindingManager : MonoBehaviour {
     public void UpdatePathfindingGraphPartial(Bounds bounds) {
         AstarPath.active.UpdateGraphs(bounds);
     }
+    public void UpdatePathfindingGraphPartial(GraphUpdateObject guo) {
+        AstarPath.active.UpdateGraphs(guo);
+    }
     public bool HasPath(LocationGridTile fromTile, LocationGridTile toTile) {
         if (fromTile == toTile) { return true; }
         if (fromTile == null || toTile == null) { return false; }

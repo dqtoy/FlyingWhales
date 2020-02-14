@@ -35,7 +35,10 @@ public static class PlayerDB {
     public const string End_Harass_Action = "End Harass";
     public const string End_Raid_Action = "End Raid";
     public const string End_Invade_Action = "End Invade";
-
+    public const string Breed_Monster_Action = "Breed Monster";
+    public const string Activate_Artifact = "Activate Artifact";
+    public const string Remove_Trait = "Remove Trait";
+    public const string Share_Intel = "Share Intel";
 
     //spells
     public const string Tornado = "Tornado";
@@ -77,4 +80,31 @@ public static class PlayerDB {
         SPELL_TYPE.PSYCHOPATHY, SPELL_TYPE.PESTILENCE, SPELL_TYPE.LYCANTHROPY, 
         SPELL_TYPE.VAMPIRISM, SPELL_TYPE.ZOMBIE_VIRUS, SPELL_TYPE.CURSED_OBJECT, SPELL_TYPE.LULLABY, 
     };
+    
+    private static string[] unlockableActions = new[] {
+        Seize_Object_Action,
+        Seize_Character_Action,
+        Remove_Trait,
+        Share_Intel,
+        Zap_Action,
+    };
+    private static string[] unlockableStructures = new[] {
+        "THE_KENNELS",
+        "THE_PIT",
+        "TORTURE_CHAMBER",
+        "THE_EYE",
+        "THE_PROFANE",
+    };
+
+    public static string[] GetChoicesForUnlockableType(ARTIFACT_UNLOCKABLE_TYPE type) {
+        switch (type) {
+            case ARTIFACT_UNLOCKABLE_TYPE.Action:
+                return unlockableActions;
+            case ARTIFACT_UNLOCKABLE_TYPE.Structure:
+                return unlockableStructures;
+            default:
+                return null;
+        }
+    }
+
 }

@@ -23,6 +23,8 @@ public class CharacterMarker : MapObjectVisual<Character> {
     [SerializeField] private SpriteRenderer clickedImg;
     [SerializeField] private SpriteRenderer actionIcon;
     [SerializeField] private BoxCollider2D buttonCollider;
+    [SerializeField] private ParticleSystem bloodSplatterEffect;
+    [SerializeField] private ParticleSystemRenderer bloodSplatterEffectRenderer;
 
     [Header("Actions")]
     [SerializeField] private StringSpriteDictionary actionIconDictionary;
@@ -90,19 +92,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         this.name = character.name + "'s Marker";
         nameLbl.SetText(character.name);
         this.character = character;
-        var sortingOrder = InnerMapManager.DefaultCharacterSortingOrder + character.id;
-        mainImg.sortingOrder = sortingOrder;
-        hairImg.sortingOrder = sortingOrder + 1;
-        knockedOutHairImg.sortingOrder = sortingOrder + 1;
-        nameLbl.sortingOrder = sortingOrder;
-        actionIcon.sortingOrder = sortingOrder;
-        hoveredImg.sortingOrder = sortingOrder - 1;
-        clickedImg.sortingOrder = sortingOrder - 1;
-        colorHighlight.sortingOrder = sortingOrder - 1;
-        hpBarGO.GetComponent<Canvas>().sortingOrder = sortingOrder;
-        // if (UIManager.Instance.characterInfoUI.isShowing) {
-        //     clickedImg.gameObject.SetActive(UIManager.Instance.characterInfoUI.activeCharacter.id == character.id);
-        // }
+        UpdateSortingOrder();
         UpdateMarkerVisuals();
         UpdateActionIcon();
 
@@ -740,33 +730,52 @@ public class CharacterMarker : MapObjectVisual<Character> {
         //}
         if (!character.IsInOwnParty()) {
             PlaySleepGround();
+            ResetBlood();
             //if (character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)) {
             //    PlaySleepGround();
             //}
             return; //if not in own party do not update any other animations
         }
         if (character.isDead) {
-            PlayAnimation("Dead");
-        } else if (character.isStoppedByOtherCharacter > 0) {
-            if (character.canMove == false || (!character.canPerform && !character.canWitness)) {
+            PlaySleepGround();
+            StartCoroutine(StartBlood());
+            // GameManager.Instance.CreateBloodEffectAt(character);
+        } else {
+            ResetBlood();
+            if (character.isStoppedByOtherCharacter > 0) {
+                if (character.canMove == false || (!character.canPerform && !character.canWitness)) {
+                    PlaySleepGround();
+                } else {
+                    PlayIdle();
+                }
+            } else if (character.canMove == false || (!character.canPerform && !character.canWitness) /*|| character.traitContainer.GetNormalTrait<Trait>("Resting") != null || character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)*/) {
                 PlaySleepGround();
+            } else if (ReferenceEquals(character.currentParty.icon, null) == false && character.currentParty.icon.isTravelling) {
+                //|| character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL
+                PlayWalkingAnimation();
+            } else if (character.currentActionNode != null && string.IsNullOrEmpty(character.currentActionNode.currentStateName) == false 
+                                                           && string.IsNullOrEmpty(character.currentActionNode.currentState.animationName) == false) {
+                PlayAnimation(character.currentActionNode.currentState.animationName);
+            } else if (character.currentActionNode != null && !string.IsNullOrEmpty(character.currentActionNode.action.animationName)) {
+                PlayAnimation(character.currentActionNode.action.animationName);
             } else {
                 PlayIdle();
             }
-        } else if (character.canMove == false || (!character.canPerform && !character.canWitness) /*|| character.traitContainer.GetNormalTrait<Trait>("Resting") != null || character.traitContainer.HasTraitOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE)*/) {
-            PlaySleepGround();
-        } else if (ReferenceEquals(character.currentParty.icon, null) == false && character.currentParty.icon.isTravelling) {
-            //|| character.stateComponent.currentState.characterState == CHARACTER_STATE.STROLL
-            PlayWalkingAnimation();
-        } else if (character.currentActionNode != null && string.IsNullOrEmpty(character.currentActionNode.currentStateName) == false 
-            && string.IsNullOrEmpty(character.currentActionNode.currentState.animationName) == false) {
-            PlayAnimation(character.currentActionNode.currentState.animationName);
-        } else if (character.currentActionNode != null && !string.IsNullOrEmpty(character.currentActionNode.action.animationName)) {
-            PlayAnimation(character.currentActionNode.action.animationName);
-        } else {
-            PlayIdle();
-        }
+        } 
+        
+        
         UpdateHairState();
+    }
+    private IEnumerator StartBlood() {
+        bloodSplatterEffect.gameObject.SetActive(true);
+        yield return new WaitForSeconds(5f);
+        bloodSplatterEffect.Pause();
+    }
+    private void ResetBlood() {
+        if (bloodSplatterEffect.gameObject.activeSelf) {
+            bloodSplatterEffect.gameObject.SetActive(false);
+            bloodSplatterEffect.Clear();    
+        }
     }
     public void PauseAnimation() {
         animator.speed = 0;
@@ -795,6 +804,19 @@ public class CharacterMarker : MapObjectVisual<Character> {
     #endregion
 
     #region Utilities
+    private void UpdateSortingOrder() {
+        var sortingOrder = InnerMapManager.DefaultCharacterSortingOrder + character.id;
+        mainImg.sortingOrder = sortingOrder;
+        hairImg.sortingOrder = sortingOrder + 1;
+        knockedOutHairImg.sortingOrder = sortingOrder + 1;
+        nameLbl.sortingOrder = sortingOrder;
+        actionIcon.sortingOrder = sortingOrder;
+        hoveredImg.sortingOrder = sortingOrder - 1;
+        clickedImg.sortingOrder = sortingOrder - 1;
+        colorHighlight.sortingOrder = sortingOrder - 1;
+        bloodSplatterEffectRenderer.sortingOrder = InnerMapManager.GroundTilemapSortingOrder + 5;
+        hpBarGO.GetComponent<Canvas>().sortingOrder = sortingOrder;
+    }
     private float GetSpeed() {
         float speed = GetSpeedWithoutProgressionMultiplier();
         speed *= progressionSpeedMultiplier;
@@ -889,6 +911,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     /// Used for placing a character for the first time.
     /// </summary>
     /// <param name="tile">The tile the character should be placed at.</param>
+    /// <param name="addToLocation">If the character should be added to the location or not?</param>
     public void InitialPlaceMarkerAt(LocationGridTile tile, bool addToLocation = true) {
         PlaceMarkerAt(tile, addToLocation);
         pathfindingAI.UpdateMe();

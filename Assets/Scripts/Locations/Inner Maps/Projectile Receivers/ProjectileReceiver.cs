@@ -5,7 +5,7 @@ using UnityEngine;
 public abstract class ProjectileReceiver : MonoBehaviour {
 
     protected IDamageable owner { get; private set; }
-    [SerializeField] private Collider2D _collider;
+    [SerializeField] protected Collider2D _collider;
 
     public void Initialize(IDamageable owner) {
         this.owner = owner;
