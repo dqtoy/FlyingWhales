@@ -49,6 +49,7 @@ public class GameManager : MonoBehaviour {
     [SerializeField] private GameObject aoeParticlesPrefab;
     [SerializeField] private GameObject aoeParticlesAutoDestroyPrefab;
     [SerializeField] private GameObject burningEffectPrefab;
+    [SerializeField] private GameObject bloodPuddleEffectPrefab;
 
     private const float X1_SPEED = 0.75f;
     private const float X2_SPEED = 0.5f;
@@ -508,6 +509,11 @@ public class GameManager : MonoBehaviour {
     public void CreateExplodeEffectAt(LocationGridTile tile) {
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(hitEffectPrefab.name, Vector3.zero, Quaternion.identity, tile.parentMap.objectsParent);
         go.transform.localPosition = tile.centeredLocalLocation;
+        go.SetActive(true);
+    }
+    public void CreateBloodEffectAt(Character character) {
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(bloodPuddleEffectPrefab.name, Vector3.zero, Quaternion.identity, InnerMapManager.Instance.transform);
+        go.transform.position = character.marker.transform.position;
         go.SetActive(true);
     }
     #endregion

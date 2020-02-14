@@ -1426,6 +1426,7 @@
                     <e p="TortureChamberStructureObject.cs" t="Include" />
                   </e>
                   <e p="TheEye.cs" t="Include" />
+                  <e p="TheKennel.cs" t="Include" />
                   <e p="ThePortal.cs" t="Include" />
                   <e p="TheSpire.cs" t="Include" />
                   <e p="TortureChamber.cs" t="Include" />
@@ -1647,6 +1648,7 @@
           <e p="Particle Effects" t="Include">
             <e p="AOEParticle.cs" t="Include" />
             <e p="AutoDestroyParticle.cs" t="Include" />
+            <e p="ObjectPoolParticle.cs" t="Include" />
           </e>
           <e p="Party" t="Include">
             <e p="Party.cs" t="Include" />
@@ -2024,6 +2026,7 @@
               <e p="EnumNameplateItem.cs" t="Include" />
               <e p="FactionNameplateItem.cs" t="Include" />
               <e p="NameplateItem.cs" t="Include" />
+              <e p="RaceClassNameplate.cs" t="Include" />
               <e p="StringNameplateItem.cs" t="Include" />
               <e p="UnsummonedMinionNameplateItem.cs" t="Include" />
             </e>

@@ -31343,6 +31343,8 @@ MonoBehaviour:
     type: 3}
   burningEffectPrefab: {fileID: 1947762124885252, guid: 6c22c7ba9171ba54995acc5cc3820d1e,
     type: 3}
+  bloodPuddleEffectPrefab: {fileID: 9033442248038542139, guid: 46622b224b908ae4ba45c8bfcaf2c617,
+    type: 3}
   pauseTickEnded2: 0
   lastProgressionBeforePausing: 
 --- !u!114 &557822220

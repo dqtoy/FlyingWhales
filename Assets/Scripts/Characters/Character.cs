@@ -1496,6 +1496,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         //    }
         //}
         marker.collisionTrigger.SetCollidersState(true);
+        marker.UpdateAnimation();
         //if (this.minion != null) {
         //    this.minion.SetEnabledState(true); //reenable this minion, since it could've been disabled because it was part of another party
         //}
@@ -1506,6 +1507,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             //ownParty.specificLocation.RemoveCharacterFromLocation(this);
             //ownParty.icon.SetVisualState(false);
             marker.collisionTrigger.SetCollidersState(false);
+            marker.UpdateAnimation();
         }
     }
     public bool IsInParty() {
