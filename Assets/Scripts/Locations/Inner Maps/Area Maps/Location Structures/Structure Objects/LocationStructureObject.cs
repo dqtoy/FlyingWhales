@@ -365,11 +365,16 @@ public class LocationStructureObject : PooledObject {
     #region Pathfinding
     [ContextMenu("Rescan Pathfinding Grid Of Structure")]
     public void RescanPathfindingGridOfStructure() {
+        StartCoroutine(Rescan());
+    }
+    private IEnumerator Rescan() {
+        yield return null;
         if (unpassableCollider != null) {
             PathfindingManager.Instance.UpdatePathfindingGraphPartial(unpassableCollider.bounds);
         } else {
             PathfindingManager.Instance.UpdatePathfindingGraphPartial(_groundTileMapRenderer.bounds);    
         }
+        yield return null;
     }
     #endregion
 
