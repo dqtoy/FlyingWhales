@@ -414,6 +414,9 @@ public partial class LandmarkManager : MonoBehaviour {
             case STRUCTURE_TYPE.THE_KENNEL:
                 createdStructure = new Inner_Maps.Location_Structures.TheKennel(location);
                 break;
+            case STRUCTURE_TYPE.THE_CRYPT:
+                createdStructure = new Inner_Maps.Location_Structures.TheCrypt(location);
+                break;
             default:
                 createdStructure = new LocationStructure(type, location);
                 break;

@@ -5,6 +5,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.Serialization;
 
 public class ObjectPicker : MonoBehaviour {
 
@@ -18,7 +19,7 @@ public class ObjectPicker : MonoBehaviour {
     [SerializeField] private GameObject objectPickerEnumItemPrefab;
     [SerializeField] private GameObject objectPickerAttackItemPrefab;
     [SerializeField] private GameObject objectPickerSummonSlotItemPrefab;
-    [SerializeField] private GameObject objectPickerArtifactSlotItemPrefab;
+    [FormerlySerializedAs("objectPickerArtifactSlotItemPrefab")] [SerializeField] private GameObject objectPickerArtifactItemPrefab;
     [SerializeField] private TextMeshProUGUI titleLbl;
     [SerializeField] private GameObject cover;
     [SerializeField] private Button closeBtn;
@@ -65,8 +66,8 @@ public class ObjectPicker : MonoBehaviour {
             ShowStringItems(validItems.Cast<string>().ToList(), invalidItems.Cast<string>().ToList(), onHoverItemAction, onHoverExitItemAction, identifier);
         } else if (type == typeof(SummonSlot)) {
             ShowSummonItems(validItems.Cast<SummonSlot>().ToList(), invalidItems.Cast<SummonSlot>().ToList(), onHoverItemAction, onHoverExitItemAction, identifier);
-        } else if (type == typeof(ArtifactSlot)) {
-            ShowArtifactSlotItems(validItems.Cast<ArtifactSlot>().ToList(), invalidItems.Cast<ArtifactSlot>().ToList(), onHoverItemAction, onHoverExitItemAction, identifier);
+        } else if (type == typeof(Artifact)) {
+            ShowArtifactItems(validItems.Cast<Artifact>().ToList(), invalidItems.Cast<Artifact>().ToList(), onHoverItemAction, onHoverExitItemAction, identifier);
         } else if (type.IsEnum) {
             ShowEnumItems(validItems.Cast<Enum>().ToList(), invalidItems.Cast<Enum>().ToList(), onHoverItemAction, onHoverExitItemAction, identifier, portraitGetter);
         } else if (type == typeof(RaceClass)) {
@@ -357,19 +358,19 @@ public class ObjectPicker : MonoBehaviour {
             item.SetInteractableState(false);
         }
     }
-    private void ShowArtifactSlotItems<T>(List<ArtifactSlot> validItems, List<ArtifactSlot> invalidItems, Action<T> onHoverItemAction, Action<T> onHoverExitItemAction, string identifier) {
-        Action<ArtifactSlot> convertedHoverAction = null;
+    private void ShowArtifactItems<T>(List<Artifact> validItems, List<Artifact> invalidItems, Action<T> onHoverItemAction, Action<T> onHoverExitItemAction, string identifier) {
+        Action<Artifact> convertedHoverAction = null;
         if (onHoverItemAction != null) {
-            convertedHoverAction = ConvertToArtifactSlot(onHoverItemAction);
+            convertedHoverAction = ConvertToArtifact(onHoverItemAction);
         }
-        Action<ArtifactSlot> convertedHoverExitAction = null;
+        Action<Artifact> convertedHoverExitAction = null;
         if (onHoverExitItemAction != null) {
-            convertedHoverExitAction = ConvertToArtifactSlot(onHoverExitItemAction);
+            convertedHoverExitAction = ConvertToArtifact(onHoverExitItemAction);
         }
         for (int i = 0; i < validItems.Count; i++) {
-            ArtifactSlot currSlot = validItems[i];
-            GameObject slotItemGO = UIManager.Instance.InstantiateUIObject(objectPickerArtifactSlotItemPrefab.name, objectPickerScrollView.content);
-            ArtifactSlotPickerItem item = slotItemGO.GetComponent<ArtifactSlotPickerItem>();
+            Artifact currSlot = validItems[i];
+            GameObject slotItemGO = UIManager.Instance.InstantiateUIObject(objectPickerArtifactItemPrefab.name, objectPickerScrollView.content);
+            ArtifactPickerItem item = slotItemGO.GetComponent<ArtifactPickerItem>();
             item.SetObject(currSlot);
 
             item.ClearAllOnClickActions();
@@ -389,9 +390,9 @@ public class ObjectPicker : MonoBehaviour {
             item.SetToggleGroup(toggleGroup);
         }
         for (int i = 0; i < invalidItems.Count; i++) {
-            ArtifactSlot currSlot = invalidItems[i];
-            GameObject slotItemGO = UIManager.Instance.InstantiateUIObject(objectPickerArtifactSlotItemPrefab.name, objectPickerScrollView.content);
-            ArtifactSlotPickerItem item = slotItemGO.GetComponent<ArtifactSlotPickerItem>();
+            Artifact currSlot = invalidItems[i];
+            GameObject slotItemGO = UIManager.Instance.InstantiateUIObject(objectPickerArtifactItemPrefab.name, objectPickerScrollView.content);
+            ArtifactPickerItem item = slotItemGO.GetComponent<ArtifactPickerItem>();
             item.SetObject(currSlot);
             item.ClearAllOnClickActions();
 
@@ -550,9 +551,9 @@ public class ObjectPicker : MonoBehaviour {
         if (myActionT == null) return null;
         else return new Action<SummonSlot>(o => myActionT((T)(object)o));
     }
-    public Action<ArtifactSlot> ConvertToArtifactSlot<T>(Action<T> myActionT) {
+    public Action<Artifact> ConvertToArtifact<T>(Action<T> myActionT) {
         if (myActionT == null) return null;
-        else return new Action<ArtifactSlot>(o => myActionT((T)(object)o));
+        else return new Action<Artifact>(o => myActionT((T)(object)o));
     }
     public Action<Minion> ConvertToMinion<T>(Action<T> myActionT) {
         if (myActionT == null) return null;

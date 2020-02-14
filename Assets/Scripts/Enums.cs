@@ -1395,6 +1395,7 @@ public enum PLAYER_ARCHETYPE { Normal, Ravager, Lich, Puppet_Master, }
 /// FAIL - only when action is finished; if action failed
 /// </summary>
 public enum ACTION_STATUS { NONE, STARTED, PERFORMING, SUCCESS, FAIL }
+public enum ARTIFACT_UNLOCKABLE_TYPE { Structure, Action }
 
 #region Crime Subcategories
 [System.AttributeUsage(System.AttributeTargets.Field)]

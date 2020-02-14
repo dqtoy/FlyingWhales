@@ -6,7 +6,8 @@ using UnityEngine;
 
 public class Artifact : TileObject {
     public ArtifactData data { get; private set; }
-
+    public bool hasBeenActivated { get; private set; }
+    
     #region getters/setters
     public string worldObjectName => name;
     public WORLD_OBJECT_TYPE worldObjectType => WORLD_OBJECT_TYPE.ARTIFACT;
@@ -44,6 +45,25 @@ public class Artifact : TileObject {
         }
     }
     #endregion
+
+    public virtual void Activate() {
+        hasBeenActivated = true;
+        for (int i = 0; i < data.unlocks.Length; i++) {
+            ArtifactUnlockable unlockable = data.unlocks[i];
+            Unlock(unlockable);    
+        }
+    }
+    private void Unlock(ArtifactUnlockable unlockable) {
+        switch (unlockable.unlockableType) {
+            case ARTIFACT_UNLOCKABLE_TYPE.Action:
+                PlayerManager.Instance.player.archetype.AddAction(unlockable.identifier);
+                break;
+            case ARTIFACT_UNLOCKABLE_TYPE.Structure:
+                LANDMARK_TYPE landmarkType = (LANDMARK_TYPE)Enum.Parse(typeof(LANDMARK_TYPE), unlockable.identifier);
+                PlayerManager.Instance.player.archetype.AddDemonicStructure(landmarkType);
+                break;
+        }
+    }
     
 }
 

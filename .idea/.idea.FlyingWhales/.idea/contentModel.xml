@@ -1425,6 +1425,7 @@
                     <e p="LocationStructureObject.cs" t="Include" />
                     <e p="TortureChamberStructureObject.cs" t="Include" />
                   </e>
+                  <e p="TheCrypt.cs" t="Include" />
                   <e p="TheEye.cs" t="Include" />
                   <e p="TheKennel.cs" t="Include" />
                   <e p="ThePortal.cs" t="Include" />
@@ -1928,7 +1929,7 @@
             <e p="AreaEmblem.cs" t="Include" />
             <e p="AreaNameplate.cs" t="Include" />
             <e p="AreaPickerItem.cs" t="Include" />
-            <e p="ArtifactSlotPickerItem.cs" t="Include" />
+            <e p="ArtifactPickerItem.cs" t="Include" />
             <e p="AttackPickerItem.cs" t="Include" />
             <e p="AttackSlotItem.cs" t="Include" />
             <e p="Button Clicks" t="Include">

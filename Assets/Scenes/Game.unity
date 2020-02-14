@@ -33615,6 +33615,7 @@ MonoBehaviour:
     - Interfere
     - Learn Spell
     - Breed Monster
+    - Activate Artifact
     m_values:
     - {fileID: 21300000, guid: 1ea6d3c87219ca34fbdaeb2464a68bc6, type: 3}
     - {fileID: 21300000, guid: b509b7ae41091354f8a5b5a1f47718ea, type: 3}
@@ -33632,6 +33633,7 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 175be3da23178ae4096b6cc3d20b459f, type: 3}
     - {fileID: 21300000, guid: 77e63770c7ecb474c9aa378a33e9e6ee, type: 3}
     - {fileID: 21300000, guid: 93474677614318e44b9f22780de3cc73, type: 3}
+    - {fileID: 21300000, guid: 5c1ddd68386fd8b4db5a6b65e6e706de, type: 3}
   killSummaryToggle: {fileID: 1981778861}
   newMinionUIGO: {fileID: 2032635302}
   newMinionCard: {fileID: 777859330}
@@ -63092,7 +63094,7 @@ MonoBehaviour:
     type: 3}
   objectPickerSummonSlotItemPrefab: {fileID: 1258680708518568, guid: e350f265eb7d8414ba2460f9395da7f9,
     type: 3}
-  objectPickerArtifactSlotItemPrefab: {fileID: 1102394896454670, guid: b2b4cda8a7575964190e55ab7440b29b,
+  objectPickerArtifactItemPrefab: {fileID: 1102394896454670, guid: b2b4cda8a7575964190e55ab7440b29b,
     type: 3}
   titleLbl: {fileID: 967205719}
   cover: {fileID: 641528016}

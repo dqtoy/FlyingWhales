@@ -5,18 +5,18 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class ArtifactSlotPickerItem : NameplateItem<ArtifactSlot> {
+public class ArtifactPickerItem : NameplateItem<Artifact> {
 
     [Header("Artifact Slot Attributes")]    
     [SerializeField] private Image portrait;
     //public GameObject portraitCover;
 
-    private ArtifactSlot artifactSlot;
-    public override ArtifactSlot obj { get { return artifactSlot; } }
+    private Artifact artifact;
+    public override Artifact obj { get { return artifact; } }
 
-    public override void SetObject(ArtifactSlot o) {
+    public override void SetObject(Artifact o) {
         base.SetObject(o);
-        this.artifactSlot = o;
+        this.artifact = o;
         UpdateVisuals();
     }
 
@@ -26,8 +26,8 @@ public class ArtifactSlotPickerItem : NameplateItem<ArtifactSlot> {
     //}
 
     private void UpdateVisuals() {
-        portrait.sprite = CharacterManager.Instance.GetArtifactSettings(artifactSlot.artifact.type).artifactPortrait;
-        mainLbl.text = artifactSlot.artifact.name;
+        portrait.sprite = PlayerManager.Instance.GetArtifactData(artifact.type).portrait;
+        mainLbl.text = artifact.name;
         subLbl.text = string.Empty;
     }
 }
