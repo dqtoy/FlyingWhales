@@ -150,4 +150,7 @@ public struct RaceClass {
         this.race = race;
         this.className = className;
     }
+    public override string ToString() {
+        return $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(race.ToString())} {className}";
+    }
 }

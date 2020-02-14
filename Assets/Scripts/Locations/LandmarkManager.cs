@@ -411,6 +411,9 @@ public partial class LandmarkManager : MonoBehaviour {
             case STRUCTURE_TYPE.DEMONIC_PRISON:
                 createdStructure = new DemonicPrison(location);
                 break;
+            case STRUCTURE_TYPE.THE_KENNEL:
+                createdStructure = new Inner_Maps.Location_Structures.TheKennel(location);
+                break;
             default:
                 createdStructure = new LocationStructure(type, location);
                 break;
@@ -499,6 +502,7 @@ public partial class LandmarkManager : MonoBehaviour {
                 BuildSpotTileObject buildSpotTileObject = innerTileMap.GetBuildSpotTileObject(chosenBuildingSpot);
                 innerTileMap.PlaceStructureObjectAt(chosenBuildingSpot, chosenStructurePrefab, structure, buildSpotTileObject);
                 structure.structureObj.RegisterPreplacedObjects(structure, innerTileMap);
+                structure.structureObj.RescanPathfindingGridOfStructure();
             } else {
                 throw new System.Exception(
                     $"Could not find valid building spot for {structure.ToString()} using prefab {chosenStructurePrefab.name}");

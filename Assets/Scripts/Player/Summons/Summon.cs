@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Actionables;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
+using JetBrains.Annotations;
 using Traits;
 using UnityEngine;
 
@@ -263,7 +264,7 @@ public class Summon : Character, IWorldObject {
     #endregion
 
     #region Territorries
-    public void AddTerritory(HexTile tile) {
+    public void AddTerritory([NotNull]HexTile tile) {
         if (territorries.Contains(tile) == false) {
             territorries.Add(tile);
         }

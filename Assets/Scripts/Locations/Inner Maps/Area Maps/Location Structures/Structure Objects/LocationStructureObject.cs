@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Contexts;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UnityEngine;
@@ -33,6 +34,9 @@ public class LocationStructureObject : PooledObject {
     [Header("Helpers")]
     [Tooltip("If this has elements, then only the provided coordinates will be set as part of the actual structure. Otherwise all the tiles inside the ground tilemap will be considered as part of the structure.")]
     [SerializeField] private List<Vector3Int> predeterminedOccupiedCoordinates;
+
+    [Header("Pathfinding")] 
+    [SerializeField] private Collider2D unpassableCollider;
     
     #region Properties
     private Tilemap[] allTilemaps;
@@ -50,7 +54,7 @@ public class LocationStructureObject : PooledObject {
     void Awake() {
         allTilemaps = this.transform.GetComponentsInChildren<Tilemap>();
         wallVisuals = this.transform.GetComponentsInChildren<WallVisual>();
-        // _groundTileMap.CompressBounds();
+        _groundTileMap.CompressBounds();
     }
     #endregion
 
@@ -359,8 +363,13 @@ public class LocationStructureObject : PooledObject {
     #endregion
 
     #region Pathfinding
-    internal void RescanPathfindingGridOfStructure() {
-        PathfindingManager.Instance.UpdatePathfindingGraphPartial(_groundTileMapRenderer.bounds);
+    [ContextMenu("Rescan Pathfinding Grid Of Structure")]
+    public void RescanPathfindingGridOfStructure() {
+        if (unpassableCollider != null) {
+            PathfindingManager.Instance.UpdatePathfindingGraphPartial(unpassableCollider.bounds);
+        } else {
+            PathfindingManager.Instance.UpdatePathfindingGraphPartial(_groundTileMapRenderer.bounds);    
+        }
     }
     #endregion
 

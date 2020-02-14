@@ -29,6 +29,7 @@ public static class PlayerDB {
     public const string Learn_Spell_Action = "Learn Spell";
     public const string Stop_Action = "Stop";
     public const string Return_To_Portal_Action = "Return To Portal";
+    public const string Breed_Monster_Action = "Breed Monster";
 
     //spells
     public const string Tornado = "Tornado";
