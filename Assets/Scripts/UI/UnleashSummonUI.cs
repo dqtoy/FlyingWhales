@@ -45,6 +45,15 @@ public class UnleashSummonUI : MonoBehaviour {
     private void PopulateSummons() {
         UtilityScripts.Utilities.DestroyChildren(summonsScrollRect.content);
         characterNameplateItems.Clear();
+        for (int i = 0; i < PlayerManager.Instance.player.summons.Count; i++) {
+            Summon summon = PlayerManager.Instance.player.summons[i];
+            CharacterNameplateItem item = CreateNewCharacterNameplateItem();
+            item.SetAsToggle();
+            item.SetObject(summon);
+            item.AddOnToggleAction(OnToggleCharacter);
+            item.SetPortraitInteractableState(false);
+            item.gameObject.SetActive(true);
+        }
         //TODO:
         // List<Region> playerOwnedRegions = PlayerManager.Instance.player.playerFaction.ownedSettlements;
         // for (int i = 0; i < playerOwnedRegions.Count; i++) {
@@ -75,7 +84,7 @@ public class UnleashSummonUI : MonoBehaviour {
     private void UpdateSummonButton() {
         if(chosenSummons.Count > 0) {
             summonButton.interactable = true;
-            summonButtonText.text = "CONFIRM (" + manaCost + ")";
+            summonButtonText.text = "CONFIRM";
         } else {
             summonButton.interactable = false;
             summonButtonText.text = "CONFIRM";
@@ -88,31 +97,53 @@ public class UnleashSummonUI : MonoBehaviour {
         characterNameplateItems.Add(item);
         return item;
     }
-    private void AttackRegion() {
-        entrances.Clear();
-        InnerTileMap innerMap = InnerMapManager.Instance.currentlyShowingMap;
-        LocationGridTile mainEntrance = innerMap.GetRandomUnoccupiedEdgeTile();
-        entrances.Add(mainEntrance);
-        for (int i = 0; i < entrances.Count; i++) {
-            if (entrances.Count == chosenSummons.Count) {
-                break;
+    private void HarassRaidInvade() {
+        Settlement targetSettlement = PlayerUI.Instance.harassRaidInvadeTargetSettlement;
+        PlayerUI.Instance.harassRaidInvadeLeaderMinion.character.behaviourComponent.SetHarassInvadeRaidTarget(targetSettlement);
+        if (PlayerUI.Instance.harassRaidInvade == "harass") {
+            PlayerUI.Instance.harassRaidInvadeLeaderMinion.character.behaviourComponent.SetIsHarassing(true);
+            for (int i = 0; i < chosenSummons.Count; i++) {
+                chosenSummons[i].behaviourComponent.SetHarassInvadeRaidTarget(targetSettlement);
+                chosenSummons[i].behaviourComponent.SetIsHarassing(true);
             }
-            for (int j = 0; j < entrances[i].neighbourList.Count; j++) {
-                LocationGridTile newEntrance = entrances[i].neighbourList[j];
-                //if (newEntrance.objHere == null && newEntrance.charactersHere.Count == 0 && newEntrance.structure != null) {
-                if (newEntrance.IsAtEdgeOfWalkableMap() && !entrances.Contains(newEntrance)) {
-                    entrances.Add(newEntrance);
-                    if (entrances.Count == chosenSummons.Count) {
-                        break;
-                    }
-                }
+        } else if (PlayerUI.Instance.harassRaidInvade == "raid") {
+            PlayerUI.Instance.harassRaidInvadeLeaderMinion.character.behaviourComponent.SetIsRaiding(true);
+            for (int i = 0; i < chosenSummons.Count; i++) {
+                chosenSummons[i].behaviourComponent.SetHarassInvadeRaidTarget(targetSettlement);
+                chosenSummons[i].behaviourComponent.SetIsRaiding(true);
+            }
+        } else if (PlayerUI.Instance.harassRaidInvade == "invade") {
+            PlayerUI.Instance.harassRaidInvadeLeaderMinion.character.behaviourComponent.SetIsInvading(true);
+            for (int i = 0; i < chosenSummons.Count; i++) {
+                chosenSummons[i].behaviourComponent.SetHarassInvadeRaidTarget(targetSettlement);
+                chosenSummons[i].behaviourComponent.SetIsInvading(true);
             }
         }
-        for (int i = 0; i < entrances.Count; i++) {
-            TryPlaceSummon(chosenSummons[i] as Summon, entrances[i]);
-            //chosenSummons[i].marker.InitialPlaceMarkerAt(entrances[i]);
-        }
-        chosenSummons[0].CenterOnCharacter();
+
+        //entrances.Clear();
+        //InnerTileMap innerMap = InnerMapManager.Instance.currentlyShowingMap;
+        //LocationGridTile mainEntrance = innerMap.GetRandomUnoccupiedEdgeTile();
+        //entrances.Add(mainEntrance);
+        //for (int i = 0; i < entrances.Count; i++) {
+        //    if (entrances.Count == chosenSummons.Count) {
+        //        break;
+        //    }
+        //    for (int j = 0; j < entrances[i].neighbourList.Count; j++) {
+        //        LocationGridTile newEntrance = entrances[i].neighbourList[j];
+        //        //if (newEntrance.objHere == null && newEntrance.charactersHere.Count == 0 && newEntrance.structure != null) {
+        //        if (newEntrance.IsAtEdgeOfWalkableMap() && !entrances.Contains(newEntrance)) {
+        //            entrances.Add(newEntrance);
+        //            if (entrances.Count == chosenSummons.Count) {
+        //                break;
+        //            }
+        //        }
+        //    }
+        //}
+        //for (int i = 0; i < entrances.Count; i++) {
+        //    TryPlaceSummon(chosenSummons[i] as Summon, entrances[i]);
+        //    //chosenSummons[i].marker.InitialPlaceMarkerAt(entrances[i]);
+        //}
+        //chosenSummons[0].CenterOnCharacter();
     }
     private void TryPlaceSummon(Summon summon, LocationGridTile locationTile) {
         CharacterManager.Instance.PlaceSummon(summon, locationTile);
@@ -130,13 +161,15 @@ public class UnleashSummonUI : MonoBehaviour {
     //}
     
     public void OnClickConfirm() {
-        if(PlayerManager.Instance.player.mana >= manaCost) {
-            Close();
-            PlayerManager.Instance.player.AdjustMana(-manaCost);
-            AttackRegion();
-        } else {
-            PlayerUI.Instance.ShowGeneralConfirmation("Mana Cost", "NOT ENOUGH MANA!");
-        }
+        HarassRaidInvade();
+
+        //if (PlayerManager.Instance.player.mana >= manaCost) {
+        //    Close();
+        //    PlayerManager.Instance.player.AdjustMana(-manaCost);
+        //    AttackRegion();
+        //} else {
+        //    PlayerUI.Instance.ShowGeneralConfirmation("Mana Cost", "NOT ENOUGH MANA!");
+        //}
 
         //if(summon != null) {
         //    PlayerUI.Instance.TryPlaceSummon(summon);

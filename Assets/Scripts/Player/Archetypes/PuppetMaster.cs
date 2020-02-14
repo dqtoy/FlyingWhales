@@ -6,7 +6,9 @@ namespace Archetype {
     public class PuppetMaster : PlayerArchetype {
         public PuppetMaster() : base(PLAYER_ARCHETYPE.Puppet_Master) {
             actions = new List<string>() { PlayerDB.Afflict_Action, PlayerDB.Bless_Action, PlayerDB.Zap_Action, PlayerDB.Booby_Trap_Action
-                    , PlayerDB.Summon_Minion_Action, PlayerDB.Corrupt_Action, PlayerDB.Interfere_Action, PlayerDB.Stop_Action, PlayerDB.Return_To_Portal_Action };
+                    , PlayerDB.Summon_Minion_Action, PlayerDB.Corrupt_Action, PlayerDB.Interfere_Action, PlayerDB.Stop_Action, PlayerDB.Return_To_Portal_Action
+                    , PlayerDB.Harass_Action, PlayerDB.Raid_Action, PlayerDB.Invade_Action
+                    , PlayerDB.End_Harass_Action, PlayerDB.End_Raid_Action, PlayerDB.End_Invade_Action };
             monsters = new List<RaceClass> { }; //No initial monsters
             demonicStructures = new List<LANDMARK_TYPE>() { LANDMARK_TYPE.THE_EYE, LANDMARK_TYPE.GOADER, };
             minionClasses = new List<string>() { "Lust", "Envy", "Greed", "Gluttony" };

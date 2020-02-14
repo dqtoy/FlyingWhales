@@ -7,8 +7,8 @@ namespace Archetype {
     public class Normal : PlayerArchetype {
         public Normal() : base(PLAYER_ARCHETYPE.Normal) {
             minionClasses = CharacterManager.sevenDeadlySinsClassNames.ToList();
-            afflictions = new List<SPELL_TYPE>(PlayerDB.afflictions);
-            spells = new List<string>(PlayerDB.spells);
+            afflictions = PlayerDB.afflictions;
+            spells = PlayerDB.spells;
             demonicStructures = new List<LANDMARK_TYPE>() { LANDMARK_TYPE.THE_ANVIL, LANDMARK_TYPE.THE_EYE, LANDMARK_TYPE.THE_KENNEL, LANDMARK_TYPE.THE_CRYPT, LANDMARK_TYPE.THE_SPIRE, LANDMARK_TYPE.THE_NEEDLES, LANDMARK_TYPE.THE_PROFANE, LANDMARK_TYPE.THE_PIT, LANDMARK_TYPE.GOADER, LANDMARK_TYPE.TORTURE_CHAMBER };
             SetCanTriggerFlaw(true);
             SetCanRemoveTraits(true);

@@ -320,7 +320,8 @@ public class SummonSlot {
     public int level;
     public Summon summon;
     public bool isLocked {
-        get { return PlayerManager.Instance.player.GetIndexForSummonSlot(this) >= PlayerManager.Instance.player.maxSummonSlots; }
+        get { return false; }
+        //get { return PlayerManager.Instance.player.GetIndexForSummonSlot(this) >= PlayerManager.Instance.player.maxSummonSlots; }
     }
 
     public SummonSlot() {

@@ -39,8 +39,8 @@ public class SaveDataPlayer {
         playerFactionID = player.playerFaction.id;
         playerAreaID = player.playerSettlement.id;
         mana = player.mana;
-        maxSummonSlots = player.maxSummonSlots;
-        maxArtifactSlots = player.maxArtifactSlots;
+        //maxSummonSlots = player.maxSummonSlots;
+        //maxArtifactSlots = player.maxArtifactSlots;
         //currentDivineInterventionTick = player.currentDivineInterventionTick;
         // minionsToSummon = player.minionsToSummon;
         constructionRatePercentageModifier = player.constructionRatePercentageModifier;
@@ -53,12 +53,12 @@ public class SaveDataPlayer {
             minions.Add(saveDataMinion);
         }
 
-        summonSlots = new List<SaveDataSummonSlot>();
-        for (int i = 0; i < player.summonSlots.Count; i++) {
-            SaveDataSummonSlot data = new SaveDataSummonSlot();
-            data.Save(player.summonSlots[i]);
-            summonSlots.Add(data);
-        }
+        //summonSlots = new List<SaveDataSummonSlot>();
+        //for (int i = 0; i < player.summons.Count; i++) {
+        //    SaveDataSummonSlot data = new SaveDataSummonSlot();
+        //    data.Save(player.summons[i]);
+        //    summonSlots.Add(data);
+        //}
 
         // artifactSlots = new List<SaveDataArtifactSlot>();
         // for (int i = 0; i < player.artifacts.Count; i++) {

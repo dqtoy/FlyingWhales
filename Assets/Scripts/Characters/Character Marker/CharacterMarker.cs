@@ -54,6 +54,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     public List<IPointOfInterest> unprocessedVisionPOIs { get; private set; } //POI's in this characters vision collider
     public List<IPointOfInterest> unprocessedVisionPOIsForActionOnly { get; private set; } //POI's in this characters vision collider
     public List<Character> inVisionCharacters { get; private set; } //POI's in this characters vision collider
+    public List<TileObject> inVisionTileObjects { get; private set; } //POI's in this characters vision collider
     //public List<IPointOfInterest> hostilesInRange { get; private set; } //POI's in this characters hostility collider
     //public List<IPointOfInterest> avoidInRange { get; private set; } //POI's in this characters hostility collider
     //// public List<ActualGoapNode> alreadyWitnessedActions { get; private set; } //List of actions this character can witness, and has not been processed yet. Will be cleared after processing
@@ -109,6 +110,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         unprocessedVisionPOIsForActionOnly = new List<IPointOfInterest>();
         inVisionPOIs = new List<IPointOfInterest>();
         inVisionCharacters = new List<Character>();
+        inVisionTileObjects = new List<TileObject>();
         //hostilesInRange = new List<IPointOfInterest>();
         //terrifyingObjects = new List<IPointOfInterest>();
         //avoidInRange = new List<IPointOfInterest>();
@@ -1053,8 +1055,10 @@ public class CharacterMarker : MapObjectVisual<Character> {
         if (!inVisionPOIs.Contains(poi)) {
             inVisionPOIs.Add(poi);
             AddUnprocessedPOI(poi);
-            if (poi is Character) {
+            if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
                 inVisionCharacters.Add(poi as Character);
+            } else if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+                inVisionTileObjects.Add(poi as TileObject);
             }
             //character.AddAwareness(poi);
             OnAddPOIAsInVisionRange(poi);
@@ -1065,16 +1069,19 @@ public class CharacterMarker : MapObjectVisual<Character> {
         if (inVisionPOIs.Remove(poi)) {
             RemoveUnprocessedPOI(poi);
             character.combatComponent.RemoveAvoidInRange(poi);
-            if (poi is Character) {
+            if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
                 Character target = poi as Character;
                 inVisionCharacters.Remove(target);
                 Messenger.Broadcast(Signals.CHARACTER_REMOVED_FROM_VISION, character, target);
+            } else if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+                inVisionTileObjects.Add(poi as TileObject);
             }
         }
     }
     public void ClearPOIsInVisionRange() {
         inVisionPOIs.Clear();
         inVisionCharacters.Clear();
+        inVisionTileObjects.Clear();
         ClearUnprocessedPOI();
     }
     public void LogPOIsInVisionRange() {

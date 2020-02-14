@@ -859,6 +859,15 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             Messenger.Broadcast(Signals.PLAYER_ACTION_REMOVED_FROM_TARGET, action, this as IPlayerActionTarget);
         }
     }
+    public void RemovePlayerAction(string actionName) {
+        for (int i = 0; i < actions.Count; i++) {
+            PlayerAction action = actions[i];
+            if (action.actionName == actionName) {
+                actions.RemoveAt(i);
+                Messenger.Broadcast(Signals.PLAYER_ACTION_REMOVED_FROM_TARGET, action, this as IPlayerActionTarget);
+            }
+        }
+    }
     public void ClearPlayerActions() {
         actions.Clear();
     }

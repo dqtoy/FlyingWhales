@@ -53,8 +53,7 @@ namespace Traits {
                     TileObject item = targetPOI as TileObject;
                     if (item.CanBePickedUpNormallyUponVisionBy(characterThatWillDoJob)
                     && !characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.MISC, INTERACTION_TYPE.PICK_UP)) {
-                        GoapPlanJob pickUpJob = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.PICK_UP, item, characterThatWillDoJob);
-                        characterThatWillDoJob.jobQueue.AddJobInQueue(pickUpJob);
+                        characterThatWillDoJob.jobComponent.CreatePickUpJob(item);
                         return true;
                     }
                 }

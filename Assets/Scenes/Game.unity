@@ -33612,6 +33612,14 @@ MonoBehaviour:
     - Seize Object
     - Interfere
     - Learn Spell
+    - Stop
+    - Return To Portal
+    - Harass
+    - Raid
+    - Invade
+    - End Harass
+    - End Raid
+    - End Invade
     m_values:
     - {fileID: 21300000, guid: 1ea6d3c87219ca34fbdaeb2464a68bc6, type: 3}
     - {fileID: 21300000, guid: b509b7ae41091354f8a5b5a1f47718ea, type: 3}
@@ -33628,6 +33636,14 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 5c1ddd68386fd8b4db5a6b65e6e706de, type: 3}
     - {fileID: 21300000, guid: 175be3da23178ae4096b6cc3d20b459f, type: 3}
     - {fileID: 21300000, guid: 77e63770c7ecb474c9aa378a33e9e6ee, type: 3}
+    - {fileID: 21300000, guid: b509b7ae41091354f8a5b5a1f47718ea, type: 3}
+    - {fileID: 21300000, guid: 5609a9ba1552aa6409aa027ddbcd2ceb, type: 3}
+    - {fileID: 21300000, guid: be6e6d76787bad747acdc647f43942bb, type: 3}
+    - {fileID: 21300000, guid: a85b0710644af4c48a2a7f742a32da7e, type: 3}
+    - {fileID: 21300000, guid: 623d4fe6fa7f3264d8a883e12f3774f4, type: 3}
+    - {fileID: 21300000, guid: be6e6d76787bad747acdc647f43942bb, type: 3}
+    - {fileID: 21300000, guid: a85b0710644af4c48a2a7f742a32da7e, type: 3}
+    - {fileID: 21300000, guid: 623d4fe6fa7f3264d8a883e12f3774f4, type: 3}
   killSummaryToggle: {fileID: 1981778861}
   newMinionUIGO: {fileID: 2032635302}
   newMinionCard: {fileID: 777859330}
@@ -63080,6 +63096,7 @@ MonoBehaviour:
     type: 3}
   objectPickerStringItemPrefab: {fileID: 1493052627817880, guid: 6fae4ada810dac340b9dde00ae3d39d4,
     type: 3}
+  objectPickerEnumItemPrefab: {fileID: 0}
   objectPickerAttackItemPrefab: {fileID: 1281087095607850, guid: a2e8dcf04a730f542b0dbeb63f54d763,
     type: 3}
   objectPickerSummonSlotItemPrefab: {fileID: 1258680708518568, guid: e350f265eb7d8414ba2460f9395da7f9,

@@ -17,7 +17,7 @@ public class Player : ILeader {
     public int mana { get; private set; }
     public List<Intel> allIntel { get; private set; }
     public List<Minion> minions { get; private set; }
-    public List<SummonSlot> summonSlots { get; private set; }
+    public List<Summon> summons { get; private set; }
     public List<Artifact> artifacts { get; private set; }
     private int currentCorruptionDuration { get; set; }
     private int currentCorruptionTick { get; set; }
@@ -27,8 +27,8 @@ public class Player : ILeader {
     public Settlement currentSettlementBeingInvaded { get; private set; }
     public CombatAbility currentActiveCombatAbility { get; private set; }
     public Intel currentActiveIntel { get; private set; }
-    public int maxSummonSlots { get; private set; } //how many summons can the player have
-    public int maxArtifactSlots { get; private set; } //how many artifacts can the player have
+    //public int maxSummonSlots { get; private set; } //how many summons can the player have
+    //public int maxArtifactSlots { get; private set; } //how many artifacts can the player have
     public PlayerJobActionSlot[] interventionAbilitySlots { get; }
     public HexTile portalTile { get; private set; }
     public float constructionRatePercentageModifier { get; private set; }
@@ -50,11 +50,11 @@ public class Player : ILeader {
     public Player() {
         allIntel = new List<Intel>();
         minions = new List<Minion>();
-        summonSlots = new List<SummonSlot>();
+        summons = new List<Summon>();
         artifacts = new List<Artifact>();
         interventionAbilitySlots = new PlayerJobActionSlot[PlayerDB.MAX_INTERVENTION_ABILITIES];
-        maxSummonSlots = 0;
-        maxArtifactSlots = 0;
+        //maxSummonSlots = 0;
+        //maxArtifactSlots = 0;
         unlearnedSpells = new List<string>(PlayerDB.spells);
         unlearnedAfflictions = new List<SPELL_TYPE>(PlayerDB.afflictions);
         AdjustMana(EditableValuesManager.Instance.startingMana);
@@ -65,16 +65,16 @@ public class Player : ILeader {
     public Player(SaveDataPlayer data) {
         allIntel = new List<Intel>();
         minions = new List<Minion>();
-        maxSummonSlots = data.maxSummonSlots;
-        maxArtifactSlots = data.maxArtifactSlots;
+        //maxSummonSlots = data.maxSummonSlots;
+        //maxArtifactSlots = data.maxArtifactSlots;
         unlearnedSpells = new List<string>();
         unlearnedAfflictions = new List<SPELL_TYPE>();
         mana = data.mana;
         SetConstructionRatePercentageModifier(data.constructionRatePercentageModifier);
-        summonSlots = new List<SummonSlot>();
-        for (int i = 0; i < summonSlots.Count; i++) {
-            summonSlots.Add(data.summonSlots[i].Load());
-        }
+        //summons = new List<SummonSlot>();
+        //for (int i = 0; i < summons.Count; i++) {
+        //    summons.Add(data.summonSlots[i].Load());
+        //}
 
         // artifacts = new List<Artifact>();
         // for (int i = 0; i < artifacts.Count; i++) {
@@ -544,118 +544,127 @@ public class Player : ILeader {
     #endregion
 
     #region Summons
-    private void GainSummonSlot(bool showUI = true) {
-        SummonSlot newSlot = new SummonSlot();
-        summonSlots.Add(newSlot);
-        //if (showUI) {
-        //    PlayerUI.Instance.ShowGeneralConfirmation("New Summon Slot", "You gained a new summon slot!");
-        //}
-        UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "You gained a summon slot!", null);
-        Messenger.Broadcast<SummonSlot>(Signals.PLAYER_GAINED_SUMMON_SLOT, newSlot);
-    }
-    private void LoseSummonSlot() {
-        SummonSlot unusedSlot;
-        if (TryGetUnusedSummonSlot(out unusedSlot)) {
-            //lose the unused slot.
-            LoseSummonSlot(unusedSlot, true);
-        } else {
-            //no unused slot, show UI to pick slot to be discarded.
-            UIManager.Instance.ShowClickableObjectPicker(summonSlots, ShowDiscardSummonConfirmation, title: "Discard a summon slot.", showCover: true, layer: 25, closable: false);
-        }
-    }
-    private void LoseSummonSlot(SummonSlot slot, bool showUI = false) {
-        if (summonSlots.Remove(slot)) {
-            //PlayerUI.Instance.ShowGeneralConfirmation("Lost Summon Slot", "You lost a summon slot!");
-            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "You lost a summon slot!", null);
-            if (slot.summon != null) {
-                ClearSummonData(slot.summon);
-            }
-            Messenger.Broadcast(Signals.PLAYER_LOST_SUMMON_SLOT, slot);
-        }
-    }
-    private void ShowDiscardSummonConfirmation(object s) {
-        SummonSlot slot = s as SummonSlot;
-        UIManager.Instance.ShowYesNoConfirmation("Discard summon slot", "Are you sure you want to discard your " + slot.summon.summonType.SummonName() + " summon?", () => OnClickYesDiscardSummon(slot), layer: 26);
-    }
-    private void OnClickYesDiscardSummon(SummonSlot slot) {
-        LoseSummonSlot(slot);
-        UIManager.Instance.HideObjectPicker();
-    }
-    public void GainSummon(SUMMON_TYPE type, int level = 1, bool showNewSummonUI = false) {
+    //private void GainSummonSlot(bool showUI = true) {
+    //    SummonSlot newSlot = new SummonSlot();
+    //    summons.Add(newSlot);
+    //    //if (showUI) {
+    //    //    PlayerUI.Instance.ShowGeneralConfirmation("New Summon Slot", "You gained a new summon slot!");
+    //    //}
+    //    UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "You gained a summon slot!", null);
+    //    Messenger.Broadcast<SummonSlot>(Signals.PLAYER_GAINED_SUMMON_SLOT, newSlot);
+    //}
+    //private void LoseSummonSlot() {
+    //    SummonSlot unusedSlot;
+    //    if (TryGetUnusedSummonSlot(out unusedSlot)) {
+    //        //lose the unused slot.
+    //        LoseSummonSlot(unusedSlot, true);
+    //    } else {
+    //        //no unused slot, show UI to pick slot to be discarded.
+    //        UIManager.Instance.ShowClickableObjectPicker(summons, ShowDiscardSummonConfirmation, title: "Discard a summon slot.", showCover: true, layer: 25, closable: false);
+    //    }
+    //}
+    //private void LoseSummonSlot(SummonSlot slot, bool showUI = false) {
+    //    if (summons.Remove(slot)) {
+    //        //PlayerUI.Instance.ShowGeneralConfirmation("Lost Summon Slot", "You lost a summon slot!");
+    //        UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "You lost a summon slot!", null);
+    //        if (slot.summon != null) {
+    //            ClearSummonData(slot.summon);
+    //        }
+    //        Messenger.Broadcast(Signals.PLAYER_LOST_SUMMON_SLOT, slot);
+    //    }
+    //}
+    //private void ShowDiscardSummonConfirmation(object s) {
+    //    SummonSlot slot = s as SummonSlot;
+    //    UIManager.Instance.ShowYesNoConfirmation("Discard summon slot", "Are you sure you want to discard your " + slot.summon.summonType.SummonName() + " summon?", () => OnClickYesDiscardSummon(slot), layer: 26);
+    //}
+    //private void OnClickYesDiscardSummon(SummonSlot slot) {
+    //    LoseSummonSlot(slot);
+    //    UIManager.Instance.HideObjectPicker();
+    //}
+    public void AddSummon(SUMMON_TYPE type, int level = 1, bool showNewSummonUI = false) {
         Faction faction = playerFaction;
         if (type == SUMMON_TYPE.Incubus || type == SUMMON_TYPE.Succubus) {
             faction = FactionManager.Instance.neutralFaction;
         }
         Summon newSummon = CharacterManager.Instance.CreateNewSummon(type, faction, playerSettlement);
         newSummon.SetLevel(level);
-        GainSummon(newSummon, showNewSummonUI);
+        AddSummon(newSummon, showNewSummonUI);
     }
-    public void GainSummon(Summon summon, bool showNewSummonUI = false) {
-        if (maxSummonSlots == 0) {
-            //no summon slots yet
-            PlayerUI.Instance.ShowGeneralConfirmation("New Summon", "You gained a new summon but do not yet have a summon slot! " + summon.summonType.SummonName() + " will be discarded.");
-            RejectSummon(summon);
-        } else if (GetTotalSummonsCount() < maxSummonSlots) {
-            AddSummon(summon, showNewSummonUI);
-        } else {
-            Debug.LogWarning("Max summons has been reached!");
-            PlayerUI.Instance.replaceUI.ShowReplaceUI(GetAllSummons(), summon, ReplaceSummon, RejectSummon);
-        }
-    }
-    public bool HasSpaceForNewSummon() {
-        return GetTotalSummonsCount() < maxSummonSlots; //if the total summons count is less than the summon slots
-    }
-    private void ReplaceSummon(object summonToReplace, object summonToAdd) {
-        Summon replace = summonToReplace as Summon;
-        Summon add = summonToAdd as Summon;
-        RemoveSummon(replace);
-        AddSummon(add);
-    }
-    private void RejectSummon(object rejectedSummon) {
-        ClearSummonData(rejectedSummon as Summon);
-    }
+    //public void GainSummon(Summon summon) {
+        //if (maxSummonSlots == 0) {
+        //    //no summon slots yet
+        //    PlayerUI.Instance.ShowGeneralConfirmation("New Summon", "You gained a new summon but do not yet have a summon slot! " + summon.summonType.SummonName() + " will be discarded.");
+        //    RejectSummon(summon);
+        //} else if (GetTotalSummonsCount() < maxSummonSlots) {
+        //    AddSummon(summon, showNewSummonUI);
+        //} else {
+        //    Debug.LogWarning("Max summons has been reached!");
+        //    PlayerUI.Instance.replaceUI.ShowReplaceUI(GetAllSummons(), summon, ReplaceSummon, RejectSummon);
+        //}
+    //}
+    //public bool HasSpaceForNewSummon() {
+    //    return GetTotalSummonsCount() < maxSummonSlots; //if the total summons count is less than the summon slots
+    //}
+    //private void ReplaceSummon(object summonToReplace, object summonToAdd) {
+    //    Summon replace = summonToReplace as Summon;
+    //    Summon add = summonToAdd as Summon;
+    //    RemoveSummon(replace);
+    //    AddSummon(add);
+    //}
+    //private void RejectSummon(object rejectedSummon) {
+    //    ClearSummonData(rejectedSummon as Summon);
+    //}
     /// <summary>
     /// Get total number of summons that the player has, regardless of them having been used or not.
     /// </summary>
     /// <returns></returns>
-    public int GetTotalSummonsCount() {
-        int count = 0;
-        for (int i = 0; i < summonSlots.Count; i++) {
-            if (summonSlots[i].summon != null) {
-                count++;
-            }
-        }
-        return count;
-    }
+    //public int GetTotalSummonsCount() {
+    //    int count = 0;
+    //    for (int i = 0; i < summons.Count; i++) {
+    //        if (summons[i].summon != null) {
+    //            count++;
+    //        }
+    //    }
+    //    return count;
+    //}
     private void AddSummon(Summon newSummon, bool showNewSummonUI = false) {
-        for (int i = 0; i < summonSlots.Count; i++) {
-            if (summonSlots[i].summon == null) {
-                summonSlots[i].SetSummon(newSummon);
-                playerSettlement.AddResident(newSummon, ignoreCapacity:true);
-                Messenger.Broadcast(Signals.PLAYER_GAINED_SUMMON, newSummon);
-                if (showNewSummonUI) {
-                    PlayerUI.Instance.newAbilityUI.ShowNewAbilityUI(currentMinionLeader, newSummon);
-                }
-                break;
+        if (!summons.Contains(newSummon)) {
+            summons.Add(newSummon);
+            playerSettlement.AddResident(newSummon, ignoreCapacity: true);
+            Messenger.Broadcast(Signals.PLAYER_GAINED_SUMMON, newSummon);
+            if (showNewSummonUI) {
+                PlayerUI.Instance.newAbilityUI.ShowNewAbilityUI(currentMinionLeader, newSummon);
             }
         }
+        //for (int i = 0; i < summons.Count; i++) {
+        //    if (summons[i].summon == null) {
+        //        summons[i].SetSummon(newSummon);
+        //        playerSettlement.AddResident(newSummon, ignoreCapacity:true);
+        //        Messenger.Broadcast(Signals.PLAYER_GAINED_SUMMON, newSummon);
+        //        if (showNewSummonUI) {
+        //            PlayerUI.Instance.newAbilityUI.ShowNewAbilityUI(currentMinionLeader, newSummon);
+        //        }
+        //        break;
+        //    }
+        //}
     }
     /// <summary>
     /// Remove summon from the players list of available summons.
     /// NOTE: Summons will be placed back on the list when the player is done with a map.
     /// </summary>
     /// <param name="summon">The summon to be removed.</param>
-    public void RemoveSummon(Summon summon) {
-        for (int i = 0; i < summonSlots.Count; i++) {
-            if (summonSlots[i].summon == summon) {
-                summonSlots[i].summon = null;
-                Messenger.Broadcast(Signals.PLAYER_REMOVED_SUMMON, summon);
-                break;
-            }
-        }
+    public bool RemoveSummon(Summon summon) {
+        return summons.Remove(summon);
+        //for (int i = 0; i < summons.Count; i++) {
+        //    if (summons[i].summon == summon) {
+        //        summons[i].summon = null;
+        //        Messenger.Broadcast(Signals.PLAYER_REMOVED_SUMMON, summon);
+        //        break;
+        //    }
+        //}
     }
     public void RemoveSummon(SUMMON_TYPE summon) {
-        Summon chosenSummon = GetAvailableSummonOfType(summon);
+        Summon chosenSummon = GetSummonOfType(summon);
         if(chosenSummon != null) {
             RemoveSummon(chosenSummon);
         }
@@ -684,17 +693,20 @@ public class Player : ILeader {
         PlayerManager.Instance.player.playerSettlement.region.RemoveResident(summon);
         CharacterManager.Instance.RemoveCharacter(summon);
     }
-    public Summon GetAvailableSummonOfType(SUMMON_TYPE type) {
-        List<SummonSlot> choices = summonSlots.Where(x => x.summon != null && !x.summon.hasBeenUsed && x.summon.summonType == type).ToList();
-        return choices[Random.Range(0, choices.Count)].summon;
-    }
+    //public Summon GetAvailableSummonOfType(SUMMON_TYPE type) {
+    //    List<SummonSlot> choices = summons.Where(x => x.summon != null && !x.summon.hasBeenUsed && x.summon.summonType == type).ToList();
+    //    return choices[Random.Range(0, choices.Count)].summon;
+    //}
     public bool HasSummonOfType(SUMMON_TYPE summonType) {
-        for (int i = 0; i < summonSlots.Count; i++) {
-            if (summonSlots[i].summon != null && summonSlots[i].summon.summonType == summonType) {
-                return true;
+        return GetSummonDescription(summonType) != null;
+    }
+    public Summon GetSummonOfType(SUMMON_TYPE summonType) {
+        for (int i = 0; i < summons.Count; i++) {
+            if (summons[i].summonType == summonType) {
+                return summons[i];
             }
         }
-        return false;
+        return null;
     }
     public bool HasAnySummon(params string[] summonName) {
         SUMMON_TYPE type;
@@ -706,79 +718,79 @@ public class Player : ILeader {
         }
         return false;
     }
-    public List<Summon> GetAllSummons() {
-        List<Summon> all = new List<Summon>();
-        for (int i = 0; i < summonSlots.Count; i++) {
-            if (summonSlots[i].summon != null) {
-                all.Add(summonSlots[i].summon);
-            }
-        }
-        return all;
-    }
-    public Summon GetRandomSummon() {
-        List<Summon> all = GetAllSummons();
-        return all[UnityEngine.Random.Range(0, all.Count)];
-    }
-    private void ResetSummons() {
-        for (int i = 0; i < summonSlots.Count; i++) {
-            if (summonSlots[i].summon != null) {
-                summonSlots[i].summon.Reset();
-            }
-        }
-    }
-    public void IncreaseSummonSlot() {
-        maxSummonSlots += 1;
-        maxSummonSlots = Mathf.Max(maxSummonSlots, 0);
-        //validate if adjusted max summons can accomodate current summons
-        if (summonSlots.Count < maxSummonSlots) {
-            //add new summon slot
-            GainSummonSlot();
-        }
-    }
-    public void DecreaseSummonSlot() {
-        maxSummonSlots -= 1;
-        maxSummonSlots = Mathf.Max(maxSummonSlots, 0);
-        //validate if adjusted max summons can accomodate current summons
-        if (summonSlots.Count > maxSummonSlots) {
-            //remove summon slot
-            LoseSummonSlot();
-        }
-    }
-    public SummonSlot GetSummonSlotBySummon(Summon summon) {
-        for (int i = 0; i < summonSlots.Count; i++) {
-            if (summonSlots[i].summon == summon) {
-                return summonSlots[i];
-            }
-        }
-        return null;
-    }
-    public int GetIndexForSummonSlot(SummonSlot slot) {
-        for (int i = 0; i < summonSlots.Count; i++) {
-            if (summonSlots[i] == slot) {
-                return i;
-            }
-        }
-        return 0;
-    }
-    public bool AreAllSummonSlotsMaxLevel() {
-        for (int i = 0; i < maxSummonSlots; i++) {
-            if (summonSlots[i].level < PlayerDB.MAX_LEVEL_SUMMON) {
-                return false;
-            }
-        }
-        return true;
-    }
-    private bool TryGetUnusedSummonSlot(out SummonSlot unusedSlot) {
-        for (int i = 0; i < summonSlots.Count; i++) {
-            SummonSlot currSlot = summonSlots[i];
-            if (currSlot.summon == null) {
-                unusedSlot = currSlot;
-                return true;
-            }
-        }
-        unusedSlot = null; //no unused slot
-        return false;
-    }
+    //public List<Summon> GetAllSummons() {
+    //    List<Summon> all = new List<Summon>();
+    //    for (int i = 0; i < summons.Count; i++) {
+    //        if (summons[i].summon != null) {
+    //            all.Add(summons[i].summon);
+    //        }
+    //    }
+    //    return all;
+    //}
+    //public Summon GetRandomSummon() {
+    //    List<Summon> all = GetAllSummons();
+    //    return all[UnityEngine.Random.Range(0, all.Count)];
+    //}
+    //private void ResetSummons() {
+    //    for (int i = 0; i < summons.Count; i++) {
+    //        if (summons[i].summon != null) {
+    //            summons[i].summon.Reset();
+    //        }
+    //    }
+    //}
+    //public void IncreaseSummonSlot() {
+    //    maxSummonSlots += 1;
+    //    maxSummonSlots = Mathf.Max(maxSummonSlots, 0);
+    //    //validate if adjusted max summons can accomodate current summons
+    //    if (summons.Count < maxSummonSlots) {
+    //        //add new summon slot
+    //        GainSummonSlot();
+    //    }
+    //}
+    //public void DecreaseSummonSlot() {
+    //    maxSummonSlots -= 1;
+    //    maxSummonSlots = Mathf.Max(maxSummonSlots, 0);
+    //    //validate if adjusted max summons can accomodate current summons
+    //    if (summons.Count > maxSummonSlots) {
+    //        //remove summon slot
+    //        LoseSummonSlot();
+    //    }
+    //}
+    //public SummonSlot GetSummonSlotBySummon(Summon summon) {
+    //    for (int i = 0; i < summons.Count; i++) {
+    //        if (summons[i].summon == summon) {
+    //            return summons[i];
+    //        }
+    //    }
+    //    return null;
+    //}
+    //public int GetIndexForSummonSlot(SummonSlot slot) {
+    //    for (int i = 0; i < summons.Count; i++) {
+    //        if (summons[i] == slot) {
+    //            return i;
+    //        }
+    //    }
+    //    return 0;
+    //}
+    //public bool AreAllSummonSlotsMaxLevel() {
+    //    for (int i = 0; i < maxSummonSlots; i++) {
+    //        if (summons[i].level < PlayerDB.MAX_LEVEL_SUMMON) {
+    //            return false;
+    //        }
+    //    }
+    //    return true;
+    //}
+    //private bool TryGetUnusedSummonSlot(out SummonSlot unusedSlot) {
+    //    for (int i = 0; i < summons.Count; i++) {
+    //        SummonSlot currSlot = summons[i];
+    //        if (currSlot.summon == null) {
+    //            unusedSlot = currSlot;
+    //            return true;
+    //        }
+    //    }
+    //    unusedSlot = null; //no unused slot
+    //    return false;
+    //}
     #endregion
 
     #region Artifacts

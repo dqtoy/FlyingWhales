@@ -16,7 +16,6 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	private bool hasStartedScreamCheck;
 
     public Dictionary<GoapAction, int> numOfTimesActionDone { get; private set; }
-    
 
     private string[] removeStatusTraits = new[] {
 		nameof(Unconscious), nameof(Injured), nameof(Sick), nameof(Plagued),
@@ -31,8 +30,8 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         numOfTimesActionDone = new Dictionary<GoapAction, int>();
 	}
 
-	#region Listeners
-	public void SubscribeToListeners() {
+    #region Listeners
+    public void SubscribeToListeners() {
 		Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_MOVE, OnCharacterCanNoLongerMove);
 		Messenger.AddListener<Character>(Signals.CHARACTER_CAN_MOVE_AGAIN, OnCharacterCanMoveAgain);
 		Messenger.AddListener<Character>(Signals.CHARACTER_CAN_NO_LONGER_PERFORM, OnCharacterCanNoLongerPerform);
@@ -565,12 +564,15 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 	    }
 	    return false;
     }
-    public bool TriggerRoamAroundTile() {
+    public bool TriggerRoamAroundTile(LocationGridTile tile = null) {
 	    if (_owner is Summon || _owner.minion != null) {
 		    if (!_owner.jobQueue.HasJob(JOB_TYPE.ROAM_AROUND_TILE)) {
-			    HexTile chosenTerritory = _owner.gridTileLocation.buildSpotOwner.hexTileOwner;
-			    BuildingSpot chosenBuildSpot = chosenTerritory.ownedBuildSpots[UnityEngine.Random.Range(0, chosenTerritory.ownedBuildSpots.Length)];
-			    LocationGridTile chosenTile = chosenBuildSpot.tilesInTerritory[UnityEngine.Random.Range(0, chosenBuildSpot.tilesInTerritory.Length)];
+                LocationGridTile chosenTile = tile;
+                if (chosenTile == null) {
+                    HexTile chosenTerritory = _owner.gridTileLocation.buildSpotOwner.hexTileOwner;
+                    BuildingSpot chosenBuildSpot = chosenTerritory.ownedBuildSpots[UnityEngine.Random.Range(0, chosenTerritory.ownedBuildSpots.Length)];
+                    chosenTile = chosenBuildSpot.tilesInTerritory[UnityEngine.Random.Range(0, chosenBuildSpot.tilesInTerritory.Length)];
+                }
 			    ActualGoapNode node = new ActualGoapNode(InteractionManager.Instance.goapActionData[INTERACTION_TYPE.ROAM], _owner, _owner, new object[] { chosenTile }, 0);
 			    GoapPlan goapPlan = new GoapPlan(new List<JobNode>() { new SingleJobNode(node) }, _owner);
 			    GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ROAM_AROUND_TILE, INTERACTION_TYPE.ROAM, _owner, _owner);
@@ -657,6 +659,17 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     public void CreateTakeArtifactJob(TileObject target, LocationStructure dropLocation) {
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.TAKE_ARTIFACT, INTERACTION_TYPE.DROP_ITEM, target, _owner);
         job.AddOtherData(INTERACTION_TYPE.DROP_ITEM, new object[] { dropLocation });
+        _owner.jobQueue.AddJobInQueue(job);
+    }
+    public void CreatePickUpJob(TileObject target) {
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.MISC, INTERACTION_TYPE.PICK_UP, target, _owner);
+        _owner.jobQueue.AddJobInQueue(job);
+    }
+    public void CreateDestroyResourceAmountJob(ResourcePile target, int amount) {
+        GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.DESTROY, INTERACTION_TYPE.DESTROY_RESOURCE_AMOUNT, target, _owner);
+        if(amount > 0) {
+            job.AddOtherData(INTERACTION_TYPE.DESTROY_RESOURCE_AMOUNT, new object[] { amount });
+        }
         _owner.jobQueue.AddJobInQueue(job);
     }
     public void TriggerStopJobs() {

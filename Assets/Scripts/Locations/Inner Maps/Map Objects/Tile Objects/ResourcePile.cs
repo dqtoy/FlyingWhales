@@ -9,7 +9,7 @@ public abstract class ResourcePile : TileObject {
     public int resourceInPile { get { return storedResources[providedResource]; } }
 
     public ResourcePile(RESOURCE providedResource) {
-        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.TAKE_RESOURCE, INTERACTION_TYPE.CARRY, INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE, INTERACTION_TYPE.DROP /*, INTERACTION_TYPE.DESTROY_RESOURCE*/ };
+        advertisedActions = new List<INTERACTION_TYPE>() { INTERACTION_TYPE.TAKE_RESOURCE, INTERACTION_TYPE.CARRY, INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE, INTERACTION_TYPE.DROP, INTERACTION_TYPE.DESTROY_RESOURCE_AMOUNT };
         this.providedResource = providedResource;
     }
 

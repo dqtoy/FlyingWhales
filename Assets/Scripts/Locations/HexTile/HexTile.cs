@@ -1046,6 +1046,13 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     public List<PlayerAction> actions { get; private set; }
     public void ConstructDefaultActions() {
         actions = new List<PlayerAction>();
+        PlayerAction harassAction = new PlayerAction(PlayerDB.Harass_Action, CanDoHarassRaidInvade, () => PlayerUI.Instance.OnClickHarassRaidInvade(this, "harass"));
+        PlayerAction raidAction = new PlayerAction(PlayerDB.Raid_Action, CanDoHarassRaidInvade, () => PlayerUI.Instance.OnClickHarassRaidInvade(this, "raid"));
+        PlayerAction invadeAction = new PlayerAction(PlayerDB.Invade_Action, CanDoHarassRaidInvade, () => PlayerUI.Instance.OnClickHarassRaidInvade(this, "invade"));
+
+        AddPlayerAction(harassAction);
+        AddPlayerAction(raidAction);
+        AddPlayerAction(invadeAction);
     }
     public void AddPlayerAction(PlayerAction action) {
         if (actions.Contains(action) == false) {
@@ -1056,6 +1063,15 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     public void RemovePlayerAction(PlayerAction action) {
         if (actions.Remove(action)) {
             Messenger.Broadcast(Signals.PLAYER_ACTION_REMOVED_FROM_TARGET, action, this as IPlayerActionTarget);
+        }
+    }
+    public void RemovePlayerAction(string actionName) {
+        for (int i = 0; i < actions.Count; i++) {
+            PlayerAction action = actions[i];
+            if (action.actionName == actionName) {
+                actions.RemoveAt(i);
+                Messenger.Broadcast(Signals.PLAYER_ACTION_REMOVED_FROM_TARGET, action, this as IPlayerActionTarget);
+            }
         }
     }
     private PlayerAction GetPlayerAction(string actionName) {
@@ -1069,6 +1085,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     }
     public void ClearPlayerActions() {
         actions.Clear();
+    }
+    private bool CanDoHarassRaidInvade() {
+        return settlementOnTile != null;
     }
     #endregion
 

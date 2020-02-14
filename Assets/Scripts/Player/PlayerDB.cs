@@ -29,6 +29,13 @@ public static class PlayerDB {
     public const string Learn_Spell_Action = "Learn Spell";
     public const string Stop_Action = "Stop";
     public const string Return_To_Portal_Action = "Return To Portal";
+    public const string Harass_Action = "Harass";
+    public const string Raid_Action = "Raid";
+    public const string Invade_Action = "Invade";
+    public const string End_Harass_Action = "End Harass";
+    public const string End_Raid_Action = "End Raid";
+    public const string End_Invade_Action = "End Invade";
+
 
     //spells
     public const string Tornado = "Tornado";

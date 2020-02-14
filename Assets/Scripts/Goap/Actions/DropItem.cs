@@ -53,6 +53,9 @@ public class DropItem : GoapAction {
     #region State Effects
     public void AfterDropSuccess(ActualGoapNode goapNode) {
         goapNode.actor.UncarryPOI(goapNode.poiTarget as TileObject);
+        if(goapNode.associatedJobType == JOB_TYPE.TAKE_ARTIFACT) {
+            goapNode.actor.behaviourComponent.SetIsRaiding(false);
+        }
     }
     #endregion
 }

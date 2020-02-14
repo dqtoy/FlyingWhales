@@ -114,6 +114,9 @@ public class PlayerUI : MonoBehaviour {
     public CombatGrid defenseGridReference { get; private set; }
 
     private PlayerJobActionButton[] interventionAbilityBtns;
+    public string harassRaidInvade { get; private set; }
+    public Minion harassRaidInvadeLeaderMinion { get; private set; }
+    public Settlement harassRaidInvadeTargetSettlement { get; private set; }
 
     void Awake() {
         Instance = this;
@@ -1188,6 +1191,35 @@ public class PlayerUI : MonoBehaviour {
     private void DisableTopMenuButtons() {
         for (int i = 0; i < topMenuButtons.Length; i++) {
             topMenuButtons[i].interactable = false;
+        }
+    }
+    #endregion
+
+    #region Settlement Actions
+    public void OnClickHarassRaidInvade(HexTile targetHex, string identifier) {
+        harassRaidInvadeTargetSettlement = targetHex.settlementOnTile;
+        harassRaidInvade = identifier;
+        UIManager.Instance.ShowClickableObjectPicker(PlayerManager.Instance.player.minions.Where(x => x.character.gridTileLocation != null).Select(x => x.character).ToList(), HarassRaidInvade
+            , null, CanChooseMinion, "Choose Leader Minion", showCover: true);
+    }
+    private bool CanChooseMinion(Character character) {
+        return !character.isDead && !character.behaviourComponent.isHarassing && !character.behaviourComponent.isRaiding && !character.behaviourComponent.isInvading;
+    }
+    private void HarassRaidInvade(object obj) {
+        Character character = obj as Character;
+        harassRaidInvadeLeaderMinion = character.minion;
+        UIManager.Instance.HideObjectPicker();
+        if(PlayerManager.Instance.player.summons.Count > 0) {
+            unleashSummonUI.ShowUnleashSummonUI();
+        } else {
+            harassRaidInvadeLeaderMinion.character.behaviourComponent.SetHarassInvadeRaidTarget(harassRaidInvadeTargetSettlement);
+            if (harassRaidInvade == "harass") {
+                harassRaidInvadeLeaderMinion.character.behaviourComponent.SetIsHarassing(true);
+            } else if (harassRaidInvade == "raid") {
+                harassRaidInvadeLeaderMinion.character.behaviourComponent.SetIsRaiding(true);
+            } else if (harassRaidInvade == "invade") {
+                harassRaidInvadeLeaderMinion.character.behaviourComponent.SetIsInvading(true);
+            }
         }
     }
     #endregion

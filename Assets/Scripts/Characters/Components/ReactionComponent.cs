@@ -230,7 +230,8 @@ public class ReactionComponent {
                 debugLog += "\n-Target is not dead";
                 debugLog += "\n-Fight or Flight response";
                 //Fight or Flight
-                owner.combatComponent.FightOrFlight(targetCharacter);
+                bool isLethal = !owner.behaviourComponent.isHarassing && !owner.behaviourComponent.isRaiding;
+                owner.combatComponent.FightOrFlight(targetCharacter, isLethal);
             } else {
                 debugLog += "\n-Target is dead";
                 debugLog += "\n-Do nothing";

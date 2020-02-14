@@ -13,6 +13,7 @@ namespace Actionables {
 		void ConstructDefaultActions();
 		void AddPlayerAction(PlayerAction action);
 		void RemovePlayerAction(PlayerAction action);
+        void RemovePlayerAction(string actionName);
 		void ClearPlayerActions();
 	}	
 }

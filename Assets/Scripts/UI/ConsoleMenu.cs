@@ -64,7 +64,7 @@ public class ConsoleMenu : UIMenu {
             {"/set_hp", SetHP },
             {"/kill_res",  KillResidents},
             {"/gain_summon",  GainSummon},
-            {"/gain_summon_slot",  GainSummonSlot},
+            //{"/gain_summon_slot",  GainSummonSlot},
             {"/gain_artifact",  GainArtifact},
             // {"/gain_artifact_slot",  GainArtifactSlot},
             {"/set_fullness", SetFullness },
@@ -1186,32 +1186,32 @@ public class ConsoleMenu : UIMenu {
         if (typeParameterString.Equals("All")) {
             SUMMON_TYPE[] types = CollectionUtilities.GetEnumValues<SUMMON_TYPE>();
             for (int i = 1; i < types.Length; i++) {
-                PlayerManager.Instance.player.GainSummon(types[i]);
+                PlayerManager.Instance.player.AddSummon(types[i]);
             }
         } else if (Enum.TryParse(typeParameterString, out type)) {
-            PlayerManager.Instance.player.GainSummon(type);
+            PlayerManager.Instance.player.AddSummon(type);
             AddSuccessMessage("Gained new summon: " + type);
         } else {
             AddErrorMessage("There is no summon of type " + typeParameterString);
         }
     }
-    private void GainSummonSlot (string[] parameters) {
-        if (parameters.Length != 1) {
-            AddCommandHistory(consoleLbl.text);
-            AddErrorMessage("There was an error in the command format of GainSummonSlot");
-            return;
-        }
-        string numParameterString = parameters[0];
-        int num;
-        if (int.TryParse(numParameterString, out num)) {
-            for (int i = 0; i < num; i++) {
-                PlayerManager.Instance.player.IncreaseSummonSlot();
-            }
-            AddSuccessMessage("Gained summon slot/s: " + num);
-        } else {
-            AddErrorMessage("Cannot parse input: " + numParameterString);
-        }
-    }
+    //private void GainSummonSlot (string[] parameters) {
+    //    if (parameters.Length != 1) {
+    //        AddCommandHistory(consoleLbl.text);
+    //        AddErrorMessage("There was an error in the command format of GainSummonSlot");
+    //        return;
+    //    }
+    //    string numParameterString = parameters[0];
+    //    int num;
+    //    if (int.TryParse(numParameterString, out num)) {
+    //        for (int i = 0; i < num; i++) {
+    //            PlayerManager.Instance.player.IncreaseSummonSlot();
+    //        }
+    //        AddSuccessMessage("Gained summon slot/s: " + num);
+    //    } else {
+    //        AddErrorMessage("Cannot parse input: " + numParameterString);
+    //    }
+    //}
     #endregion
 
     #region Artifacts

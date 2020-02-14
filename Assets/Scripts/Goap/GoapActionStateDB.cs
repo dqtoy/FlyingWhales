@@ -290,9 +290,9 @@ public static class GoapActionStateDB {
         {INTERACTION_TYPE.DANCE, new[]{
             new StateNameAndDuration(){ name = "Dance Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(15) },
         } },
-        {INTERACTION_TYPE.DESTROY_RESOURCE, new[]{
-            new StateNameAndDuration(){ name = "Destroy Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
-        } },
+        //{INTERACTION_TYPE.DESTROY_RESOURCE, new[]{
+        //    new StateNameAndDuration(){ name = "Destroy Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(30) },
+        //} },
         {INTERACTION_TYPE.SCREAM_FOR_HELP, new[]{
             new StateNameAndDuration(){ name = "Scream Success", status = InteractionManager.Goap_State_Success, duration = GameManager.Instance.GetTicksBasedOnMinutes(15) },
         } },
@@ -379,6 +379,9 @@ public static class GoapActionStateDB {
         } },
         {INTERACTION_TYPE.DROP_ITEM, new[]{
             new StateNameAndDuration(){ name = "Drop Success", status = InteractionManager.Goap_State_Success, duration = 1 },
+        } },
+        {INTERACTION_TYPE.DESTROY_RESOURCE_AMOUNT, new[]{
+            new StateNameAndDuration(){ name = "Destroy Success", status = InteractionManager.Goap_State_Success, duration = 1 },
         } },
     };
 }

@@ -6,6 +6,10 @@ public class BehaviourComponent {
 
 	public Character owner { get; private set; }
     public List<CharacterBehaviourComponent> currentBehaviourComponents { get; private set; }
+    public Settlement harassInvadeRaidTarget { get; private set; }
+    public bool isHarassing { get; private set; }
+    public bool isRaiding { get; private set; }
+    public bool isInvading { get; private set; }
 
     public BehaviourComponent (Character owner) {
         this.owner = owner;
@@ -89,6 +93,51 @@ public class BehaviourComponent {
         }
         currentBehaviourComponents.Add(component);
         return true;
+    }
+    public void SetHarassInvadeRaidTarget(Settlement settlement) {
+        harassInvadeRaidTarget = settlement;
+    }
+    public void SetIsHarassing(bool state) {
+        if(isHarassing != state) {
+            isHarassing = state;
+            if (isHarassing) {
+                owner.CancelAllJobs();
+                AddBehaviourComponent(typeof(HarassBehaviour));
+                //TODO: Optimize this to not always create new instance if playeraction, or if it can't be helped, do object pool
+                owner.AddPlayerAction(new Actionables.PlayerAction(PlayerDB.End_Harass_Action, () => true, () => owner.behaviourComponent.SetIsHarassing(false)));
+            } else {
+                RemoveBehaviourComponent(typeof(HarassBehaviour));
+                owner.RemovePlayerAction(PlayerDB.End_Harass_Action);
+            }
+        }
+    }
+    public void SetIsRaiding(bool state) {
+        if (isRaiding != state) {
+            isRaiding = state;
+            if (isRaiding) {
+                owner.CancelAllJobs();
+                AddBehaviourComponent(typeof(RaidBehaviour));
+                //TODO: Optimize this to not always create new instance if playeraction, or if it can't be helped, do object pool
+                owner.AddPlayerAction(new Actionables.PlayerAction(PlayerDB.End_Raid_Action, () => true, () => owner.behaviourComponent.SetIsRaiding(false)));
+            } else {
+                RemoveBehaviourComponent(typeof(RaidBehaviour));
+                owner.RemovePlayerAction(PlayerDB.End_Raid_Action);
+            }
+        }
+    }
+    public void SetIsInvading(bool state) {
+        if (isInvading != state) {
+            isInvading = state;
+            if (isInvading) {
+                owner.CancelAllJobs();
+                AddBehaviourComponent(typeof(InvadeBehaviour));
+                //TODO: Optimize this to not always create new instance if playeraction, or if it can't be helped, do object pool
+                owner.AddPlayerAction(new Actionables.PlayerAction(PlayerDB.End_Invade_Action, () => true, () => owner.behaviourComponent.SetIsInvading(false)));
+            } else {
+                RemoveBehaviourComponent(typeof(InvadeBehaviour));
+                owner.RemovePlayerAction(PlayerDB.End_Invade_Action);
+            }
+        }
     }
     #endregion
 
