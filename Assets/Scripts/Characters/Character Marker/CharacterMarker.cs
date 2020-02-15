@@ -1097,7 +1097,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
                 inVisionCharacters.Remove(target);
                 Messenger.Broadcast(Signals.CHARACTER_REMOVED_FROM_VISION, character, target);
             } else if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
-                inVisionTileObjects.Add(poi as TileObject);
+                inVisionTileObjects.Remove(poi as TileObject);
             }
         }
     }
