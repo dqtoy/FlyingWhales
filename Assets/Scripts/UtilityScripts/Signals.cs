@@ -515,6 +515,7 @@ public static class Signals {
     /// Parameters (Table table)
     /// </summary>
     public static string FOOD_IN_DWELLING_CHANGED = "OnFoodInDwellingChanged";
+    public static string NO_ABLE_CHARACTER_INSIDE_SETTLEMENT = "OnNoAbleCharacterInsideSettlement";
     #endregion
 
     #region Interrupt

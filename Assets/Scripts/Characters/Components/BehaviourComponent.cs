@@ -100,8 +100,8 @@ public class BehaviourComponent {
     public void SetIsHarassing(bool state) {
         if(isHarassing != state) {
             isHarassing = state;
+            owner.CancelAllJobs();
             if (isHarassing) {
-                owner.CancelAllJobs();
                 AddBehaviourComponent(typeof(HarassBehaviour));
                 //TODO: Optimize this to not always create new instance if playeraction, or if it can't be helped, do object pool
                 owner.AddPlayerAction(new Actionables.PlayerAction(PlayerDB.End_Harass_Action, () => true, () => owner.behaviourComponent.SetIsHarassing(false)));
@@ -114,8 +114,8 @@ public class BehaviourComponent {
     public void SetIsRaiding(bool state) {
         if (isRaiding != state) {
             isRaiding = state;
+            owner.CancelAllJobs();
             if (isRaiding) {
-                owner.CancelAllJobs();
                 AddBehaviourComponent(typeof(RaidBehaviour));
                 //TODO: Optimize this to not always create new instance if playeraction, or if it can't be helped, do object pool
                 owner.AddPlayerAction(new Actionables.PlayerAction(PlayerDB.End_Raid_Action, () => true, () => owner.behaviourComponent.SetIsRaiding(false)));
@@ -128,15 +128,22 @@ public class BehaviourComponent {
     public void SetIsInvading(bool state) {
         if (isInvading != state) {
             isInvading = state;
+            owner.CancelAllJobs();
             if (isInvading) {
-                owner.CancelAllJobs();
                 AddBehaviourComponent(typeof(InvadeBehaviour));
                 //TODO: Optimize this to not always create new instance if playeraction, or if it can't be helped, do object pool
                 owner.AddPlayerAction(new Actionables.PlayerAction(PlayerDB.End_Invade_Action, () => true, () => owner.behaviourComponent.SetIsInvading(false)));
+                Messenger.AddListener<Settlement>(Signals.NO_ABLE_CHARACTER_INSIDE_SETTLEMENT, OnNoLongerAbleResidentsInsideSettlement);
             } else {
                 RemoveBehaviourComponent(typeof(InvadeBehaviour));
                 owner.RemovePlayerAction(PlayerDB.End_Invade_Action);
+                Messenger.RemoveListener<Settlement>(Signals.NO_ABLE_CHARACTER_INSIDE_SETTLEMENT, OnNoLongerAbleResidentsInsideSettlement);
             }
+        }
+    }
+    private void OnNoLongerAbleResidentsInsideSettlement(Settlement settlement) {
+        if(harassInvadeRaidTarget == settlement) {
+            SetIsInvading(false);
         }
     }
     #endregion
