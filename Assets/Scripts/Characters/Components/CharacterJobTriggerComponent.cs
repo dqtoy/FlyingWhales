@@ -684,7 +684,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
     public void CreateAbductJob(Character target) {
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ABDUCT, INTERACTION_TYPE.DROP, target, _owner);
         LocationStructure dropLocationStructure = PlayerManager.Instance.player.portalTile.region.GetRandomStructureOfType(STRUCTURE_TYPE.TORTURE_CHAMBER);
-        if (dropLocationStructure != null) {
+        if (dropLocationStructure == null) {
 	        dropLocationStructure = PlayerManager.Instance.player.portalTile.locationGridTiles[0].structure;
         }
         job.AddOtherData(INTERACTION_TYPE.DROP, new object[] { dropLocationStructure }); //For now drop in portal, this will be changed to Demonic Prison

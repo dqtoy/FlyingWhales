@@ -9,6 +9,7 @@ namespace Interrupts {
 		public Poisoned() : base(INTERRUPT.Poisoned) {
 			duration = 0;
 			isSimulateneous = true;
+			interruptIconString = GoapActionStateDB.Flirt_Icon;
 		}
 
 		#region Overrides

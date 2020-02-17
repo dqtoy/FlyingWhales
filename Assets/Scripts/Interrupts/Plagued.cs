@@ -7,6 +7,7 @@ namespace Interrupts {
 		public Plagued() : base(INTERRUPT.Plagued) {
 			duration = 0;
 			isSimulateneous = true;
+			interruptIconString = GoapActionStateDB.Flirt_Icon;
 		}
 
 		#region Overrides

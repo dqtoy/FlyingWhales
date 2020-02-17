@@ -7,6 +7,7 @@ namespace Interrupts {
         public NarcolepticAttack() : base(INTERRUPT.Narcoleptic_Attack) {
             duration = 6;
             doesStopCurrentAction = true;
+            interruptIconString = GoapActionStateDB.Flirt_Icon;
         }
 
         #region Overrides

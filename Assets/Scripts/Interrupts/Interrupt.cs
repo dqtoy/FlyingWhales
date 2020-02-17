@@ -10,11 +10,13 @@ namespace Interrupts {
         public bool isSimulateneous { get; protected set; }
         public bool doesStopCurrentAction { get; protected set; }
         public bool doesDropCurrentJob { get; protected set; }
+        public string interruptIconString { get; protected set; }
 
         public Interrupt(INTERRUPT interrupt) {
             this.interrupt = interrupt;
             this.name = UtilityScripts.Utilities.NotNormalizedConversionEnumToString(interrupt.ToString());
             isSimulateneous = false;
+            interruptIconString = GoapActionStateDB.No_Icon;
         }
 
         #region Virtuals

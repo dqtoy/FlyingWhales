@@ -17,7 +17,9 @@ namespace Traits {
 			if (targetPOI is TornadoTileObject) {
 				if (characterThatWillDoJob.stateComponent.currentState is CombatState 
 				    && characterThatWillDoJob.combatComponent.avoidInRange.Count > 0) {
-					characterThatWillDoJob.combatComponent.FightOrFlight(targetPOI);
+					if (characterThatWillDoJob.combatComponent.combatMode == COMBAT_MODE.Aggressive) {
+						characterThatWillDoJob.combatComponent.Flight(targetPOI);
+					}
 				} else {
 					if(!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.SNUFF_TORNADO, targetPOI)) {
 						GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.SNUFF_TORNADO,

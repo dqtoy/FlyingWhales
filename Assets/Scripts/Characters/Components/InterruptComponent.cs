@@ -9,6 +9,8 @@ public class InterruptComponent {
     public Interrupt currentInterrupt { get; private set; }
     public int currentDuration { get; private set; }
     public string identifier { get; private set; }
+    public Interrupt triggeredSimultaneousInterrupt { get; private set; }
+    public int currentSimultaneousInterruptDuration { get; private set; }
 
     public Log thoughtBubbleLog { get; private set; }
 
@@ -16,6 +18,7 @@ public class InterruptComponent {
 
     #region getters
     public bool isInterrupted => currentInterrupt != null;
+    public bool hasTriggeredSimultaneousInterrupt => triggeredSimultaneousInterrupt != null;
     public Log currentEffectLog => _currentEffectLog;
     #endregion
 
@@ -64,10 +67,12 @@ public class InterruptComponent {
     }
     private bool TriggeredSimultaneousInterrupt(Interrupt interrupt, IPointOfInterest targetPOI, string identifier) {
         owner.logComponent.PrintLogIfActive(owner.name + " triggered a simultaneous interrupt: " + interrupt.name);
+        triggeredSimultaneousInterrupt = interrupt;
         this.identifier = identifier;
         ExecuteStartInterrupt(interrupt, targetPOI);
         AddEffectLog();
         interrupt.ExecuteInterruptEndEffect(owner, currentTargetPOI);
+        currentSimultaneousInterruptDuration = 0;
         return true;
     }
     private void ExecuteStartInterrupt(Interrupt interrupt, IPointOfInterest targetPOI) {
@@ -75,6 +80,9 @@ public class InterruptComponent {
         interrupt.ExecuteInterruptStartEffect(owner, targetPOI, ref _currentEffectLog);
         if(_currentEffectLog == null) {
             _currentEffectLog = interrupt.CreateEffectLog(owner, targetPOI);
+        }
+        if (owner.marker != null) {
+            owner.marker.UpdateActionIcon();
         }
     }
     public void OnTickEnded() {
@@ -84,6 +92,15 @@ public class InterruptComponent {
                 AddEffectLog();
                 currentInterrupt.ExecuteInterruptEndEffect(owner, currentTargetPOI);
                 EndInterrupt();
+            }
+        }
+        if (hasTriggeredSimultaneousInterrupt) {
+            currentSimultaneousInterruptDuration++;
+            if (currentSimultaneousInterruptDuration > 2) {
+                triggeredSimultaneousInterrupt = null;
+                if (owner.marker != null) {
+                    owner.marker.UpdateActionIcon();
+                }
             }
         }
     }
@@ -101,6 +118,9 @@ public class InterruptComponent {
                 }
             } 
             owner.needsComponent.CheckExtremeNeeds(finishedInterrupt);
+        }
+        if (owner.marker != null) {
+            owner.marker.UpdateActionIcon();
         }
         Messenger.Broadcast(Signals.INTERRUPT_FINISHED, finishedInterrupt.interrupt, owner);
     }

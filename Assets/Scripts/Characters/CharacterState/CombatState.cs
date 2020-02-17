@@ -633,9 +633,12 @@ public class CombatState : CharacterState {
                 //if the character that was hit is not the actual target of this combat, do not make him/her enter combat state
                 if (damageable == currentClosestHostile) {
                     //When the target is hit and it is still alive, add hostile
-                    if (!hitCharacter.combatComponent.hostilesInRange.Contains(stateComponent.character) &&
-                        !hitCharacter.combatComponent.avoidInRange.Contains(stateComponent.character)) {
-                        hitCharacter.combatComponent.FightOrFlight(stateComponent.character, isLethal: stateComponent.character.combatComponent.IsLethalCombatForTarget(hitCharacter));
+                    if (hitCharacter.combatComponent.combatMode == COMBAT_MODE.Defend ||
+                        hitCharacter.combatComponent.combatMode == COMBAT_MODE.Aggressive) {
+                        if (!hitCharacter.combatComponent.hostilesInRange.Contains(stateComponent.character) &&
+                            !hitCharacter.combatComponent.avoidInRange.Contains(stateComponent.character)) {
+                            hitCharacter.combatComponent.FightOrFlight(stateComponent.character, isLethal: stateComponent.character.combatComponent.IsLethalCombatForTarget(hitCharacter));
+                        }
                     }
                     //hitCharacter.combatComponent.AddHostileInRange(stateComponent.character, isLethal: stateComponent.character.combatComponent.IsLethalCombatForTarget(hitCharacter));
                     //also add the hit character as degraded rel, so that when the character that owns this state is hit by the other character because of retaliation, relationship degradation will no longer happen

@@ -8,6 +8,7 @@ namespace Interrupts {
         public FeelingLazy() : base(INTERRUPT.Feeling_Lazy) {
             duration = 0;
             doesStopCurrentAction = true;
+            interruptIconString = GoapActionStateDB.Flirt_Icon;
         }
 
         #region Overrides

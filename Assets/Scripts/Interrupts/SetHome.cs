@@ -7,6 +7,7 @@ namespace Interrupts {
         public SetHome() : base(INTERRUPT.Set_Home) {
             duration = 0;
             isSimulateneous = true;
+            interruptIconString = GoapActionStateDB.Flirt_Icon;
         }
 
         #region Overrides
