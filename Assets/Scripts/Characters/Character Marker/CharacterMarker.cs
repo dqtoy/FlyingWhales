@@ -718,7 +718,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         PlayAnimation("Sleep Ground");
     }
     public void PlayAnimation(string animation) {
-        if (!this.gameObject.activeInHierarchy) {
+        if (gameObject.activeSelf == false) {
             return;
         }
         currentAnimation = animation;
@@ -728,6 +728,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         //if (isInCombatTick) {
         //    return;
         //}
+        if (gameObject.activeSelf == false) { return; }
         if (!character.IsInOwnParty()) {
             PlaySleepGround();
             ResetBlood();
@@ -739,7 +740,6 @@ public class CharacterMarker : MapObjectVisual<Character> {
         if (character.isDead) {
             PlaySleepGround();
             StartCoroutine(StartBlood());
-            // GameManager.Instance.CreateBloodEffectAt(character);
         } else {
             ResetBlood();
             if (character.isStoppedByOtherCharacter > 0) {

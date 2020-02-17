@@ -1,4 +1,5 @@
-﻿using EZObjectPools;
+﻿using System.Collections;
+using EZObjectPools;
 using Pathfinding;
 using UnityEngine;
 
@@ -9,14 +10,20 @@ namespace Inner_Maps {
 
         [ContextMenu("Apply")]
         public void Apply() {
+            // gus.Apply();
+            StartCoroutine(ApplyCoroutine());
+        }
+        private IEnumerator ApplyCoroutine() {
+            yield return null;
             gus.Apply();
         }
         public void Initialize(Vector2 offset, Vector2 size, IPointOfInterest poi) {
-            this.name = poi.name;
+            name = poi.name;
             boxCollider.offset = offset;
             boxCollider.size = size;
             gus.setWalkability = false;
-            this.transform.localPosition = Vector3.zero;
+            transform.localPosition = Vector3.zero;
+            gameObject.SetActive(true);
             Apply();
         }
 

@@ -1261,6 +1261,7 @@ public enum TILE_OBJECT_TYPE {
     WATER_BUCKET,
     IRON_MAIDEN,
     ARTIFACT,
+    BLOCK_WALL
 }
 public enum POI_STATE {
     ACTIVE,

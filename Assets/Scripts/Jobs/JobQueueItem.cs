@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using System.Reflection;
 using Traits;
+using UnityEngine.Assertions;
 
 public class JobQueueItem {
     public int id { get; protected set; }
@@ -244,11 +245,8 @@ public class JobQueueItem {
     }
     private void SetInitialPriority() {
         int priority = jobType.GetJobTypePriority();
-        if(priority > 0) {
-            SetPriority(priority);
-        } else {
-            Debug.LogError("Cannot set initial priority for " + name + " job because priority is " + priority);
-        }
+        Assert.IsTrue(priority > 0, $"Cannot set initial priority for {name} job because priority is {priority}");
+        SetPriority(priority);
     }
     #endregion
 

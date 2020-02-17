@@ -26,7 +26,7 @@ namespace Inner_Maps {
             yield return StartCoroutine(GenerateGrid(tileMapWidth, tileMapHeight, mapGenerationComponent));
             InitializeBuildingSpots(mapGenerationComponent);
             ConnectHexTilesToBuildSpots(mapGenerationComponent);
-            AssignWilderness(mapGenerationComponent);
+            // AssignWilderness(mapGenerationComponent);
             yield return StartCoroutine(GenerateDetails(mapGenerationComponent));
         }
         private void AssignWilderness(MapGenerationComponent mapGenerationComponent) {

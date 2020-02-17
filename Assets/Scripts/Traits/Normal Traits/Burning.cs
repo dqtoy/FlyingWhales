@@ -26,16 +26,14 @@ namespace Traits {
         public override void OnAddTrait(ITraitable addedTo) {
             owner = addedTo;
             burningEffect = GameManager.Instance.CreateBurningEffectAt(addedTo);
-            if (addedTo is IPointOfInterest) {
-                IPointOfInterest poi = addedTo as IPointOfInterest;
-                if (addedTo is Character) {
-                    Character character = addedTo as Character;
+            if (addedTo is IPointOfInterest poi) {
+                if (poi is Character character) {
                     character.AdjustDoNotRecoverHP(1);
                     if(character.canMove && character.canWitness && character.canPerform) {
                         CreateJobsOnEnterVisionBasedOnTrait(character, character);
                     }
                 } else {
-                    IPointOfInterest obj = addedTo as IPointOfInterest;
+                    IPointOfInterest obj = poi;
                     obj.SetPOIState(POI_STATE.INACTIVE);
                 }
                 Messenger.Broadcast(Signals.REPROCESS_POI, poi);

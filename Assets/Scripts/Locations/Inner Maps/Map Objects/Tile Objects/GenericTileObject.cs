@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Inner_Maps;
-using Inner_Maps.Location_Structures;
 using UnityEngine;
 using Traits;
 
@@ -25,11 +24,11 @@ public class GenericTileObject : TileObject {
         }
     }
     public override void OnPlacePOI() {
-        if (ReferenceEquals(mapVisual, null)) {
-            InitializeMapObject(this);
-        }
-        PlaceMapObjectAt(gridTileLocation);
-        OnPlaceTileObjectAtTile(gridTileLocation);
+        // if (ReferenceEquals(mapVisual, null)) {
+        //     InitializeMapObject(this);
+        // }
+        // PlaceMapObjectAt(gridTileLocation);
+        // OnPlaceTileObjectAtTile(gridTileLocation);
         SetPOIState(POI_STATE.ACTIVE);
     }
     protected override void OnPlaceTileObjectAtTile(LocationGridTile tile) { } //overridden this to reduce unnecessary processing 
@@ -50,14 +49,24 @@ public class GenericTileObject : TileObject {
     public override void OnTileObjectGainedTrait(Trait trait) {
         base.OnTileObjectGainedTrait(trait);
         if (trait.IsTangible()) {
-            EnableGameObject();
+            // EnableGameObject();
+            //create map object visual
+            if (ReferenceEquals(mapVisual, null)) {
+                InitializeMapObject(this);
+            }
+            PlaceMapObjectAt(gridTileLocation);
+            OnPlaceTileObjectAtTile(gridTileLocation);
+            
             SubscribeListeners();
         }
     }
     public override void OnTileObjectLostTrait(Trait trait) {
         base.OnTileObjectLostTrait(trait);
         if (HasTangibleTrait() == false) {
-            DisableGameObject();
+            // DisableGameObject();
+            if (ReferenceEquals(mapVisual, null) == false) {
+                DestroyMapVisualGameObject();    
+            }
             UnsubscribeListeners();
         }
     }
@@ -100,12 +109,15 @@ public class GenericTileObject : TileObject {
     }
 
 
-    public void ManualInitialize(LocationStructure location, LocationGridTile tile) {
+    public void ManualInitialize(LocationGridTile tile) {
+        if (hasBeenInitialized) {
+            return;
+        }
         hasBeenInitialized = true;
         Initialize(TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT);
         SetGridTileLocation(tile);
-        OnPlacePOI();
-        DisableGameObject();
-        RemoveCommonAdvertisements();
+        // OnPlacePOI();
+        // DisableGameObject();
+        // RemoveCommonAdvertisements();
     }
 }

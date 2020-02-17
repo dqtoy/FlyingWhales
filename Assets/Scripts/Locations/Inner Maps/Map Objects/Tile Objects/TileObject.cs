@@ -64,7 +64,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public string nameWithID => ToString();
     public GameObject visualGO => mapVisual.gameObject;
     public Character isBeingCarriedBy => carriedByCharacter;
-    public Faction factionOwner => characterOwner != null ? characterOwner.faction : null;
+    public Faction factionOwner => characterOwner?.faction;
     #endregion
 
     protected void Initialize(TILE_OBJECT_TYPE tileObjectType) {
@@ -99,7 +99,6 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         InnerMapManager.Instance.AddTileObject(this);
         SubscribeListeners();
     }
-
     private void AddCommonAdvertisements() {
         AddAdvertisedAction(INTERACTION_TYPE.ASSAULT);
         AddAdvertisedAction(INTERACTION_TYPE.POISON);
@@ -153,11 +152,10 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
 
     public virtual void OnDestroyPOI() {
         //DisableGameObject();
-        DestroyGameObject();
         OnRemoveTileObject(null, previousTile);
+        DestroyMapVisualGameObject();
         SetPOIState(POI_STATE.INACTIVE);
-        TileObjectData objData;
-        if (TileObjectDB.TryGetTileObjectData(tileObjectType, out objData)) {
+        if (TileObjectDB.TryGetTileObjectData(tileObjectType, out var objData)) {
             if (objData.occupiedSize.X > 1 || objData.occupiedSize.Y > 1) {
                 UnoccupyTiles(objData.occupiedSize, previousTile);
             }
@@ -432,12 +430,11 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
         Messenger.Broadcast(Signals.FORCE_CANCEL_ALL_JOBS_TARGETING_POI, this as IPointOfInterest, "");
         //Messenger.Broadcast(Signals.ON_SEIZE_TILE_OBJECT, this);
+        OnRemoveTileObject(null, gridTileLocation, false, false);
         gridTileLocation.structure.RemovePOIWithoutDestroying(this);
         //DestroyGameObject();
-        OnRemoveTileObject(null, previousTile, false, false);
         SetPOIState(POI_STATE.INACTIVE);
-        TileObjectData objData;
-        if (TileObjectDB.TryGetTileObjectData(tileObjectType, out objData)) {
+        if (TileObjectDB.TryGetTileObjectData(tileObjectType, out var objData)) {
             if (objData.occupiedSize.X > 1 || objData.occupiedSize.Y > 1) {
                 UnoccupyTiles(objData.occupiedSize, previousTile);
             }
@@ -446,7 +443,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         UnsubscribeListeners();
     }
     public void OnUnseizePOI(LocationGridTile tileLocation) {
-        DestroyGameObject();
+        DestroyMapVisualGameObject();
         tileLocation.structure.AddPOI(this, tileLocation);
     }
     #endregion
@@ -721,16 +718,18 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     #endregion
 
     #region Graph Updates
-    protected void CreateNewGUS(Vector2 offset, Vector2 size) {
-        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool("LocationGridTileGUS", Vector3.zero, Quaternion.identity, mapVisual.transform);//gridTileLocation.parentAreaMap.graphUpdateScenesParent
-        LocationGridTileGUS gus = go.GetComponent<LocationGridTileGUS>();
-        gus.Initialize(offset, size, this);
-        graphUpdateScene = gus;
+    protected void InitializeGUS(Vector2 offset, Vector2 size) {
+        if (graphUpdateScene == null) {
+            GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool("LocationGridTileGUS", Vector3.zero, Quaternion.identity, mapVisual.transform);//gridTileLocation.parentAreaMap.graphUpdateScenesParent
+            LocationGridTileGUS gus = go.GetComponent<LocationGridTileGUS>();
+            graphUpdateScene = gus;
+        }
+        graphUpdateScene.Initialize(offset, size, this);
     }
     protected void DestroyExistingGUS() {
-        if (graphUpdateScene != null) {
-            graphUpdateScene.Destroy();
-        }
+        if (graphUpdateScene == null) return;
+        graphUpdateScene.Destroy();
+        graphUpdateScene = null;
     }
     #endregion
 

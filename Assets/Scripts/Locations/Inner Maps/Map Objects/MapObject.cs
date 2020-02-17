@@ -1,4 +1,5 @@
 ﻿using Inner_Maps;
+using UnityEngine.Assertions;
 
 /// <summary>
 /// Base class for anything in the settlement map that can be damaged and has a physical object to be shown.
@@ -32,7 +33,8 @@ public abstract class MapObject<T> where T: IDamageable {
     protected void EnableGameObject() {
         mapVisual.SetActiveState(true);
     }
-    protected void DestroyGameObject() {
+    protected void DestroyMapVisualGameObject() {
+        Assert.IsNotNull(mapVisual, $"Trying to destroy map visual of {this.ToString()} but map visual is null!");
         ObjectPoolManager.Instance.DestroyObject(mapVisual);
         mapVisual = null;
     }

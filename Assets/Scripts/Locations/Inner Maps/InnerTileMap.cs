@@ -95,10 +95,13 @@ namespace Inner_Maps {
             allTiles = new List<LocationGridTile>();
             allEdgeTiles = new List<LocationGridTile>();
             int batchCount = 0;
+            LocationStructure wilderness = location.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
                     groundTilemap.SetTile(new Vector3Int(x, y, 0), GetOutsideFloorTile(location));
                     LocationGridTile tile = new LocationGridTile(x, y, groundTilemap, this);
+                    tile.CreateGenericTileObject();
+                    tile.SetStructure(wilderness);
                     allTiles.Add(tile);
                     if (tile.IsAtEdgeOfWalkableMap()) {
                         allEdgeTiles.Add(tile);

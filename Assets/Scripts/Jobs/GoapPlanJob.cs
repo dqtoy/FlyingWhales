@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Traits;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public class GoapPlanJob : JobQueueItem {
     public GoapEffect goal { get; protected set; }
@@ -309,11 +310,8 @@ public class GoapPlanJob : JobQueueItem {
         return GetJobDetailString();
     }
     public override void AddOtherData(INTERACTION_TYPE actionType, object[] data) {
-        if (!otherData.ContainsKey(actionType)) {
-            otherData[actionType] = data;
-        } else {
-            Debug.LogError("Job " + name + " already has other data for " + actionType.ToString());
-        }
+        Assert.IsFalse(otherData.ContainsKey(actionType), $"Job {name} already has other data for {actionType.ToString()}");
+        otherData[actionType] = data;
     }
     public override bool CanBeInterruptedBy(JOB_TYPE jobType) {
         if(assignedPlan != null && assignedPlan.currentActualNode.actionStatus == ACTION_STATUS.PERFORMING) {

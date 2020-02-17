@@ -356,9 +356,7 @@ namespace Inner_Maps {
             structure?.RemoveTile(this);
             this.structure = structure;
             this.structure.AddTile(this);
-            if (!genericTileObject.hasBeenInitialized) { //TODO: Make this better
-                genericTileObject.ManualInitialize(structure, this);
-            }
+            genericTileObject.ManualInitialize(this);
         }
         public void SetTileState(Tile_State state) {
             if (structure != null) {

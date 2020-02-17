@@ -369,11 +369,9 @@ public class LocationStructureObject : PooledObject {
     }
     private IEnumerator Rescan() {
         yield return null;
-        if (unpassableCollider != null) {
-            PathfindingManager.Instance.UpdatePathfindingGraphPartial(unpassableCollider.bounds);
-        } else {
-            PathfindingManager.Instance.UpdatePathfindingGraphPartial(_groundTileMapRenderer.bounds);    
-        }
+        PathfindingManager.Instance.UpdatePathfindingGraphPartial(ReferenceEquals(unpassableCollider, null) == false
+            ? unpassableCollider.bounds
+            : _groundTileMapRenderer.bounds);
         yield return null;
     }
     #endregion

@@ -171,7 +171,7 @@ public class Settlement : IJobOwner {
     public void OnAreaSetAsActive() {
         SubscribeToSignals();
         //LocationStructure warehouse = GetRandomStructureOfType(STRUCTURE_TYPE.WAREHOUSE);
-        CheckAreaInventoryJobs(mainStorage);
+        CheckAreaInventoryJobs(mainStorage, null);
         //DesignateNewRuler();
     }
     public void SetIsUnderSeige(bool state) {
@@ -637,10 +637,10 @@ public class Settlement : IJobOwner {
     //    return count;
     //}
     public void OnItemAddedToLocation(TileObject item, LocationStructure structure) {
-        CheckAreaInventoryJobs(structure);
+        CheckAreaInventoryJobs(structure, item);
     }
     public void OnItemRemovedFromLocation(TileObject item, LocationStructure structure) {
-        CheckAreaInventoryJobs(structure);
+        CheckAreaInventoryJobs(structure, item);
     }
     public bool IsRequiredByLocation(TileObject item) {
         if (item.gridTileLocation != null && item.gridTileLocation.structure == mainStorage) {
@@ -917,8 +917,7 @@ public class Settlement : IJobOwner {
             availableJobs.Insert(position, job);
         }
         jobManager.OnAddToAvailableJobs(job);
-        if (job is GoapPlanJob) {
-            GoapPlanJob goapJob = job as GoapPlanJob;
+        if (job is GoapPlanJob goapJob) {
             Debug.Log($"{GameManager.Instance.TodayLogString()}{goapJob.ToString()} targeting {goapJob.targetPOI?.name} was added to {this.name}'s available jobs");
         } else {
             Debug.Log($"{GameManager.Instance.TodayLogString()}{job.ToString()} was added to {this.name}'s available jobs");    
@@ -1120,8 +1119,10 @@ public class Settlement : IJobOwner {
         }
         return null;
     }
-    private void CheckAreaInventoryJobs(LocationStructure affectedStructure) {
-        if (affectedStructure == mainStorage) {
+    private void CheckAreaInventoryJobs(LocationStructure affectedStructure, TileObject objectThatTriggeredChange) {
+        if (affectedStructure == mainStorage && (objectThatTriggeredChange == null 
+             || objectThatTriggeredChange.tileObjectType == TILE_OBJECT_TYPE.HEALING_POTION 
+             || objectThatTriggeredChange.tileObjectType == TILE_OBJECT_TYPE.TOOL)) {
             //brew potion
             if (affectedStructure.GetTileObjectsOfTypeCount(TILE_OBJECT_TYPE.HEALING_POTION) < 2) {
                 //create an un crafted potion and place it at the main storage structure, then use that as the target for the job.
@@ -1156,7 +1157,7 @@ public class Settlement : IJobOwner {
         jobManager.OnRemoveFromAvailableJobs(job);
         JobManager.Instance.OnFinishJob(job);
         if (job.jobType == JOB_TYPE.CRAFT_OBJECT) {
-            CheckAreaInventoryJobs(mainStorage);
+            CheckAreaInventoryJobs(mainStorage, null);
         }
     }
     //private void CreateReplaceTileObjectJob(TileObject removedObj, LocationGridTile removedFrom) {

@@ -1488,6 +1488,7 @@
                   <e p="Bed.cs" t="Include" />
                   <e p="BedClinic.cs" t="Include" />
                   <e p="BigTreeObject.cs" t="Include" />
+                  <e p="BlockWall.cs" t="Include" />
                   <e p="Brazier.cs" t="Include" />
                   <e p="BuildSpotTileObject.cs" t="Include" />
                   <e p="Campfire.cs" t="Include" />

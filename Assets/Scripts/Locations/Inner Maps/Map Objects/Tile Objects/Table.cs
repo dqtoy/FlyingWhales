@@ -85,9 +85,9 @@ public class Table : TileObject {
     protected override void OnPlaceTileObjectAtTile(LocationGridTile tile) {
         base.OnPlaceTileObjectAtTile(tile);
         if (mapVisual.usedSprite.name.Contains("Bartop")) {
-            CreateNewGUS(new Vector2(0f, 0.5f), new Vector2(1f, 0.5f));
+            InitializeGUS(new Vector2(0f, 0.5f), new Vector2(1f, 0.5f));
         } else {
-            CreateNewGUS(Vector2.zero, new Vector2(0.5f, 0.5f));
+            InitializeGUS(Vector2.zero, new Vector2(0.5f, 0.5f));
         }
     }
     protected override void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom, bool removeTraits = true, bool destroyTileSlots = true) {

@@ -16,7 +16,7 @@ namespace Inner_Maps.Location_Structures {
         public List<Character> charactersHere { get; private set; }
         public ILocation location { get; private set; }
         public Settlement settlementLocation { get; private set; }
-    // public List<SpecialToken> itemsInStructure { get; private set; }
+        // public List<SpecialToken> itemsInStructure { get; private set; }
         public HashSet<IPointOfInterest> pointsOfInterest { get; private set; }
         public Dictionary<TILE_OBJECT_TYPE, List<TileObject>> groupedTileObjects { get; private set; }
         public POI_STATE state { get; private set; }
@@ -159,7 +159,6 @@ namespace Inner_Maps.Location_Structures {
                     } else {
                         groupedTileObjects.Add(tileObject.tileObjectType, new List<TileObject>() { tileObject });
                     }
-                    
                     if (tileObject.gridTileLocation != null && tileObject.gridTileLocation.buildSpotOwner.isPartOfParentRegionMap) {
                         // tileObject.SetFactionOwner(tileObject.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile.owner);
                         tileObject.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile?.OnItemAddedToLocation(tileObject, this);
@@ -345,9 +344,9 @@ namespace Inner_Maps.Location_Structures {
                                                           && !x.HasNeighbourOfElevation(ELEVATION.WATER)
                         ).ToList();
                     } else if (poi is WaterWell) {
-                        return unoccupiedTiles.Where(x => !x.HasOccupiedNeighbour() && x.parentMap.GetTilesInRadius(x, 3).Where(y => y.objHere is WaterWell).Count() == 0 && !x.HasNeighbouringWalledStructure()).ToList();
+                        return unoccupiedTiles.Where(x => !x.HasOccupiedNeighbour() && !x.parentMap.GetTilesInRadius(x, 3).Any(y => y.objHere is WaterWell) && !x.HasNeighbouringWalledStructure()).ToList();
                     } else if (poi is GoddessStatue) {
-                        return unoccupiedTiles.Where(x => !x.HasOccupiedNeighbour() && x.parentMap.GetTilesInRadius(x, 3).Where(y => y.objHere is GoddessStatue).Count() == 0 && !x.HasNeighbouringWalledStructure()).ToList();
+                        return unoccupiedTiles.Where(x => !x.HasOccupiedNeighbour() && !x.parentMap.GetTilesInRadius(x, 3).Any(y => y.objHere is GoddessStatue) && !x.HasNeighbouringWalledStructure()).ToList();
                     } else if (poi is Guitar || poi is Bed || poi is Table) {
                         return GetOuterTiles().Where(x => unoccupiedTiles.Contains(x) && x.tileType != LocationGridTile.Tile_Type.Structure_Entrance).ToList();
                     } else {

@@ -38,10 +38,12 @@ public class ChaosOrb : PooledObject {
 	}
 	
 	private void Expire() {
-		SchedulingManager.Instance.RemoveSpecificEntry(expiryKey);
 		Destroy();
 	}
 	private void Destroy() {
+		if (string.IsNullOrEmpty(expiryKey) == false) {
+			SchedulingManager.Instance.RemoveSpecificEntry(expiryKey);	
+		}
 		ObjectPoolManager.Instance.DestroyObject(this);
 	}
 	public void OnPointerClick(BaseEventData data) {
