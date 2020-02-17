@@ -5,11 +5,11 @@ using Inner_Maps;
 using UnityEngine;
 using Traits;
 
-public class Explosion : PlayerSpell {
+public class Meteor : PlayerSpell {
 
     private int abilityRadius;
 
-    public Explosion() : base(SPELL_TYPE.EXPLOSION) {
+    public Meteor() : base(SPELL_TYPE.METEOR) {
         SetDefaultCooldownTime(24);
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
         abilityRadius = 1;
@@ -45,8 +45,8 @@ public class Explosion : PlayerSpell {
     }
 }
 
-public class ExplosionData : SpellData {
-    public override SPELL_TYPE ability => SPELL_TYPE.EXPLOSION;
+public class MeteorData : SpellData {
+    public override SPELL_TYPE ability => SPELL_TYPE.METEOR;
     public override string name { get { return "Explosion"; } }
     public override string description { get { return "Destroy objects and structures within a huge radius and significantly damage characters within."; } }
     public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.DEVASTATION; } }
