@@ -7,6 +7,7 @@ namespace Interrupts {
         public MentalBreak() : base(INTERRUPT.Mental_Break) {
             duration = 0;
             isSimulateneous = true;
+            interruptIconString = GoapActionStateDB.Flirt_Icon;
         }
 
         #region Overrides

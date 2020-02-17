@@ -2194,6 +2194,17 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                         reactionComponent.ReactTo(targetCharacterCurrentActionNode, SHARE_INTEL_STATUS.WITNESSED);
                         targetCharacterCurrentActionNode.AddAwareCharacter(this);
                     }
+                } else if (targetCharacter.isInCombat && targetCharacter.jobQueue.jobsInQueue.Count > 1) {
+                    if (targetCharacter.jobQueue.jobsInQueue[1] is GoapPlanJob) {
+                        GoapPlanJob planJob = targetCharacter.jobQueue.jobsInQueue[1] as GoapPlanJob;
+                        if (planJob.assignedPlan != null && planJob.assignedPlan.currentActualNode != null) {
+                            targetCharacterCurrentActionNode = planJob.assignedPlan.currentActualNode;
+                            if (!targetCharacterCurrentActionNode.awareCharacters.Contains(this)) {
+                                reactionComponent.ReactTo(targetCharacterCurrentActionNode, SHARE_INTEL_STATUS.WITNESSED);
+                                targetCharacterCurrentActionNode.AddAwareCharacter(this);
+                            }
+                        }
+                    }
                 }
             }
         }

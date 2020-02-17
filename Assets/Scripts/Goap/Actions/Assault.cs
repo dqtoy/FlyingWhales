@@ -10,7 +10,7 @@ public class Assault : GoapAction {
     private Character loser;
 
     public Assault() : base(INTERACTION_TYPE.ASSAULT) {
-        actionLocationType = ACTION_LOCATION_TYPE.NEAR_TARGET;
+        actionLocationType = ACTION_LOCATION_TYPE.IN_PLACE;
         actionIconString = GoapActionStateDB.Hostile_Icon;
         doesNotStopTargetCharacter = true;
         advertisedBy = new POINT_OF_INTEREST_TYPE[] { POINT_OF_INTEREST_TYPE.CHARACTER };
@@ -49,6 +49,9 @@ public class Assault : GoapAction {
                         response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor);
                     }
                 }
+                if (node.associatedJobType != JOB_TYPE.APPREHEND && !actor.IsHostileWith(targetCharacter)) {
+                    CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.MISDEMEANOR);
+                }
             }
         }
         return response;
@@ -76,15 +79,14 @@ public class Assault : GoapAction {
     #region Effects
     public void AfterCombatStart(ActualGoapNode goapNode) {
         Debug.Log(goapNode.actor + " will start combat towards " + goapNode.poiTarget.name);
-        bool isLethal = goapNode.associatedJobType != JOB_TYPE.APPREHEND && goapNode.associatedJobType != JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM 
-            && goapNode.associatedJobType != JOB_TYPE.KNOCKOUT && goapNode.associatedJobType != JOB_TYPE.ABDUCT && goapNode.associatedJobType != JOB_TYPE.LEARN_MONSTER;
+        bool isLethal = goapNode.associatedJobType.IsJobLethal();
         goapNode.actor.combatComponent.Fight(goapNode.poiTarget, isLethal: isLethal);
-        if(goapNode.poiTarget is Character) {
-            Character targetCharacter = goapNode.poiTarget as Character;
-            if (goapNode.associatedJobType != JOB_TYPE.APPREHEND && !goapNode.actor.IsHostileWith(targetCharacter)) {
-                CrimeManager.Instance.ReactToCrime(targetCharacter, goapNode.actor, goapNode, goapNode.associatedJobType, CRIME_TYPE.MISDEMEANOR);
-            }
-        }
+        // if(goapNode.poiTarget is Character) {
+        //     Character targetCharacter = goapNode.poiTarget as Character;
+        //     if (goapNode.associatedJobType != JOB_TYPE.APPREHEND && !goapNode.actor.IsHostileWith(targetCharacter)) {
+        //         CrimeManager.Instance.ReactToCrime(targetCharacter, goapNode.actor, goapNode, goapNode.associatedJobType, CRIME_TYPE.MISDEMEANOR);
+        //     }
+        // }
     }
     #endregion
 

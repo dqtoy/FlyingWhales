@@ -7,6 +7,7 @@ namespace Interrupts {
         public Stumble() : base(INTERRUPT.Stumble) {
             duration = 2;
             doesStopCurrentAction = true;
+            interruptIconString = GoapActionStateDB.Flirt_Icon;
         }
 
         #region Overrides

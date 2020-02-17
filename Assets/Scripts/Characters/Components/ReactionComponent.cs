@@ -230,8 +230,16 @@ public class ReactionComponent {
                 debugLog += "\n-Target is not dead";
                 debugLog += "\n-Fight or Flight response";
                 //Fight or Flight
-                bool isLethal = !owner.behaviourComponent.isHarassing && !owner.behaviourComponent.isRaiding;
-                owner.combatComponent.FightOrFlight(targetCharacter, isLethal);
+                if (owner.combatComponent.combatMode == COMBAT_MODE.Aggressive) {
+                    bool isLethal = !owner.behaviourComponent.isHarassing && !owner.behaviourComponent.isRaiding;
+                    bool isTopPrioJobLethal = owner.jobQueue.jobsInQueue.Count <= 0 || owner.jobQueue.jobsInQueue[0].jobType.IsJobLethal();
+                    if (owner.jobQueue.jobsInQueue.Count > 0) {
+                        debugLog += "\n-" + owner.jobQueue.jobsInQueue[0].jobType.ToString();
+                    }
+                    if (!targetCharacter.traitContainer.HasTrait("Unconscious") || (isLethal && isTopPrioJobLethal)) {
+                        owner.combatComponent.FightOrFlight(targetCharacter, isLethal);
+                    }
+                }
             } else {
                 debugLog += "\n-Target is dead";
                 debugLog += "\n-Do nothing";
@@ -340,7 +348,12 @@ public class ReactionComponent {
                         if (owner.relationshipContainer.IsEnemiesWith(targetCharacter)) {
                             debugLog += "\n-Character considers Target as Enemy or Rival, will trigger Fight or Flight response";
                             //Fight or Flight
-                            owner.combatComponent.FightOrFlight(targetCharacter);
+                            if (owner.combatComponent.combatMode == COMBAT_MODE.Aggressive) {
+                                bool isTopPrioJobLethal = owner.jobQueue.jobsInQueue.Count <= 0 || owner.jobQueue.jobsInQueue[0].jobType.IsJobLethal();
+                                if (!targetCharacter.traitContainer.HasTrait("Unconscious") || isTopPrioJobLethal) {
+                                    owner.combatComponent.FightOrFlight(targetCharacter);
+                                }
+                            }
                         }
                     }
                 } else {
@@ -373,7 +386,9 @@ public class ReactionComponent {
                         if (job.assignedCharacter == null && owner.jobQueue.CanJobBeAddedToQueue(job)) {
                             owner.jobQueue.AddJobInQueue(job);
                         } else {
-                            owner.combatComponent.Flight(targetTileObject);
+                            if (owner.combatComponent.combatMode == COMBAT_MODE.Aggressive) {
+                                owner.combatComponent.Flight(targetTileObject);
+                            }
                         }
                         return;
                     }
@@ -383,10 +398,12 @@ public class ReactionComponent {
 
         if(targetTileObject is TornadoTileObject) {
             if(!owner.traitContainer.HasTrait("Elemental Master")) {
-                if(owner.traitContainer.HasTrait("Berserked")) {
-                    owner.combatComponent.FightOrFlight(targetTileObject);
-                } else {
-                    owner.combatComponent.Flight(targetTileObject);
+                if (owner.combatComponent.combatMode == COMBAT_MODE.Aggressive) {
+                    if (owner.traitContainer.HasTrait("Berserked")) {
+                        owner.combatComponent.FightOrFlight(targetTileObject);
+                    } else {
+                        owner.combatComponent.Flight(targetTileObject);
+                    }
                 }
             }
         }

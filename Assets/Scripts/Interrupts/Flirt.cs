@@ -7,6 +7,7 @@ namespace Interrupts {
         public Flirt() : base(INTERRUPT.Flirt) {
             duration = 0;
             isSimulateneous = true;
+            interruptIconString = GoapActionStateDB.Flirt_Icon;
         }
 
         #region Overrides

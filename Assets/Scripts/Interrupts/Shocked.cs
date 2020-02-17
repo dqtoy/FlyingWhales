@@ -7,6 +7,7 @@ namespace Interrupts {
         public Shocked() : base(INTERRUPT.Shocked) {
             duration = 2;
             doesStopCurrentAction = true;
+            interruptIconString = GoapActionStateDB.Flirt_Icon;
         }
 
         //#region Overrides

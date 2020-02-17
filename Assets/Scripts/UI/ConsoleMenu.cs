@@ -81,7 +81,7 @@ public class ConsoleMenu : UIMenu {
             {"/adjust_opinion", AdjustOpinion },
             {"/join_faction", JoinFaction },
             {"/emotion", TriggerEmotion },
-            {"/adjust_resource", TriggerEmotion },
+            // {"/adjust_resource", TriggerEmotion },
             {"/change_archetype", ChangeArchetype },
         };
 

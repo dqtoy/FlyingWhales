@@ -6,11 +6,14 @@ using Inner_Maps;
 
 public class CombatComponent {
 	public Character owner { get; private set; }
+    public COMBAT_MODE combatMode { get; private set; }
     public List<IPointOfInterest> hostilesInRange { get; private set; } //POI's in this characters hostility collider
     public List<IPointOfInterest> avoidInRange { get; private set; } //POI's in this characters hostility collider
     public Dictionary<Character, bool> lethalCharacters { get; private set; }
     public string avoidReason { get; private set; }
     private bool willProcessCombat;
+    
+    // public ActualGoapNode combatConnectedActionNode { get; private set; }
 
     //delegates
     public delegate void OnProcessCombat(CombatState state);
@@ -21,11 +24,17 @@ public class CombatComponent {
         hostilesInRange = new List<IPointOfInterest>();
         avoidInRange = new List<IPointOfInterest>();
         lethalCharacters = new Dictionary<Character, bool>();
+        SetCombatMode(COMBAT_MODE.Aggressive);
 	}
 
     #region Fight or Flight
     public void FightOrFlight(IPointOfInterest target, bool isLethal = true) {
         string debugLog = "FIGHT or FLIGHT response of " + owner.name + " against " + target.nameWithID;
+        if (!owner.canMove) {
+            debugLog += "\n-Character cannot move, will not fight or flight";
+            owner.logComponent.PrintLogIfActive(debugLog);
+            return;
+        }
         if(target is Character) {
             debugLog += "\n-Target is character";
             Character targetCharacter = target as Character;
@@ -127,35 +136,15 @@ public class CombatComponent {
                 avoidReason = reason;
                 debugLog += "\n" + target.name + " was added to " + owner.name + "'s avoid range!";
                 hasFled = true;
+                if (target is Character) {
+                    Character targetCharacter = target as Character;
+                    if (targetCharacter.combatComponent.combatMode == COMBAT_MODE.Defend) {
+                        targetCharacter.combatComponent.RemoveHostileInRange(owner);
+                    }
+                }
             }
             owner.logComponent.PrintLogIfActive(debugLog);
         }
-        // if(owner.homeStructure != null && owner.homeStructure != owner.currentStructure) {
-        //     debugLog += "\n" + owner.name + " has a home and not in his/her home";
-        //     if(UnityEngine.Random.Range(0, 100) < 20) {
-        //         owner.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, owner);
-        //         debugLog += "\n" + owner.name + " triggered Cowering interrupt";
-        //     }
-        //     debugLog += "\n" + owner.name + " will flee to home";
-        //     owner.jobComponent.TriggerFleeHome();
-        //     hasFled = true;
-        // } else {
-        //     if (UnityEngine.Random.Range(0, 2) == 0) {
-        //         debugLog += "\n" + owner.name + " triggered Cowering interrupt";
-        //         owner.interruptComponent.TriggerInterrupt(INTERRUPT.Cowering, owner);
-        //         hasFled = true;
-        //     } else {
-        //         if (!avoidInRange.Contains(target)) {
-        //             if (owner.marker.inVisionPOIs.Contains(target)) {
-        //                 avoidInRange.Add(target);
-        //                 willProcessCombat = true;
-        //                 avoidReason = reason;
-        //                 debugLog += "\n" + target.name + " was added to " + owner.name + "'s avoid range!";
-        //                 hasFled = true;
-        //             }
-        //         }
-        //     }
-        // }
         return hasFled;
     }
     public void FlightAll() {
@@ -165,11 +154,13 @@ public class CombatComponent {
                     IPointOfInterest hostile = hostilesInRange[i];
                     if (owner.marker.inVisionPOIs.Contains(hostile)) {
                         avoidInRange.Add(hostile);
-                    } 
-                    // else {
-                    //     RemoveHostileInRange(hostile, false);
-                    //     i--;
-                    // }
+                        if (hostile is Character) {
+                            Character targetCharacter = hostile as Character;
+                            if (targetCharacter.combatComponent.combatMode == COMBAT_MODE.Defend) {
+                                targetCharacter.combatComponent.RemoveHostileInRange(owner);
+                            }
+                        }
+                    }
                 }
             }
             ClearHostilesInRange(false);
@@ -364,5 +355,11 @@ public class CombatComponent {
             willProcessCombat = false;
         }
     }
+    public void SetCombatMode(COMBAT_MODE mode) {
+        combatMode = mode;
+    }
+    // public void SetCombatConnectedActionNode(ActualGoapNode node) {
+    //     combatConnectedActionNode = node;
+    // }
     #endregion
 }

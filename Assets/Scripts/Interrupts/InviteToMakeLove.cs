@@ -8,6 +8,7 @@ namespace Interrupts {
         public InviteToMakeLove() : base(INTERRUPT.Invite_To_Make_Love) {
             duration = 0;
             isSimulateneous = true;
+            interruptIconString = GoapActionStateDB.Flirt_Icon;
         }
 
         #region Overrides

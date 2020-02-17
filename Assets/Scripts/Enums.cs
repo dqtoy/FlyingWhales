@@ -1398,6 +1398,7 @@ public enum PLAYER_ARCHETYPE { Normal, Ravager, Lich, Puppet_Master, }
 /// </summary>
 public enum ACTION_STATUS { NONE, STARTED, PERFORMING, SUCCESS, FAIL }
 public enum ARTIFACT_UNLOCKABLE_TYPE { Structure, Action }
+public enum COMBAT_MODE { Aggressive, Passive, Defend, }
 
 #region Crime Subcategories
 [System.AttributeUsage(System.AttributeTargets.Field)]
@@ -1999,6 +2000,18 @@ public static class Extensions {
             //     break;
         }
         return priority;
+    }
+    public static bool IsJobLethal(this JOB_TYPE type) {
+        switch (type) {
+            case JOB_TYPE.APPREHEND:
+            case JOB_TYPE.HUNT_SERIAL_KILLER_VICTIM:
+            case JOB_TYPE.KNOCKOUT:
+            case JOB_TYPE.ABDUCT:
+            case JOB_TYPE.LEARN_MONSTER:
+                return false;
+            default:
+                return true;
+        }
     }
     #endregion
 
