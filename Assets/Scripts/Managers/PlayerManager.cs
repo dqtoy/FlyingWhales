@@ -38,7 +38,7 @@ public class PlayerManager : MonoBehaviour {
     public void Initialize() {
         SPELL_TYPE[] allSpellTypes = { SPELL_TYPE.ZAP, SPELL_TYPE.RAISE_DEAD, SPELL_TYPE.CANNIBALISM
             , SPELL_TYPE.LYCANTHROPY, SPELL_TYPE.VAMPIRISM, SPELL_TYPE.KLEPTOMANIA
-            , SPELL_TYPE.UNFAITHFULNESS, SPELL_TYPE.ENRAGE, SPELL_TYPE.PROVOKE, SPELL_TYPE.EXPLOSION
+            , SPELL_TYPE.UNFAITHFULNESS, SPELL_TYPE.ENRAGE, SPELL_TYPE.PROVOKE, SPELL_TYPE.METEOR
             , SPELL_TYPE.IGNITE, SPELL_TYPE.LURE, SPELL_TYPE.CURSED_OBJECT, SPELL_TYPE.SPOIL, SPELL_TYPE.ALCOHOLIC
             , SPELL_TYPE.LULLABY, SPELL_TYPE.AGORAPHOBIA, SPELL_TYPE.PARALYSIS, SPELL_TYPE.RELEASE, SPELL_TYPE.ZOMBIE_VIRUS
             , SPELL_TYPE.PESTILENCE, SPELL_TYPE.PSYCHOPATHY, SPELL_TYPE.TORNADO , SPELL_TYPE.DESTROY };
@@ -173,8 +173,8 @@ public class PlayerManager : MonoBehaviour {
                 return new CloakOfInvisibility();
             case SPELL_TYPE.LURE:
                 return new Lure();
-            case SPELL_TYPE.EXPLOSION:
-                return new Explosion();
+            case SPELL_TYPE.METEOR:
+                return new Meteor();
             case SPELL_TYPE.IGNITE:
                 return new Ignite();
             case SPELL_TYPE.CURSED_OBJECT:

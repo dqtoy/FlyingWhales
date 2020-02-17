@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="C:\Users\Ian Chy\.Rider2019.3\system\extResources" t="IncludeRecursive" />
-    <e p="C:\Users\Ian Chy\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_FlyingWhales.1495046791.00" t="ExcludeRecursive" />
-    <e p="C:\Users\Ian Chy\Documents\FlyingWhales" t="IncludeRecursive">
+    <e p="C:\Users\Mykel Abania\.Rider2019.3\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\Mykel Abania\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_FlyingWhales.1985073317.00" t="ExcludeRecursive" />
+    <e p="C:\Users\Mykel Abania\Repositories\FlyingWhales" t="IncludeRecursive">
       <e p="Assembly-CSharp-Editor.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp-firstpass.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
@@ -1702,13 +1702,13 @@
               <e p="Destroy.cs" t="Include" />
               <e p="Disable.cs" t="Include" />
               <e p="Enrage.cs" t="Include" />
-              <e p="Explosion.cs" t="Include" />
               <e p="Ignite.cs" t="Include" />
               <e p="Jolt.cs" t="Include" />
               <e p="Kleptomania.cs" t="Include" />
               <e p="Lullaby.cs" t="Include" />
               <e p="Lure.cs" t="Include" />
               <e p="Lycanthropy.cs" t="Include" />
+              <e p="Meteor.cs" t="Include" />
               <e p="Paralysis.cs" t="Include" />
               <e p="Pestilence.cs" t="Include" />
               <e p="PlayerSpell.cs" t="Include" />

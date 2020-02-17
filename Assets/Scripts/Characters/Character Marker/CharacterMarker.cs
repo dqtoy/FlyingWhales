@@ -1450,10 +1450,12 @@ public class CharacterMarker : MapObjectVisual<Character> {
         }
         pathfindingAI.ClearAllCurrentPathData();
         SetHasFleePath(true);
-        LocationGridTile chosenTile = character.homeStructure.GetLocationStructure().GetRandomTile();
-        if(character is Summon) {
-            Summon summon = character as Summon;
+        LocationGridTile chosenTile;
+        if(character is Summon summon) {
             chosenTile = summon.GetRandomLocationGridTileWithPath();
+        } else {
+            chosenTile = character.homeStructure.GetLocationStructure().GetRandomTile();
+            
         }
         if(chosenTile == null) {
             chosenTile = character.currentStructure.GetRandomTile();
