@@ -50,7 +50,7 @@ namespace Inner_Maps {
         public List<LocationGridTile> UnoccupiedNeighbours { get { return neighbours.Values.Where(o => !o.isOccupied && o.structure == structure).ToList(); } }
 
         public GenericTileObject genericTileObject { get; private set; }
-        public List<WallObject> walls { get; private set; }
+        public List<StructureWallObject> walls { get; private set; }
         public bool isCorrupted => groundType == Ground_Type.Corrupted;
         
         public LocationGridTile(int x, int y, Tilemap tilemap, InnerTileMap parentMap) {
@@ -64,7 +64,7 @@ namespace Inner_Maps {
             tileType = Tile_Type.Empty;
             tileState = Tile_State.Empty;
             charactersHere = new List<Character>();
-            walls = new List<WallObject>();
+            walls = new List<StructureWallObject>();
             SetLockedState(false);
             SetReservedType(TILE_OBJECT_TYPE.NONE);
             defaultTileColor = Color.white;
@@ -82,7 +82,7 @@ namespace Inner_Maps {
             SetLockedState(data.isLocked);
             SetReservedType(data.reservedObjectType);
             charactersHere = new List<Character>();
-            walls = new List<WallObject>();
+            walls = new List<StructureWallObject>();
             defaultTileColor = Color.white;
         }
 
@@ -613,9 +613,9 @@ namespace Inner_Maps {
                 traitables.Add(genericTileObject);
             }
             for (int i = 0; i < walls.Count; i++) {
-                WallObject wallObject = walls[i];
-                if (wallObject.traitContainer.HasTrait(requiredTrait)) {
-                    traitables.Add(wallObject);
+                StructureWallObject structureWallObject = walls[i];
+                if (structureWallObject.traitContainer.HasTrait(requiredTrait)) {
+                    traitables.Add(structureWallObject);
                 }
             }
             if (objHere != null && objHere.traitContainer.HasTrait(requiredTrait)) {
@@ -636,8 +636,8 @@ namespace Inner_Maps {
             List<ITraitable> traitables = new List<ITraitable>();
             traitables.Add(genericTileObject);
             for (int i = 0; i < walls.Count; i++) {
-                WallObject wallObject = walls[i];
-                traitables.Add(wallObject);
+                StructureWallObject structureWallObject = walls[i];
+                traitables.Add(structureWallObject);
             }
             if (objHere != null) {
                 if ((objHere is TileObject && (objHere as TileObject).mapObjectState == MAP_OBJECT_STATE.BUILT)) {//|| (objHere is SpecialToken && (objHere as SpecialToken).mapObjectState == MAP_OBJECT_STATE.BUILT)
@@ -789,11 +789,11 @@ namespace Inner_Maps {
         #endregion
 
         #region Walls
-        public void AddWallObject(WallObject wallObject) {
-            walls.Add(wallObject);
+        public void AddWallObject(StructureWallObject structureWallObject) {
+            walls.Add(structureWallObject);
         }
-        public void RemoveWallObject(WallObject wallObject) {
-            walls.Remove(wallObject);
+        public void RemoveWallObject(StructureWallObject structureWallObject) {
+            walls.Remove(structureWallObject);
         }
         public void ClearWallObjects() {
             walls.Clear();

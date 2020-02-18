@@ -28,7 +28,7 @@ namespace Traits {
                 TileObject obj = addedTo as TileObject;
                 obj.SetPOIState(POI_STATE.INACTIVE);
                 obj.SetSlotColor(burntColor);
-                obj.mapVisual.SetColor(burntColor);
+                obj.mapVisual?.SetColor(burntColor);
                 if (obj is GenericTileObject) {
                     LocationGridTile tile = obj.gridTileLocation;
                     tile.parentTileMap.SetColor(tile.localPlace, burntColor);

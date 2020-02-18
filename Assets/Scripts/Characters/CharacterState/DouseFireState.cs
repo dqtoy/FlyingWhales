@@ -165,7 +165,7 @@ public class DouseFireState : CharacterState {
     }
     private bool GetWater() {
         if (isFetchingWater) {
-            return false;
+            return true;
         }
         List<TileObject> targets = stateComponent.character.currentRegion.GetTileObjectsOfType(TILE_OBJECT_TYPE.WATER_WELL);
         TileObject nearestWater = null;

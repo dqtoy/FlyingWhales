@@ -25,6 +25,7 @@ namespace Inner_Maps.Location_Structures {
         //Inner Map
         public List<LocationGridTile> tiles { get; private set; }
         public List<LocationGridTile> unoccupiedTiles { get; private set; }
+        public bool isInterior { get; private set; }
 
         #region getters
         public virtual bool isDwelling => false;
@@ -43,6 +44,7 @@ namespace Inner_Maps.Location_Structures {
             groupedTileObjects = new Dictionary<TILE_OBJECT_TYPE, List<TileObject>>();
             tiles = new List<LocationGridTile>();
             unoccupiedTiles = new List<LocationGridTile>();
+            SetInteriorState(structureType.IsInterior());
         }
         public LocationStructure(ILocation location, SaveDataLocationStructure data) {
             this.location = location;
@@ -54,6 +56,7 @@ namespace Inner_Maps.Location_Structures {
             pointsOfInterest = new HashSet<IPointOfInterest>();
             groupedTileObjects = new Dictionary<TILE_OBJECT_TYPE, List<TileObject>>();
             tiles = new List<LocationGridTile>();
+            SetInteriorState(structureType.IsInterior());
         }
 
         #region Initialization
@@ -66,16 +69,16 @@ namespace Inner_Maps.Location_Structures {
         #region Listeners
         protected virtual void SubscribeListeners() {
             if (structureType.HasWalls()) {
-                Messenger.AddListener<WallObject>(Signals.WALL_DAMAGED, OnWallDamaged);
-                Messenger.AddListener<WallObject>(Signals.WALL_DESTROYED, OnWallDestroyed);
-                Messenger.AddListener<WallObject>(Signals.WALL_REPAIRED, OnWallRepaired);
+                Messenger.AddListener<StructureWallObject>(Signals.WALL_DAMAGED, OnWallDamaged);
+                Messenger.AddListener<StructureWallObject>(Signals.WALL_DESTROYED, OnWallDestroyed);
+                Messenger.AddListener<StructureWallObject>(Signals.WALL_REPAIRED, OnWallRepaired);
             }
         }
         protected virtual void UnsubscribeListeners() {
             if (structureType.HasWalls()) {
-                Messenger.RemoveListener<WallObject>(Signals.WALL_DAMAGED, OnWallDamaged);
-                Messenger.RemoveListener<WallObject>(Signals.WALL_DESTROYED, OnWallDestroyed);
-                Messenger.RemoveListener<WallObject>(Signals.WALL_REPAIRED, OnWallRepaired);
+                Messenger.RemoveListener<StructureWallObject>(Signals.WALL_DAMAGED, OnWallDamaged);
+                Messenger.RemoveListener<StructureWallObject>(Signals.WALL_DESTROYED, OnWallDestroyed);
+                Messenger.RemoveListener<StructureWallObject>(Signals.WALL_REPAIRED, OnWallRepaired);
             }
         }
         #endregion
@@ -102,43 +105,6 @@ namespace Inner_Maps.Location_Structures {
             }
         }
         #endregion
-
-        // #region Items/Special Tokens
-        // public void AddItem(SpecialToken token, LocationGridTile gridLocation = null) {
-        //     if (!itemsInStructure.Contains(token)) {
-        //         itemsInStructure.Add(token);
-        //         token.SetStructureLocation(this);
-        //         if(AddPOI(token, gridLocation)) {
-        //             if (token.gridTileLocation.buildSpotOwner.hexTileOwner != null 
-        //                 && token.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile != null) {
-        //                 token.SetOwner(token.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile.owner);
-        //                 token.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile?.OnItemAddedToLocation(token, this);
-        //             }
-        //         }
-        //     }
-        // }
-        // public void RemoveItem(SpecialToken token, Character removedBy = null) {
-        //     if (itemsInStructure.Remove(token)) {
-        //         token.SetStructureLocation(null);
-        //         LocationGridTile removedFrom = token.gridTileLocation;
-        //         if (RemovePOI(token, removedBy)) {
-        //             if (removedFrom.buildSpotOwner.isPartOfParentRegionMap) {
-        //                 removedFrom.buildSpotOwner.hexTileOwner.settlementOnTile?.OnItemRemovedFromLocation(token, this);    
-        //             }
-        //         }
-        //     }
-        // }
-        //
-        // public int GetItemsOfTypeCount(SPECIAL_TOKEN type) {
-        //     int count = 0;
-        //     for (int i = 0; i < itemsInStructure.Count; i++) {
-        //         if (itemsInStructure[i].specialTokenType == type) {
-        //             count++;
-        //         }
-        //     }
-        //     return count;
-        // }
-        // #endregion
 
         #region Points Of Interest
         public virtual bool AddPOI(IPointOfInterest poi, LocationGridTile tileLocation = null, bool placeObject = true) {
@@ -449,6 +415,9 @@ namespace Inner_Maps.Location_Structures {
         public void SetSettlementLocation(Settlement settlement) {
             settlementLocation = settlement;
         }
+        public void SetInteriorState(bool _isInterior) {
+            isInterior = _isInterior;
+        }
         #endregion
 
         #region Tile Objects
@@ -552,14 +521,7 @@ namespace Inner_Maps.Location_Structures {
         private bool CheckIfStructureDestroyed() {
             //To check if a structure is destroyed, check if 50% of its walls have been destroyed.
             int neededWallsToBeConsideredValid = Mathf.FloorToInt(structureObj.walls.Length * 0.5f);
-            int intactWalls = 0;
-            for (int i = 0; i < structureObj.walls.Length; i++) {
-                WallObject wall = structureObj.walls[i];
-                if (wall.currentHP > 0) {
-                    //wall is not yet destroyed
-                    intactWalls++;
-                }
-            }
+            int intactWalls = structureObj.walls.Count(wall => wall.currentHP > 0);
             if (intactWalls < neededWallsToBeConsideredValid) {
                 //consider structure as destroyed
                 DestroyStructure();
@@ -570,22 +532,25 @@ namespace Inner_Maps.Location_Structures {
         #endregion
 
         #region Walls
-        public void OnWallDestroyed(WallObject wall) {
+        public void OnWallDestroyed(StructureWallObject structureWall) {
             //check if structure destroyed
-            if (structureObj.walls.Contains(wall)) {
-                wall.gridTileLocation.SetTileType(LocationGridTile.Tile_Type.Empty);
+            if (structureObj.walls.Contains(structureWall)) {
+                structureWall.gridTileLocation.SetTileType(LocationGridTile.Tile_Type.Empty);
                 structureObj.RescanPathfindingGridOfStructure();
+                CheckInteriorState();
                 CheckIfStructureDestroyed();
             }
         }
-        public void OnWallRepaired(WallObject wall) {
-            if (structureObj.walls.Contains(wall)) {
-                wall.gridTileLocation.SetTileType(LocationGridTile.Tile_Type.Wall);
+        public void OnWallRepaired(StructureWallObject structureWall) {
+            if (structureObj.walls.Contains(structureWall)) {
+                structureWall.gridTileLocation.SetTileType(LocationGridTile.Tile_Type.Wall);
+                structureObj.RescanPathfindingGridOfStructure();
+                CheckInteriorState();
             }
         }
-        public void OnWallDamaged(WallObject wall) {
+        public void OnWallDamaged(StructureWallObject structureWall) {
             Assert.IsNotNull(structureObj, $"Wall of {this.ToString()} was damaged, but it has no structure object");
-            if (structureObj.walls.Contains(wall)) {
+            if (structureObj.walls.Contains(structureWall)) {
                 //create repair job
                 OnStructureDamaged();
             }
@@ -610,10 +575,10 @@ namespace Inner_Maps.Location_Structures {
             if (occupiedBuildSpot.advertisedActions.Contains(INTERACTION_TYPE.REPAIR_STRUCTURE) == false) {
                 occupiedBuildSpot.AddAdvertisedAction(INTERACTION_TYPE.REPAIR_STRUCTURE);
             }
-            if (settlementLocation != null) {
-                if (settlementLocation.HasJob(JOB_TYPE.REPAIR, occupiedBuildSpot) == false) {
-                    CreateRepairJob();
-                }    
+            CheckInteriorState();
+            if (settlementLocation == null) return;
+            if (settlementLocation.HasJob(JOB_TYPE.REPAIR, occupiedBuildSpot) == false) {
+                CreateRepairJob();
             }
         }
         private bool StillHasObjectsToRepair() {
@@ -622,14 +587,18 @@ namespace Inner_Maps.Location_Structures {
                 if (tile.genericTileObject.currentHP < tile.genericTileObject.maxHP) {
                     return true;
                 }
-                for (int j = 0; j < tile.walls.Count; j++) {
-                    WallObject wall = tile.walls[j];
-                    if (wall.currentHP < wall.maxHP) {
-                        return true;
-                    }
+                if (tile.walls.Any(wall => wall.currentHP < wall.maxHP)) {
+                    return true;
                 }
             }
             return false;
+        }
+        private void CheckInteriorState() {
+            //if structure object only has 70% or less of walls intact, set it as exterior
+            //else, set it as interior
+            int neededWallsToBeConsideredExterior = Mathf.FloorToInt(structureObj.walls.Length * 0.7f);
+            int intactWalls = structureObj.walls.Count(wall => wall.currentHP > 0);
+            SetInteriorState(intactWalls > neededWallsToBeConsideredExterior);
         }
         #endregion
 

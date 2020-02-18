@@ -35,14 +35,11 @@ public class LocationStructureObject : PooledObject {
     [Tooltip("If this has elements, then only the provided coordinates will be set as part of the actual structure. Otherwise all the tiles inside the ground tilemap will be considered as part of the structure.")]
     [SerializeField] private List<Vector3Int> predeterminedOccupiedCoordinates;
 
-    [Header("Pathfinding")] 
-    [SerializeField] private Collider2D unpassableCollider;
-    
     #region Properties
     private Tilemap[] allTilemaps;
     private WallVisual[] wallVisuals;
     public LocationGridTile[] tiles { get; private set; }
-    public WallObject[] walls { get; private set; }
+    public StructureWallObject[] walls { get; private set; }
     #endregion
 
     #region Getters
@@ -328,22 +325,22 @@ public class LocationStructureObject : PooledObject {
 
     #region Walls
     private void RegisterWalls(InnerTileMap map, LocationStructure structure) {
-        walls = new WallObject[wallVisuals.Length];
+        walls = new StructureWallObject[wallVisuals.Length];
         for (int i = 0; i < wallVisuals.Length; i++) {
             WallVisual wallVisual = wallVisuals[i];
-            WallObject wallObject = new WallObject(structure, wallVisual);
+            StructureWallObject structureWallObject = new StructureWallObject(structure, wallVisual);
             Vector3Int tileLocation = map.groundTilemap.WorldToCell(wallVisual.transform.position);
             LocationGridTile tile = map.map[tileLocation.x, tileLocation.y];
             tile.SetTileType(LocationGridTile.Tile_Type.Wall);
-            wallObject.SetGridTileLocation(tile);
-            tile.AddWallObject(wallObject);
-            walls[i] = wallObject;
+            structureWallObject.SetGridTileLocation(tile);
+            tile.AddWallObject(structureWallObject);
+            walls[i] = structureWallObject;
         }
     }
     internal void ChangeResourceMadeOf(RESOURCE resource) {
         for (int i = 0; i < walls.Length; i++) {
-            WallObject wallObject = walls[i];
-            wallObject.ChangeResourceMadeOf(resource);
+            StructureWallObject structureWallObject = walls[i];
+            structureWallObject.ChangeResourceMadeOf(resource);
         }
         for (int i = 0; i < tiles.Length; i++) {
             LocationGridTile tile = tiles[i];
@@ -365,14 +362,7 @@ public class LocationStructureObject : PooledObject {
     #region Pathfinding
     [ContextMenu("Rescan Pathfinding Grid Of Structure")]
     public void RescanPathfindingGridOfStructure() {
-        StartCoroutine(Rescan());
-    }
-    private IEnumerator Rescan() {
-        yield return null;
-        PathfindingManager.Instance.UpdatePathfindingGraphPartial(ReferenceEquals(unpassableCollider, null) == false
-            ? unpassableCollider.bounds
-            : _groundTileMapRenderer.bounds);
-        yield return null;
+        PathfindingManager.Instance.UpdatePathfindingGraphPartialCoroutine(_groundTileMapRenderer.bounds);
     }
     #endregion
 

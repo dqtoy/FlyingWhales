@@ -50,9 +50,9 @@ public class RepairStructure : GoapAction {
             tile.genericTileObject.AdjustHP(tile.genericTileObject.maxHP);
             tile.genericTileObject.traitContainer.RemoveTrait(tile.genericTileObject, "Burnt");
             for (int j = 0; j < tile.walls.Count; j++) {
-                WallObject wall = tile.walls[j];
-                wall.traitContainer.RemoveTrait(wall, "Burnt");
-                wall.AdjustHP(wall.maxHP);
+                StructureWallObject structureWall = tile.walls[j];
+                structureWall.traitContainer.RemoveTrait(structureWall, "Burnt");
+                structureWall.AdjustHP(structureWall.maxHP);
             }
         }
     }

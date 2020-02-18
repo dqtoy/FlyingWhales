@@ -5,26 +5,26 @@ using Inner_Maps.Location_Structures;
 using Traits;
 using UnityEngine;
 
-public class WallObject : MapObject<WallObject>, ITraitable {
-    public string name { get; private set; }
+public class StructureWallObject : MapObject<StructureWallObject>, ITraitable {
+    public string name { get; }
+    public int maxHP { get; }
     public int currentHP { get; private set; }
-    public int maxHP { get; private set; }
-    public ProjectileReceiver projectileReceiver { get { return _visual.collisionTrigger.projectileReceiver; } }
     public RESOURCE madeOf { get; private set; }
     public ITraitContainer traitContainer { get; private set; }
+    public LocationGridTile gridTileLocation { get; private set; }
+    public ProjectileReceiver projectileReceiver => _visual.collisionTrigger.projectileReceiver;
     public TraitProcessor traitProcessor => TraitManager.defaultTraitProcessor;
     public Transform worldObject => _visual.transform;
-    public LocationGridTile gridTileLocation { get; private set; }
-    public override MapObjectVisual<WallObject> mapVisual => _visual;
+    public override MapObjectVisual<StructureWallObject> mapVisual => _visual;
     public BaseMapObjectVisual mapObjectVisual => mapVisual;
-    private WallVisual _visual;
+    private readonly WallVisual _visual;
 
-    public WallObject(LocationStructure structure, WallVisual visual) {
-        this.name = $"Wall of {structure.ToString()}";
-        this._visual = visual;
-        this.maxHP = 100;
-        this.currentHP = maxHP;
-        this.madeOf = RESOURCE.WOOD;
+    public StructureWallObject(LocationStructure structure, WallVisual visual) {
+        name = $"Wall of {structure}";
+        _visual = visual;
+        maxHP = 100;
+        currentHP = maxHP;
+        madeOf = RESOURCE.WOOD;
         CreateTraitContainer();
         traitContainer.AddTrait(this, "Flammable");
         visual.Initialize(this);
@@ -62,7 +62,7 @@ public class WallObject : MapObject<WallObject>, ITraitable {
     }
     public void OnHitByAttackFrom(Character characterThatAttacked, CombatState state, ref string attackSummary) {
         GameManager.Instance.CreateHitEffectAt(this);
-        this.AdjustHP(-characterThatAttacked.attackPower, source: characterThatAttacked);
+        AdjustHP(-characterThatAttacked.attackPower, source: characterThatAttacked);
     }
     #endregion
 

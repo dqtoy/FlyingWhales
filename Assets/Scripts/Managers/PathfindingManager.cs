@@ -57,7 +57,11 @@ public class PathfindingManager : MonoBehaviour {
     public void RemoveAgent(CharacterAIPath agent) {
         _allAgents.Remove(agent);
     }
-    public void UpdatePathfindingGraphPartial(Bounds bounds) {
+    public void UpdatePathfindingGraphPartialCoroutine(Bounds bounds) {
+        StartCoroutine(UpdatePathfindingGraphPartial(bounds));
+    }
+    private IEnumerator UpdatePathfindingGraphPartial(Bounds bounds) {
+        yield return null;
         AstarPath.active.UpdateGraphs(bounds);
     }
     public void UpdatePathfindingGraphPartial(GraphUpdateObject guo) {

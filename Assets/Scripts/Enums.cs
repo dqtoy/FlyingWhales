@@ -1121,45 +1121,44 @@ public enum SPELL_TARGET {
     TILE,
 }
 public enum STRUCTURE_TYPE {
-    EXIT,
-    INN,
-    WAREHOUSE,
-    DWELLING,
-    DUNGEON,
-    WILDERNESS,
-    WORK_AREA,
-    EXPLORE_AREA,
-    CEMETERY,
-    PRISON,
-    POND,
-    CITY_CENTER,
-    SMITHY,
-    BARRACKS,
-    APOTHECARY,
-    GRANARY,
-    MINER_CAMP,
-    RAIDER_CAMP,
-    ASSASSIN_GUILD,
-    HUNTER_LODGE,
-    MAGE_QUARTERS,
-    NONE,
-    MONSTER_LAIR,
-    ABANDONED_MINE,
-    TEMPLE,
-    MAGE_TOWER,
-    THE_PORTAL,
-    CAVE,
-    OCEAN,
-    THE_SPIRE,
-    THE_KENNEL,
-    THE_CRYPT,
-    GOADER,
-    THE_PROFANE,
-    THE_ANVIL,
-    THE_EYE,
-    THE_NEEDLES,
-    TORTURE_CHAMBER,
-    DEMONIC_PRISON
+    INN = 1,
+    WAREHOUSE = 2,
+    DWELLING = 3,
+    DUNGEON = 4,
+    WILDERNESS = 5,
+    WORK_AREA = 6,
+    EXPLORE_AREA = 7,
+    CEMETERY = 8,
+    PRISON = 9,
+    POND = 10,
+    CITY_CENTER = 11,
+    SMITHY = 12,
+    BARRACKS = 13,
+    APOTHECARY = 14,
+    GRANARY = 15,
+    MINER_CAMP = 16,
+    RAIDER_CAMP = 17,
+    ASSASSIN_GUILD = 18,
+    HUNTER_LODGE = 19,
+    MAGE_QUARTERS = 20,
+    NONE = 21,
+    MONSTER_LAIR = 22,
+    ABANDONED_MINE = 23,
+    TEMPLE = 24,
+    MAGE_TOWER = 25,
+    THE_PORTAL = 26,
+    CAVE = 27,
+    OCEAN = 28,
+    THE_SPIRE = 29,
+    THE_KENNEL = 30,
+    THE_CRYPT = 31,
+    GOADER = 32,
+    THE_PROFANE = 33,
+    THE_ANVIL = 34,
+    THE_EYE = 35,
+    THE_NEEDLES = 36,
+    TORTURE_CHAMBER = 37,
+    DEMONIC_PRISON = 38
 }
 public enum RELATIONSHIP_TYPE {
     NONE = 0,
@@ -1551,6 +1550,27 @@ public static class Extensions {
                 return 99;
         }
     }
+    public static bool IsInterior(this STRUCTURE_TYPE structureType) {
+        switch (structureType) {
+            case STRUCTURE_TYPE.DWELLING:
+            case STRUCTURE_TYPE.INN:
+            case STRUCTURE_TYPE.PRISON:
+            case STRUCTURE_TYPE.SMITHY:
+            case STRUCTURE_TYPE.GRANARY:
+            case STRUCTURE_TYPE.BARRACKS:
+            case STRUCTURE_TYPE.MINER_CAMP:
+            case STRUCTURE_TYPE.WAREHOUSE:
+            case STRUCTURE_TYPE.APOTHECARY:
+            case STRUCTURE_TYPE.RAIDER_CAMP:
+            case STRUCTURE_TYPE.HUNTER_LODGE:
+            case STRUCTURE_TYPE.ASSASSIN_GUILD:
+            case STRUCTURE_TYPE.DEMONIC_PRISON:
+            case STRUCTURE_TYPE.TORTURE_CHAMBER:
+                return true;
+            default:
+                return false;
+        }
+    }
     #endregion
 
     #region Misc
@@ -1654,32 +1674,6 @@ public static class Extensions {
         }
     }
     #endregion
-
-    //#region Tokens
-    //public static bool CanBeCraftedBy(this SPECIAL_TOKEN type, Character character) {
-    //    if (TokenManager.Instance.itemData.ContainsKey(type)) {
-    //        ItemData data = TokenManager.Instance.itemData[type];
-    //        if (data.canBeCraftedBy == null) {
-    //            return true;
-    //        }
-    //        for (int i = 0; i < data.canBeCraftedBy.Length; i++) {
-    //            if (character.traitContainer.HasTrait(data.canBeCraftedBy[i])) {
-    //                return true;
-    //            }
-    //        }
-    //        return false;
-    //    }
-    //    return true;
-    //}
-    //public static bool CreatesObjectWhenDropped(this SPECIAL_TOKEN type) {
-    //    switch (type) {
-    //        case SPECIAL_TOKEN.WATER_BUCKET:
-    //            return false;
-    //        default:
-    //            return true;
-    //    }
-    //}
-    //#endregion
 
     #region Furniture
     public static TILE_OBJECT_TYPE ConvertFurnitureToTileObject(this FURNITURE_TYPE type) {

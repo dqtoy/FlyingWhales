@@ -1464,8 +1464,8 @@
               </e>
               <e p="Damageables" t="Include">
                 <e p="IDamageable.cs" t="Include" />
+                <e p="StructureWallObject.cs" t="Include" />
                 <e p="WallAsset.cs" t="Include" />
-                <e p="WallObject.cs" t="Include" />
                 <e p="WallResouceAssets.cs" t="Include" />
                 <e p="WallVisual.cs" t="Include" />
               </e>
@@ -1554,6 +1554,7 @@
                   <e p="Trash.cs" t="Include" />
                   <e p="TreeObject.cs" t="Include" />
                   <e p="WaterBasin.cs" t="Include" />
+                  <e p="WaterBucket.cs" t="Include" />
                   <e p="WaterWell.cs" t="Include" />
                   <e p="Wheelbarrow.cs" t="Include" />
                   <e p="WoodPile.cs" t="Include" />

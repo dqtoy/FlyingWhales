@@ -30,8 +30,7 @@ public class MeteorVisual : MonoBehaviour {
         BurningSource bs = new BurningSource(InnerMapManager.Instance.currentlyShowingLocation);
         for (int i = 0; i < traitables.Count; i++) {
             ITraitable traitable = traitables[i];
-            if (traitable is TileObject) {
-                TileObject obj = traitable as TileObject;
+            if (traitable is TileObject obj) {
                 GameManager.Instance.CreateExplodeEffectAt(obj.gridTileLocation);
                 if (obj.tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
                     obj.AdjustHP(-obj.currentHP);
@@ -39,21 +38,13 @@ public class MeteorVisual : MonoBehaviour {
                         continue; //object was destroyed, do not add burning trait
                     }
                 }
-            } 
-            // else if (traitable is SpecialToken) {
-            //     SpecialToken token = traitable as SpecialToken;
-            //     GameManager.Instance.CreateExplodeEffectAt(token.gridTileLocation);
-            //     token.AdjustHP(-token.currentHP);
-            //     if (token.gridTileLocation == null) {
-            //         continue; //object was destroyed, do not add burning trait
-            //     }
-            // } 
-            else if (traitable is Character) {
-                Character character = traitable as Character;
+            } else if (traitable is Character character) {
                 GameManager.Instance.CreateExplodeEffectAt(character.gridTileLocation);
                 character.AdjustHP(-(int)(character.maxHP * 0.4f), true);
+            } else {
+                traitable.AdjustHP(-traitable.currentHP);
             }
-            if (Random.Range(0, 100) < 60) {
+            if (traitable.currentHP > 0 && Random.Range(0, 100) < 60) {
                 if (traitable.traitContainer.HasTrait("Flammable") &&
                     !traitable.traitContainer.HasTrait("Burning", "Burnt", "Wet", "Fireproof")) {
                     Burning burning = new Burning();
