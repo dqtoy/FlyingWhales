@@ -22,10 +22,10 @@ namespace Traits {
         //}
         public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
             if (targetPOI is Character) {
-                string debugLog = characterThatWillDoJob.name + " saw " + targetPOI.name + " and has " + name;
+                string debugLog = $"{characterThatWillDoJob.name} saw {targetPOI.name} and has {name}";
                 debugLog += "\n-20% chance to trigger Angered interrupt if saw an Enemy or Rival";
                 int chance = UnityEngine.Random.Range(0, 100);
-                debugLog += "\n-Roll: " + chance;
+                debugLog += $"\n-Roll: {chance}";
                 if (chance < 20) {
                     Character targetCharacter = targetPOI as Character;
                     if (characterThatWillDoJob.relationshipContainer.IsEnemiesWith(targetCharacter)) {

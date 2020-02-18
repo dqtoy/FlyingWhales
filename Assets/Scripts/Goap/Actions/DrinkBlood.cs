@@ -27,9 +27,9 @@ public class DrinkBlood : GoapAction {
         SetState("Drink Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
-        string costLog = "\n" + name + " " + target.nameWithID + ":";
+        string costLog = $"\n{name} {target.nameWithID}:";
         int cost = UtilityScripts.Utilities.rng.Next(50, 61);
-        costLog += " +" + cost + "(Initial)";
+        costLog += $" +{cost}(Initial)";
         if(target is Character) {
             Character targetCharacter = target as Character;
             if (targetCharacter.traitContainer.HasTrait("Vampiric")) {

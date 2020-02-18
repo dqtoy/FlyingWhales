@@ -8,7 +8,7 @@ public class InvadeBehaviour : CharacterBehaviourComponent {
         priority = 0;
     }
     public override bool TryDoBehaviour(Character character, ref string log) {
-        log += "\n-" + character.name + " will invade";
+        log += $"\n-{character.name} will invade";
         if (character.gridTileLocation.buildSpotOwner.hexTileOwner != null && character.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile == character.behaviourComponent.harassInvadeRaidTarget) {
             log += "\n-Already in the target settlement";
             log += "\n-Roam";

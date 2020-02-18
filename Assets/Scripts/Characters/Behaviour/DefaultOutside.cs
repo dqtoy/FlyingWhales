@@ -10,21 +10,21 @@ public class DefaultOutside : CharacterBehaviourComponent {
     public override bool TryDoBehaviour(Character character, ref string log) {
         if ((character.currentStructure.structureType == STRUCTURE_TYPE.WORK_AREA || character.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS || 
             character.currentStructure.structureType == STRUCTURE_TYPE.CEMETERY || character.currentStructure.structureType == STRUCTURE_TYPE.CITY_CENTER) && character.isAtHomeRegion) {
-            log += "\n-" + character.name + " is in the Work Settlement/Wilderness/Cemetery/City Center of home location";
+            log += $"\n-{character.name} is in the Work Settlement/Wilderness/Cemetery/City Center of home location";
 
             log += "\n-If it is Morning or Afternoon, 25% chance to enter Stroll Outside Mode";
             TIME_IN_WORDS currentTimeOfDay = GameManager.GetCurrentTimeInWordsOfTick(character);
             if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.LUNCH_TIME || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON) {
-                log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
+                log += $"\n  -Time of Day: {currentTimeOfDay}";
                 int chance = UnityEngine.Random.Range(0, 100);
-                log += "\n  -RNG roll: " + chance;
+                log += $"\n  -RNG roll: {chance}";
                 if (chance < 25) {
-                    log += "\n  -Morning or Afternoon: " + character.name + " will enter Stroll Outside State";
+                    log += $"\n  -Morning or Afternoon: {character.name} will enter Stroll Outside State";
                     character.PlanIdleStrollOutside(); //character.currentStructure
                     return true;
                 }
             } else {
-                log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
+                log += $"\n  -Time of Day: {currentTimeOfDay}";
             }
             // log += "\n-Otherwise, if it is Morning or Afternoon or Early Night, and the character has a positive relationship with someone currently Paralyzed or Catatonic, 30% chance to Check Out one at random";
             // if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON || currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT) {
@@ -45,7 +45,7 @@ public class DefaultOutside : CharacterBehaviourComponent {
             //     log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
             // }
             log += "\n-Otherwise, return home";
-            log += "\n  -" + character.name + " will do action Return Home";
+            log += $"\n  -{character.name} will do action Return Home";
             character.PlanIdleReturnHome();
             return true;
         }

@@ -50,12 +50,14 @@ public class GoapActionState {
     public Log CreateDescriptionLog(Character actor, IPointOfInterest poiTarget, ActualGoapNode goapNode) {
         string actionName = parentAction.goapName;
         string stateNameLowercase = name.ToLower();
-        if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", actionName, stateNameLowercase + "_description")) {
-            Log _descriptionLog = new Log(GameManager.Instance.Today(), "GoapAction", actionName, stateNameLowercase + "_description", goapNode);
+        if (LocalizationManager.Instance.HasLocalizedValue("GoapAction", actionName,
+            $"{stateNameLowercase}_description")) {
+            Log _descriptionLog = new Log(GameManager.Instance.Today(), "GoapAction", actionName,
+                $"{stateNameLowercase}_description", goapNode);
             goapNode.action.AddFillersToLog(_descriptionLog, goapNode);
             return _descriptionLog;
         } else {
-            Debug.LogWarning(this.name + " does had problems creating it's description log");
+            Debug.LogWarning($"{this.name} does had problems creating it's description log");
         }
         return null;
     }
@@ -127,7 +129,7 @@ public class GoapActionState {
     //}
 
     public override string ToString() {
-        return name + " " + parentAction.ToString();
+        return $"{name} {parentAction}";
     }
 }
 

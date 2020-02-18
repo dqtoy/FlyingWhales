@@ -125,7 +125,7 @@ public class JobQueue {
         if (jobsInQueue.Remove(job)) {
             job.UnassignJob(shouldDoAfterEffect, reason);
             string ownerName = owner.name;
-            string removeLog = job.name + " has been removed from " + ownerName + " job queue.";
+            string removeLog = $"{job.name} has been removed from {ownerName} job queue.";
             //removeLog += "\nIs Personal: " + (character != null ? character.name : "False");
             //removeLog += "\nAssigned Character: " + (job.assignedCharacter != null ? job.assignedCharacter.name : "None");
             //if(job is GoapPlanJob) {

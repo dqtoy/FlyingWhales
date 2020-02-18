@@ -142,7 +142,8 @@ namespace EZObjectPools
         {
             if (Template == null)
             {
-                Debug.LogError("EZ Object Pool: " + name + ": Template GameObject is null! Make sure you assigned a template either in the inspector or in your scripts.");
+                Debug.LogError(
+                    $"EZ Object Pool: {name}: Template GameObject is null! Make sure you assigned a template either in the inspector or in your scripts.");
                 return;
             }
 
@@ -168,7 +169,8 @@ namespace EZObjectPools
         {
             if (ObjectList.Count == 0)
             {
-                throw new Exception("EZ Object Pool " + PoolName + ", the pool has not been instantiated but you are trying to retrieve an object!");
+                throw new Exception(
+                    $"EZ Object Pool {PoolName}, the pool has not been instantiated but you are trying to retrieve an object!");
             }
 
             int lastIndex = AvailableObjects.Count - 1;
@@ -178,7 +180,8 @@ namespace EZObjectPools
                 if (ReferenceEquals(AvailableObjects[lastIndex], null))
                 {
                     obj = null;
-                    throw new Exception("EZObjectPool " + PoolName + " has missing objects in its pool! Are you accidentally destroying any GameObjects retrieved from the pool?");
+                    throw new Exception(
+                        $"EZObjectPool {PoolName} has missing objects in its pool! Are you accidentally destroying any GameObjects retrieved from the pool?");
                     // return false;
                 }
 
@@ -215,7 +218,8 @@ namespace EZObjectPools
         {
             if (ObjectList.Count == 0)
             {
-                Debug.LogError("EZ Object Pool " + PoolName + ", the pool has not been instantiated but you are trying to retrieve an object!");
+                Debug.LogError(
+                    $"EZ Object Pool {PoolName}, the pool has not been instantiated but you are trying to retrieve an object!");
             }
 
             int lastIndex = AvailableObjects.Count - 1;
@@ -224,7 +228,8 @@ namespace EZObjectPools
             {
                 if (AvailableObjects[lastIndex] == null)
                 {
-                    Debug.LogError("EZObjectPool " + PoolName + " has missing objects in its pool! Are you accidentally destroying any GameObjects retrieved from the pool?");
+                    Debug.LogError(
+                        $"EZObjectPool {PoolName} has missing objects in its pool! Are you accidentally destroying any GameObjects retrieved from the pool?");
                     return;
                 }
 

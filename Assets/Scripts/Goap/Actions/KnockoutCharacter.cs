@@ -24,7 +24,7 @@ public class KnockoutCharacter : GoapAction {
         SetState("Knockout Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
-        string costLog = "\n" + name + " " + target.nameWithID + ":";
+        string costLog = $"\n{name} {target.nameWithID}:";
         int cost = 0;
         if (target is Character) {
             Character targetCharacter = target as Character;
@@ -35,7 +35,7 @@ public class KnockoutCharacter : GoapAction {
                 costLog += " +15(Friend/Close/Acquaintance/Same Faction/Settlement)";
             } else if (job.jobType == JOB_TYPE.UNDERMINE) {
                 cost += UtilityScripts.Utilities.rng.Next(80, 121);
-                costLog += " +" + cost + "(Undermine)";
+                costLog += $" +{cost}(Undermine)";
             } else {
                 cost += 2000;
                 costLog += " +2000(Else)";

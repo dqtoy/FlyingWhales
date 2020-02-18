@@ -22,7 +22,7 @@ namespace Traits {
         public Grudge(Character target) {
             targetCharacter = target;
             name = "Grudge";
-            description = "This character holds a grudge against " + targetCharacter.name;
+            description = $"This character holds a grudge against {targetCharacter.name}";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = 0;
@@ -30,7 +30,7 @@ namespace Traits {
         }
 
         public override string GetNameInUI(ITraitable traitable) {
-            return "Grudge: " + traitable.name;
+            return $"Grudge: {traitable.name}";
         }
     }
 }

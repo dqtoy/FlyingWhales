@@ -50,9 +50,9 @@ public class ReplaceChoiceItem : PooledObject {
     private void UpdateTextInfo() {
         if (obj is Summon) {
             Summon summon = obj as Summon;
-            string text = summon.name + " (" + summon.summonType.SummonName() + ")";
-            text += "\nLevel: " + summon.level.ToString();
-            text += "\nDescription: " + PlayerManager.Instance.player.GetSummonDescription(summon.summonType);
+            string text = $"{summon.name} ({summon.summonType.SummonName()})";
+            text += $"\nLevel: {summon.level}";
+            text += $"\nDescription: {PlayerManager.Instance.player.GetSummonDescription(summon.summonType)}";
             info.text = text;
         } 
         // else if (obj is Artifact) {
@@ -65,17 +65,17 @@ public class ReplaceChoiceItem : PooledObject {
         else if (obj is PlayerSpell) {
             PlayerSpell action = obj as PlayerSpell;
             string text = action.name;
-            text += "\nSlot Level: " + action.level;
+            text += $"\nSlot Level: {action.level}";
             info.text = text;
         } else if (obj is CombatAbility) {
             CombatAbility ability = obj as CombatAbility;
             string text = ability.name;
-            text += "\nDescription: " + ability.description;
+            text += $"\nDescription: {ability.description}";
             info.text = text;
         } else if (obj is Minion) {
             Minion minion = obj as Minion;
             string text = minion.character.name;
-            text += "\nLvl. " + minion.character.level + " " + minion.character.raceClassName;
+            text += $"\nLvl. {minion.character.level} {minion.character.raceClassName}";
             info.text = text;
         }
     }

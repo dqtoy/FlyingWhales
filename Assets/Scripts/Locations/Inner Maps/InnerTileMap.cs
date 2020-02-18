@@ -120,32 +120,7 @@ namespace Inner_Maps {
         }
 
         #endregion
-        
-        #region Loading
-        protected void LoadGrid(SaveDataAreaInnerTileMap data) {
-            map = new LocationGridTile[width, height];
-            allTiles = new List<LocationGridTile>();
-            allEdgeTiles = new List<LocationGridTile>();
 
-            Dictionary<string, TileBase> tileDb = InnerMapManager.Instance.GetTileAssetDatabase();
-
-            for (int x = 0; x < width; x++) {
-                for (int y = 0; y < height; y++) {
-                    //groundTilemap.SetTile(new Vector3Int(x, y, 0), GetOutsideFloorTileForArea(settlement));
-                    LocationGridTile tile = data.map[x][y].Load(groundTilemap, this, tileDb);
-                    allTiles.Add(tile);
-                    if (tile.IsAtEdgeOfWalkableMap()) {
-                        allEdgeTiles.Add(tile);
-                    }
-                    map[x, y] = tile;
-                }
-            }
-            allTiles.ForEach(x => x.FindNeighbours(map));
-
-            groundTilemap.RefreshAllTiles();
-        }
-        #endregion
-        
         #region Visuals
         public void ClearAllTilemaps() {
             for (var i = 0; i < _allTilemaps.Length; i++) {
@@ -333,7 +308,7 @@ namespace Inner_Maps {
                     if (to.structure != null) {
                         to.structure.AddCharacterAtLocation(character);
                     } else {
-                        throw new Exception(character.name + " is going to tile " + to.ToString() + " which does not have a structure!");
+                        throw new Exception($"{character.name} is going to tile {to} which does not have a structure!");
                     }
                 }
                 Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.REMOVE_STATUS, character as IPointOfInterest);
@@ -379,7 +354,7 @@ namespace Inner_Maps {
         public void Open() { }
         public void Close() { }
         public void OnMapGenerationFinished() {
-            name = location.name + "'s Inner Map";
+            name = $"{location.name}'s Inner Map";
             worldUiCanvas.worldCamera = InnerMapCameraMove.Instance.innerMapsCamera;
             var orthographicSize = InnerMapCameraMove.Instance.innerMapsCamera.orthographicSize;
             cameraBounds = new Vector4 {x = -185.8f}; //x - minX, y - minY, z - maxX, w - maxY 
@@ -569,9 +544,13 @@ namespace Inner_Maps {
         }
         public List<LocationGridTile> GetTiles(Point size, LocationGridTile startingTile, List<LocationGridTile> mustBeIn = null) {
             List<LocationGridTile> tiles = new List<LocationGridTile>();
+
+            // int upperBoundX = map.GetUpperBound(0);
+            // int upperBoundY = map.GetUpperBound(1);
+            
             for (int x = startingTile.localPlace.x; x < startingTile.localPlace.x + size.X; x++) {
                 for (int y = startingTile.localPlace.y; y < startingTile.localPlace.y + size.Y; y++) {
-                    if (x > map.GetUpperBound(0) || y > map.GetUpperBound(1)) {
+                    if (x >= width || y >= height) {
                         continue; //skip
                     }
                     if (mustBeIn != null && !mustBeIn.Contains(map[x, y])) {

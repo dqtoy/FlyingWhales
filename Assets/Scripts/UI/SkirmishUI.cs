@@ -41,8 +41,8 @@ public class SkirmishUI : MonoBehaviour {
         this.char1WinRate = char1WinRate;
         this.char2WinRate = char2WinRate;
 
-        char1WinRateText.text = this.char1WinRate + "%";
-        char2WinRateText.text = this.char2WinRate + "%";
+        char1WinRateText.text = $"{this.char1WinRate}%";
+        char2WinRateText.text = $"{this.char2WinRate}%";
 
         fightBtn.gameObject.SetActive(true);
         okBtn.gameObject.SetActive(false);
@@ -54,24 +54,24 @@ public class SkirmishUI : MonoBehaviour {
     private void UpdateChar1() {
         char1Portrait.GeneratePortrait(char1);
         string text = char1.name;
-        text += "\nLvl." + char1.level + " " + char1.raceClassName;
+        text += $"\nLvl.{char1.level} {char1.raceClassName}";
         char1Text.text = text;
     }
     private void UpdateChar2() {
         char2Portrait.GeneratePortrait(char2);
         string text = char2.name;
-        text += "\nLvl." + char2.level + " " + char2.raceClassName;
+        text += $"\nLvl.{char2.level} {char2.raceClassName}";
         char2Text.text = text;
     }
     private void Results() {
         int chance = UnityEngine.Random.Range(0, 100);
         if(chance < char1WinRate) {
             //You won
-            resultText.text = "You won! " + char1.name + " gains a level!";
+            resultText.text = $"You won! {char1.name} gains a level!";
             char1.LevelUp();
         } else {
             //You lost
-            resultText.text = "You lost! " + char1.name + " is injured!";
+            resultText.text = $"You lost! {char1.name} is injured!";
             if(char1.minion != null) {
                 char1.minion.AddTrait("Injured", char2);
             } else {

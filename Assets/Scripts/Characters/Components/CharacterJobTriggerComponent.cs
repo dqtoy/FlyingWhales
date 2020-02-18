@@ -569,6 +569,9 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 		    if (!_owner.jobQueue.HasJob(JOB_TYPE.ROAM_AROUND_TILE)) {
                 LocationGridTile chosenTile = tile;
                 if (chosenTile == null) {
+	                if (_owner.gridTileLocation.buildSpotOwner.isPartOfParentRegionMap == false) {
+		                return false;
+	                }
                     HexTile chosenTerritory = _owner.gridTileLocation.buildSpotOwner.hexTileOwner;
                     BuildingSpot chosenBuildSpot = chosenTerritory.ownedBuildSpots[UnityEngine.Random.Range(0, chosenTerritory.ownedBuildSpots.Length)];
                     chosenTile = chosenBuildSpot.tilesInTerritory[UnityEngine.Random.Range(0, chosenBuildSpot.tilesInTerritory.Length)];

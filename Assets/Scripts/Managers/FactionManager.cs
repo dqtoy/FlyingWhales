@@ -148,7 +148,7 @@ public class FactionManager : MonoBehaviour {
             usedEmblems.Add(currSprite);
             return currSprite;
         }
-        throw new System.Exception("There are no more emblems for faction: " + faction.name);
+        throw new System.Exception($"There are no more emblems for faction: {faction.name}");
     }
     public Sprite GetFactionEmblem(int emblemIndex) {
         return _factionEmblems[emblemIndex];
@@ -241,7 +241,7 @@ public class FactionManager : MonoBehaviour {
         if (faction1Rel == faction2Rel) {
             return faction1Rel;
         }
-        throw new System.Exception(faction1.name + " does not have the same relationship object as " + faction2.name + "!");
+        throw new System.Exception($"{faction1.name} does not have the same relationship object as {faction2.name}!");
     }
     public int GetAverageFactionLevel() {
         int activeFactionsCount = allFactions.Where(x => x.isActive).Count();
@@ -259,7 +259,7 @@ public class FactionManager : MonoBehaviour {
             FactionIdeology data = System.Activator.CreateInstance(type) as FactionIdeology;
             return data;
         } else {
-            throw new System.Exception(ideologyStr + " has no data!");
+            throw new System.Exception($"{ideologyStr} has no data!");
         }
     }
     #endregion

@@ -24,7 +24,7 @@ public class ProvokeMenu : MonoBehaviour {
 
         this.targetCharacter = targetCharacter;
         this.actor = actor;
-        instructionLbl.text = "Provoke " + targetCharacter.name;
+        instructionLbl.text = $"Provoke {targetCharacter.name}";
 
         UtilityScripts.Utilities.DestroyChildren(dialogScrollView.content);
 
@@ -102,9 +102,10 @@ public class ProvokeMenu : MonoBehaviour {
                     targetText = "I should, but I rather let them fight each other.";
                 }
             } else {
-                actorText = chosenCharacter.name + " is living " + UtilityScripts.Utilities.GetPronounString(chosenCharacter.gender, PRONOUN_TYPE.POSSESSIVE, false)
-                    + " best life. Are you just gonna let your enemy be happy?";
-                targetText = "I will not allow it! I'll take " + UtilityScripts.Utilities.GetPronounString(chosenCharacter.gender, PRONOUN_TYPE.OBJECTIVE, false) + " down with me!";
+                actorText =
+                    $"{chosenCharacter.name} is living {UtilityScripts.Utilities.GetPronounString(chosenCharacter.gender, PRONOUN_TYPE.POSSESSIVE, false)} best life. Are you just gonna let your enemy be happy?";
+                targetText =
+                    $"I will not allow it! I'll take {UtilityScripts.Utilities.GetPronounString(chosenCharacter.gender, PRONOUN_TYPE.OBJECTIVE, false)} down with me!";
 
                 //GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob("Undermine Enemy", new GoapEffect() { conditionType = GOAP_EFFECT_CONDITION.HAS_TRAIT_EFFECT, conditionKey = "Negative", targetPOI = chosenCharacter });
                 //job.SetCannotOverrideJob(true);

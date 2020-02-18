@@ -41,13 +41,13 @@ public class ObjectPoolManager : MonoBehaviour {
     public GameObject InstantiateObjectFromPool(string poolName, Vector3 position, Quaternion rotation, Transform parent = null) {
         poolName = poolName.ToUpper();
         if (!allObjectPools.ContainsKey(poolName)) {
-            throw new Exception("Object Pool does not have key " + poolName);
+            throw new Exception($"Object Pool does not have key {poolName}");
         }
         GameObject instantiatedObj = null;
         EZObjectPool objectPoolToUse = allObjectPools[poolName];
 
         if(ReferenceEquals(objectPoolToUse, null)) {
-            throw new Exception("Cannot find an object pool with name " + poolName);
+            throw new Exception($"Cannot find an object pool with name {poolName}");
         } else {
             if(objectPoolToUse.TryGetNextObject(Vector3.zero, rotation, out instantiatedObj)) {
                 if(ReferenceEquals(parent, null) == false) {

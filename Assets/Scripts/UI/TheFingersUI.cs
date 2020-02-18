@@ -214,7 +214,7 @@ public class TheFingersUI : MonoBehaviour {
         if(chosenLeader == null) {
             leaderNameLbl.text = string.Empty;
         } else {
-            leaderNameLbl.text = character.name + ", " + character.raceClassName;
+            leaderNameLbl.text = $"{character.name}, {character.raceClassName}";
         }
     }
     private void PopulateIdeologiesPickerUI() {

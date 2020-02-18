@@ -86,9 +86,9 @@ public class POIData {
     }
 
     public override string ToString() {
-        string name = poiType.ToString() + " " + poiID + ".";
+        string name = $"{poiType} {poiID}.";
         if (poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
-            name += " Tile Object Type: " + tileObjectType.ToString();
+            name += $" Tile Object Type: {tileObjectType}";
         }
         // else if (poiType == POINT_OF_INTEREST_TYPE.ITEM) {
         //     name += " Item Type: " + specialTokenType.ToString();

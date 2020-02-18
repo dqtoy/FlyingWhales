@@ -8,7 +8,7 @@ public class RaidBehaviour : CharacterBehaviourComponent {
         priority = 0;
     }
     public override bool TryDoBehaviour(Character character, ref string log) {
-        log += "\n-" + character.name + " will raid";
+        log += $"\n-{character.name} will raid";
         if (character.gridTileLocation.buildSpotOwner.hexTileOwner != null && character.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile == character.behaviourComponent.harassInvadeRaidTarget) {
             log += "\n-Already in the target settlement";
             if (character.marker.inVisionTileObjects.Count > 0) {
@@ -23,7 +23,7 @@ public class RaidBehaviour : CharacterBehaviourComponent {
                 if(target != null) {
                     log += "\n-Has artifact or resource pile in vision, 50% to destroy tile object";
                     int roll = UnityEngine.Random.Range(0, 100);
-                    log += "\n-Roll: " + roll;
+                    log += $"\n-Roll: {roll}";
                     if (roll < 50) {
                         log += "\n-Destroying a random tile object";
                         if (target is Artifact) {

@@ -21,7 +21,7 @@ public class MetalPile : ResourcePile {
     //    }
     //}
     public override string ToString() {
-        return "Metal Pile " + id.ToString();
+        return $"Metal Pile {id}";
     }
     public override bool CanBeReplaced() {
         return true;

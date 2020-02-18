@@ -237,7 +237,7 @@ public class CharacterInfoUI : UIMenu {
                 }
                 additionalText += "Faction Leader";
             }
-            nameLbl.text += " (" + additionalText + ")";
+            nameLbl.text += $" ({additionalText})";
         }
         UpdateThoughtBubble();
     }
@@ -379,8 +379,8 @@ public class CharacterInfoUI : UIMenu {
                 Trait trait = activeCharacter.traitContainer.allTraits[index];
                 string traitDescription = trait.description;
                 if (trait.canBeTriggered) {
-                    traitDescription += "\n" + trait.GetRequirementDescription(activeCharacter) +
-                    "\n\n<b>Effect</b>: " + trait.GetTriggerFlawEffectDescription(activeCharacter, "flaw_effect");
+                    traitDescription +=
+                        $"\n{trait.GetRequirementDescription(activeCharacter)}\n\n<b>Effect</b>: {trait.GetTriggerFlawEffectDescription(activeCharacter, "flaw_effect")}";
                 }
 
                 StartCoroutine(HoverOutTraitAfterClick());//Quick fix because tooltips do not disappear. Issue with hover out action in label not being called when other collider goes over it.
@@ -522,8 +522,8 @@ public class CharacterInfoUI : UIMenu {
 
     #region For Testing
     public void ShowCharacterTestingInfo() {
-        string summary = "Home structure: " + activeCharacter.homeStructure?.ToString() ?? "None";
-        summary = $"{summary}{("\nCurrent structure: " + activeCharacter.currentStructure?.ToString() ?? "None")}";
+        string summary = $"Home structure: {activeCharacter.homeStructure}" ?? "None";
+        summary = $"{summary}{($"\nCurrent structure: {activeCharacter.currentStructure}" ?? "None")}";
         summary = $"{summary}{("\nPOI State: " + activeCharacter.state.ToString())}";
         summary = $"{summary}{("\nDo Not Get Hungry: " + activeCharacter.needsComponent.doNotGetHungry.ToString())}";
         summary = $"{summary}{("\nDo Not Get Tired: " + activeCharacter.needsComponent.doNotGetTired.ToString())}";
@@ -547,8 +547,8 @@ public class CharacterInfoUI : UIMenu {
         summary = $"{summary}{("\nAttack Range: " + activeCharacter.characterClass.attackRange.ToString())}";
         summary = $"{summary}{("\nAttack Speed: " + activeCharacter.attackSpeed.ToString())}";
         if (activeCharacter.stateComponent.currentState != null) {
-            summary = $"{summary}{"\nCurrent State: " + activeCharacter.stateComponent.currentState.ToString()}";
-            summary = $"{summary}{"\n\tDuration in state: " + activeCharacter.stateComponent.currentState.currentDuration.ToString() + "/" + activeCharacter.stateComponent.currentState.duration.ToString()}";
+            summary = $"{summary}{$"\nCurrent State: {activeCharacter.stateComponent.currentState}"}";
+            summary = $"{summary}{$"\n\tDuration in state: {activeCharacter.stateComponent.currentState.currentDuration}/{activeCharacter.stateComponent.currentState.duration}"}";
         }
         
         summary += "\nBehaviour Components: ";
@@ -561,7 +561,7 @@ public class CharacterInfoUI : UIMenu {
         if (activeCharacter.jobQueue.jobsInQueue.Count > 0) {
             for (int i = 0; i < activeCharacter.jobQueue.jobsInQueue.Count; i++) {
                 JobQueueItem poi = activeCharacter.jobQueue.jobsInQueue[i];
-                summary += poi + ", ";
+                summary += $"{poi}, ";
             }
         } else {
             summary += "None";
@@ -607,9 +607,8 @@ public class CharacterInfoUI : UIMenu {
             }
             
             relationshipNamesLbl.text += $"<link=\"{actualIndex.ToString()}\">{relationshipData.targetName}</link>\n";
-            relationshipValuesLbl.text += $"<link=\"{actualIndex.ToString()}\"><color=\"{ OpinionColor(activeCharacter.relationshipContainer.GetTotalOpinion(targetID)) }\"> " +
-                                          $"{GetOpinionText(activeCharacter.relationshipContainer.GetTotalOpinion(targetID))}</color> " +
-                                          $"<color=\"{OpinionColor(opinionOfOther)}\">({opinionText})</color></link>\n";
+            relationshipValuesLbl.text +=
+                $"<link=\"{actualIndex.ToString()}\"><color=\"{OpinionColor(activeCharacter.relationshipContainer.GetTotalOpinion(targetID))}\"> {GetOpinionText(activeCharacter.relationshipContainer.GetTotalOpinion(targetID))}</color> <color=\"{OpinionColor(opinionOfOther)}\">({opinionText})</color></link>\n";
         }
     }
     public void OnHoverRelationshipValue(object obj) {
@@ -639,22 +638,25 @@ public class CharacterInfoUI : UIMenu {
         IRelationshipData targetData = _activeCharacter.relationshipContainer.GetRelationshipDataWith(targetID);
         Character target = CharacterManager.Instance.GetCharacterByID(targetID);
 
-        string summary = activeCharacter.name + "'s opinion of " + targetData.targetName;
+        string summary = $"{activeCharacter.name}'s opinion of {targetData.targetName}";
         summary += "\n---------------------";
         Dictionary<string, int> opinions = activeCharacter.relationshipContainer.GetOpinionData(targetID).allOpinions;
         foreach (KeyValuePair<string, int> kvp in opinions) {
-            summary += "\n" + kvp.Key + ": " + "<color=" + OpinionColor(kvp.Value) + ">" + GetOpinionText(kvp.Value) + "</color>";
+            summary += $"\n{kvp.Key}: <color={OpinionColor(kvp.Value)}>{GetOpinionText(kvp.Value)}</color>";
         }
         summary += "\n---------------------";
-        summary += "\nTotal: <color=" + OpinionColor(targetData.opinions.totalOpinion) + ">" + GetOpinionText(activeCharacter.relationshipContainer.GetTotalOpinion(targetID)) + "</color>";
+        summary +=
+            $"\nTotal: <color={OpinionColor(targetData.opinions.totalOpinion)}>{GetOpinionText(activeCharacter.relationshipContainer.GetTotalOpinion(targetID))}</color>";
         if (target != null) {
             int opinionOfOther = target.relationshipContainer.GetTotalOpinion(activeCharacter);
-            summary += "\n" + targetData.targetName + "'s opinion of " + activeCharacter.name + ": <color=" + OpinionColor(opinionOfOther) + ">" + GetOpinionText(opinionOfOther) + "</color>";
+            summary +=
+                $"\n{targetData.targetName}'s opinion of {activeCharacter.name}: <color={OpinionColor(opinionOfOther)}>{GetOpinionText(opinionOfOther)}</color>";
         } else {
-            summary += "\n" + targetData.targetName + "'s opinion of " + activeCharacter.name + ": ???</color>";
+            summary += $"\n{targetData.targetName}'s opinion of {activeCharacter.name}: ???</color>";
         }
         
-        summary += "\n\nCompatibility: " + RelationshipManager.Instance.GetCompatibilityBetween(activeCharacter, targetID);
+        summary +=
+            $"\n\nCompatibility: {RelationshipManager.Instance.GetCompatibilityBetween(activeCharacter, targetID)}";
         UIManager.Instance.ShowSmallInfo(summary);
     }
     public void HideRelationshipData() {
@@ -668,9 +670,9 @@ public class CharacterInfoUI : UIMenu {
     }
     private string GetOpinionText(int number) {
         if (number < 0) {
-            return "" + number;
+            return $"{number}";
         }
-        return "+" + number;
+        return $"+{number}";
     }
     private void OnClickCharacter(object obj) {
         if (obj is string) {
@@ -736,10 +738,10 @@ public class CharacterInfoUI : UIMenu {
     }
     public void ShowMoodTooltip() {
         string summary = $"{_activeCharacter.moodComponent.moodValue.ToString()}/100 ({_activeCharacter.moodComponent.moodState})";
-        summary += $"\nChance to trigger Major Mental Break " +
-                   $"{_activeCharacter.moodComponent.currentCriticalMoodEffectChance.ToString()}";
-        summary += $"\nChance to trigger Minor Mental Break " +
-                   $"{_activeCharacter.moodComponent.currentLowMoodEffectChance.ToString()}";
+        summary +=
+            $"\nChance to trigger Major Mental Break {_activeCharacter.moodComponent.currentCriticalMoodEffectChance.ToString()}";
+        summary +=
+            $"\nChance to trigger Minor Mental Break {_activeCharacter.moodComponent.currentLowMoodEffectChance.ToString()}";
         UIManager.Instance.ShowSmallInfo(summary);
     }
     public void HideSmallInfo() {

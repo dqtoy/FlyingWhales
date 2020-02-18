@@ -8,7 +8,8 @@ public class DivineInterventionQuest : Quest {
 
     public DivineInterventionQuest(Faction factionOwner, Region region) : base(factionOwner, region) {
         name = "Divine Intervention Quest";
-        description = factionOwner.name + " has begun the ritual that will call for the Goddess's Return. If the ritual finishes, this Divine Intervention will cleanse the world of all the Ruinarch's corruption and banish the demons back to the Nether Realm.";
+        description =
+            $"{factionOwner.name} has begun the ritual that will call for the Goddess's Return. If the ritual finishes, this Divine Intervention will cleanse the world of all the Ruinarch's corruption and banish the demons back to the Nether Realm.";
         SetDuration(PlayerDB.DIVINE_INTERVENTION_DURATION);
         SetCurrentDuration(0);
     }
@@ -205,7 +206,7 @@ public class DivineInterventionQuest : Quest {
     #region Utilities
     private void CheckIfJobWillExpire(JobQueueItem item) {
         if (item.assignedCharacter == null && item.assignedCharacter != null && item.assignedCharacter.jobQueue.jobsInQueue.Contains(item)) {
-            Debug.Log(GameManager.Instance.TodayLogString() + item.jobType.ToString() + " expired.");
+            Debug.Log($"{GameManager.Instance.TodayLogString()}{item.jobType} expired.");
             item.assignedCharacter.jobQueue.RemoveJobInQueue(item);
         }
     }

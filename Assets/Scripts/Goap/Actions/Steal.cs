@@ -28,9 +28,9 @@ public class Steal : GoapAction {
         SetState("Steal Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
-        string costLog = "\n" + name + " " + target.nameWithID + ":";
+        string costLog = $"\n{name} {target.nameWithID}:";
         int cost = UtilityScripts.Utilities.rng.Next(300, 351);
-        costLog += " +" + cost + "(Initial)";
+        costLog += $" +{cost}(Initial)";
         if (actor.traitContainer.HasTrait("Kleptomaniac")) {
             cost += -200;
             costLog += " -200(Kleptomaniac)";

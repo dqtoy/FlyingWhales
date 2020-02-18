@@ -58,7 +58,7 @@ namespace Traits {
             if (responsibleCharacter == null) {
                 return description;
             }
-            return "This character was killed by " + responsibleCharacter.name;
+            return $"This character was killed by {responsibleCharacter.name}";
         }
         #endregion
     }

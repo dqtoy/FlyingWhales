@@ -26,7 +26,7 @@ public class FirstAidCharacter : GoapAction {
         SetState("First Aid Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
-        string costLog = "\n" + name + " " + target.nameWithID + ": +10(Constant)";
+        string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
         return 10;
     }
@@ -91,7 +91,8 @@ public class FirstAidCharacter : GoapAction {
             goapNode.actor.UnobtainItem(potion);
         } else {
             //the actor does not have a healing potion, log for now
-            goapNode.actor.logComponent.PrintLogErrorIfActive(goapNode.actor.name + " does not have a healing potion for first aid! Injured and Unconscious was still removed, but thought you should know.");
+            goapNode.actor.logComponent.PrintLogErrorIfActive(
+                $"{goapNode.actor.name} does not have a healing potion for first aid! Injured and Unconscious was still removed, but thought you should know.");
         }
         //**After Effect 3**: Allow movement of Target
         //(poiTarget as Character).marker.pathfindingAI.AdjustDoNotMove(-1);

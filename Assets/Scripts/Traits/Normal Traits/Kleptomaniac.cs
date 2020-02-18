@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Inner_Maps.Location_Structures;
 using UnityEngine;
-using UnityEngine.WSA;
 using UtilityScripts;
+
 namespace Traits {
     public class Kleptomaniac : Trait {
         public List<Character> noItemCharacters { get; private set; }
@@ -49,7 +49,7 @@ namespace Traits {
             string testingData = string.Empty;
             testingData += "Known character'S with no items: \n";
             for (int i = 0; i < noItemCharacters.Count; i++) {
-                testingData += noItemCharacters[i].name + ", ";
+                testingData += $"{noItemCharacters[i].name}, ";
             }
             return testingData;
         }

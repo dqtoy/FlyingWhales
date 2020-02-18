@@ -15,7 +15,8 @@ namespace Interrupts {
             int randomHpToLose = UnityEngine.Random.Range(1, 6);
             float percentMaxHPToLose = randomHpToLose / 100f;
             int actualHPToLose = Mathf.CeilToInt(actor.maxHP * percentMaxHPToLose);
-            Debug.Log("Stumble of " + actor.name + " percent: " + percentMaxHPToLose + ", max hp: " + actor.maxHP + ", lost hp: " + actualHPToLose);
+            Debug.Log(
+                $"Stumble of {actor.name} percent: {percentMaxHPToLose}, max hp: {actor.maxHP}, lost hp: {actualHPToLose}");
             actor.AdjustHP(-actualHPToLose);
             if (actor.currentHP <= 0) {
                 actor.Death("Stumble");

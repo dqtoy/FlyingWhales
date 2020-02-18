@@ -28,7 +28,7 @@ public class Tombstone : TileObject {
     }
 
     public override string ToString() {
-        return "Tombstone of " + character.name;
+        return $"Tombstone of {character.name}";
     }
 
     public void SetCharacter(Character character) {

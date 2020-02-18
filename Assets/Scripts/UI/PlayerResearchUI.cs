@@ -19,9 +19,9 @@ public class PlayerResearchUI : MonoBehaviour {
         if (!CanChooseMinion(character)) {
             string message = string.Empty;
             if (character.minion.isAssigned) {
-                message = character.name + " is already doing something else.";
+                message = $"{character.name} is already doing something else.";
             } else if (!character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.SPELL_SOURCE)) {
-                message = character.name + " does not have the required trait: Spell Source";
+                message = $"{character.name} does not have the required trait: Spell Source";
             }
             UIManager.Instance.ShowSmallInfo(message);
         }
@@ -72,7 +72,7 @@ public class PlayerResearchUI : MonoBehaviour {
             if (info != string.Empty) {
                 info += "\n";
             }
-            info += "Cost: " + data.manaCost.ToString() + " Mana";
+            info += $"Cost: {data.manaCost} Mana";
             UIManager.Instance.ShowSmallInfo(info);
         }
     }

@@ -23,9 +23,9 @@ public class Sing : GoapAction {
         SetState("Sing Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
-        string costLog = "\n" + name + " " + target.nameWithID + ":";
+        string costLog = $"\n{name} {target.nameWithID}:";
         int cost = UtilityScripts.Utilities.rng.Next(90, 131);
-        costLog += " +" + cost + "(Initial)";
+        costLog += $" +{cost}(Initial)";
         int numOfTimesActionDone = actor.jobComponent.GetNumOfTimesActionDone(this);
         if (numOfTimesActionDone > 5) {
             cost += 2000;
@@ -33,7 +33,7 @@ public class Sing : GoapAction {
         } else {
             int timesCost = 10 * numOfTimesActionDone;
             cost += timesCost;
-            costLog += " +" + timesCost + "(10 x Times Played)";
+            costLog += $" +{timesCost}(10 x Times Played)";
         }
         Trait trait = actor.traitContainer.GetNormalTrait<Trait>("Music Hater", "Music Lover");
         if (trait != null) {

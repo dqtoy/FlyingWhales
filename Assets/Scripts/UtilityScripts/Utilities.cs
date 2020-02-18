@@ -50,15 +50,16 @@ namespace UtilityScripts {
 // #if UNITY_EDITOR
 //                 return Application.dataPath + "/Resources/Data/";
 // #elif UNITY_STANDALONE
-            return Application.streamingAssetsPath + "/Data/";
+            return $"{Application.streamingAssetsPath}/Data/";
 // #endif
             }
         }
-        public static string worldConfigsSavePath { get { return Application.persistentDataPath + "/Saves/"; } }
-        public static string gameSavePath { get { return Application.persistentDataPath + "/GameSaves/"; } }
-        public static string worldConfigsTemplatesPath { get { return Application.streamingAssetsPath + "/WorldTemplates/"; } }
+        public static string worldConfigsSavePath { get { return $"{Application.persistentDataPath}/Saves/"; } }
+        public static string gameSavePath { get { return $"{Application.persistentDataPath}/GameSaves/"; } }
+        public static string worldConfigsTemplatesPath { get { return
+            $"{Application.streamingAssetsPath}/WorldTemplates/"; } }
         public static string worldConfigFileExt { get { return ".worldConfig"; } }
-        public static string portraitsSavePath { get { return dataPath + "PortraitSettings/"; } }
+        public static string portraitsSavePath { get { return $"{dataPath}PortraitSettings/"; } }
         public static string portraitFileExt { get { return ".portraitSetting"; } }
 
         private static Dictionary<string, string> pluralExceptions = new Dictionary<string, string>() {
@@ -426,9 +427,9 @@ namespace UtilityScripts {
                             wordToReplace += ", ";
                         }
                         if(objectLog[i].obj != null) {
-                            wordToReplace += "<b><link=" + '"' + i.ToString() + '"' + ">" + objectLog[i].value + "</link></b>";
+                            wordToReplace += $"<b><link={'"'}{i}{'"'}>{objectLog[i].value}</link></b>";
                         } else {
-                            wordToReplace += "<b>" + objectLog[i].value + "</b>";
+                            wordToReplace += $"<b>{objectLog[i].value}</b>";
                         }
                         listCount++;
                     }
@@ -449,9 +450,9 @@ namespace UtilityScripts {
                 for (int i = 0; i < objectLog.Count; i++) {
                     if (objectLog[i].identifier == identifier) {
                         if (objectLog[i].obj != null) {
-                            wordToReplace = "<b><link=" + '"' + i.ToString() + '"' + ">" + objectLog[i].value + "</link></b>";
+                            wordToReplace = $"<b><link={'"'}{i}{'"'}>{objectLog[i].value}</link></b>";
                         } else {
-                            wordToReplace = "<b>" + objectLog[i].value + "</b>";
+                            wordToReplace = $"<b>{objectLog[i].value}</b>";
                         }
                         break;
                     }
@@ -582,7 +583,7 @@ namespace UtilityScripts {
             foreach (KeyValuePair<string, LOG_IDENTIFIER> item in logIdentifiers) {
                 if (item.Value == identifier) {
                     string key = item.Key;
-                    key = "%" + key;
+                    key = $"%{key}";
                     if (identifier.ToString().Contains("PRONOUN")) {
                         key += "b";
                         return key;
@@ -832,7 +833,7 @@ namespace UtilityScripts {
             string[] words = System.Text.RegularExpressions.Regex.Split(s, @"(?<!^)(?=[A-Z])");
             string normalizedString = Utilities.FirstLetterToUpperCase(words.First());
             for (int i = 1; i < words.Length; i++) {
-                normalizedString += " " + words[i];
+                normalizedString += $" {words[i]}";
             }
             return normalizedString;
         }
@@ -1052,24 +1053,24 @@ namespace UtilityScripts {
                            !s.EndsWith("iy", StringComparison.OrdinalIgnoreCase) &&
                            !s.EndsWith("oy", StringComparison.OrdinalIgnoreCase) &&
                            !s.EndsWith("uy", StringComparison.OrdinalIgnoreCase)) {
-                    return s.Substring(0, s.Length - 1) + "ies";
+                    return $"{s.Substring(0, s.Length - 1)}ies";
                 } else if (s.EndsWith("us", StringComparison.InvariantCultureIgnoreCase)) {
                     //http://en.wikipedia.org/wiki/Plural_form_of_words_ending_in_-us
-                    return s + "es";
+                    return $"{s}es";
                 } else if (s.EndsWith("ss", StringComparison.InvariantCultureIgnoreCase)) {
-                    return s + "es";
+                    return $"{s}es";
                 } else if (s.EndsWith("s", StringComparison.InvariantCultureIgnoreCase)) {
                     return s;
                 } else if (s.EndsWith("x", StringComparison.InvariantCultureIgnoreCase) ||
                            s.EndsWith("ch", StringComparison.InvariantCultureIgnoreCase) ||
                            s.EndsWith("sh", StringComparison.InvariantCultureIgnoreCase)) {
-                    return s + "es";
+                    return $"{s}es";
                 } else if (s.EndsWith("f", StringComparison.InvariantCultureIgnoreCase) && s.Length > 1) {
-                    return s.Substring(0, s.Length - 1) + "ves";
+                    return $"{s.Substring(0, s.Length - 1)}ves";
                 } else if (s.EndsWith("fe", StringComparison.InvariantCultureIgnoreCase) && s.Length > 2) {
-                    return s.Substring(0, s.Length - 2) + "ves";
+                    return $"{s.Substring(0, s.Length - 2)}ves";
                 } else {
-                    return s + "s";
+                    return $"{s}s";
                 }
             }
         }
@@ -1208,11 +1209,11 @@ namespace UtilityScripts {
                 T key = kvp.Key;
                 int value = kvp.Value;
                 if (key is Character) {
-                    actionWeightsSummary += "\n" + (key as Character).name + " - " + kvp.Value.ToString();
+                    actionWeightsSummary += $"\n{(key as Character).name} - {kvp.Value}";
                 } else if (key is BaseLandmark) {
-                    actionWeightsSummary += "\n" + (key as BaseLandmark).landmarkName + " - " + kvp.Value.ToString();
+                    actionWeightsSummary += $"\n{(key as BaseLandmark).landmarkName} - {kvp.Value}";
                 } else {
-                    actionWeightsSummary += "\n" + kvp.Key.ToString() + " - " + kvp.Value.ToString();
+                    actionWeightsSummary += $"\n{kvp.Key} - {kvp.Value}";
                 }
 
             }
@@ -1224,11 +1225,11 @@ namespace UtilityScripts {
                 T key = kvp.Key;
                 float value = kvp.Value;
                 if (key is Character) {
-                    actionWeightsSummary += "\n" + (key as Character).name + " - " + kvp.Value.ToString();
+                    actionWeightsSummary += $"\n{(key as Character).name} - {kvp.Value}";
                 } else if (key is BaseLandmark) {
-                    actionWeightsSummary += "\n" + (key as BaseLandmark).landmarkName + " - " + kvp.Value.ToString();
+                    actionWeightsSummary += $"\n{(key as BaseLandmark).landmarkName} - {kvp.Value}";
                 } else {
-                    actionWeightsSummary += "\n" + kvp.Key.ToString() + " - " + kvp.Value.ToString();
+                    actionWeightsSummary += $"\n{kvp.Key} - {kvp.Value}";
                 }
 
             }
@@ -1237,9 +1238,9 @@ namespace UtilityScripts {
         public static string GetWeightsSummary<T>(Dictionary<T, Dictionary<T, int>> weights, string title = "Weights Summary: ") {
             string actionWeightsSummary = title;
             foreach (KeyValuePair<T, Dictionary<T, int>> kvp in weights) {
-                actionWeightsSummary += "\n" + kvp.Key.ToString() + " : ";
+                actionWeightsSummary += $"\n{kvp.Key} : ";
                 foreach (KeyValuePair<T, int> pair in kvp.Value) {
-                    actionWeightsSummary += "\n     " + pair.Key.ToString() + " - " + pair.Value.ToString();
+                    actionWeightsSummary += $"\n     {pair.Key} - {pair.Value}";
                 }
             }
             return actionWeightsSummary;

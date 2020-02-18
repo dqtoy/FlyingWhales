@@ -19,7 +19,7 @@ namespace Traits {
         public PatrollingCharacter(Character target) : base() {
             _targetCharacter = target;
             name = "Patrolling Character";
-            description = "This character is guarding " + _targetCharacter.name;
+            description = $"This character is guarding {_targetCharacter.name}";
             type = TRAIT_TYPE.ABILITY;
             effect = TRAIT_EFFECT.POSITIVE;
             

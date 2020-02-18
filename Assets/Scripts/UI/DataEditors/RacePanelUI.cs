@@ -116,10 +116,12 @@ public class RacePanelUI : MonoBehaviour {
             return;
 #endif
         }
-        string path = UtilityScripts.Utilities.dataPath + "RaceSettings/" + raceOptions.options[raceOptions.value].text + ".json";
+        string path =
+            $"{UtilityScripts.Utilities.dataPath}RaceSettings/{raceOptions.options[raceOptions.value].text}.json";
         if (UtilityScripts.Utilities.DoesFileExist(path)) {
 #if UNITY_EDITOR
-            if (EditorUtility.DisplayDialog("Overwrite Race", "A race with name " + raceOptions.options[raceOptions.value].text + " already exists. Replace with this race?", "Yes", "No")) {
+            if (EditorUtility.DisplayDialog("Overwrite Race",
+                $"A race with name {raceOptions.options[raceOptions.value].text} already exists. Replace with this race?", "Yes", "No")) {
                 File.Delete(path);
                 SaveRaceJson(path);
             }
@@ -143,12 +145,13 @@ public class RacePanelUI : MonoBehaviour {
         //Re-import the file to update the reference in the editor
         UnityEditor.AssetDatabase.ImportAsset(path);
 #endif
-        Debug.Log("Successfully saved race at " + path);
+        Debug.Log($"Successfully saved race at {path}");
     }
 
     private void LoadRace() {
 #if UNITY_EDITOR
-        string filePath = EditorUtility.OpenFilePanel("Select Race", UtilityScripts.Utilities.dataPath + "RaceSettings/", "json");
+        string filePath = EditorUtility.OpenFilePanel("Select Race",
+            $"{UtilityScripts.Utilities.dataPath}RaceSettings/", "json");
 
         if (!string.IsNullOrEmpty(filePath)) {
             string dataAsJson = File.ReadAllText(filePath);

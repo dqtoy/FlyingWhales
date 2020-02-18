@@ -137,7 +137,7 @@ public class CharacterStateComponent {
     /// <param name="stopMovement">Should this character stop his/her current movement when exiting his/her current state?/param>
     public void ExitCurrentState() {
         if (currentState == null) {
-            throw new System.Exception(character.name + " is trying to exit his/her current state but it is null");
+            throw new System.Exception($"{character.name} is trying to exit his/her current state but it is null");
         }
 
         //if(!(this.currentState != null && character.currentActionNode != null)) { //&& character.currentActionNode.parentPlan == null -- removed this?

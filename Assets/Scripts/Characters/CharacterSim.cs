@@ -60,7 +60,7 @@ public class CharacterSim : ICharacterSim {
         get { return _name; }
     }
     public string idName {
-        get { return "[" + _id + "]" + this._name; }
+        get { return $"[{_id}]{this._name}"; }
     }
     public string className {
         get { return _className; }
@@ -170,7 +170,8 @@ public class CharacterSim : ICharacterSim {
     public void InitializeSim() {
         _id = UtilityScripts.Utilities.SetID(this);
         ConstructClass();
-        _raceSetting = JsonUtility.FromJson<RaceSetting>(System.IO.File.ReadAllText(UtilityScripts.Utilities.dataPath + "RaceSettings/" + _raceName + ".json"));
+        _raceSetting = JsonUtility.FromJson<RaceSetting>(System.IO.File.ReadAllText(
+            $"{UtilityScripts.Utilities.dataPath}RaceSettings/{_raceName}.json"));
         _battleOnlyTracker = new CharacterBattleOnlyTracker();
         _battleTracker = new CharacterBattleTracker();
         _elementalWeaknesses = new Dictionary<ELEMENT, float>(CombatSimManager.Instance.elementsChanceDictionary);
@@ -254,7 +255,7 @@ public class CharacterSim : ICharacterSim {
 
     #region Utilities
     private void ConstructClass() {
-        string path = UtilityScripts.Utilities.dataPath + "CharacterClasses/" + _className + ".json";
+        string path = $"{UtilityScripts.Utilities.dataPath}CharacterClasses/{_className}.json";
         _characterClass = JsonUtility.FromJson<CharacterClass>(System.IO.File.ReadAllText(path));
     }
     private void AllocateStats() {

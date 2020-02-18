@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
@@ -9,7 +8,6 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
-using UnityEngine.Tilemaps;
 using UtilityScripts;
 namespace Inner_Maps {
     public class InnerMapManager : MonoBehaviour {
@@ -45,10 +43,8 @@ namespace Inner_Maps {
 
         [Header("Tilemap Assets")] 
         public InnerMapAssetManager assetManager;
-        // [SerializeField] private ItemAsseteDictionary itemTiles;
         [SerializeField] private TileObjectAssetDictionary tileObjectTiles;
         [SerializeField] private WallResourceAssetDictionary wallResourceAssets; //wall assets categorized by resource.
-        [SerializeField] private List<TileBase> allTileAssets;
 
         //Settlement Map Objects
         [FormerlySerializedAs("areaMapObjectFactory")] public MapVisualFactory mapObjectFactory;
@@ -74,7 +70,7 @@ namespace Inner_Maps {
         #region Monobehaviours
         private void Awake() {
             Instance = this;
-            templatePath = Application.dataPath + "/StreamingAssets/Structure Templates/";
+            templatePath = $"{Application.dataPath}/StreamingAssets/Structure Templates/";
         }
         public void LateUpdate() {
             if (GameManager.showAllTilesTooltip) {
@@ -94,39 +90,38 @@ namespace Inner_Maps {
             if (keyCode == KeyCode.Mouse0) {
                 if (UIManager.Instance.IsMouseOnUI() == false && ReferenceEquals(currentlyShowingMap, null) == false) {
                     LocationGridTile clickedTile = GetTileFromMousePosition();
-                    List<ISelectable> selectables = GetSelectablesOnTile(clickedTile);
-                    if (selectables.Count > 0) {
-                        if (lastClickedTile != clickedTile) {
-                            //if last tile that was clicked is not the tile that has been clicked, then instead of 
-                            //looping through the selectables, just select the first one.
-                            selectables[0].LeftSelectAction();  
-                        } else {
-                            ISelectable objToSelect = null;
-                            for (int i = 0; i < selectables.Count; i++) {
-                                ISelectable currentSelectable = selectables[i];
-                                if (currentSelectable.IsCurrentlySelected()) {
-                                    //set next selectable in list to be selected.
-                                    objToSelect = CollectionUtilities.GetNextElementCyclic(selectables, i);
-                                    break;
+                    if (TryGetSelectablesOnTile(clickedTile, out var selectables)) {
+                        if (selectables.Count > 0) {
+                            if (lastClickedTile != clickedTile) {
+                                //if last tile that was clicked is not the tile that has been clicked, then instead of 
+                                //looping through the selectables, just select the first one.
+                                selectables[0].LeftSelectAction();  
+                            } else {
+                                ISelectable objToSelect = null;
+                                for (int i = 0; i < selectables.Count; i++) {
+                                    ISelectable currentSelectable = selectables[i];
+                                    if (currentSelectable.IsCurrentlySelected()) {
+                                        //set next selectable in list to be selected.
+                                        objToSelect = CollectionUtilities.GetNextElementCyclic(selectables, i);
+                                        break;
+                                    }
                                 }
+                                if (objToSelect == null) {
+                                    objToSelect = selectables[0];
+                                }
+                                objToSelect.LeftSelectAction();    
                             }
-                            if (objToSelect == null) {
-                                objToSelect = selectables[0];
-                            }
-                            objToSelect.LeftSelectAction();    
+                        } else {
+                            Messenger.Broadcast(Signals.HIDE_MENUS);    
                         }
-                    } else {
-                        Messenger.Broadcast(Signals.HIDE_MENUS);    
+                        lastClickedTile = clickedTile;    
                     }
-                    lastClickedTile = clickedTile;    
                 }
             } else if (keyCode == KeyCode.Mouse1) {
                 if (UIManager.Instance.IsMouseOnUI() == false && ReferenceEquals(currentlyShowingMap, null) == false) {
                     LocationGridTile clickedTile = GetTileFromMousePosition();
                     ISelectable selectable = GetFirstSelectableOnTile(clickedTile);
-                    if (selectable != null) {
-                        selectable.RightSelectAction();
-                    }
+                    selectable?.RightSelectAction();
                 }
             }
         }
@@ -164,8 +159,8 @@ namespace Inner_Maps {
             }
             return null;
         }
-        private List<ISelectable> GetSelectablesOnTile(LocationGridTile tile) {
-            List<ISelectable> selectables = new List<ISelectable>();
+        private bool TryGetSelectablesOnTile(LocationGridTile tile, out List<ISelectable> selectables) {
+            selectables = new List<ISelectable>();
             
             PointerEventData pointer = new PointerEventData(EventSystem.current);
             pointer.position = Input.mousePosition;
@@ -184,6 +179,8 @@ namespace Inner_Maps {
                         if (visual.selectable != null) {
                             selectables.Add(visual.selectable);    
                         }
+                    } else if (go.gameObject.CompareTag("Map_Click_Blocker")) {
+                        return false; //click was blocked
                     }
                 }
             }
@@ -197,7 +194,7 @@ namespace Inner_Maps {
             if (tile.buildSpotOwner.isPartOfParentRegionMap) {
                 selectables.Add(tile.buildSpotOwner.hexTileOwner);
             }
-            return selectables;
+            return true;
         }
         private void Update() {
             if (currentlyHoveredPoi != null && ReferenceEquals(currentlyHoveredPoi.mapObjectVisual, null) == false) {
@@ -270,7 +267,7 @@ namespace Inner_Maps {
             location.innerMap.CleanUp();
             innerMaps.Remove(location.innerMap);
             GameObject.Destroy(location.innerMap.gameObject);
-            Debug.LogError("Settlement map of " + location.name + " is destroyed!");
+            Debug.LogError($"Settlement map of {location.name} is destroyed!");
         }
         #endregion
 
@@ -314,92 +311,6 @@ namespace Inner_Maps {
         }
         #endregion
 
-        #region Structure Templates
-        public List<StructureTemplate> GetStructureTemplates(STRUCTURE_TYPE structure) {
-            List<StructureTemplate> templates = new List<StructureTemplate>();
-            string path = templatePath + structure.ToString() + "/";
-            if (Directory.Exists(path)) {
-                DirectoryInfo info = new DirectoryInfo(path);
-                FileInfo[] files = info.GetFiles();
-                for (int i = 0; i < files.Length; i++) {
-                    FileInfo currInfo = files[i];
-                    if (currInfo.Extension.Equals(".json")) {
-                        string dataAsJson = File.ReadAllText(currInfo.FullName);
-                        StructureTemplate loaded = JsonUtility.FromJson<StructureTemplate>(dataAsJson);
-                        loaded.name = currInfo.Name;
-                        templates.Add(loaded);
-                    }
-                }
-            }
-            return templates;
-        }
-        public List<StructureTemplate> GetStructureTemplates(string folderName, List<string> except = null) {
-            List<StructureTemplate> templates = new List<StructureTemplate>();
-            string path = templatePath + folderName + "/";
-            if (Directory.Exists(path)) {
-                DirectoryInfo info = new DirectoryInfo(path);
-                FileInfo[] files = info.GetFiles();
-                for (int i = 0; i < files.Length; i++) {
-                    FileInfo currInfo = files[i];
-                    if (currInfo.Extension.Equals(".json")) {
-                        string dataAsJson = File.ReadAllText(currInfo.FullName);
-                        StructureTemplate loaded = JsonUtility.FromJson<StructureTemplate>(dataAsJson);
-                        loaded.name = currInfo.Name;
-                        if (except != null && except.Contains(loaded.name)) {
-                            continue; //skip
-                        }
-                        templates.Add(loaded);
-                    }
-                }
-            }
-            return templates;
-        }
-        /// <summary>
-        /// Get Tile asset based on name. NOTE: Should only be used on the start of the game when building the settlement maps.
-        /// </summary>
-        /// <param name="name">Name of the asset</param>
-        public TileBase GetTileAsset(string name, bool logMissing = false) {
-            //List<TileBase> allTileAssets = LoadAllTilesAssets();
-            for (int i = 0; i < allTileAssets.Count; i++) {
-                TileBase currTile = allTileAssets[i];
-                if (currTile.name == name) {
-                    return currTile;
-                }
-            }
-            if (logMissing) {
-                Debug.LogWarning("There is no tilemap asset with name " + name);
-            }
-            return null;
-        }
-        /// <summary>
-        /// Convert all tile list to a dictionary for easier accessing of data. Meant to be used when a function is expected to 
-        /// heavily use the tile database, to prevent constant looping of tile database list.
-        /// </summary>
-        /// <returns></returns>
-        public Dictionary<string, TileBase> GetTileAssetDatabase() {
-            Dictionary<string, TileBase> tileDB = new Dictionary<string, TileBase>();
-            for (int i = 0; i < allTileAssets.Count; i++) {
-                TileBase currTile = allTileAssets[i];
-                tileDB.Add(currTile.name, currTile);
-            }
-            return tileDB;
-        }
-        public TileBase TryGetTileAsset(string name, Dictionary<string, TileBase> assets) {
-            if (assets.ContainsKey(name)) {
-                return assets[name];
-            }
-            return null;
-        }
-        private List<TileBase> LoadAllTilesAssets() {
-            return Resources.LoadAll("Tile Map Assets", typeof(TileBase)).Cast<TileBase>().ToList();
-        }
-        [ContextMenu("Load Assets")]
-        public void LoadTileAssets() {
-            allTileAssets = LoadAllTilesAssets().Distinct().ToList();
-            allTileAssets.Sort((x, y) => string.Compare(x.name, y.name));
-        }
-        #endregion
-
         #region For Testing
         public void ShowTileData(LocationGridTile tile, Character character = null) {
             if (tile == null) {
@@ -426,68 +337,49 @@ namespace Inner_Maps {
             summary = $"{summary}\nTile Traits: ";
             if (tile.genericTileObject != null && tile.normalTraits.Count > 0) {
                 summary = $"{summary}\n";
-                for (int i = 0; i < tile.normalTraits.Count; i++) {
-                    summary = $"{summary}|{tile.normalTraits[i].name}|";
-                }
-
+                summary = tile.normalTraits.Aggregate(summary, (current, t) => $"{current}|{t.name}|");
             } else {
                 summary = $"{summary}None";
             }
 
-            IPointOfInterest poi = tile.objHere;
-            if (poi == null) {
-                poi = tile.genericTileObject;
-            }
-            summary = summary + ($"\nContent: {poi}" ?? "None");
+            IPointOfInterest poi = tile.objHere ?? tile.genericTileObject;
+            summary = $"{summary}\nContent: {poi}";
             if (poi != null) {
                 summary = $"{summary}\nHP: {poi.currentHP.ToString()}/{poi.maxHP.ToString()}";
                 summary = $"{summary}\n\tObject State: {poi.state.ToString()}";
                 summary = $"{summary}\n\tIs Available: {poi.IsAvailable().ToString()}";
 
-                if (poi is TileObject) {
-                    summary += "\n\tCharacter Owner: " + (poi as TileObject).characterOwner?.name ?? "None";
-                    summary += "\n\tFaction Owner: " + (poi as TileObject).factionOwner?.name ?? "None";
+                if (poi is TileObject tileObject) {
+                    summary = $"{summary}\n\tCharacter Owner: {tileObject.characterOwner?.name}" ?? "None";
+                    summary = $"{summary}\n\tFaction Owner: {tileObject.factionOwner?.name}" ?? "None";
                     
-                    if (poi is TreeObject) {
-                        summary = $"{summary}\n\tYield: {(poi as TreeObject).yield.ToString()}";
-                    } else if (poi is Ore) {
-                        summary = $"{summary}\n\tYield: {(poi as Ore).yield.ToString()}";
-                    } else if (poi is ResourcePile) {
-                        summary = $"{summary}\n\tResource in Pile: {(poi as ResourcePile).resourceInPile.ToString()}";
-                    }  else if (poi is Table) {
-                        summary = $"{summary}\n\tFood in Table: {(poi as Table).food.ToString()}";
+                    switch (tileObject) {
+                        case TreeObject treeObject:
+                            summary = $"{summary}\n\tYield: {treeObject.yield.ToString()}";
+                            break;
+                        case Ore ore:
+                            summary = $"{summary}\n\tYield: {ore.yield.ToString()}";
+                            break;
+                        case ResourcePile pile:
+                            summary = $"{summary}\n\tResource in Pile: {pile.resourceInPile.ToString()}";
+                            break;
+                        case Table table:
+                            summary = $"{summary}\n\tFood in Table: {table.food.ToString()}";
+                            break;
                     }
                 }
                 summary = $"{summary}\n\tAdvertised Actions: ";
-                if (poi.advertisedActions.Count > 0) {
-                    for (int i = 0; i < poi.advertisedActions.Count; i++) {
-                        summary = $"{summary}|{poi.advertisedActions[i].ToString()}|";
-                    }
-                } else {
-                    summary = $"{summary}None";
-                }
+                summary = poi.advertisedActions.Count > 0 ? poi.advertisedActions.Aggregate(summary, (current, t) => $"{current}|{t.ToString()}|") : $"{summary}None";
+                
                 summary = $"{summary}\n\tObject Traits: ";
-                if (poi.traitContainer.allTraits.Count > 0) {
-                    for (int i = 0; i < poi.traitContainer.allTraits.Count; i++) {
-                        summary =
-                            $"{summary}\n\t\t- {poi.traitContainer.allTraits[i].name} - {poi.traitContainer.allTraits[i].GetTestingData()}";
-                    }
-                } else {
-                    summary = $"{summary}None";
-                }
+                summary = poi.traitContainer.allTraits.Count > 0 ? poi.traitContainer.allTraits.Aggregate(summary, (current, t) => $"{current}\n\t\t- {t.name} - {t.GetTestingData()}") : $"{summary}None";
+                
                 summary = $"{summary}\n\tJobs Targeting this: ";
-                if (poi.allJobsTargetingThis.Count > 0) {
-                    for (int i = 0; i < poi.allJobsTargetingThis.Count; i++) {
-                        summary = $"{summary}\n\t\t- {poi.allJobsTargetingThis[i]}";
-                    }
-                } else {
-                    summary = $"{summary}None";
-                }
+                summary = poi.allJobsTargetingThis.Count > 0 ? poi.allJobsTargetingThis.Aggregate(summary, (current, t) => $"{current}\n\t\t- {t}") : $"{summary}None";
             }
             if (tile.structure != null) {
                 summary =
-                    $"{summary}\nStructure: {tile.structure}, Tiles: {tile.structure.tiles.Count.ToString()}, " +
-                    $"Has Owner: {tile.structure.IsOccupied().ToString()}, Is Interior: {tile.structure.isInterior.ToString()} ";
+                    $"{summary}\nStructure: {tile.structure}, Tiles: {tile.structure.tiles.Count.ToString()}, Has Owner: {tile.structure.IsOccupied().ToString()}, Is Interior: {tile.structure.isInterior.ToString()} ";
                 summary = $"{summary}\nCharacters at {tile.structure}: ";
                 if (tile.structure.charactersHere.Count > 0) {
                     for (int i = 0; i < tile.structure.charactersHere.Count; i++) {
@@ -515,8 +407,8 @@ namespace Inner_Maps {
 #endif
         }
         public void ShowCharacterData(Character character) {
-            string summary = "<b>" + character.name + "</b>";
-            summary += "\n\t" + GetCharacterHoverData(character) + "\n";
+            string summary = $"<b>{character.name}</b>";
+            summary = $"{summary}\n\t{GetCharacterHoverData(character)}\n";
             UIManager.Instance.ShowSmallInfo(summary);
         }
         private string GetCharacterHoverData(Character character) {
@@ -534,66 +426,25 @@ namespace Inner_Maps {
                 $"{summary} <b>Base Structure:</b>{(character.trapStructure.structure != null ? character.trapStructure.structure.ToString() : "None")}";
 
             summary = $"{summary}\n\tDestination Tile: ";
-            if (character.marker.destinationTile == null) {
-                summary = $"{summary}None";
-            } else {
-                summary =
-                    $"{summary}{character.marker.destinationTile} at {character.marker.destinationTile.parentMap.location.name}";
-            }
+            summary = character.marker.destinationTile == null ? $"{summary}None" : $"{summary}{character.marker.destinationTile} at {character.marker.destinationTile.parentMap.location.name}";
+            
             summary = $"{summary}\n\tPOI's in Vision: ";
-            if (character.marker.inVisionPOIs.Count > 0) {
-                for (int i = 0; i < character.marker.inVisionPOIs.Count; i++) {
-                    IPointOfInterest poi = character.marker.inVisionPOIs[i];
-                    summary = $"{summary}{poi}, ";
-                }
-            } else {
-                summary = $"{summary}None";
-            }
+            summary = character.marker.inVisionPOIs.Count > 0 ? character.marker.inVisionPOIs.Aggregate(summary, (current, poi) => $"{current}{poi}, ") : $"{summary}None";
+            
             summary = $"{summary}\n\tCharacters in Vision: ";
-            if (character.marker.inVisionCharacters.Count > 0) {
-                for (int i = 0; i < character.marker.inVisionCharacters.Count; i++) {
-                    Character poi = character.marker.inVisionCharacters.ElementAt(i);
-                    summary = $"{summary}{poi.name}, ";
-                }
-            } else {
-                summary = $"{summary}None";
-            }
+            summary = character.marker.inVisionCharacters.Count > 0 ? character.marker.inVisionCharacters.Select((t, i) => (Character) character.marker.inVisionCharacters.ElementAt(i)).Aggregate(summary, (current, poi) => $"{current}{poi.name}, ") : $"{summary}None";
+            
             summary = $"{summary}\n\tPOI's in Range but different structures: ";
-            if (character.marker.visionCollision.poisInRangeButDiffStructure.Count > 0) {
-                for (int i = 0; i < character.marker.visionCollision.poisInRangeButDiffStructure.Count; i++) {
-                    IPointOfInterest poi = character.marker.visionCollision.poisInRangeButDiffStructure[i];
-                    summary = $"{summary}{poi}, ";
-                }
-            } else {
-                summary = $"{summary}None";
-            }
+            summary = character.marker.visionCollision.poisInRangeButDiffStructure.Count > 0 ? character.marker.visionCollision.poisInRangeButDiffStructure.Aggregate(summary, (current, poi) => $"{current}{poi}, ") : $"{summary}None";
+            
             summary = $"{summary}\n\tHostiles in Range: ";
-            if (character.combatComponent.hostilesInRange.Count > 0) {
-                for (int i = 0; i < character.combatComponent.hostilesInRange.Count; i++) {
-                    IPointOfInterest poi = character.combatComponent.hostilesInRange[i];
-                    summary = $"{summary}{poi.name}, ";
-                }
-            } else {
-                summary = $"{summary}None";
-            }
+            summary = character.combatComponent.hostilesInRange.Count > 0 ? character.combatComponent.hostilesInRange.Aggregate(summary, (current, poi) => $"{current}{poi.name}, ") : $"{summary}None";
+            
             summary = $"{summary}\n\tAvoid in Range: ";
-            if (character.combatComponent.avoidInRange.Count > 0) {
-                for (int i = 0; i < character.combatComponent.avoidInRange.Count; i++) {
-                    IPointOfInterest poi = character.combatComponent.avoidInRange[i];
-                    summary = $"{summary}{poi.name}, ";
-                }
-            } else {
-                summary = $"{summary}None";
-            }
+            summary = character.combatComponent.avoidInRange.Count > 0 ? character.combatComponent.avoidInRange.Aggregate(summary, (current, poi) => $"{current}{poi.name}, ") : $"{summary}None";
+            
             summary = $"{summary}\n\tPersonal Job Queue: ";
-            if (character.jobQueue.jobsInQueue.Count > 0) {
-                for (int i = 0; i < character.jobQueue.jobsInQueue.Count; i++) {
-                    JobQueueItem poi = character.jobQueue.jobsInQueue[i];
-                    summary = $"{summary}{poi}, ";
-                }
-            } else {
-                summary = $"{summary}None";
-            }
+            summary = character.jobQueue.jobsInQueue.Count > 0 ? character.jobQueue.jobsInQueue.Aggregate(summary, (current, poi) => $"{current}{poi}, ") : $"{summary}None";
             return summary;
         }
         #endregion
@@ -615,7 +466,8 @@ namespace Inner_Maps {
             GetBounds(shiftedSettings, out minX, out maxX, out minY, out maxY);
 
             if (minX < 0 || minY < 0) {
-                throw new System.Exception("Minimum bounds of shifted settings has negative value! X: " + minX.ToString() + ", Y: " + minY.ToString());
+                throw new System.Exception(
+                    $"Minimum bounds of shifted settings has negative value! X: {minX}, Y: {minY}");
             }
             s.size = new Point(maxX, maxY);
 
@@ -653,7 +505,8 @@ namespace Inner_Maps {
             }
 
             if (count != (maxX * maxY)) {
-                throw new System.Exception("Total tiles are inconsistent with size! Count is: " + count.ToString() + ". MaxX is: " + maxX.ToString() + ". MaxY is: " + maxY.ToString());
+                throw new System.Exception(
+                    $"Total tiles are inconsistent with size! Count is: {count}. MaxX is: {maxX}. MaxY is: {maxY}");
             }
 
             foreach (KeyValuePair<int, Dictionary<int, LocationGridTileSettings>> kvp in shiftedSettings) {
@@ -791,7 +644,7 @@ namespace Inner_Maps {
                 T obj = System.Activator.CreateInstance(type) as T;
                 return obj;
             }
-            throw new System.Exception("Could not create new instance of tile object of type " + tileObjectType.ToString());
+            throw new System.Exception($"Could not create new instance of tile object of type {tileObjectType}");
         }
         public TILE_OBJECT_TYPE GetTileObjectTypeFromTileAsset(Sprite sprite) {
             int index = sprite.name.IndexOf("#", StringComparison.Ordinal);

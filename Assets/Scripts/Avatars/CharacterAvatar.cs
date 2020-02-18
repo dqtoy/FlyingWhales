@@ -85,7 +85,7 @@ public class CharacterAvatar : MonoBehaviour {
         // SetSprite(_party.owner.role.roleType);
         SetIsPlaceCharacterAsTileObject(true);
 
-        this.name = party.owner.name + "'s Avatar";
+        this.name = $"{party.owner.name}'s Avatar";
         
         GameObject portraitGO = UIManager.Instance.InstantiateUIObject(CharacterManager.Instance.characterPortraitPrefab.name, this.transform);
         characterPortrait = portraitGO.GetComponent<CharacterPortrait>();
@@ -253,7 +253,8 @@ public class CharacterAvatar : MonoBehaviour {
             }
         }
         if (path == null) {
-            Debug.LogError(_party.name + ". There is no path from " + _party.owner.currentRegion.name + " to " + targetLocation.name, this);
+            Debug.LogError(
+                $"{_party.name}. There is no path from {_party.owner.currentRegion.name} to {targetLocation.name}", this);
             return;
         }
         if (path.Count > 0) {
@@ -288,7 +289,7 @@ public class CharacterAvatar : MonoBehaviour {
     public virtual void OnMoveFinished() {
 		if(this.path == null){
 			Debug.LogError (GameManager.Instance.Today ().ToStringDate());
-			Debug.LogError ("Location: " + _party.owner.currentRegion.name);
+			Debug.LogError ($"Location: {_party.owner.currentRegion.name}");
 		}
         //if (_trackTarget != null) {
         //    if(_trackTarget.currentParty.specificLocation.id != targetLocation.id) {

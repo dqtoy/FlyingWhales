@@ -91,7 +91,8 @@ public class Minion {
             character.SetPOIState(POI_STATE.INACTIVE);
 
             if (character.currentRegion == null) {
-                throw new Exception("Specific location of " + character.name + " is null! Please use command /l_character_location_history [Character Name/ID] in console menu to log character's location history. (Use '~' to show console menu)");
+                throw new Exception(
+                    $"Specific location of {character.name} is null! Please use command /l_character_location_history [Character Name/ID] in console menu to log character's location history. (Use '~' to show console menu)");
             }
             if (character.stateComponent.currentState != null) {
                 character.stateComponent.ExitCurrentState();
@@ -136,7 +137,7 @@ public class Minion {
 
             Log deathLog;
             if (_deathLog == null) {
-                deathLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "death_" + cause);
+                deathLog = new Log(GameManager.Instance.Today(), "Character", "Generic", $"death_{cause}");
                 deathLog.AddToFillers(this, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 if (responsibleCharacter != null) {
                     deathLog.AddToFillers(responsibleCharacter, responsibleCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);
@@ -152,7 +153,8 @@ public class Minion {
             } else {
                 deathLog = _deathLog;
             }
-            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(), "Minion Died: " +  UtilityScripts.Utilities.LogReplacer(deathLog), null);
+            UIManager.Instance.ShowImportantNotification(GameManager.Instance.Today(),
+                $"Minion Died: {UtilityScripts.Utilities.LogReplacer(deathLog)}", null);
             Unsummon();
         }
     }
@@ -342,7 +344,8 @@ public class Minion {
         if (assignedRegion != null) {
             if (assignedRegion.mainLandmark.specificLandmarkType.IsPlayerLandmark() || assignedRegion.mainLandmark.specificLandmarkType == LANDMARK_TYPE.NONE) {
                 //the region that this minion is assigned to is a player landmark
-                Log log = new Log(GameManager.Instance.Today(), "Character", "Minion", "busy_" + assignedRegion.mainLandmark.specificLandmarkType.ToString());
+                Log log = new Log(GameManager.Instance.Today(), "Character", "Minion",
+                    $"busy_{assignedRegion.mainLandmark.specificLandmarkType}");
                 log.AddToFillers(this.character, this.character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 log.AddToFillers(assignedRegion, assignedRegion.name, LOG_IDENTIFIER.LANDMARK_1);
                 SetBusyReason(log);

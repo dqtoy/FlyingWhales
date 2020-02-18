@@ -18,7 +18,7 @@ public class FoodPile : ResourcePile {
 
     #region Overrides
     public override string ToString() {
-        return "Food Pile " + id.ToString();
+        return $"Food Pile {id}";
     }
     public override bool CanBeReplaced() {
         return true;

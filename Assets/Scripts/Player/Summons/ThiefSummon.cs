@@ -9,7 +9,7 @@ public class ThiefSummon : Summon {
 
     #region getters/setters
     public override string worldObjectName {
-        get { return name + " (Thief)"; }
+        get { return $"{name} (Thief)"; }
     }
     #endregion
 

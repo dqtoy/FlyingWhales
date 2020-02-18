@@ -71,7 +71,7 @@ public class GenericTileObject : TileObject {
         }
     }
     public override string ToString() {
-        return "Generic Obj at tile " + gridTileLocation?.ToString();
+        return $"Generic Obj at tile {gridTileLocation}";
     }
     public override void AdjustHP(int amount, bool triggerDeath = false, object source = null) {
         if (currentHP == 0 && amount < 0) {

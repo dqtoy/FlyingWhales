@@ -126,7 +126,7 @@ public class CharacterPanelUI : MonoBehaviour {
         //}
 
         List<string> races = new List<string>();
-        string path3 = UtilityScripts.Utilities.dataPath + "RaceSettings/";
+        string path3 = $"{UtilityScripts.Utilities.dataPath}RaceSettings/";
         foreach (string file in Directory.GetFiles(path3, "*.json")) {
             races.Add(Path.GetFileNameWithoutExtension(file));
         }
@@ -196,9 +196,10 @@ public class CharacterPanelUI : MonoBehaviour {
             EditorUtility.DisplayDialog("Error", "Please specify a Character Name", "OK");
             return;
         }
-        string path = UtilityScripts.Utilities.dataPath + "CharacterSims/" + nameInput.text + ".json";
+        string path = $"{UtilityScripts.Utilities.dataPath}CharacterSims/{nameInput.text}.json";
         if (UtilityScripts.Utilities.DoesFileExist(path)) {
-            if (EditorUtility.DisplayDialog("Overwrite Character", "A character with name " + nameInput.text + " already exists. Replace with this character?", "Yes", "No")) {
+            if (EditorUtility.DisplayDialog("Overwrite Character",
+                $"A character with name {nameInput.text} already exists. Replace with this character?", "Yes", "No")) {
                 File.Delete(path);
                 SaveCharacterJson(path);
             }
@@ -222,13 +223,14 @@ public class CharacterPanelUI : MonoBehaviour {
         //Re-import the file to update the reference in the editor
         UnityEditor.AssetDatabase.ImportAsset(path);
 #endif
-        Debug.Log("Successfully saved character at " + path);
+        Debug.Log($"Successfully saved character at {path}");
 
         CombatSimManager.Instance.UpdateAllCharacters();
     }
     private void LoadCharacter() {
 #if UNITY_EDITOR
-        string filePath = EditorUtility.OpenFilePanel("Select Character", UtilityScripts.Utilities.dataPath + "CharacterSims/", "json");
+        string filePath = EditorUtility.OpenFilePanel("Select Character",
+            $"{UtilityScripts.Utilities.dataPath}CharacterSims/", "json");
 
         if (!string.IsNullOrEmpty(filePath)) {
             string dataAsJson = File.ReadAllText(filePath);
@@ -283,12 +285,12 @@ public class CharacterPanelUI : MonoBehaviour {
         return 0;
     }
     private CharacterClass GetClass(string className) {
-        string path = UtilityScripts.Utilities.dataPath + "CharacterClasses/" + className + ".json";
+        string path = $"{UtilityScripts.Utilities.dataPath}CharacterClasses/{className}.json";
         CharacterClass currentClass = JsonUtility.FromJson<CharacterClass>(System.IO.File.ReadAllText(path));
         return currentClass;
     }
     private RaceSetting GetRace(string raceName) {
-        string path = UtilityScripts.Utilities.dataPath + "RaceSettings/" + raceName + ".json";
+        string path = $"{UtilityScripts.Utilities.dataPath}RaceSettings/{raceName}.json";
         RaceSetting currentRace = JsonUtility.FromJson<RaceSetting>(System.IO.File.ReadAllText(path));
         return currentRace;
     }
@@ -369,7 +371,7 @@ public class CharacterPanelUI : MonoBehaviour {
         if (_allCombatAttributeNames != null && _allCombatAttributeNames.Count > 0) {
             combatAttributesLbl.text += _allCombatAttributeNames[0];
             for (int i = 1; i < _allCombatAttributeNames.Count; i++) {
-                combatAttributesLbl.text +=  ", " + _allCombatAttributeNames[i];
+                combatAttributesLbl.text += $", {_allCombatAttributeNames[i]}";
             }
         }
         if(string.IsNullOrEmpty(combatAttributesLbl.text)) {

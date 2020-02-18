@@ -42,14 +42,15 @@ public class POITestingUI : MonoBehaviour {
                 CreateKnockoutJob(UIManager.Instance.characterInfoUI.activeCharacter, bed.users[1]);
             }
         } else {
-            Debug.LogError(poi.name + " is not a character!");
+            Debug.LogError($"{poi.name} is not a character!");
         }
         HideUI();
     }
     public bool CreateKnockoutJob(Character character, Character targetCharacter) {
         GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.KNOCKOUT, new GoapEffect(GOAP_EFFECT_CONDITION.HAS_TRAIT, "Unconscious", false, GOAP_EFFECT_TARGET.TARGET), targetCharacter, character);
         character.jobQueue.AddJobInQueue(job);
-        character.logComponent.PrintLogIfActive("Added a KNOCKOUT Job to " + this.name + " with target " + targetCharacter.name);
+        character.logComponent.PrintLogIfActive(
+            $"Added a KNOCKOUT Job to {this.name} with target {targetCharacter.name}");
         return true;
     }
     public void ChatWithThisCharacter() {
@@ -61,7 +62,7 @@ public class POITestingUI : MonoBehaviour {
             }
             //UIManager.Instance.characterInfoUI.activeCharacter.nonActionEventsComponent.ForceChatCharacter(poi as Character);
         } else {
-            Debug.LogError(poi.name + " is not a character!");
+            Debug.LogError($"{poi.name} is not a character!");
         }
         HideUI();
     }
@@ -78,7 +79,7 @@ public class POITestingUI : MonoBehaviour {
             //    Debug.LogError("Must be affair or lover!");
             //}
         } else {
-            Debug.LogError(poi.name + " is not a character!");
+            Debug.LogError($"{poi.name} is not a character!");
         }
         HideUI();
     }
@@ -88,7 +89,7 @@ public class POITestingUI : MonoBehaviour {
             //job.SetCannotOverrideJob(true);
             //UIManager.Instance.characterInfoUI.activeCharacter.jobQueue.AddJobInQueue(job);
         } else {
-            Debug.LogError(poi.name + " is not a character!");
+            Debug.LogError($"{poi.name} is not a character!");
         }
         HideUI();
     }
@@ -97,7 +98,7 @@ public class POITestingUI : MonoBehaviour {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FULLNESS_RECOVERY_URGENT, INTERACTION_TYPE.DRINK_BLOOD, poi, UIManager.Instance.characterInfoUI.activeCharacter);
             UIManager.Instance.characterInfoUI.activeCharacter.jobQueue.AddJobInQueue(job);
         } else {
-            Debug.LogError(poi.name + " is not a character!");
+            Debug.LogError($"{poi.name} is not a character!");
         }
         HideUI();
     }
@@ -106,7 +107,7 @@ public class POITestingUI : MonoBehaviour {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FULLNESS_RECOVERY_URGENT, INTERACTION_TYPE.FEED, poi, UIManager.Instance.characterInfoUI.activeCharacter);
             UIManager.Instance.characterInfoUI.activeCharacter.jobQueue.AddJobInQueue(job);
         } else {
-            Debug.LogError(poi.name + " is not a character!");
+            Debug.LogError($"{poi.name} is not a character!");
         }
         HideUI();
     }
@@ -118,7 +119,7 @@ public class POITestingUI : MonoBehaviour {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.UNDERMINE, INTERACTION_TYPE.POISON, poi, UIManager.Instance.characterInfoUI.activeCharacter);
             UIManager.Instance.characterInfoUI.activeCharacter.jobQueue.AddJobInQueue(job);
         } else {
-            Debug.LogError(poi.name + " is not a table!");
+            Debug.LogError($"{poi.name} is not a table!");
         }
         HideUI();
     }
@@ -127,7 +128,7 @@ public class POITestingUI : MonoBehaviour {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.FULLNESS_RECOVERY_URGENT, INTERACTION_TYPE.EAT, poi, UIManager.Instance.characterInfoUI.activeCharacter);
             UIManager.Instance.characterInfoUI.activeCharacter.jobQueue.AddJobInQueue(job);
         } else {
-            Debug.LogError(poi.name + " is not a table!");
+            Debug.LogError($"{poi.name} is not a table!");
         }
         HideUI();
     }
@@ -136,7 +137,7 @@ public class POITestingUI : MonoBehaviour {
             GoapPlanJob job = JobManager.Instance.CreateNewGoapPlanJob(JOB_TYPE.ENERGY_RECOVERY_NORMAL, INTERACTION_TYPE.SLEEP, poi, UIManager.Instance.characterInfoUI.activeCharacter);
             UIManager.Instance.characterInfoUI.activeCharacter.jobQueue.AddJobInQueue(job);
         } else {
-            Debug.LogError(poi.name + " is not a bed!");
+            Debug.LogError($"{poi.name} is not a bed!");
         }
         HideUI();
     }

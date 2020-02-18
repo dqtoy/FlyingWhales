@@ -1,10 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UnityEngine;  
 using Traits;
-using UnityEngine.WSA;
 
 public class DepositResourcePile : GoapAction {
     public DepositResourcePile() : base(INTERACTION_TYPE.DEPOSIT_RESOURCE_PILE) {
@@ -103,7 +103,7 @@ public class DepositResourcePile : GoapAction {
     public override LocationGridTile GetTargetTileToGoTo(ActualGoapNode goapNode) {
         //if the process goes through here, this must mean that the target poi where the actor is supposed to go has no grid tile location or is destroyed or is carried by another character
         //so, just return a random unoccupied tile from the target structure
-        List<LocationGridTile> unoccupiedTiles = goapNode.targetStructure.unoccupiedTiles;
+        List<LocationGridTile> unoccupiedTiles = goapNode.targetStructure.unoccupiedTiles.ToList();
         return unoccupiedTiles[UnityEngine.Random.Range(0, unoccupiedTiles.Count)];
     }
     public override void OnStopWhileStarted(ActualGoapNode node) {

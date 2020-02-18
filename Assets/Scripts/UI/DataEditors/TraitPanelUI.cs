@@ -71,7 +71,7 @@ public class TraitPanelUI : MonoBehaviour {
     }
     private void UpdateTraits() {
         _allTraits.Clear();
-        string path = UtilityScripts.Utilities.dataPath + "Traits/";
+        string path = $"{UtilityScripts.Utilities.dataPath}Traits/";
         foreach (string file in Directory.GetFiles(path, "*.json")) {
             _allTraits.Add(Path.GetFileNameWithoutExtension(file));
         }
@@ -188,9 +188,10 @@ public class TraitPanelUI : MonoBehaviour {
             EditorUtility.DisplayDialog("Error", "Please specify a Trait Name", "OK");
             return;
         }
-        string path = UtilityScripts.Utilities.dataPath + "Traits/" + nameInput.text + ".json";
+        string path = $"{UtilityScripts.Utilities.dataPath}Traits/{nameInput.text}.json";
         if (UtilityScripts.Utilities.DoesFileExist(path)) {
-            if (EditorUtility.DisplayDialog("Overwrite Trait", "A trait with name " + nameInput.text + " already exists. Replace with this trait?", "Yes", "No")) {
+            if (EditorUtility.DisplayDialog("Overwrite Trait",
+                $"A trait with name {nameInput.text} already exists. Replace with this trait?", "Yes", "No")) {
                 File.Delete(path);
                 SaveTraitJson(path);
             }
@@ -231,14 +232,14 @@ public class TraitPanelUI : MonoBehaviour {
         //Re-import the file to update the reference in the editor
         UnityEditor.AssetDatabase.ImportAsset(path);
 #endif
-        Debug.Log("Successfully saved trait at " + path);
+        Debug.Log($"Successfully saved trait at {path}");
 
         UpdateTraits();
     }
 
     private void LoadTrait() {
 #if UNITY_EDITOR
-        string filePath = EditorUtility.OpenFilePanel("Select Trait", UtilityScripts.Utilities.dataPath + "Traits/", "json");
+        string filePath = EditorUtility.OpenFilePanel("Select Trait", $"{UtilityScripts.Utilities.dataPath}Traits/", "json");
         if (!string.IsNullOrEmpty(filePath)) {
             string dataAsJson = File.ReadAllText(filePath);
             Trait attribute = JsonUtility.FromJson<Trait>(dataAsJson);

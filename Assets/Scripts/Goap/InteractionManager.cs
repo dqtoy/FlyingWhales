@@ -58,7 +58,7 @@ public partial class InteractionManager : MonoBehaviour {
                 GoapAction data = System.Activator.CreateInstance(type) as GoapAction;
                 goapActionData.Add(currType, data);
             } else {
-                Debug.LogWarning(currType.ToString() + " has no data!");
+                Debug.LogWarning($"{currType} has no data!");
             }
         }
     }
@@ -73,7 +73,7 @@ public partial class InteractionManager : MonoBehaviour {
                 Interrupt data = System.Activator.CreateInstance(type) as Interrupt;
                 interruptData.Add(interrupt, data);
             } else {
-                Debug.LogWarning(typeName + " has no data!");
+                Debug.LogWarning($"{typeName} has no data!");
             }
         }
     }
@@ -88,7 +88,7 @@ public partial class InteractionManager : MonoBehaviour {
         if (goapActionData.ContainsKey(goapType)) {
             return goapActionData[goapType].CanSatisfyRequirements(actor, poiTarget, otherData);
         }
-        throw new Exception("No Goap Action Data for " + goapType.ToString());
+        throw new Exception($"No Goap Action Data for {goapType}");
     }
 
     #region Intel

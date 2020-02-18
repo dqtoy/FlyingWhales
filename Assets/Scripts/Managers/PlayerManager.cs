@@ -45,7 +45,8 @@ public class PlayerManager : MonoBehaviour {
 
         allSpellsData = new Dictionary<SPELL_TYPE, SpellData>();
         for (int i = 0; i < allSpellTypes.Length; i++) {
-            var typeName = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(allSpellTypes[i].ToString()) + "Data";
+            var typeName =
+                $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(allSpellTypes[i].ToString())}Data";
             allSpellsData.Add(allSpellTypes[i], System.Activator.CreateInstance(System.Type.GetType(typeName) ?? 
                         throw new Exception($"Problem with creating spell data for {typeName}")) as SpellData);
         }
@@ -206,7 +207,7 @@ public class PlayerManager : MonoBehaviour {
         if (allSpellsData.ContainsKey(type)) {
             return allSpellsData[type];
         }
-        throw new System.Exception("No spell data for " + type.ToString());
+        throw new System.Exception($"No spell data for {type}");
     }
     public int GetSpellTier(SPELL_TYPE abilityType) {
         if (spellTiers.ContainsKey(abilityType)) {
@@ -372,8 +373,8 @@ public class PlayerManager : MonoBehaviour {
                     orbsToCreate = 2;
                     break;
             }
-            character.logComponent.PrintLogIfActive($"{GameManager.Instance.TodayLogString()}{character.name} performed " +
-                            $"a crime of type {crimeType.ToString()}. Expelling {orbsToCreate.ToString()} Chaos Orbs.");
+            character.logComponent.PrintLogIfActive(
+                $"{GameManager.Instance.TodayLogString()}{character.name} performed a crime of type {crimeType.ToString()}. Expelling {orbsToCreate.ToString()} Chaos Orbs.");
             Messenger.Broadcast(Signals.CREATE_CHAOS_ORBS, character.marker.transform.position, orbsToCreate, 
                 character.currentRegion.innerMap);
 

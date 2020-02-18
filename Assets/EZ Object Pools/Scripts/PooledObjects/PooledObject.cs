@@ -27,7 +27,8 @@ namespace EZObjectPools
             if (ParentPool) {
                 ParentPool.AddToAvailableObjects(this.gameObject);
             } else {
-                throw new Exception("PooledObject " + gameObject.name + " does not have a parent pool. If this occurred during a scene transition, ignore this. Otherwise report to developer.");
+                throw new Exception(
+                    $"PooledObject {gameObject.name} does not have a parent pool. If this occurred during a scene transition, ignore this. Otherwise report to developer.");
             }
         }
 

@@ -684,7 +684,8 @@ public class Player : ILeader {
             case SUMMON_TYPE.ThiefSummon:
                 return "Summon a thief that will steal items from the settlements warehouse.";
             default:
-                return "Summon a " + UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(currentlySelectedSummon.ToString());
+                return
+                    $"Summon a {UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(currentlySelectedSummon.ToString())}";
         }
     }
     private void ClearSummonData(Summon summon) {
@@ -1089,7 +1090,7 @@ public class Player : ILeader {
             for (int i = 0; i < currentMinions.Count; i++) {
                 Minion currMinion = currentMinions[i];
                 if (!currMinion.character.marker.gameObject.activeInHierarchy) {
-                    throw new System.Exception(currMinion.character.name + " was not placed!");
+                    throw new System.Exception($"{currMinion.character.name} was not placed!");
                 }
                 currMinion.StartInvasionProtocol(settlement);
             }
@@ -1427,7 +1428,7 @@ public class Player : ILeader {
             PlayerArchetype obj = System.Activator.CreateInstance(type) as PlayerArchetype;
             return obj;
         }
-        throw new System.Exception("Could not create new archetype " + archetype.ToString() + " because there is no data for it!");
+        throw new System.Exception($"Could not create new archetype {archetype} because there is no data for it!");
     }
     public void LearnSpell(string spellName) {
         archetype.AddSpell(spellName);

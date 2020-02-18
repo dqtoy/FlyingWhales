@@ -35,9 +35,9 @@ public class PickUp : GoapAction {
         SetState("Take Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
-        string costLog = "\n" + name + " " + target.nameWithID + ":";
+        string costLog = $"\n{name} {target.nameWithID}:";
         int cost = UtilityScripts.Utilities.rng.Next(80, 121);
-        costLog += " +" + cost + "(RNG)";
+        costLog += $" +{cost}(RNG)";
         actor.logComponent.AppendCostLog(costLog);
         return cost;
     }

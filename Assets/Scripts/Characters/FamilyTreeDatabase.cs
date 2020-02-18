@@ -34,9 +34,9 @@ public class FamilyTreeDatabase {
     }
     
     public void Save() {
-        var folder = Directory.CreateDirectory(Application.persistentDataPath + "/Family Trees");
+        var folder = Directory.CreateDirectory($"{Application.persistentDataPath}/Family Trees");
         XmlSerializer serializer = new XmlSerializer(typeof(FamilyTreeDatabase)); //Create serializer
-        FileStream stream = new FileStream(Application.persistentDataPath + "/Family Trees/FamilyTrees.xml", FileMode.Create); //Create file at this path
+        FileStream stream = new FileStream($"{Application.persistentDataPath}/Family Trees/FamilyTrees.xml", FileMode.Create); //Create file at this path
         serializer.Serialize(stream, this); //Write the data in the xml file
         stream.Close(); //Close the stream
     }

@@ -27,7 +27,7 @@ public class Assault : GoapAction {
         SetState("Combat Start", actionNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
-        string costLog = "\n" + name + " " + target.nameWithID + ": +50(Constant)";
+        string costLog = $"\n{name} {target.nameWithID}: +50(Constant)";
         actor.logComponent.AppendCostLog(costLog);
         return 50;
     }
@@ -78,7 +78,7 @@ public class Assault : GoapAction {
 
     #region Effects
     public void AfterCombatStart(ActualGoapNode goapNode) {
-        Debug.Log(goapNode.actor + " will start combat towards " + goapNode.poiTarget.name);
+        Debug.Log($"{goapNode.actor} will start combat towards {goapNode.poiTarget.name}");
         bool isLethal = goapNode.associatedJobType.IsJobLethal();
         goapNode.actor.combatComponent.Fight(goapNode.poiTarget, isLethal: isLethal);
         // if(goapNode.poiTarget is Character) {

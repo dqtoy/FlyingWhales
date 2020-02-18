@@ -42,12 +42,12 @@ public class PathGenerator : MonoBehaviour {
     public void GetLocGridPathForTesting() {
         List<LocationGridTile> path = GetPath(InnerMapManager.Instance.currentlyShowingMap.map[startLocGrid.x, startLocGrid.y], InnerMapManager.Instance.currentlyShowingMap.map[destLocGrid.x, destLocGrid.y], gridModeToUse);
         if (path != null) {
-            Debug.Log("========== Path from " + startTile.name + " to " + targetTile.name + "============");
+            Debug.Log($"========== Path from {startTile.name} to {targetTile.name}============");
             for (int i = 0; i < path.Count; i++) {
                 Debug.Log(path[i].ToString());
             }
         } else {
-            Debug.LogError("Cannot get path from " + startTile.name + " to " + targetTile.name + " using " + modeToUse.ToString());
+            Debug.LogError($"Cannot get path from {startTile.name} to {targetTile.name} using {modeToUse}");
         }
     }
     #endregion

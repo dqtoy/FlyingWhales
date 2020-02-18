@@ -87,7 +87,7 @@ public class Party {
     public Party(Character owner) {
         _owner = owner;
         if (owner != null) {
-            _partyName = owner.name + "'s Party";
+            _partyName = $"{owner.name}'s Party";
         }
         _id = UtilityScripts.Utilities.SetID(this);
         _isDead = false;
@@ -195,12 +195,12 @@ public class Party {
 
             Plagued targetPlagued = character.traitContainer.GetNormalTrait<Plagued>("Plagued");
             if (targetPlagued != null) {
-                string plaguedSummary = owner.name + " carried a plagued character. Rolling for infection.";
+                string plaguedSummary = $"{owner.name} carried a plagued character. Rolling for infection.";
                 int roll = UnityEngine.Random.Range(0, 100);
-                plaguedSummary += "\nRoll is: " + roll.ToString() + ", Chance is: " + targetPlagued.GetCarryInfectChance().ToString();
+                plaguedSummary += $"\nRoll is: {roll}, Chance is: {targetPlagued.GetCarryInfectChance()}";
                 if (roll < targetPlagued.GetCarryInfectChance()) {
                     //carrier will be infected with plague
-                    plaguedSummary += "\nWill infect " + owner.name + " with plague!";
+                    plaguedSummary += $"\nWill infect {owner.name} with plague!";
                     owner.interruptComponent.TriggerInterrupt(INTERRUPT.Plagued, owner);
                     // if (owner.traitContainer.AddTrait(owner, "Plagued", character)) {
                     //     Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "contracted_plague");
@@ -236,7 +236,8 @@ public class Party {
                     if (chosenTile != null) {
                         _owner.gridTileLocation.structure.AddPOI(tileObject, chosenTile);
                     } else {
-                        Debug.LogWarning(GameManager.Instance.TodayLogString() + tileObject.name + " is being dropped by " + _owner.name + " but there is no unoccupied neighbor tile including the tile he/she is standing on. Default behavior is to drop character on the tile he/she is standing on regardless if it is unoccupied or not.");
+                        Debug.LogWarning(
+                            $"{GameManager.Instance.TodayLogString()}{tileObject.name} is being dropped by {_owner.name} but there is no unoccupied neighbor tile including the tile he/she is standing on. Default behavior is to drop character on the tile he/she is standing on regardless if it is unoccupied or not.");
                         _owner.gridTileLocation.structure.AddPOI(tileObject);
                     }
                 } else {
@@ -272,7 +273,8 @@ public class Party {
                 if (chosenTile != null) {
                     character.marker.PlaceMarkerAt(chosenTile, addToLocation);
                 } else {
-                    Debug.LogWarning(GameManager.Instance.TodayLogString() + character.name + " is being dropped by " + _owner.name + " but there is no unoccupied neighbor tile including the tile he/she is standing on. Default behavior is to drop character on the tile he/she is standing on regardless if it is unoccupied or not.");
+                    Debug.LogWarning(
+                        $"{GameManager.Instance.TodayLogString()}{character.name} is being dropped by {_owner.name} but there is no unoccupied neighbor tile including the tile he/she is standing on. Default behavior is to drop character on the tile he/she is standing on regardless if it is unoccupied or not.");
                     character.marker.PlaceMarkerAt(_owner.gridTileLocation, addToLocation);
                 }
             } else {

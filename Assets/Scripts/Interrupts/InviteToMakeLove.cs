@@ -14,14 +14,14 @@ namespace Interrupts {
         #region Overrides
         public override bool ExecuteInterruptStartEffect(Character actor, IPointOfInterest target, ref Log overrideEffectLog) {
             if(target is Character) {
-                string debugLog = actor.name + " invite to make love interrupt with " + target.name;
+                string debugLog = $"{actor.name} invite to make love interrupt with {target.name}";
 
                 Character targetCharacter = target as Character;
                 WeightedDictionary<string> weights = new WeightedDictionary<string>();
                 int acceptWeight = 50;
                 int rejectWeight = 10;
-                debugLog += "\n-Base accept weight: " + acceptWeight;
-                debugLog += "\n-Base reject weight: " + rejectWeight;
+                debugLog += $"\n-Base accept weight: {acceptWeight}";
+                debugLog += $"\n-Base reject weight: {rejectWeight}";
 
 
                 int targetOpinionToActor = 0;
@@ -29,7 +29,7 @@ namespace Interrupts {
                     targetOpinionToActor = targetCharacter.relationshipContainer.GetTotalOpinion(actor);
                 }
                 acceptWeight += (3 * targetOpinionToActor);
-                debugLog += "\n-Target opinion towards Actor: +(3 x " + targetOpinionToActor + ") to Accept Weight";
+                debugLog += $"\n-Target opinion towards Actor: +(3 x {targetOpinionToActor}) to Accept Weight";
 
                 Trait trait = target.traitContainer.GetNormalTrait<Trait>("Chaste", "Lustful");
                 if(trait != null) {
@@ -53,10 +53,10 @@ namespace Interrupts {
                 weights.AddElement("Accept", acceptWeight);
                 weights.AddElement("Reject", rejectWeight);
 
-                debugLog += "\n\n" + weights.GetWeightsSummary("FINAL WEIGHTS");
+                debugLog += $"\n\n{weights.GetWeightsSummary("FINAL WEIGHTS")}";
 
                 string chosen = weights.PickRandomElementGivenWeights();
-                debugLog += "\n\nCHOSEN RESPONSE: " + chosen;
+                debugLog += $"\n\nCHOSEN RESPONSE: {chosen}";
                 actor.logComponent.PrintLogIfActive(debugLog);
 
 

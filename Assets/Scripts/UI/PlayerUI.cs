@@ -737,7 +737,7 @@ public class PlayerUI : MonoBehaviour {
         string log = "Initial Kill Count UI";
         for (int i = 0; i < allCharactersCount; i++) {
             Character character = allCharacters[i];
-            log += "\nCharacter: " + character.name;
+            log += $"\nCharacter: {character.name}";
             if (i >= killCountCharacterItemsCount) {
                 CreateNewKillCountCharacterItem();
             }
@@ -946,7 +946,7 @@ public class PlayerUI : MonoBehaviour {
                 aliveCount++;
             }
         }
-        killCountLbl.text = aliveCount + "/" + allFilteredCharactersCount;
+        killCountLbl.text = $"{aliveCount}/{allFilteredCharactersCount}";
         if (aliveCount <= 0) {
             //player has won
             UIManager.Instance.Pause();

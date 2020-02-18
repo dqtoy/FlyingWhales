@@ -6,7 +6,6 @@ using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UnityEngine;
 using Traits;
-using UnityEngine.WSA;
 using UtilityScripts;
 
 public class Settlement : IJobOwner {
@@ -219,11 +218,12 @@ public class Settlement : IJobOwner {
     #region Characters
     public void AssignCharacterToDwellingInArea(Character character, IDwelling dwellingOverride = null) {
         if (structures == null) {
-            Debug.LogWarning(this.name + " doesn't have any dwellings for " + character.name + " because structrues have not been generated yet");
+            Debug.LogWarning(
+                $"{this.name} doesn't have any dwellings for {character.name} because structrues have not been generated yet");
             return;
         }
         if (!character.isFactionless && !structures.ContainsKey(STRUCTURE_TYPE.DWELLING)) {
-            Debug.LogWarning(this.name + " doesn't have any dwellings for " + character.name);
+            Debug.LogWarning($"{this.name} doesn't have any dwellings for {character.name}");
             return;
         }
         if (character.isFactionless) {
@@ -255,7 +255,8 @@ public class Settlement : IJobOwner {
 
         if (chosenDwelling == null) {
             //if the code reaches here, it means that the settlement could not find a dwelling for the character
-            Debug.LogWarning(GameManager.Instance.TodayLogString() + "Could not find a dwelling for " + character.name + " at " + this.name + ", setting home to Town Center");
+            Debug.LogWarning(
+                $"{GameManager.Instance.TodayLogString()}Could not find a dwelling for {character.name} at {this.name}, setting home to Town Center");
             chosenDwelling = GetRandomStructureOfType(STRUCTURE_TYPE.CITY_CENTER) as CityCenter;
         }
         character.MigrateHomeStructureTo(chosenDwelling);
@@ -339,12 +340,14 @@ public class Settlement : IJobOwner {
         if (!residents.Contains(character)) {
             if (!ignoreCapacity) {
                 if (IsResidentsFull()) {
-                    Debug.LogWarning(GameManager.Instance.TodayLogString() + "Cannot add " + character.name + " as resident of " + this.name + " because residency is already full!");
+                    Debug.LogWarning(
+                        $"{GameManager.Instance.TodayLogString()}Cannot add {character.name} as resident of {this.name} because residency is already full!");
                     return false; //settlement is at capacity
                 }
             }
             if (!CanCharacterBeAddedAsResidentBasedOnFaction(character)) {
-                character.logComponent.PrintLogIfActive(character.name + " tried to become a resident of " + name + " but their factions conflicted");
+                character.logComponent.PrintLogIfActive(
+                    $"{character.name} tried to become a resident of {name} but their factions conflicted");
                 return false;
             }
             region.AddResident(character);
@@ -413,10 +416,11 @@ public class Settlement : IJobOwner {
         }
     }
     private void CheckForNewRulerDesignation() {
-        string debugLog = GameManager.Instance.TodayLogString() + "Checking for new settlement ruler designation for " + name;
-        debugLog += "\n-Chance: " + newRulerDesignationChance;
+        string debugLog =
+            $"{GameManager.Instance.TodayLogString()}Checking for new settlement ruler designation for {name}";
+        debugLog += $"\n-Chance: {newRulerDesignationChance}";
         int chance = UnityEngine.Random.Range(0, 100);
-        debugLog += "\n-Roll: " + chance;
+        debugLog += $"\n-Roll: {chance}";
         Debug.Log(debugLog);
         if (chance < newRulerDesignationChance) {
             DesignateNewRuler();
@@ -425,11 +429,12 @@ public class Settlement : IJobOwner {
         }
     }
     public void DesignateNewRuler(bool willLog = true) {
-        string log = GameManager.Instance.TodayLogString() + "Designating a new settlement ruler for: " + region.name + "(chance it triggered: " + newRulerDesignationChance + ")";
+        string log =
+            $"{GameManager.Instance.TodayLogString()}Designating a new settlement ruler for: {region.name}(chance it triggered: {newRulerDesignationChance})";
         newRulerDesignationWeights.Clear();
         for (int i = 0; i < residents.Count; i++) {
             Character resident = residents[i];
-            log += "\n\n-" + resident.name;
+            log += $"\n\n-{resident.name}";
             if(resident.isDead || resident.isMissing || resident.isBeingSeized) {
                 log += "\nEither dead or missing or seized, will not be part of candidates for ruler";
                 continue;
@@ -458,7 +463,8 @@ public class Settlement : IJobOwner {
             }
             if(numberOfFriends > 0) {
                 weight += (numberOfFriends * 20);
-                log += "\n  -Num of Friend/Close Friend in the Settlement: " + numberOfFriends + ", +" + (numberOfFriends * 20);
+                log +=
+                    $"\n  -Num of Friend/Close Friend in the Settlement: {numberOfFriends}, +{(numberOfFriends * 20)}";
             }
             if (resident.traitContainer.HasTrait("Inspiring")) {
                 weight += 25;
@@ -472,7 +478,7 @@ public class Settlement : IJobOwner {
 
             if (numberOfEnemies > 0) {
                 weight += (numberOfEnemies * -10);
-                log += "\n  -Num of Enemies/Rivals in the Settlement: " + numberOfEnemies + ", +" + (numberOfEnemies * -10);
+                log += $"\n  -Num of Enemies/Rivals in the Settlement: {numberOfEnemies}, +{(numberOfEnemies * -10)}";
             }
             if (resident.traitContainer.HasTrait("Ugly")) {
                 weight += -20;
@@ -494,7 +500,7 @@ public class Settlement : IJobOwner {
                 weight = 1;
                 log += "\n  -Weight cannot be less than 1, setting weight to 1";
             }
-            log += "\n  -TOTAL WEIGHT: " + weight;
+            log += $"\n  -TOTAL WEIGHT: {weight}";
             if (weight > 0) {
                 newRulerDesignationWeights.AddElement(resident, weight);
             }
@@ -502,7 +508,7 @@ public class Settlement : IJobOwner {
         if(newRulerDesignationWeights.Count > 0) {
             Character chosenRuler = newRulerDesignationWeights.PickRandomElementGivenWeights();
             if (chosenRuler != null) {
-                log += "\nCHOSEN RULER: " + chosenRuler.name;
+                log += $"\nCHOSEN RULER: {chosenRuler.name}";
                 if (willLog) {
                     chosenRuler.interruptComponent.TriggerInterrupt(INTERRUPT.Become_Settlement_Ruler, chosenRuler);
                 } else {

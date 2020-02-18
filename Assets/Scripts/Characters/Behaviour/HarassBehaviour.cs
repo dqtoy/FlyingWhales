@@ -8,7 +8,7 @@ public class HarassBehaviour : CharacterBehaviourComponent {
         priority = 0;
     }
     public override bool TryDoBehaviour(Character character, ref string log) {
-        log += "\n-" + character.name + " will harass";
+        log += $"\n-{character.name} will harass";
         if (character.gridTileLocation.buildSpotOwner.hexTileOwner != null && character.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile == character.behaviourComponent.harassInvadeRaidTarget) {
             log += "\n-Already in the target settlement";
             if(character.marker.inVisionTileObjects.Count > 0) {

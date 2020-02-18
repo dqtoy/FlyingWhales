@@ -63,7 +63,8 @@ public class ResolveConflict : GoapAction {
             if (target != null) {
                 goapNode.descriptionLog.AddToFillers(target, target.name, LOG_IDENTIFIER.CHARACTER_3);
             } else {
-                throw new System.Exception("Cannot resolve conflict for " + targetCharacter.name + " because he/she does not have enemies!");
+                throw new System.Exception(
+                    $"Cannot resolve conflict for {targetCharacter.name} because he/she does not have enemies!");
             }
         }
     }

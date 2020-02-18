@@ -88,7 +88,8 @@ public class StrollOutsideState : CharacterState {
         if(tile != null) {
             return tile;
         } else {
-            throw new System.Exception("No unoccupied tile in 3-tile radius for " + stateComponent.character.name + " to go to in " + stateName);
+            throw new System.Exception(
+                $"No unoccupied tile in 3-tile radius for {stateComponent.character.name} to go to in {stateName}");
         }
         //List<LocationGridTile> tiles = stateComponent.character.gridTileLocation.parentAreaMap.GetUnoccupiedTilesInRadius(stateComponent.character.gridTileLocation, 4, 3, false, true);
         //if (tiles.Count > 0) {

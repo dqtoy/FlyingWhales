@@ -45,13 +45,14 @@ public class NewResidentEvent : LocationEvent {
                 }
             }
         }
-        PlayerUI.Instance.ShowGeneralConfirmation("New Residents", "New residents have arrived at " + location.name);
+        PlayerUI.Instance.ShowGeneralConfirmation("New Residents", $"New residents have arrived at {location.name}");
     }
     #endregion
     private void GenerateSingleResident(Settlement location) {
         RACE race = GetRaceForNewResident(location);
         Character newResident = location.AddNewResident(race, location.owner);
-        Debug.Log(GameManager.Instance.TodayLogString() + "Generated new Single Resident " + newResident + " from New Resident Event");
+        Debug.Log(
+            $"{GameManager.Instance.TodayLogString()}Generated new Single Resident {newResident} from New Resident Event");
         //CharacterManager.Instance.CreateNewCharacter(CharacterRole.SOLDIER, race, Utilities.GetRandomGender(), location.region.owner, location.region);
     }
     private void GenerateCoupleResidents(Settlement location) {
@@ -93,7 +94,8 @@ public class NewResidentEvent : LocationEvent {
         //location.PlaceNewResidentInInnerMap(spouse1);
         //location.PlaceNewResidentInInnerMap(spouse2);
 
-        Debug.Log(GameManager.Instance.TodayLogString() + "Generated new Couple Resident " + spouse1 + " and " + spouse2 + " from New Resident Event");
+        Debug.Log(
+            $"{GameManager.Instance.TodayLogString()}Generated new Couple Resident {spouse1} and {spouse2} from New Resident Event");
     }
     private RACE GetRaceForNewResident(Settlement location) {
         if(location.owner != null && location.owner.leader != null) {

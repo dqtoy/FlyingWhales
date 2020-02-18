@@ -33,13 +33,13 @@ public class Eat : GoapAction {
         SetState("Eat Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
-        string costLog = "\n" + name + " " + target.nameWithID + ":";
+        string costLog = $"\n{name} {target.nameWithID}:";
         int cost = 0;
         if (target is Table) {
             Table table = target as Table;
             if (table.IsOwnedBy(actor)) {
                 cost = UtilityScripts.Utilities.rng.Next(10, 16);
-                costLog += " +" + cost + "(Owned)";
+                costLog += $" +{cost}(Owned)";
             } else {
                 List<Character> tableOwners = table.GetOwners();
                 bool isTargetObjectOwnedByFriend = false;
@@ -57,18 +57,18 @@ public class Eat : GoapAction {
                 }
                 if (isTargetObjectOwnedByFriend) {
                     cost = UtilityScripts.Utilities.rng.Next(25, 46);
-                    costLog += " +" + cost + "(Owned by Friend)";
+                    costLog += $" +{cost}(Owned by Friend)";
                 } else if (isTargetObjectOwnedByEnemy) {
                     cost = 2000;
                     costLog += " +2000(Owned by Enemy)";
                 } else {
                     cost = UtilityScripts.Utilities.rng.Next(40, 51);
-                    costLog += " +" + cost + "(Otherwise)";
+                    costLog += $" +{cost}(Otherwise)";
                 }
             }
         } else if (target is FoodPile) {
             cost = UtilityScripts.Utilities.rng.Next(400, 451);
-            costLog += " +" + cost + "(Food Pile)";
+            costLog += $" +{cost}(Food Pile)";
         }
         actor.logComponent.AppendCostLog(costLog);
         return cost;

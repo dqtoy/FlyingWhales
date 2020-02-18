@@ -41,7 +41,7 @@ public class NewAbilityUI : MonoBehaviour {
             this.minion = minion;
             minionPortrait.GeneratePortrait(this.minion.character);
             string text = this.minion.character.name;
-            text += "\nLvl. " + this.minion.character.level + " " + this.minion.character.raceClassName;
+            text += $"\nLvl. {this.minion.character.level} {this.minion.character.raceClassName}";
             minionText.text = text;
         }
     }
@@ -57,7 +57,7 @@ public class NewAbilityUI : MonoBehaviour {
             abilityIcon.sprite = PlayerManager.Instance.GetJobActionSprite(action.name);
             string text = action.name;
             //text += "\nLevel: " + action.level;
-            text += "\nDescription: " + action.description;
+            text += $"\nDescription: {action.description}";
             abilityText.text = text;
             obtainText.gameObject.SetActive(true);
         } else if (obj is CombatAbility) {
@@ -65,8 +65,8 @@ public class NewAbilityUI : MonoBehaviour {
             CombatAbility ability = obj as CombatAbility;
             abilityIcon.sprite = PlayerManager.Instance.GetCombatAbilitySprite(ability.name);
             string text = ability.name;
-            text += "\nLevel: " + ability.lvl;
-            text += "\nDescription: " + ability.description;
+            text += $"\nLevel: {ability.lvl}";
+            text += $"\nDescription: {ability.description}";
             abilityText.text = text;
             minionGO.SetActive(true);
         } else if (obj is Summon) {
@@ -74,9 +74,9 @@ public class NewAbilityUI : MonoBehaviour {
             obtainText.text = "You obtained a new Summon!";
             Summon summon = obj as Summon;
             abilityIcon.sprite = CharacterManager.Instance.GetSummonSettings(summon.summonType).summonPortrait;
-            string text = summon.name + " (" + summon.summonType.SummonName() + ")";
-            text += "\nLevel: " + summon.level.ToString();
-            text += "\nDescription: " + PlayerManager.Instance.player.GetSummonDescription(summon.summonType);
+            string text = $"{summon.name} ({summon.summonType.SummonName()})";
+            text += $"\nLevel: {summon.level}";
+            text += $"\nDescription: {PlayerManager.Instance.player.GetSummonDescription(summon.summonType)}";
             abilityText.text = text;
             obtainText.gameObject.SetActive(true);
         }

@@ -68,9 +68,9 @@ public class TileObjectInfoUI : UIMenu {
     private void UpdateBasicInfo() {
         nameLbl.text = activeTileObject.name;
         if(activeTileObject is ResourcePile) {
-            nameLbl.text += " (x" + (activeTileObject as ResourcePile).resourceInPile + ")";
+            nameLbl.text += $" (x{(activeTileObject as ResourcePile).resourceInPile})";
         }else if (activeTileObject is Table) {
-            nameLbl.text += " (x" + (activeTileObject as Table).food + ")";
+            nameLbl.text += $" (x{(activeTileObject as Table).food})";
         }
         if (activeTileObject.isDisabledByPlayer) {
             nameLbl.text += " (Disabled)";

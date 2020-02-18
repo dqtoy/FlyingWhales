@@ -18,7 +18,7 @@ public class MainMenuManager : MonoBehaviour {
         for (int i = 0; i < result.Count; i++) {
             string log = "\n{";
             for (int j = 0; j < result[i].Count(); j++) {
-                log += " " + result[i][j]+ ",";
+                log += $" {result[i][j]},";
             }
             log += " }";
             Debug.Log(log);

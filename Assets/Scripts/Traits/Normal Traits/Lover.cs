@@ -11,7 +11,7 @@ namespace Traits {
 
         public Lover(Character target) : base(target) {
             name = "Lover";
-            description = "This character is a lover of " + targetCharacter.name;
+            description = $"This character is a lover of {targetCharacter.name}";
             type = TRAIT_TYPE.RELATIONSHIP;
             effect = TRAIT_EFFECT.POSITIVE;
             relType = RELATIONSHIP_TYPE.LOVER;
@@ -21,7 +21,7 @@ namespace Traits {
         }
 
         public override string GetNameInUI(ITraitable traitable) {
-            return "Lover: " + traitable.name;
+            return $"Lover: {traitable.name}";
         }
     }
 }

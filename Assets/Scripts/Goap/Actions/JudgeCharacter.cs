@@ -38,7 +38,7 @@ public class JudgeCharacter : GoapAction {
             crimeData.SetJudge(actor);
         }
 
-        string debugLog = actor.name + " is going to judge " + targetCharacter.name;
+        string debugLog = $"{actor.name} is going to judge {targetCharacter.name}";
 
 
         int absolve = 0;
@@ -123,10 +123,10 @@ public class JudgeCharacter : GoapAction {
         weights.AddElement("Kill", kill);
         weights.AddElement("Exile", exile);
 
-        debugLog += "\n\n" + weights.GetWeightsSummary("FINAL WEIGHTS");
+        debugLog += $"\n\n{weights.GetWeightsSummary("FINAL WEIGHTS")}";
 
         string chosen = weights.PickRandomElementGivenWeights();
-        debugLog += "\n\n" + chosen;
+        debugLog += $"\n\n{chosen}";
         actor.logComponent.PrintLogIfActive(debugLog);
         CreateJudgeLog(goapNode, chosen);
 

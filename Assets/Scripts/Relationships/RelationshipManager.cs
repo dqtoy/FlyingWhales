@@ -92,13 +92,14 @@ public class RelationshipManager : MonoBehaviour {
                 continue; //skip
             }
             int totalCreatedRels = currentRelCount;
-            string summary = currCharacter.name + "(" + currCharacter.sexuality.ToString() + ") relationship generation summary:";
+            string summary = $"{currCharacter.name}({currCharacter.sexuality}) relationship generation summary:";
 
             //  Loop through all relationship types
             for (int k = 0; k < relsInOrder.Length; k++) {
                 RELATIONSHIP_TYPE currRel = relsInOrder[k];
                 if (totalCreatedRels >= maxInitialRels) {
-                    summary += "\nMax Initial Relationships reached, stopping relationship generation for " + currCharacter.name;
+                    summary +=
+                        $"\nMax Initial Relationships reached, stopping relationship generation for {currCharacter.name}";
                     break; //stop generating more relationships for this character
                 }
                 int relsToCreate = 0;
@@ -122,7 +123,7 @@ public class RelationshipManager : MonoBehaviour {
                         //relsToCreate = 1;
                         break;
                 }
-                summary += "\n===========Creating " + relsToCreate + " " + currRel.ToString() + " Relationships...==========";
+                summary += $"\n===========Creating {relsToCreate} {currRel} Relationships...==========";
 
 
                 if (relsToCreate > 0) {
@@ -215,7 +216,7 @@ public class RelationshipManager : MonoBehaviour {
                         }
                     }
                     if (relWeights.GetTotalOfWeights() > 0) {
-                        summary += "\n" + relWeights.GetWeightsSummary("Weights are: ");
+                        summary += $"\n{relWeights.GetWeightsSummary("Weights are: ")}";
                     } else {
                         summary += "\nThere are no valid characters to have a relationship with.";
                     }
@@ -226,7 +227,8 @@ public class RelationshipManager : MonoBehaviour {
                             Character chosenCharacter = relWeights.PickRandomElementGivenWeights();
                             CreateNewRelationshipBetween(currCharacter, chosenCharacter, currRel);
                             totalCreatedRels++;
-                            summary += "\nCreated new relationship " + currRel.ToString() + " between " + currCharacter.name + " and " + chosenCharacter.name + ". Total relationships created for " + currCharacter.name + " are " + totalCreatedRels.ToString();
+                            summary +=
+                                $"\nCreated new relationship {currRel} between {currCharacter.name} and {chosenCharacter.name}. Total relationships created for {currCharacter.name} are {totalCreatedRels}";
                             relWeights.RemoveElement(chosenCharacter);
                         } else {
                             break;
@@ -317,7 +319,7 @@ public class RelationshipManager : MonoBehaviour {
         if (actor.returnedToLife || target.returnedToLife) {
             return false; //do not let zombies or skeletons develop other relationships
         }
-        string summary = "Relationship improvement between " + actor.name + " and " + target.name;
+        string summary = $"Relationship improvement between {actor.name} and {target.name}";
         bool hasImproved = false;
         // Log log = null;
         // if (target.relationshipContainer.HasRelationshipWith(actor.currentAlterEgo, RELATIONSHIP_TYPE.ENEMY)) {
@@ -380,11 +382,11 @@ public class RelationshipManager : MonoBehaviour {
             return hasDegraded;
         }
         if (actor == target) {
-            Debug.LogWarning("Relationship degredation was called and provided same characters " + target.name);
+            Debug.LogWarning($"Relationship degredation was called and provided same characters {target.name}");
             return hasDegraded;
         }
         if (target.traitContainer.HasTrait("Diplomatic")) {
-            Debug.LogWarning("Relationship degredation was called but " + target.name + " is Diplomatic");
+            Debug.LogWarning($"Relationship degredation was called but {target.name} is Diplomatic");
             hasDegraded = true;
             return hasDegraded;
         }

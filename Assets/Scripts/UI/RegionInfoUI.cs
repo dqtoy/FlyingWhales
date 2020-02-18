@@ -241,9 +241,9 @@ public class RegionInfoUI : UIMenu {
         if (!CanMinionInvade(character)) {
             string message = string.Empty;
             if (character.minion.isAssigned) {
-                message = character.name + " is already doing something else.";
+                message = $"{character.name} is already doing something else.";
             } else if (!character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.INVADER)) {
-                message = character.name + " does have not the required trait: Invader";
+                message = $"{character.name} does have not the required trait: Invader";
             }
             UIManager.Instance.ShowSmallInfo(message);
         }

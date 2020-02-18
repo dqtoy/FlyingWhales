@@ -47,35 +47,35 @@ public class KillCountCharacterItem : CharacterNameplateItem {
     }
     private void UpdateInfo() {
         if (character.isDead) {
-            supportingLbl.text = "\"" + character.deathStr + "\"";
+            supportingLbl.text = $"\"{character.deathStr}\"";
         } else {
             string text = string.Empty;
             Trait negDisTrait = character.traitContainer.GetAllTraitsOf(TRAIT_TYPE.DISABLER, TRAIT_EFFECT.NEGATIVE).FirstOrDefault();
             if (negDisTrait != null) {
                 if (negDisTrait is Unconscious) {
-                    text = "\"" + character.name + " was knocked out";
+                    text = $"\"{character.name} was knocked out";
                 } else if (negDisTrait is Restrained) {
                     Character responsibleCharacter = negDisTrait.responsibleCharacter;
                     if (responsibleCharacter != null) {
-                        text = "\"" + character.name + " was restrained by " + responsibleCharacter.name + ".\"";    
+                        text = $"\"{character.name} was restrained by {responsibleCharacter.name}.\"";    
                     } else {
-                        text = "\"" + character.name + " was restrained by something.\"";
+                        text = $"\"{character.name} was restrained by something.\"";
                     }
                     
                 } else if (negDisTrait is Paralyzed) {
-                    text = "\"" + character.name + " became paralyzed.\"";
+                    text = $"\"{character.name} became paralyzed.\"";
                 }
                 if(negDisTrait.responsibleCharacter != null) {
-                    text += " by " + negDisTrait.responsibleCharacter.name + ".\"";
+                    text += $" by {negDisTrait.responsibleCharacter.name}.\"";
                 } else {
                     text += ".\"";
                 }
             } else {
                 if (character.returnedToLife) {
                     if (character.characterClass.className == "Zombie") {
-                        text = "\"" + character.name + " turned into a zombie.\"";
+                        text = $"\"{character.name} turned into a zombie.\"";
                     } else {
-                        text = "\"" + character.name + " was resurrected into a mindless skeleton.\"";
+                        text = $"\"{character.name} was resurrected into a mindless skeleton.\"";
                     }
                 } 
                 //else if (character.currentAlterEgo.name != CharacterManager.Original_Alter_Ego) {

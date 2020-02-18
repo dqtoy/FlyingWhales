@@ -9,7 +9,7 @@ public class DefaultMonster : CharacterBehaviourComponent {
 	}
 	public override bool TryDoBehaviour(Character character, ref string log) {
 		if (character is Summon) {
-			log += "\n-" + character.name + " is monster";
+			log += $"\n-{character.name} is monster";
 			Summon summon = character as Summon;
 			if (summon.gridTileLocation != null) {
 				if (summon.IsInTerritory()) {
@@ -22,7 +22,7 @@ public class DefaultMonster : CharacterBehaviourComponent {
 					} else {
 						log += "\n-35% chance to Roam Around Territory";
 						int roll = UnityEngine.Random.Range(0, 100);
-						log += "\n-Roll: " + roll;
+						log += $"\n-Roll: {roll}";
 						if (roll < 35) {
 							hasAddedJob = summon.jobComponent.TriggerRoamAroundTerritory();
 						} else {
@@ -30,14 +30,14 @@ public class DefaultMonster : CharacterBehaviourComponent {
 							if (currTime == TIME_IN_WORDS.LATE_NIGHT || currTime == TIME_IN_WORDS.AFTER_MIDNIGHT) {
 								log += "\n-Late Night or After Midnight, 40% chance to Sleep";
 								int sleepRoll = UnityEngine.Random.Range(0, 100);
-								log += "\n-Roll: " + sleepRoll;
+								log += $"\n-Roll: {sleepRoll}";
 								if (roll < 40) {
 									hasAddedJob = summon.jobComponent.TriggerMonsterSleep();
 								}
 							} else {
 								log += "\n-5% chance to Sleep";
 								int sleepRoll = UnityEngine.Random.Range(0, 100);
-								log += "\n-Roll: " + sleepRoll;
+								log += $"\n-Roll: {sleepRoll}";
 								if (roll < 5) {
 									hasAddedJob = summon.jobComponent.TriggerMonsterSleep();
 								}
@@ -57,7 +57,7 @@ public class DefaultMonster : CharacterBehaviourComponent {
 					} else {
 						log += "\n-50% chance to Roam Around Tile";
 						int roll = UnityEngine.Random.Range(0, 100);
-						log += "\n-Roll: " + roll;
+						log += $"\n-Roll: {roll}";
 						if (roll < 50) {
 							summon.jobComponent.TriggerRoamAroundTile();
 						} else {

@@ -138,7 +138,7 @@ public class FactionInfoUI : UIMenu {
             Character leader = activeFaction.leader as Character;
             CharacterNameplateItem leaderItem = GetItem(leader);
             if (leaderItem == null) {
-                throw new System.Exception("Leader item in " + activeFaction.name + "'s UI is null! Leader is " + leader.name);
+                throw new System.Exception($"Leader item in {activeFaction.name}'s UI is null! Leader is {leader.name}");
             }
             leaderItem.transform.SetAsFirstSibling();
         }
@@ -251,7 +251,7 @@ public class FactionInfoUI : UIMenu {
             summary += activeFaction.activeQuest.name;
             for (int i = 0; i < activeFaction.activeQuest.availableJobs.Count; i++) {
                 JobQueueItem item = activeFaction.activeQuest.availableJobs[i];
-                summary += "\n\t- " + item.jobType.ToString() + ": " + item.assignedCharacter?.name;
+                summary += $"\n\t- {item.jobType}: {item.assignedCharacter?.name}";
             }
         }
         //if (!string.IsNullOrEmpty(summary)) {
@@ -259,9 +259,9 @@ public class FactionInfoUI : UIMenu {
         //}
         for (int i = 0; i < activeFaction.ideologyComponent.currentIdeologies.Length; i++) {
             FactionIdeology ideology = activeFaction.ideologyComponent.currentIdeologies[i];
-            summary += "\n" + ideology.name;
+            summary += $"\n{ideology.name}";
             summary += "\nRequirements for joining:";
-            summary += "\n\t" + ideology.GetRequirementsForJoiningAsString();
+            summary += $"\n\t{ideology.GetRequirementsForJoiningAsString()}";
         }
 
         UIManager.Instance.ShowSmallInfo(summary);

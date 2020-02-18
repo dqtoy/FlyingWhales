@@ -159,7 +159,8 @@ public class BerserkedState : CharacterState {
 
     private void OnArriveAtLocation() {
         if (stateComponent.character.currentActionNode == null) {
-            Debug.LogWarning(GameManager.Instance.TodayLogString() + stateComponent.character.name + " arrived at location of item/tile object to be destroyed during " + stateName + ", but current action is null");
+            Debug.LogWarning(
+                $"{GameManager.Instance.TodayLogString()}{stateComponent.character.name} arrived at location of item/tile object to be destroyed during {stateName}, but current action is null");
             return;
         }
         //stateComponent.character.currentActionNode.SetEndAction(BerserkAgain);
@@ -187,7 +188,8 @@ public class BerserkedState : CharacterState {
         if (chosenTile != null) {
             return chosenTile;
         } else {
-            throw new System.Exception("No tile in " + chosenStructure.name + " for " + stateComponent.character.name + " to go to in " + stateName);
+            throw new System.Exception(
+                $"No tile in {chosenStructure.name} for {stateComponent.character.name} to go to in {stateName}");
         }
     }
 

@@ -196,16 +196,19 @@ public class PartyInfoUI : UIMenu {
                     } else {
                         //if the character is not in his/her own party (means he/she is already in another party)
                         item.ClearSlot(true);
-                        Messenger.Broadcast<string, bool>(Signals.SHOW_POPUP_MESSAGE, characterToAdd.name + " is already part of this party!", true);
+                        Messenger.Broadcast<string, bool>(Signals.SHOW_POPUP_MESSAGE,
+                            $"{characterToAdd.name} is already part of this party!", true);
                     }
                 } else {
                     //if the character is not in his/her own party and is not part of the current party(means he/she is already in another party)
                     item.ClearSlot(true);
-                    Messenger.Broadcast<string, bool>(Signals.SHOW_POPUP_MESSAGE, characterToAdd.name + " is already part of another party!", true);
+                    Messenger.Broadcast<string, bool>(Signals.SHOW_POPUP_MESSAGE,
+                        $"{characterToAdd.name} is already part of another party!", true);
                 }
             } else if (partyHolder.characters.Contains(characterToAdd)) {
                 item.ClearSlot(true);
-                Messenger.Broadcast<string, bool>(Signals.SHOW_POPUP_MESSAGE, characterToAdd.name + " is already part of this party!", true);
+                Messenger.Broadcast<string, bool>(Signals.SHOW_POPUP_MESSAGE,
+                    $"{characterToAdd.name} is already part of this party!", true);
             } else {
                 partyHolder.AddCharacter(characterToAdd);
             }
@@ -214,7 +217,7 @@ public class PartyInfoUI : UIMenu {
         OnChangesMade();
     }
     private void OnItemDroppedOutOfSlot(object obj, int slotIndex) {
-        Debug.Log(obj.ToString() + " dropped out of slot " + slotIndex);
+        Debug.Log($"{obj} dropped out of slot {slotIndex}");
         SlotItem item = partySlots[slotIndex];
         if (obj is Minion) {
             partyHolder.RemoveCharacter((obj as Minion).character);

@@ -28,7 +28,7 @@ namespace Traits {
             if (responsibleCharacter == null) {
                 return description;
             }
-            return "This character has been abducted by " + responsibleCharacter.name;
+            return $"This character has been abducted by {responsibleCharacter.name}";
         }
         #endregion
     }

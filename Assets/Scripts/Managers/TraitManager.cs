@@ -44,7 +44,7 @@ public class TraitManager : MonoBehaviour {
 
     public void Initialize() {
         _allTraits = new Dictionary<string, Trait>();
-        string path = UtilityScripts.Utilities.dataPath + "Traits/";
+        string path = $"{UtilityScripts.Utilities.dataPath}Traits/";
         string[] files = Directory.GetFiles(path, "*.json");
         for (int i = 0; i < files.Length; i++) {
             Trait attribute = JsonUtility.FromJson<Trait>(System.IO.File.ReadAllText(files[i]));
@@ -70,7 +70,7 @@ public class TraitManager : MonoBehaviour {
                     neutralTraitPool.Add(currTraitName);
                 }
             } else {
-                throw new Exception("There is no trait named: " + currTraitName);
+                throw new Exception($"There is no trait named: {currTraitName}");
             }
         }
     }

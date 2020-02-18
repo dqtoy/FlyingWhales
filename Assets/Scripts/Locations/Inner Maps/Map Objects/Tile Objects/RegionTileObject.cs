@@ -11,12 +11,12 @@ public class RegionTileObject : TileObject {
         Initialize(data);
     }
     public void SetName(Region region) {
-        this.name = region.name + " Region tile object";
+        this.name = $"{region.name} Region tile object";
     }
 
     #region Overrides
     public override string ToString() {
-        return this.name + " " + this.id.ToString();
+        return $"{this.name} {this.id}";
     }
     #endregion
 

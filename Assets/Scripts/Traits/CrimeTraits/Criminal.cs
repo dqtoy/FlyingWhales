@@ -43,7 +43,7 @@ namespace Traits {
         //}
         public override string GetNameInUI(ITraitable traitable) {
             if(crimeData != null) {
-                return name + ":" + crimeData.strCrimeType;
+                return $"{name}:{crimeData.strCrimeType}";
             }
             return name;
         }
@@ -52,7 +52,8 @@ namespace Traits {
         #region General
         public void SetCrime(CRIME_TYPE crimeType, IReactable crime) {
             if(crimeData != null) {
-                Debug.LogError("Cannot set crime to criminal " + owner.name + " because it already has a crime: " + crimeData.crimeType.ToString());
+                Debug.LogError(
+                    $"Cannot set crime to criminal {owner.name} because it already has a crime: {crimeData.crimeType}");
                 return;
             }
             crimeData = new CrimeData(crimeType, crime, owner);

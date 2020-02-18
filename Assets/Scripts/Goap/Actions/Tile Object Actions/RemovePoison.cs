@@ -24,7 +24,7 @@ public class RemovePoison : GoapAction {
         SetState("Remove Poison Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
-        string costLog = "\n" + name + " " + target.nameWithID + ": +10(Constant)";
+        string costLog = $"\n{name} {target.nameWithID}: +10(Constant)";
         actor.logComponent.AppendCostLog(costLog);
         return 10;
     }
@@ -43,7 +43,8 @@ public class RemovePoison : GoapAction {
             goapNode.actor.UnobtainItem(tool);
         } else {
             //the actor does not have a tool, log for now
-            goapNode.actor.logComponent.PrintLogErrorIfActive(goapNode.actor.name + " does not have a tool for removing poison! Poison was still removed, but thought you should know.");
+            goapNode.actor.logComponent.PrintLogErrorIfActive(
+                $"{goapNode.actor.name} does not have a tool for removing poison! Poison was still removed, but thought you should know.");
         }
        
     }

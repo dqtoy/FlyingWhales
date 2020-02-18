@@ -20,7 +20,7 @@ public class TreeObject : TileObject {
     }
 
     public override string ToString() {
-        return "Tree " + id.ToString();
+        return $"Tree {id}";
     }
 
     //public int GetSupplyPerMine() {

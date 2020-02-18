@@ -25,7 +25,7 @@ public class Bed : TileObject {
 
     #region Overrides
     public override string ToString() {
-        return "Bed " + id.ToString();
+        return $"Bed {id}";
     }
     public virtual void OnClickAction() {
         //base.OnClickAction();

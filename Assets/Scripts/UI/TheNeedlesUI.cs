@@ -22,7 +22,7 @@ public class TheNeedlesUI : MonoBehaviour {
         if (!CanChooseMinion(character)) {
             string message = string.Empty;
             if (character.minion.isAssigned) {
-                message = character.name + " is already doing something else.";
+                message = $"{character.name} is already doing something else.";
             }
             UIManager.Instance.ShowSmallInfo(message);
         }

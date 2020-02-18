@@ -32,7 +32,7 @@ namespace Traits {
             if (responsibleCharacter == null) {
                 return description;
             }
-            return "This character is restrained by " + responsibleCharacter.name;
+            return $"This character is restrained by {responsibleCharacter.name}";
         }
         public override void OnAddTrait(ITraitable sourceCharacter) {
             base.OnAddTrait(sourceCharacter);

@@ -34,7 +34,7 @@ public class WorldMapGridGeneration : MapGenerationComponent {
 				GameObject hex = Object.Instantiate(GridMap.Instance.goHex, GridMap.Instance.transform, true) as GameObject;
 				hex.transform.localPosition = new Vector3(xPosition, yPosition, 0f);
 				hex.transform.localScale = new Vector3(MapGenerationData.tileSize, MapGenerationData.tileSize, 0f);
-				hex.name = x + "," + y;
+				hex.name = $"{x},{y}";
 				HexTile currHex = hex.GetComponent<HexTile>();
 				currHex.Initialize();
 				currHex.data.id = id;
