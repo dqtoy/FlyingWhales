@@ -22,7 +22,7 @@ public class Tornado : PlayerSpell {
         base.ActivateAction(targetTile);
         TornadoTileObject tornadoTileObject = new TornadoTileObject();
         tornadoTileObject.SetRadius(radius);
-        tornadoTileObject.SetDuration(durationInTicks);
+        tornadoTileObject.SetDuration(GameManager.Instance.GetTicksBasedOnHour(Random.Range(1, 4)));
         tornadoTileObject.SetGridTileLocation(targetTile);
         tornadoTileObject.OnPlacePOI();
         //targetTile.structure.AddPOI(tornadoTileObject, targetTile);
