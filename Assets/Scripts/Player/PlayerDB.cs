@@ -36,9 +36,10 @@ public static class PlayerDB {
     public const string End_Raid_Action = "End Raid";
     public const string End_Invade_Action = "End Invade";
     public const string Breed_Monster_Action = "Breed Monster";
-    public const string Activate_Artifact = "Activate Artifact";
-    public const string Remove_Trait = "Remove Trait";
-    public const string Share_Intel = "Share Intel";
+    public const string Activate_Artifact_Action = "Activate Artifact";
+    public const string Remove_Trait_Action = "Remove Trait";
+    public const string Share_Intel_Action = "Share Intel";
+    public const string Combat_Mode_Action = "Combat Mode";
 
     //spells
     public const string Tornado = "Tornado";
@@ -84,8 +85,8 @@ public static class PlayerDB {
     private static string[] unlockableActions = new[] {
         Seize_Object_Action,
         Seize_Character_Action,
-        Remove_Trait,
-        Share_Intel,
+        Remove_Trait_Action,
+        Share_Intel_Action,
         Zap_Action,
     };
     private static string[] unlockableStructures = new[] {

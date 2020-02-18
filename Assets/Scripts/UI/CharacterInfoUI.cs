@@ -8,6 +8,7 @@ using TMPro;
 using UnityEngine.UI;
 using Traits;
 using UnityEngine.Serialization;
+using Actionables;
 
 public class CharacterInfoUI : UIMenu {
     
@@ -84,6 +85,7 @@ public class CharacterInfoUI : UIMenu {
     private string buffTextColor = "#39FF14";
     private string flawTextColor = "#FF073A";
     private List<string> afflictions;
+    private List<string> combatModes;
 
     internal override void Initialize() {
         base.Initialize();
@@ -151,6 +153,7 @@ public class CharacterInfoUI : UIMenu {
         InitializeLogsMenu();
 
         afflictions = new List<string>();
+        ConstructCombatModes();
     }
 
     #region Overrides
@@ -189,6 +192,26 @@ public class CharacterInfoUI : UIMenu {
         //if (isShowing) {
         //    UpdateCharacterInfo();
         //}
+    }
+    protected override void OnPlayerActionExecuted(PlayerAction action) {
+        base.OnPlayerActionExecuted(action);
+        if(action.actionName == PlayerDB.Combat_Mode_Action) {
+            SetCombatModeUIPosition(action);
+        }
+    }
+    protected override void LoadActions(IPlayerActionTarget target) {
+        UtilityScripts.Utilities.DestroyChildren(actionsTransform);
+        activeActionItems.Clear();
+        for (int i = 0; i < target.actions.Count; i++) {
+            PlayerAction action = target.actions[i];
+            if (PlayerManager.Instance.player.archetype.CanDoAction(action.actionName)) {
+                if (action.actionName == PlayerDB.Combat_Mode_Action) {
+                    action.SetLabelText(action.actionName + ": " + UtilityScripts.Utilities.NotNormalizedConversionEnumToString(activeCharacter.combatComponent.combatMode.ToString()));
+                }
+                ActionItem actionItem = AddNewAction(action);
+                actionItem.SetInteractable(action.isActionValidChecker.Invoke() && !PlayerManager.Instance.player.seizeComponent.hasSeizedPOI);
+            }
+        }
     }
     #endregion
 
@@ -769,6 +792,35 @@ public class CharacterInfoUI : UIMenu {
     }
     public void ShowComfortTooltip() {
         UIManager.Instance.ShowSmallInfo($"{_activeCharacter.needsComponent.comfort.ToString()}/100");
+    }
+    #endregion
+
+    #region Combat Modes
+    private void ConstructCombatModes() {
+        combatModes = new List<string>();
+        for (int i = 0; i < CharacterManager.Instance.combatModes.Length; i++) {
+            combatModes.Add(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(CharacterManager.Instance.combatModes[i].ToString()));
+        }
+    }
+    public void ShowSwitchCombatModeUI() {
+        UIManager.Instance.customDropdownList.ShowDropdown(combatModes, OnClickChooseCombatMode, CanChoostCombatMode);
+    }
+    private void SetCombatModeUIPosition(PlayerAction action) {
+        Vector3 actionWorldPos = action.actionItem.transform.localPosition;
+        UIManager.Instance.customDropdownList.SetPosition(new Vector3(actionWorldPos.x, actionWorldPos.y + 10f, actionWorldPos.z));
+    }
+    private bool CanChoostCombatMode(string mode) {
+        if(UtilityScripts.Utilities.NotNormalizedConversionEnumToString(activeCharacter.combatComponent.combatMode.ToString())
+            == mode) {
+            return false;
+        }
+        return true;
+    }
+    private void OnClickChooseCombatMode(string mode) {
+        COMBAT_MODE combatMode = (COMBAT_MODE) System.Enum.Parse(typeof(COMBAT_MODE), UtilityScripts.Utilities.NotNormalizedConversionStringToEnum(mode));
+        UIManager.Instance.characterInfoUI.activeCharacter.combatComponent.SetCombatMode(combatMode);
+        Messenger.Broadcast(Signals.RELOAD_PLAYER_ACTIONS, activeCharacter as IPlayerActionTarget);
+        UIManager.Instance.customDropdownList.HideDropdown();
     }
     #endregion
 }

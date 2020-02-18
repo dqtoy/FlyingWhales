@@ -5723,9 +5723,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             PlayerAction returnAction = new PlayerAction(PlayerDB.Return_To_Portal_Action, 
                 () => true,
                 () => jobComponent.TriggerReturnPortal());
-            
+            PlayerAction combatModeAction = new PlayerAction(PlayerDB.Combat_Mode_Action,
+                () => true,
+                UIManager.Instance.characterInfoUI.ShowSwitchCombatModeUI);
+            combatModeAction.SetLabelText(combatModeAction.actionName + ": " + UtilityScripts.Utilities.NotNormalizedConversionEnumToString(combatComponent.combatMode.ToString()));
+
             AddPlayerAction(stopAction);
             AddPlayerAction(returnAction);
+            AddPlayerAction(combatModeAction);
         } else {
             PlayerAction afflictAction = new PlayerAction(PlayerDB.Afflict_Action, 
                 () => true,

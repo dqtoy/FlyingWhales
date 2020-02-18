@@ -27,6 +27,9 @@ public class CustomDropdownList : MonoBehaviour {
         }
         gameObject.SetActive(true);
     }
+    public void SetPosition(Vector3 position) {
+        gameObject.transform.localPosition = position;
+    }
 
     public void HideDropdown() {
         gameObject.SetActive(false);

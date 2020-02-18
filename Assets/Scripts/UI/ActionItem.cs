@@ -28,7 +28,7 @@ public class ActionItem : PooledObject {
         // 	actionImg.sprite = icon;	
         // }
         actionImg.sprite = PlayerUI.Instance.playerActionIconDictionary[playerAction.actionName];
-        actionLbl.text = playerAction.actionName;
+        actionLbl.text = playerAction.labelText;
 		SetAsClickable();
         // Messenger.AddListener<PlayerAction>(Signals.PLAYER_ACTION_UNTOGGLE, ListenUntoggleHighlight);
 	}

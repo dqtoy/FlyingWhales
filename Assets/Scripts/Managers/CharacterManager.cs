@@ -48,6 +48,7 @@ public class CharacterManager : MonoBehaviour {
     public int defaultSleepTicks { get; private set; } //how many ticks does a character must sleep per day?
     public SUMMON_TYPE[] summonsPool { get; private set; }
     public int CHARACTER_MISSING_THRESHOLD { get; private set; }
+    public COMBAT_MODE[] combatModes { get; private set; }
 
     #region getters/setters
     public List<Character> allCharacters => characterDatabase.allCharactersList;
@@ -66,6 +67,7 @@ public class CharacterManager : MonoBehaviour {
         defaultSleepTicks = GameManager.Instance.GetTicksBasedOnHour(8);
         CHARACTER_MISSING_THRESHOLD = GameManager.Instance.GetTicksBasedOnHour(72);
         summonsPool = new[] { SUMMON_TYPE.Wolf, SUMMON_TYPE.Golem, SUMMON_TYPE.Incubus, SUMMON_TYPE.Succubus };
+        combatModes = new COMBAT_MODE[] { COMBAT_MODE.Aggressive, COMBAT_MODE.Passive, COMBAT_MODE.Defend };
         characterDatabase = new CharacterDatabase();
         ConstructEmotionData();
         Messenger.AddListener<ActualGoapNode>(Signals.CHARACTER_FINISHED_ACTION, OnCharacterFinishedAction);

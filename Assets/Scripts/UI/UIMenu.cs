@@ -41,6 +41,7 @@ public class UIMenu : MonoBehaviour {
         }
         UIManager.Instance.poiTestingUI.HideUI();
         UIManager.Instance.minionCommandsUI.HideUI();
+        UIManager.Instance.customDropdownList.HideDropdown();
         _playerActionTarget = _data as IPlayerActionTarget;
         if (_playerActionTarget != null) {
             LoadActions(_playerActionTarget);    
@@ -65,11 +66,21 @@ public class UIMenu : MonoBehaviour {
     public virtual void ShowTooltip(GameObject objectHovered) {
 
     }
+    protected virtual void OnPlayerActionExecuted(PlayerAction action) {
+        if (_playerActionTarget != null && _playerActionTarget.actions.Contains(action)) {
+            LoadActions(_playerActionTarget);
+        }
+        // ActionItem actionItem = GetActionItem(action);
+        // if (actionItem != null) {
+        //     LoadActions();
+        // }
+    }
+    #endregion
+
     public void OnClickCloseMenu() {
         CloseMenu();
         UIManager.Instance.ClearUIMenuHistory();
     }
-    #endregion
 
     private void GoBackToPreviousUIMenu(object data) {
         if(data != null) {
@@ -99,7 +110,7 @@ public class UIMenu : MonoBehaviour {
     }
 
     #region Actions
-    private List<ActionItem> activeActionItems = new List<ActionItem>();
+    protected List<ActionItem> activeActionItems = new List<ActionItem>();
     protected virtual void LoadActions(IPlayerActionTarget target) {
         UtilityScripts.Utilities.DestroyChildren(actionsTransform);
         activeActionItems.Clear();
@@ -116,6 +127,7 @@ public class UIMenu : MonoBehaviour {
             Quaternion.identity, actionsTransform);
         ActionItem item = obj.GetComponent<ActionItem>();
         item.SetAction(playerAction);
+        playerAction.SetActionItem(item);
         activeActionItems.Add(item);
         return item;
     }
@@ -127,15 +139,6 @@ public class UIMenu : MonoBehaviour {
             }
         }
         return null;
-    }
-    private void OnPlayerActionExecuted(PlayerAction action) {
-        if (_playerActionTarget != null && _playerActionTarget.actions.Contains(action)) {
-            LoadActions(_playerActionTarget);
-        }
-        // ActionItem actionItem = GetActionItem(action);
-        // if (actionItem != null) {
-        //     LoadActions();
-        // }
     }
     private void OnPlayerActionAddedToTarget(PlayerAction playerAction, IPlayerActionTarget actionTarget) {
         if (_playerActionTarget == actionTarget) {

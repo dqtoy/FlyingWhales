@@ -20,6 +20,8 @@ public class LogReplacerDictionary : SerializableDictionary<string, LOG_IDENTIFI
 public class StringSpriteDictionary : SerializableDictionary<string, Sprite> { }
 [System.Serializable]
 public class FactionEmblemDictionary : SerializableDictionary<int, Sprite> { }
+[System.Serializable]
+public class CombatModeSpriteDictionary : SerializableDictionary<COMBAT_MODE, Sprite> { }
 // [System.Serializable]
 // public class ItemAsseteDictionary : SerializableDictionary<SPECIAL_TOKEN, Sprite> { }
 [System.Serializable]

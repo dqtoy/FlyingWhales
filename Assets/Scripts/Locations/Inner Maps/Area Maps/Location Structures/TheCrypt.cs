@@ -23,11 +23,11 @@ namespace Inner_Maps.Location_Structures {
 
         #region Activate
         private void AddActivateAction() {
-            PlayerAction activate = new PlayerAction(PlayerDB.Activate_Artifact, CanDoActivateArtifactAction, OnClickActivateArtifact);
+            PlayerAction activate = new PlayerAction(PlayerDB.Activate_Artifact_Action, CanDoActivateArtifactAction, OnClickActivateArtifact);
             AddPlayerAction(activate);
         }
         private void RemoveActivateAction() {
-            RemovePlayerAction(GetPlayerAction(PlayerDB.Activate_Artifact));
+            RemovePlayerAction(GetPlayerAction(PlayerDB.Activate_Artifact_Action));
         }
         private bool CanDoActivateArtifactAction() {
             return PlayerManager.Instance.player.mana >= 50;

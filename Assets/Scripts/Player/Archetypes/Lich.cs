@@ -8,7 +8,8 @@ namespace Archetype {
             actions = new List<string>() { PlayerDB.Afflict_Action, PlayerDB.Poison_Action, PlayerDB.Seize_Object_Action, PlayerDB.Animate_Action, PlayerDB.Summon_Minion_Action
                     , PlayerDB.Corrupt_Action, PlayerDB.Stop_Action, PlayerDB.Return_To_Portal_Action
                     , PlayerDB.Harass_Action, PlayerDB.Raid_Action, PlayerDB.Invade_Action
-                    , PlayerDB.End_Harass_Action, PlayerDB.End_Raid_Action, PlayerDB.End_Invade_Action };
+                    , PlayerDB.End_Harass_Action, PlayerDB.End_Raid_Action, PlayerDB.End_Invade_Action
+                    , PlayerDB.Combat_Mode_Action };
             monsters = new List<RaceClass> { new RaceClass(RACE.SKELETON, "Archer"), new RaceClass(RACE.SKELETON, "Marauder") };
             demonicStructures = new List<LANDMARK_TYPE>() { LANDMARK_TYPE.THE_PROFANE, LANDMARK_TYPE.THE_KENNEL, LANDMARK_TYPE.TORTURE_CHAMBER };
             minionClasses = new List<string>() { "Pride", "Sloth", "Lust", "Gluttony" };

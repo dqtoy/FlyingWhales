@@ -75,6 +75,7 @@ public class UIManager : MonoBehaviour {
     [Space(10)]
     [Header("Combat")]
     public CombatUI combatUI;
+    public CombatModeSpriteDictionary combatModeSpriteDictionary;
 
     [Space(10)]
     [Header("Nameplate Prefabs")]
@@ -91,6 +92,10 @@ public class UIManager : MonoBehaviour {
     [Space(10)]
     [Header("Psychopath")]
     public PsychopathUI psychopathUI;
+
+    [Space(10)]
+    [Header("Custom Dropdown List")]
+    public CustomDropdownList customDropdownList;
 
     public bool isShowingAreaTooltip { get; private set; } //is the tooltip for settlement double clicks showing?
     private UIMenu lastOpenedMenu = null;
@@ -172,6 +177,7 @@ public class UIManager : MonoBehaviour {
     private void HideMenus() {
         poiTestingUI.HideUI();
         minionCommandsUI.HideUI();
+        customDropdownList.HideDropdown();
         if (characterInfoUI.isShowing) {
             characterInfoUI.CloseMenu();
         }
