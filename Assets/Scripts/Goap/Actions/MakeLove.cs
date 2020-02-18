@@ -26,9 +26,9 @@ public class MakeLove : GoapAction {
         SetState("Make Love Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
-        string costLog = "\n" + name + " " + target.nameWithID + ":";
+        string costLog = $"\n{name} {target.nameWithID}:";
         int cost = UtilityScripts.Utilities.rng.Next(80, 121);
-        costLog += " +" + cost + "(Initial)";
+        costLog += $" +{cost}(Initial)";
         Trait trait = actor.traitContainer.GetNormalTrait<Trait>("Chaste", "Lustful");
         if (trait != null && trait.name == "Chaste") {
             cost += 2000;
@@ -45,7 +45,7 @@ public class MakeLove : GoapAction {
             } else {
                 int timesCost = 10 * numOfTimesActionDone;
                 cost += timesCost;
-                costLog += " +" + timesCost + "(10 x Times Made Love)";
+                costLog += $" +{timesCost}(10 x Times Made Love)";
             }
         }
         actor.logComponent.AppendCostLog(costLog);

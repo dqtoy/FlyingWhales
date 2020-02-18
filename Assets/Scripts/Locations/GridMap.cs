@@ -20,7 +20,7 @@ public class GridMap : MonoBehaviour {
 
     public int tileSize;
     [Space(10)]
-    public List<HexTile> outerGridList;
+    public HashSet<HexTile> outerGridList;
     public List<HexTile> normalHexTiles;
 	public HexTile[,] map;
     public Region[] allRegions { get; private set; }
@@ -69,7 +69,7 @@ public class GridMap : MonoBehaviour {
             hex.transform.parent = this.transform;
             hex.transform.localPosition = new Vector3(xPosition, yPosition, 0f);
             hex.transform.localScale = new Vector3(tileSize, tileSize, 0f);
-            hex.name = x + "," + y;
+            hex.name = $"{x},{y}";
             HexTile currHex = hex.GetComponent<HexTile>();
             normalHexTiles.Add(currHex);
             currHex.Initialize();
@@ -79,7 +79,7 @@ public class GridMap : MonoBehaviour {
         normalHexTiles.ForEach(o => o.FindNeighbours(map));
     }
 
-    public void SetOuterGridList(List<HexTile> outerTiles) {
+    public void SetOuterGridList(HashSet<HexTile> outerTiles) {
         outerGridList = outerTiles;
         allTiles.AddRange(outerTiles);
     }
@@ -91,7 +91,7 @@ public class GridMap : MonoBehaviour {
         float newX = xOffset * (int) (newWidth / 2);
         float newY = yOffset * (int) (newHeight / 2);
 
-        outerGridList = new List<HexTile>();
+        outerGridList = new HashSet<HexTile>();
         borderParent.transform.localPosition = new Vector2(-newX, -newY);
         for (int i = 0; i < data.outerHextileSaves.Count; i++) {
             SaveDataHextile saveDataHextile = data.outerHextileSaves[i];
@@ -115,13 +115,13 @@ public class GridMap : MonoBehaviour {
             HexTile currHex = hex.GetComponent<HexTile>();
             currHex.Initialize();
             saveDataHextile.Load(currHex);
-            currHex.name = currHex.xCoordinate + "," + currHex.yCoordinate;
+            currHex.name = $"{currHex.xCoordinate},{currHex.yCoordinate}";
 
             outerGridList.Add(currHex);
             currHex.DisableColliders();
         }
         //Biomes.Instance.UpdateTileVisuals(outerGridList);
-        outerGridList.ForEach(o => o.FindNeighboursForBorders());
+        // outerGridList.ForEach(o => o.FindNeighboursForBorders());
     }
     public HexTile GetTileFromCoordinates(int x, int y) {
         if ((x < 0 || x > width - 1) || (y < 0 || y > height - 1)) {
@@ -133,7 +133,7 @@ public class GridMap : MonoBehaviour {
     }
     private HexTile GetBorderTile(int x, int y) {
         for (int i = 0; i < outerGridList.Count; i++) {
-            HexTile currTile = outerGridList[i];
+            HexTile currTile = outerGridList.ElementAt(i);
             if (currTile.xCoordinate == x && currTile.yCoordinate == y) {
                 return currTile;
             }
@@ -170,7 +170,7 @@ public class GridMap : MonoBehaviour {
     public List<HexTile> GetTilesInRange(HexTile center, int range) {
         List<HexTile> tilesInRange = new List<HexTile>();
         CubeCoordinate cube = OddRToCube(new HexCoordinate(center.xCoordinate, center.yCoordinate));
-        Debug.Log("Center in cube coordinates: " + cube.x.ToString() + "," + cube.y.ToString() + "," + cube.z.ToString());
+        Debug.Log($"Center in cube coordinates: {cube.x},{cube.y},{cube.z}");
         for (int dx = -range; dx <= range; dx++) {
             for (int dy = Mathf.Max(-range, -dx - range); dy <= Mathf.Min(range, -dx + range); dy++) {
                 int dz = -dx - dy;

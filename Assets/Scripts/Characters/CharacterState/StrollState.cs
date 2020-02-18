@@ -61,7 +61,8 @@ public class StrollState : CharacterState {
         if (tiles.Count > 0) {
             return tiles[UnityEngine.Random.Range(0, tiles.Count)];
         } else {
-            throw new System.Exception("No unoccupied tile in 3-tile radius for " + stateComponent.character.name + " to go to in " + stateName);
+            throw new System.Exception(
+                $"No unoccupied tile in 3-tile radius for {stateComponent.character.name} to go to in {stateName}");
         }
         //int multiplier = 1;//UnityEngine.Random.Range(5, 8);
         //Vector3 forwardPos = stateComponent.character.marker.visualsParent.up * multiplier;

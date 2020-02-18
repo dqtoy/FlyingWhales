@@ -22,7 +22,7 @@ public class Accident : GoapAction {
         SetState("Accident Success", actionNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
-        string costLog = "\n" + name + " " + target.nameWithID + ": +5(Constant)";
+        string costLog = $"\n{name} {target.nameWithID}: +5(Constant)";
         actor.logComponent.AppendCostLog(costLog);
         return 5;
     }
@@ -49,7 +49,8 @@ public class Accident : GoapAction {
         int randomHpToLose = UnityEngine.Random.Range(5, 26);
         float percentMaxHPToLose = randomHpToLose / 100f;
         int actualHPToLose = Mathf.CeilToInt(goapNode.actor.maxHP * percentMaxHPToLose);
-        Debug.Log("Accident of " + goapNode.actor.name + " percent: " + percentMaxHPToLose + ", max hp: " + goapNode.actor.maxHP + ", lost hp: " + actualHPToLose);
+        Debug.Log(
+            $"Accident of {goapNode.actor.name} percent: {percentMaxHPToLose}, max hp: {goapNode.actor.maxHP}, lost hp: {actualHPToLose}");
         goapNode.actor.AdjustHP(-actualHPToLose);
         if (goapNode.actor.currentHP <= 0) {
             goapNode.actor.Death(deathFromAction: goapNode);

@@ -13,15 +13,14 @@ namespace UtilityScripts {
                         JobQueueItem jqi = settlement.availableJobs[j];
                         if (jqi is GoapPlanJob) {
                             GoapPlanJob gpj = jqi as GoapPlanJob;
-                            summary += "\n" + gpj.name + " Targeting " + gpj.targetPOI?.name ?? "None";
+                            summary += $"\n{gpj.name} Targeting {gpj.targetPOI?.name}" ?? "None";
                         } else {
-                            summary += "\n" + jqi.name;
+                            summary += $"\n{jqi.name}";
                         }
-                        summary += "\nAssigned Character: " + jqi.assignedCharacter?.name ?? "None";
+                        summary += $"\nAssigned Character: {jqi.assignedCharacter?.name}" ?? "None";
                         if (UIManager.Instance.characterInfoUI.isShowing) {
-                            summary += "\nCan character take job? " + jqi
-                                           .CanCharacterDoJob(UIManager.Instance.characterInfoUI.activeCharacter)
-                                           .ToString();
+                            summary +=
+                                $"\nCan character take job? {jqi.CanCharacterDoJob(UIManager.Instance.characterInfoUI.activeCharacter)}";
                         }
             
                     }

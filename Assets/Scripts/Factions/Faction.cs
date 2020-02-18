@@ -47,7 +47,7 @@ public class Faction {
 
     #region getters/setters
     public string urlName {
-        get { return "<link=" + '"' + this.id.ToString() + "_faction" + '"' + ">" + this.name + "</link>"; }
+        get { return $"<link={'"'}{this.id}_faction{'"'}>{this.name}</link>"; }
     }
     public bool isDestroyed {
         get { return characters.Count <= 0; }
@@ -409,10 +409,11 @@ public class Faction {
         }
     }
     private void CheckForNewLeaderDesignation() {
-        string debugLog = GameManager.Instance.TodayLogString() + "Checking for new faction leader designation for " + name;
-        debugLog += "\n-Chance: " + newLeaderDesignationChance;
+        string debugLog =
+            $"{GameManager.Instance.TodayLogString()}Checking for new faction leader designation for {name}";
+        debugLog += $"\n-Chance: {newLeaderDesignationChance}";
         int chance = UnityEngine.Random.Range(0, 100);
-        debugLog += "\n-Roll: " + chance;
+        debugLog += $"\n-Roll: {chance}";
         Debug.Log(debugLog);
         if (chance < newLeaderDesignationChance) {
             DesignateNewLeader();
@@ -421,11 +422,12 @@ public class Faction {
         }
     }
     public void DesignateNewLeader(bool willLog = true) {
-        string log = "Designating a new settlement faction leader for: " + name + "(chance it triggered: " + newLeaderDesignationChance + ")";
+        string log =
+            $"Designating a new settlement faction leader for: {name}(chance it triggered: {newLeaderDesignationChance})";
         newLeaderDesignationWeights.Clear();
         for (int i = 0; i < characters.Count; i++) {
             Character member = characters[i];
-            log += "\n\n-" + member.name;
+            log += $"\n\n-{member.name}";
             if (member.isDead || member.isMissing || member.isBeingSeized) {
                 log += "\nEither dead or missing or seized, will not be part of candidates for faction leader";
                 continue;
@@ -454,7 +456,8 @@ public class Faction {
             }
             if (numberOfFriends > 0) {
                 weight += (numberOfFriends * 20);
-                log += "\n  -Num of Friend/Close Friend in the Settlement: " + numberOfFriends + ", +" + (numberOfFriends * 20);
+                log +=
+                    $"\n  -Num of Friend/Close Friend in the Settlement: {numberOfFriends}, +{(numberOfFriends * 20)}";
             }
             if (member.traitContainer.HasTrait("Inspiring")) {
                 weight += 25;
@@ -468,7 +471,7 @@ public class Faction {
 
             if (numberOfEnemies > 0) {
                 weight += (numberOfEnemies * -10);
-                log += "\n  -Num of Enemies/Rivals in the Settlement: " + numberOfEnemies + ", +" + (numberOfEnemies * -10);
+                log += $"\n  -Num of Enemies/Rivals in the Settlement: {numberOfEnemies}, +{(numberOfEnemies * -10)}";
             }
             if (member.traitContainer.HasTrait("Ugly")) {
                 weight += -20;
@@ -490,7 +493,7 @@ public class Faction {
                 weight = 1;
                 log += "\n  -Weight cannot be less than 1, setting weight to 1";
             }
-            log += "\n  -TOTAL WEIGHT: " + weight;
+            log += $"\n  -TOTAL WEIGHT: {weight}";
             if (weight > 0) {
                 newLeaderDesignationWeights.AddElement(member, weight);
             }
@@ -498,7 +501,7 @@ public class Faction {
         if (newLeaderDesignationWeights.Count > 0) {
             Character chosenLeader = newLeaderDesignationWeights.PickRandomElementGivenWeights();
             if (chosenLeader != null) {
-                log += "\nCHOSEN LEADER: " + chosenLeader.name;
+                log += $"\nCHOSEN LEADER: {chosenLeader.name}";
                 if (willLog) {
                     chosenLeader.interruptComponent.TriggerInterrupt(INTERRUPT.Become_Faction_Leader, chosenLeader);
                 } else {
@@ -655,7 +658,7 @@ public class Faction {
         return createdCharacters;
     }
     public string GetRaceText() {
-        return UtilityScripts.GameUtilities.GetNormalizedRaceAdjective(race) + " Faction";
+        return $"{UtilityScripts.GameUtilities.GetNormalizedRaceAdjective(race)} Faction";
     }
     #endregion
 
@@ -664,7 +667,8 @@ public class Faction {
         if (!relationships.ContainsKey(relWith)) {
             relationships.Add(relWith, relationship);
         } else {
-            throw new System.Exception(this.name + " already has a relationship with " + relWith.name + ", but something is trying to create a new one!");
+            throw new System.Exception(
+                $"{this.name} already has a relationship with {relWith.name}, but something is trying to create a new one!");
         }
     }
     public void RemoveRelationshipWith(Faction relWith) {
@@ -722,14 +726,14 @@ public class Faction {
         if (relationships.ContainsKey(otherFaction)) {
             relationships[otherFaction].AdjustRelationshipStatus(adjustment);
         } else {
-            Debug.LogWarning("There is no key for " + otherFaction.name + " in " + this.name + "'s relationship dictionary");
+            Debug.LogWarning($"There is no key for {otherFaction.name} in {this.name}'s relationship dictionary");
         }
     }
     public void SetRelationshipFor(Faction otherFaction, FACTION_RELATIONSHIP_STATUS status) {
         if (relationships.ContainsKey(otherFaction)) {
             relationships[otherFaction].SetRelationshipStatus(status);
         } else {
-            Debug.LogWarning("There is no key for " + otherFaction.name + " in " + this.name + "'s relationship dictionary");
+            Debug.LogWarning($"There is no key for {otherFaction.name} in {this.name}'s relationship dictionary");
         }
     }
     public bool IsAtWar() {
@@ -824,7 +828,7 @@ public class Faction {
 
     #region Quests
     public void CreateAndSetActiveQuest(string name, Region region) {
-        var typeName = UtilityScripts.Utilities.RemoveAllWhiteSpace(name) + "Quest";
+        var typeName = $"{UtilityScripts.Utilities.RemoveAllWhiteSpace(name)}Quest";
         System.Type type = System.Type.GetType(typeName);
         Quest quest = null;
         if(type != null) {

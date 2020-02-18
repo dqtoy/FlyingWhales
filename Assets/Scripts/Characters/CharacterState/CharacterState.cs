@@ -129,7 +129,8 @@ public class CharacterState {
     /// Pauses this state, used in switching states if this is a major state
     /// </summary>
     public virtual void PauseState() {
-        stateComponent.character.logComponent.PrintLogIfActive("Pausing " + stateName + " for " + stateComponent.character.name);
+        stateComponent.character.logComponent.PrintLogIfActive(
+            $"Pausing {stateName} for {stateComponent.character.name}");
         isPaused = true;
         //StopStatePerTick();
     }
@@ -143,7 +144,8 @@ public class CharacterState {
         if (!isPaused) {
             return; //if this state is not paused then do not resume.
         }
-        stateComponent.character.logComponent.PrintLogIfActive("Resuming " + stateName + " for " + stateComponent.character.name);
+        stateComponent.character.logComponent.PrintLogIfActive(
+            $"Resuming {stateName} for {stateComponent.character.name}");
         isPaused = false;
         stateComponent.SetCurrentState(this);
         //StartStatePerTick();
@@ -235,7 +237,8 @@ public class CharacterState {
     //}
     //This is the one must be called to exit and end this state
     public void ExitState() {
-        stateComponent.character.logComponent.PrintLogIfActive("Exiting " + stateName + " for " + stateComponent.character.name /*+ " targetting " + targetCharacter?.name ?? "No One"*/);
+        stateComponent.character.logComponent.PrintLogIfActive(
+            $"Exiting {stateName} for {stateComponent.character.name}" /*+ " targetting " + targetCharacter?.name ?? "No One"*/);
         EndState();
     }
     public void SetJob(CharacterStateJob job) {
@@ -243,7 +246,7 @@ public class CharacterState {
         if (job != null) {
             OnJobSet();
         } else {
-            Debug.Log(GameManager.Instance.TodayLogString() + this.ToString() + " Set job to null!");
+            Debug.Log($"{GameManager.Instance.TodayLogString()}{this} Set job to null!");
         }
     }
     /// <summary>
@@ -309,7 +312,7 @@ public class CharacterState {
     //    isUnending = state;
     //}
     public override string ToString() {
-        return stateName + " by " + stateComponent.character.name + " with job : " + (job?.name ?? "None");
+        return $"{stateName} by {stateComponent.character.name} with job : {(job?.name ?? "None")}";
     }
     #endregion
 }

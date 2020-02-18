@@ -44,7 +44,7 @@ public class TraitItem : MonoBehaviour {
     public void OnHover() {
         if(trait != null) {
             string summary = trait.name;
-            summary += "\n" + trait.GetTestingData();
+            summary += $"\n{trait.GetTestingData()}";
             if(summary != string.Empty) {
                 UIManager.Instance.ShowSmallInfo(summary);
             }

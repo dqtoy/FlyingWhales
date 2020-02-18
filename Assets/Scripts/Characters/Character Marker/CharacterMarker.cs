@@ -89,7 +89,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     
     public void SetCharacter(Character character) {
         base.Initialize(character);
-        this.name = character.name + "'s Marker";
+        this.name = $"{character.name}'s Marker";
         nameLbl.SetText(character.name);
         this.character = character;
         UpdateSortingOrder();
@@ -602,7 +602,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     public void StopMovement() {
         isMoving = false;
-        string log = character.name + " StopMovement function is called!";
+        string log = $"{character.name} StopMovement function is called!";
         character.logComponent.PrintLogIfActive(log);
         if (ReferenceEquals(character.currentParty.icon, null) == false) {
             character.currentParty.icon.SetIsTravelling(false);
@@ -1116,9 +1116,9 @@ public class CharacterMarker : MapObjectVisual<Character> {
         ClearUnprocessedPOI();
     }
     public void LogPOIsInVisionRange() {
-        string summary = character.name + "'s POIs in range: ";
+        string summary = $"{character.name}'s POIs in range: ";
         for (int i = 0; i < inVisionPOIs.Count; i++) {
-            summary += "\n- " + inVisionPOIs[i].ToString();
+            summary += $"\n- {inVisionPOIs[i]}";
         }
         Debug.Log(summary);
     }
@@ -1161,11 +1161,11 @@ public class CharacterMarker : MapObjectVisual<Character> {
     }
     private void ProcessAllUnprocessedVisionPOIs() {
         if(unprocessedVisionPOIs.Count > 0) {
-            string log = character.name + " tick ended! Processing all unprocessed in visions...";
+            string log = $"{character.name} tick ended! Processing all unprocessed in visions...";
             if (!character.isDead/* && character.canWitness*/) { //character.traitContainer.GetNormalTrait<Trait>("Unconscious", "Resting", "Zapped") == null
                 for (int i = 0; i < unprocessedVisionPOIs.Count; i++) {
                     IPointOfInterest poi = unprocessedVisionPOIs[i];
-                    log += "\n-" + poi.nameWithID;
+                    log += $"\n-{poi.nameWithID}";
                     bool reactToActionOnly = false;
                     if (unprocessedVisionPOIsForActionOnly.Count > 0) {
                         reactToActionOnly = unprocessedVisionPOIsForActionOnly.Contains(poi);

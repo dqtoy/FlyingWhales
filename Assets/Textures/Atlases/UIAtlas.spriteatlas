@@ -17,13 +17,13 @@ SpriteAtlas:
       textureCompression: 0
       filterMode: 0
       generateMipMaps: 0
-      readable: 1
+      readable: 0
       crunchedCompression: 0
       sRGB: 1
     platformSettings:
     - serializedVersion: 3
       m_BuildTarget: DefaultTexturePlatform
-      m_MaxTextureSize: 4096
+      m_MaxTextureSize: 2048
       m_ResizeAlgorithm: 0
       m_TextureFormat: -1
       m_TextureCompression: 0
@@ -35,7 +35,7 @@ SpriteAtlas:
       m_ForceMaximumCompressionQuality_BC6H_BC7: 0
     packingSettings:
       serializedVersion: 2
-      padding: 8
+      padding: 4
       blockOffset: 1
       allowAlphaSplitting: 0
       enableRotation: 0
@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: d64d057451588de47862f92a337b5fc0, type: 3}
-    totalSpriteSurfaceArea: 14125410
+    totalSpriteSurfaceArea: 13624290
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -169,7 +169,6 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 3e5fb104e05f42a4daa91213c335a35d, type: 3}
   - {fileID: 21300000, guid: 3eb28a04324abd547a200406c98fcd13, type: 3}
   - {fileID: 21300000, guid: 50e9bf049ac33d549a26a04145a2c972, type: 3}
-  - {fileID: 21300000, guid: 6a2b1414e6cf3fc4e80aae9c98333149, type: 3}
   - {fileID: 21300000, guid: 50b2e9143d30d444581537d6fbb83b9c, type: 3}
   - {fileID: 21300000, guid: 2d268f1405957354594a0f0804fd3b00, type: 3}
   - {fileID: 21300000, guid: c869c324f4724ff488b16ee73c03bdda, type: 3}
@@ -703,7 +702,6 @@ SpriteAtlas:
   - faction_ui_top_cover_container
   - ge_icon-18
   - ge_icon-03
-  - character_info
   - player_s
   - ge_icon-20
   - minion_tab_items_disabled

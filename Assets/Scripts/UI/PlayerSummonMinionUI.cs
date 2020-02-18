@@ -25,7 +25,7 @@ public class PlayerSummonMinionUI : MonoBehaviour {
         if (!CanChooseMinion(character)) {
             string message = string.Empty;
             if (character.minion.isAssigned) {
-                message = character.name + " is already doing something else.";
+                message = $"{character.name} is already doing something else.";
             }
             UIManager.Instance.ShowSmallInfo(message);
         }
@@ -37,7 +37,7 @@ public class PlayerSummonMinionUI : MonoBehaviour {
         UnsummonedMinionData data = (UnsummonedMinionData)summonObj;
         Minion minion = (minionObj as Character)?.minion ?? null;
 
-        Debug.Log("Will summon " + data.className + " helped by " + (minion?.character.name ?? "No one"));
+        Debug.Log($"Will summon {data.className} helped by {(minion?.character.name ?? "No one")}");
 
         int summonDuration = LandmarkManager.SUMMON_MINION_DURATION;
         if (minion != null) {

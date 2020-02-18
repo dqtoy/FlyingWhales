@@ -157,7 +157,7 @@ public partial class LandmarkManager : MonoBehaviour {
         if (landmarkDataDict.ContainsKey(landmarkType)) {
             return landmarkDataDict[landmarkType];
         }
-        throw new System.Exception("There is no landmark data for " + landmarkType.ToString());
+        throw new System.Exception($"There is no landmark data for {landmarkType}");
     }
     public LandmarkData GetLandmarkData(string landmarkName) {
         for (int i = 0; i < landmarkData.Count; i++) {
@@ -166,7 +166,7 @@ public partial class LandmarkManager : MonoBehaviour {
                 return currData;
             }
         }
-        throw new System.Exception("There is no landmark data for " + landmarkName);
+        throw new System.Exception($"There is no landmark data for {landmarkName}");
     }
     public Island GetIslandOfRegion(Region region, List<Island> islands) {
         for (int i = 0; i < islands.Count; i++) {
@@ -290,7 +290,7 @@ public partial class LandmarkManager : MonoBehaviour {
                 return currData;
             }
         }
-        throw new System.Exception("No settlement data for type " + locationType);
+        throw new System.Exception($"No settlement data for type {locationType}");
     }
     public Settlement CreateNewSettlement(Region region, LOCATION_TYPE locationType, int citizenCount, params HexTile[] tiles) {
         Settlement newSettlement = new Settlement(region, locationType, citizenCount);
@@ -529,10 +529,10 @@ public partial class LandmarkManager : MonoBehaviour {
     #region Regions
     public TileFeature CreateTileFeature([NotNull] string featureName) {
         try {
-            Debug.Assert(featureName != null, nameof(featureName) + " != null");
+            Debug.Assert(featureName != null, $"{nameof(featureName)} != null");
             return System.Activator.CreateInstance(System.Type.GetType(featureName)) as TileFeature;
         } catch {
-            throw new System.Exception("Cannot create region feature with name " + featureName);
+            throw new System.Exception($"Cannot create region feature with name {featureName}");
         }
         
     }

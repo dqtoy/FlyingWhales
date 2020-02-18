@@ -36,7 +36,7 @@ public class MinionCard : MonoBehaviour {
             portraitImg.gameObject.SetActive(false);
         }
         txtName.text = minionName;
-        txtClass.text = "Demon " + this.minionData.className;
+        txtClass.text = $"Demon {this.minionData.className}";
         // txtCombatAbility.text = "<link=\"0\">" + UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(this.minionData.combatAbility.ToString()) + "</link>";
 
         // DeadlySin deadlySin = CharacterManager.Instance.GetDeadlySin(this.minionData.className);

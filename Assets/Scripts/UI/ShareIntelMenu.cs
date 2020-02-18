@@ -36,7 +36,7 @@ public class ShareIntelMenu : MonoBehaviour {
 
         this.targetCharacter = targetCharacter;
         this.actor = PlayerManager.Instance.player.minions.FirstOrDefault()?.character ?? null;
-        instructionLbl.text = "Share Intel with " + targetCharacter.name;
+        instructionLbl.text = $"Share Intel with {targetCharacter.name}";
         endOfConversationLbl.transform.SetParent(this.transform);
         endOfConversationLbl.gameObject.SetActive(false);
 
@@ -66,7 +66,7 @@ public class ShareIntelMenu : MonoBehaviour {
 
         this.targetCharacter = targetCharacter;
         this.actor = actor;
-        instructionLbl.text = "Share Intel with " + targetCharacter.name;
+        instructionLbl.text = $"Share Intel with {targetCharacter.name}";
         endOfConversationLbl.transform.SetParent(this.transform);
         endOfConversationLbl.gameObject.SetActive(false);
 
@@ -146,7 +146,7 @@ public class ShareIntelMenu : MonoBehaviour {
         "And the point of sharing this with me is...?"
     };
     private IEnumerator ShowReactions(List<string> reactions) {
-        Debug.Log("Showing Reactions of " + targetCharacter.name + ": " + reactions.Count.ToString());
+        Debug.Log($"Showing Reactions of {targetCharacter.name}: {reactions.Count}");
         if (reactions.Count == 0) {
             //character had no reaction
             reactions.Add(randomNothings[Random.Range(0, randomNothings.Length)]);
@@ -203,8 +203,8 @@ public class ShareIntelMenu : MonoBehaviour {
                             if (finalReaction != string.Empty && i > 0) {
                                 finalReaction += "\n";
                             }
-                            finalReaction += "I feel " + responses + " towards " +
-                                             (i == 0 ? intel.node.actor.name : intel.node.poiTarget.name) + ".";
+                            finalReaction +=
+                                $"I feel {responses} towards {(i == 0 ? intel.node.actor.name : intel.node.poiTarget.name)}.";
                         }
                     }
                 }

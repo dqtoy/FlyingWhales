@@ -110,8 +110,10 @@ namespace Inner_Maps {
             
             HexTile leftMostTile = region.GetLeftMostTile();
             List<int> leftMostRows = region.GetLeftMostRows();
-            for (int localX = 0; localX <= region.hexTileMap.GetUpperBound(0); localX++) {
-                for (int localY = 0; localY <= region.hexTileMap.GetUpperBound(1); localY++) {
+            int xBound = region.hexTileMap.GetUpperBound(0);
+            int yBound = region.hexTileMap.GetUpperBound(1);
+            for (int localX = 0; localX <= xBound; localX++) {
+                for (int localY = 0; localY <= yBound; localY++) {
                     HexTile firstTileInRow = region.hexTileMap[0, localY];
                     HexTile tile = region.hexTileMap[localX, localY];
                     if (tile.region == this.region) {

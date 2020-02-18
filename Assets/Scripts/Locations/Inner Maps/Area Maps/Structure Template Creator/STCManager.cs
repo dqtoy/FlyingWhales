@@ -33,7 +33,7 @@ public class STCManager : MonoBehaviour {
 
     private void Awake() {
 #if UNITY_EDITOR
-        templatePath = Application.dataPath + "/StreamingAssets/Structure Templates/";
+        templatePath = $"{Application.dataPath}/StreamingAssets/Structure Templates/";
 #endif
     }
 
@@ -93,7 +93,7 @@ public class STCManager : MonoBehaviour {
         }
 
         Vector3Int shiftBy = new Vector3Int(shiftXBy, shiftYBy, 0);
-        Debug.Log("Shifting map by " + shiftBy.ToString());
+        Debug.Log($"Shifting map by {shiftBy}");
         Tilemap[] tilemaps = GetComponentsInChildren<Tilemap>();
         for (int i = 0; i < tilemaps.Length; i++) {
             ShiftTilemapPosition(tilemaps[i], bounds);
@@ -154,7 +154,7 @@ public class STCManager : MonoBehaviour {
             furnitureSpots[i] = currMono.GetFurnitureSpot();
         }
 
-        Debug.Log("Got " + groundTiles.Length + " tiles");
+        Debug.Log($"Got {groundTiles.Length} tiles");
 
         StructureTemplate newTemplate = new StructureTemplate("Structure_Template", groundTiles, groundWallTiles, wallTiles, objectTiles, detailTiles,
             new Point(groundTilemap.cellBounds.size.x, groundTilemap.cellBounds.size.y), connectors, furnitureSpots);
@@ -176,7 +176,7 @@ public class STCManager : MonoBehaviour {
             string dataAsJson = File.ReadAllText(path);
             StructureTemplate loaded = JsonUtility.FromJson<StructureTemplate>(dataAsJson);
             LoadTemplate(loaded);
-            Debug.Log("Loaded " + path);
+            Debug.Log($"Loaded {path}");
         }
 #endif
     }
@@ -187,7 +187,7 @@ public class STCManager : MonoBehaviour {
                 return currSpot;
             }
         }
-        throw new System.Exception("There is no building spot with id " + id.ToString());
+        throw new System.Exception($"There is no building spot with id {id}");
     }
     private void LoadTemplate(StructureTemplate st) {
         ClearTiles();
@@ -328,7 +328,7 @@ public class STCManager : MonoBehaviour {
     };
     public List<StructureTemplate> GetStructureTemplates(string folderName) {
         List<StructureTemplate> templates = new List<StructureTemplate>();
-        string path = templatePath + folderName + "/";
+        string path = $"{templatePath}{folderName}/";
         if (Directory.Exists(path)) {
             DirectoryInfo info = new DirectoryInfo(path);
             FileInfo[] files = info.GetFiles();
@@ -398,7 +398,7 @@ public class StructureTemplate {
                 return currSpot;
             }
         }
-        throw new System.Exception("There is no building spot with id " + id.ToString());
+        throw new System.Exception($"There is no building spot with id {id}");
     }
     public bool TryGetBuildingSpotDataAtLocation(Vector3 location, out BuildingSpotData spot) {
         for (int i = 0; i < connectors.Length; i++) {

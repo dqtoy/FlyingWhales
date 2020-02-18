@@ -79,7 +79,7 @@ public class LevelUpUI : MonoBehaviour {
             minionToLevelUp = minion;
             minionPortrait.GeneratePortrait(minionToLevelUp.character);
             string text = minionToLevelUp.character.name;
-            text += "\nLvl. " + minionToLevelUp.character.level + " " + minionToLevelUp.character.raceClassName;
+            text += $"\nLvl. {minionToLevelUp.character.level} {minionToLevelUp.character.raceClassName}";
             minionText.text = text;
             minionPortrait.gameObject.SetActive(true);
             minionText.gameObject.SetActive(true);

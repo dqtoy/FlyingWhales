@@ -60,7 +60,7 @@ public class Save {
         if(landmarkSaves == null) {
             landmarkSaves = new List<SaveDataLandmark>();
         }
-        var typeName = "SaveData" + landmark.GetType().ToString();
+        var typeName = $"SaveData{landmark.GetType()}";
         System.Type type = System.Type.GetType(typeName);
         SaveDataLandmark newSaveData = null;
         if (type != null) {
@@ -287,7 +287,7 @@ public class Save {
             for (int i = 0; i < kvp.Value.Count; i++) {
                 TileObject currTileObject = kvp.Value[i];
                 SaveDataTileObject data = null;
-                System.Type type = System.Type.GetType("SaveData" + currTileObject.GetType().ToString());
+                System.Type type = System.Type.GetType($"SaveData{currTileObject.GetType()}");
                 if (type != null) {
                     data = System.Activator.CreateInstance(type) as SaveDataTileObject;
                 } else {

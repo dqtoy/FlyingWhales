@@ -43,7 +43,7 @@ public class CharacterRole {
                 return ALL[i];
             }
         }
-        throw new Exception("There's no character role instance for " + roleType.ToString());
+        throw new Exception($"There's no character role instance for {roleType}");
     }
 
     #region Virtuals

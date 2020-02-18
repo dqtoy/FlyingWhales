@@ -76,7 +76,7 @@ namespace UtilityScripts {
                 HexTile newCenterOfMass = map[midPointX, midPointY];
                 return newCenterOfMass;
             } catch {
-                throw new Exception("Cannot Recompute center. Computed new center is " + midPointX.ToString() + ", " + midPointY.ToString());
+                throw new Exception($"Cannot Recompute center. Computed new center is {midPointX}, {midPointY}");
             }
 
         }
@@ -133,9 +133,8 @@ namespace UtilityScripts {
 
             LocationGridTile centerTile = map[centerX, centerY]; 
         
-            Assert.IsTrue(tiles.Contains(centerTile), $"Computed center is not in provided list. " +
-                                                      $"Center was {centerTile.ToString()}. Min X is {minX.ToString()}. Max X is {maxX.ToString()}. " +
-                                                      $"Min Y is {minY.ToString()}. Max Y is {maxY.ToString()}.");
+            Assert.IsTrue(tiles.Contains(centerTile),
+                $"Computed center is not in provided list. Center was {centerTile.ToString()}. Min X is {minX.ToString()}. Max X is {maxX.ToString()}. Min Y is {minY.ToString()}. Max Y is {maxY.ToString()}.");
 
             return centerTile;
 
@@ -150,7 +149,7 @@ namespace UtilityScripts {
             } else if (race == RACE.WOLF) {
                 return "Ravager";
             }
-            throw new Exception("No beast class for " + race.ToString() + " Race!");
+            throw new Exception($"No beast class for {race} Race!");
         }
         private static readonly HashSet<RACE> _beastRaces = new HashSet<RACE>() {
             RACE.DRAGON,

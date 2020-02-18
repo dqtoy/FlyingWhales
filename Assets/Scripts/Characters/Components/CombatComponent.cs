@@ -29,7 +29,7 @@ public class CombatComponent {
 
     #region Fight or Flight
     public void FightOrFlight(IPointOfInterest target, bool isLethal = true) {
-        string debugLog = "FIGHT or FLIGHT response of " + owner.name + " against " + target.nameWithID;
+        string debugLog = $"FIGHT or FLIGHT response of {owner.name} against {target.nameWithID}";
         if (!owner.canMove) {
             debugLog += "\n-Character cannot move, will not fight or flight";
             owner.logComponent.PrintLogIfActive(debugLog);
@@ -48,7 +48,7 @@ public class CombatComponent {
                 if (!owner.traitContainer.HasTrait("Combatant")) {
                     debugLog += "\n-Character is not combatant, 20% to Fight";
                     int chance = UnityEngine.Random.Range(0, 100);
-                    debugLog += "\n-Roll: " + chance;
+                    debugLog += $"\n-Roll: {chance}";
                     if (chance < 20) {
                         debugLog += "\n-FIGHT";
                         owner.logComponent.PrintLogIfActive(debugLog);
@@ -75,9 +75,9 @@ public class CombatComponent {
                                 break;
                             }
                         }
-                        debugLog += "\n-Fight chance: " + fightChance;
+                        debugLog += $"\n-Fight chance: {fightChance}";
                         int roll = UnityEngine.Random.Range(0, 100);
-                        debugLog += "\n-Roll: " + roll;
+                        debugLog += $"\n-Roll: {roll}";
                         if (roll < fightChance) {
                             debugLog += "\n-FIGHT";
                             owner.logComponent.PrintLogIfActive(debugLog);
@@ -108,14 +108,14 @@ public class CombatComponent {
     public bool Fight(IPointOfInterest target, bool isLethal = true) {
         bool hasFought = false;
         if (!hostilesInRange.Contains(target)) {
-            string debugLog = "Triggered FIGHT response for " + owner.name + " against " + target.nameWithID;
+            string debugLog = $"Triggered FIGHT response for {owner.name} against {target.nameWithID}";
             hostilesInRange.Add(target);
             avoidInRange.Remove(target);
             willProcessCombat = true;
             if (target.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
                 lethalCharacters.Add(target as Character, isLethal);
             }
-            debugLog += "\n" + target.name + " was added to " + owner.name + "'s hostile range!";
+            debugLog += $"\n{target.name} was added to {owner.name}'s hostile range!";
             hasFought = true;
             owner.logComponent.PrintLogIfActive(debugLog);
         }
@@ -129,12 +129,12 @@ public class CombatComponent {
             }
         }
         if (!avoidInRange.Contains(target)) {
-            string debugLog = "Triggered FLIGHT response for " + owner.name + " against " + target.nameWithID;
+            string debugLog = $"Triggered FLIGHT response for {owner.name} against {target.nameWithID}";
             if (owner.marker.inVisionPOIs.Contains(target)) {
                 avoidInRange.Add(target);
                 willProcessCombat = true;
                 avoidReason = reason;
-                debugLog += "\n" + target.name + " was added to " + owner.name + "'s avoid range!";
+                debugLog += $"\n{target.name} was added to {owner.name}'s avoid range!";
                 hasFled = true;
                 if (target is Character) {
                     Character targetCharacter = target as Character;
@@ -187,7 +187,7 @@ public class CombatComponent {
             if (poi is Character) {
                 lethalCharacters.Remove(poi as Character);
             }
-            string removeHostileSummary = poi.name + " was removed from " + owner.name + "'s hostile range.";
+            string removeHostileSummary = $"{poi.name} was removed from {owner.name}'s hostile range.";
             owner.logComponent.PrintLogIfActive(removeHostileSummary);
             //When removing hostile in range, check if character is still in combat state, if it is, reevaluate combat behavior, if not, do nothing
             if (processCombatBehavior) {
@@ -311,10 +311,10 @@ public class CombatComponent {
         SetOnProcessCombatAction(null);
     }
     private void ProcessCombatBehavior() {
-        string log = owner.name + " process combat switch is turned on, processing combat...";
+        string log = $"{owner.name} process combat switch is turned on, processing combat...";
         if (owner.interruptComponent.isInterrupted) {
-            log += "\n-Character is interrupted: " + owner.interruptComponent.currentInterrupt.name +
-                   ", will not process combat";
+            log +=
+                $"\n-Character is interrupted: {owner.interruptComponent.currentInterrupt.name}, will not process combat";
         } else {
             if (owner.isInCombat) {
                 log += "\n-Character is already in combat, determining combat action to do";

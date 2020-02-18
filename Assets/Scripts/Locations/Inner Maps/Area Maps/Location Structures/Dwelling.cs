@@ -133,7 +133,8 @@ namespace Inner_Maps.Location_Structures {
         public override string GetNameRelativeTo(Character character) {
             if (character.homeStructure == this) {
                 //- Dwelling where Actor Resides: "at [his/her] home"
-                return UtilityScripts.Utilities.GetPronounString(character.gender, PRONOUN_TYPE.POSSESSIVE, false) + " home";
+                return
+                    $"{UtilityScripts.Utilities.GetPronounString(character.gender, PRONOUN_TYPE.POSSESSIVE, false)} home";
             } else if (residents.Count > 0) {
                 //- Dwelling where Someone else Resides: "at [Resident Name]'s home"
                 string residentSummary = residents[0].name;
@@ -146,9 +147,9 @@ namespace Inner_Maps.Location_Structures {
                     residentSummary += residents[i].name;
                 }
                 if (residentSummary.Last() == 's') {
-                    return residentSummary + "' home";
+                    return $"{residentSummary}' home";
                 }
-                return residentSummary + "'s home";
+                return $"{residentSummary}'s home";
             } else {
                 //- Dwelling where no one resides: "at an empty house"
                 return "an empty house";

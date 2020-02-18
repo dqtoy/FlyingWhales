@@ -117,10 +117,8 @@ public class GoapThread : Multithread {
         try {
             CreatePlan();
         }catch(System.Exception e) {
-            Debug.LogError("Problem with " + actor.name + "'s GoapThread! " +
-                           "\nJob is " + (job?.jobType.ToString() ?? "None") +
-                           "\nTarget is " + target.name +
-                           "\n" + e.Message + "\n" + e.StackTrace);
+            Debug.LogError(
+                $"Problem with {actor.name}'s GoapThread! \nJob is {(job?.jobType.ToString() ?? "None")}\nTarget is {target.name}\n{e.Message}\n{e.StackTrace}");
         }
     }
     public override void FinishMultithread() {
@@ -137,11 +135,12 @@ public class GoapThread : Multithread {
         }
     }
     private void CreateNewPlan() {
-        log = "-----------------RECEIVING NEW PLAN FROM OTHER THREAD OF " + actor.name + " WITH TARGET " + target?.name ?? "None" + " (" + actor.currentRegion.name + ")-----------------------";
+        log = $"-----------------RECEIVING NEW PLAN FROM OTHER THREAD OF {actor.name} WITH TARGET {target?.name}" ??
+              $"None ({actor.currentRegion.name})-----------------------";
         if (goalType != INTERACTION_TYPE.NONE) {
-            log += "\nGOAL: " + goalType.ToString();
+            log += $"\nGOAL: {goalType}";
         } else {
-            log += "\nGOAL: " + goalEffect.ToString();
+            log += $"\nGOAL: {goalEffect}";
         }
 
         string planLog = string.Empty;
@@ -166,7 +165,7 @@ public class GoapThread : Multithread {
             //default
             plan = actor.planner.PlanActions(target, goalEffect, isPersonalPlan, ref planLog, job);
         }
-        log += "\nGOAP TREE LOG: " + planLog;
+        log += $"\nGOAP TREE LOG: {planLog}";
         if(plan != null) {
             log += "\n\nGENERATED PLAN: ";
             log += plan.LogPlan();
@@ -460,15 +459,17 @@ public class GoapThread : Multithread {
         //log += usableLog;
     }
     private void RecalculatePlan() {
-        log = "-----------------RECALCULATING PLAN OF " + actor.name + " WITH TARGET " + recalculationPlan.target.name + " (" + actor.currentRegion.name + ")-----------------------";
+        log =
+            $"-----------------RECALCULATING PLAN OF {actor.name} WITH TARGET {recalculationPlan.target.name} ({actor.currentRegion.name})-----------------------";
         if (recalculationPlan.isEnd) {
             log += "\nPlan has already ended! Cannot recalculate!";
             return;
         }
-        log += "\nGOAL ACTION: " + recalculationPlan.endNode.singleNode.action.goapName + " - " + recalculationPlan.target.name;
+        log +=
+            $"\nGOAL ACTION: {recalculationPlan.endNode.singleNode.action.goapName} - {recalculationPlan.target.name}";
         string planLog = string.Empty;
         bool success = actor.planner.RecalculatePathForPlan(recalculationPlan, job, ref planLog);
-        log += "\nGOAP TREE LOG: " + planLog;
+        log += $"\nGOAP TREE LOG: {planLog}";
         if (success) {
             log += "\nGENERATED PLAN: ";
             log += recalculationPlan.LogPlan();

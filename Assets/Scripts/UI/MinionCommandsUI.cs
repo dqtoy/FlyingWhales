@@ -86,7 +86,7 @@ public class MinionCommandsUI : MonoBehaviour {
             Character actor = UIManager.Instance.characterInfoUI.activeCharacter;
             actor.jobComponent.CreateKnockoutJob(targetPOI as Character);
         } else {
-            Debug.LogError(targetPOI.name + " is not a character!");
+            Debug.LogError($"{targetPOI.name} is not a character!");
         }
         HideUI();
     }
@@ -98,7 +98,7 @@ public class MinionCommandsUI : MonoBehaviour {
             Character actor = UIManager.Instance.characterInfoUI.activeCharacter;
             actor.jobComponent.CreateKillJob(targetPOI as Character);
         } else {
-            Debug.LogError(targetPOI.name + " is not a character!");
+            Debug.LogError($"{targetPOI.name} is not a character!");
         }
         HideUI();
     }
@@ -110,7 +110,7 @@ public class MinionCommandsUI : MonoBehaviour {
             Character actor = UIManager.Instance.characterInfoUI.activeCharacter;
             actor.jobComponent.CreateAbductJob(targetPOI as Character);
         } else {
-            Debug.LogError(targetPOI.name + " is not a character!");
+            Debug.LogError($"{targetPOI.name} is not a character!");
         }
         HideUI();
     }
@@ -125,7 +125,7 @@ public class MinionCommandsUI : MonoBehaviour {
             Character actor = UIManager.Instance.characterInfoUI.activeCharacter;
             actor.jobComponent.CreateLearnMonsterJob(targetPOI as Character);
         } else {
-            Debug.LogError(targetPOI.name + " is not a character!");
+            Debug.LogError($"{targetPOI.name} is not a character!");
         }
         HideUI();
     }
@@ -141,7 +141,7 @@ public class MinionCommandsUI : MonoBehaviour {
             Character actor = UIManager.Instance.characterInfoUI.activeCharacter;
             actor.jobComponent.CreateTakeArtifactJob(targetPOI as Artifact, PlayerManager.Instance.player.portalTile.locationGridTiles[0].structure);
         } else {
-            Debug.LogError(targetPOI.name + " is not an artifact!");
+            Debug.LogError($"{targetPOI.name} is not an artifact!");
         }
         HideUI();
     }

@@ -26,7 +26,8 @@ public class Lure : PlayerSpell {
         if (targetPOI is Character) {
             isGamePausedOnLure = GameManager.Instance.isPaused;
             targetCharacter = targetPOI as Character;
-            UIManager.Instance.ShowClickableObjectPicker(GridMap.Instance.allRegions.ToList(), GoToRegion, null, CanChooseRegion, "Select Region to Lure " + targetCharacter.name, showCover: true);
+            UIManager.Instance.ShowClickableObjectPicker(GridMap.Instance.allRegions.ToList(), GoToRegion, null, CanChooseRegion,
+                $"Select Region to Lure {targetCharacter.name}", showCover: true);
         } 
     }
     protected override bool CanPerformActionTowards(Character targetCharacter) {

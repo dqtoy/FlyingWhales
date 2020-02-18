@@ -29,7 +29,7 @@ public class ReactionComponent {
         }
         debugLog += "\n-Character will loop through all his/her traits to react to Target";
         for (int i = 0; i < owner.traitContainer.allTraits.Count; i++) {
-            debugLog += "\n - " + owner.traitContainer.allTraits[i].name;
+            debugLog += $"\n - {owner.traitContainer.allTraits[i].name}";
             if (owner.traitContainer.allTraits[i].OnSeePOI(targetTileObject, owner)) {
                 debugLog += ": triggered";
             } else {
@@ -69,36 +69,36 @@ public class ReactionComponent {
             string emotionsToActor = interrupt.ReactionToActor(owner, actor, target, interrupt);
             if (emotionsToActor != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsToActor)) {
                 string error = "Interrupt Error in Witness Reaction To Actor (Duplicate/Incompatible Emotions Triggered)";
-                error += "\n-Witness: " + owner;
-                error += "\n-Interrupt: " + interrupt.name;
-                error += "\n-Actor: " + actor.name;
-                error += "\n-Target: " + target.nameWithID;
+                error += $"\n-Witness: {owner}";
+                error += $"\n-Interrupt: {interrupt.name}";
+                error += $"\n-Actor: {actor.name}";
+                error += $"\n-Target: {target.nameWithID}";
                 owner.logComponent.PrintLogErrorIfActive(error);
             }
             string emotionsToTarget = interrupt.ReactionToTarget(owner, actor, target, interrupt);
             if (emotionsToTarget != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsToTarget)) {
                 string error = "Interrupt Error in Witness Reaction To Actor (Duplicate/Incompatible Emotions Triggered)";
-                error += "\n-Witness: " + owner;
-                error += "\n-Interrupt: " + interrupt.name;
-                error += "\n-Actor: " + actor.name;
-                error += "\n-Target: " + target.nameWithID;
+                error += $"\n-Witness: {owner}";
+                error += $"\n-Interrupt: {interrupt.name}";
+                error += $"\n-Actor: {actor.name}";
+                error += $"\n-Target: {target.nameWithID}";
                 owner.logComponent.PrintLogErrorIfActive(error);
             }
-            string response = "Witness interrupt reaction of " + owner.name + " to " + interrupt.name + " of " + actor.name + " with target " + target.name
-                + ": " + emotionsToActor + emotionsToTarget;
+            string response =
+                $"Witness interrupt reaction of {owner.name} to {interrupt.name} of {actor.name} with target {target.name}: {emotionsToActor}{emotionsToTarget}";
             owner.logComponent.PrintLogIfActive(response);
         } else if (target == owner) {
             string emotionsOfTarget = interrupt.ReactionOfTarget(actor, target, interrupt);
             if (emotionsOfTarget != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsOfTarget)) {
                 string error = "Interrupt Error in Witness Reaction To Actor (Duplicate/Incompatible Emotions Triggered)";
-                error += "\n-Witness: " + owner;
-                error += "\n-Interrupt: " + interrupt.name;
-                error += "\n-Actor: " + actor.name;
-                error += "\n-Target: " + target.nameWithID;
+                error += $"\n-Witness: {owner}";
+                error += $"\n-Interrupt: {interrupt.name}";
+                error += $"\n-Actor: {actor.name}";
+                error += $"\n-Target: {target.nameWithID}";
                 owner.logComponent.PrintLogErrorIfActive(error);
             }
-            string response = "Witness interrupt reaction of " + owner.name + " to " + interrupt.name + " of " + actor.name + " with target " + target.name
-                + ": " + emotionsOfTarget;
+            string response =
+                $"Witness interrupt reaction of {owner.name} to {interrupt.name} of {actor.name} with target {target.name}: {emotionsOfTarget}";
             owner.logComponent.PrintLogIfActive(response);
         }
     }
@@ -110,8 +110,12 @@ public class ReactionComponent {
         //if (witnessedEvent.currentStateName == null) {
         //    throw new System.Exception(GameManager.Instance.TodayLogString() + this.name + " witnessed event " + witnessedEvent.action.goapName + " by " + witnessedEvent.actor.name + " but it does not have a current state!");
         //}
+        if (string.IsNullOrEmpty(node.currentStateName)) {
+            return;
+        }
         if (node.descriptionLog == null) {
-            throw new Exception(GameManager.Instance.TodayLogString() + owner.name + " witnessed event " + node.action.goapName + " by " + node.actor.name + " with state " + node.currentStateName + " but it does not have a description log!");
+            throw new Exception(
+                $"{GameManager.Instance.TodayLogString()}{owner.name} witnessed event {node.action.goapName} by {node.actor.name} with state {node.currentStateName} but it does not have a description log!");
         }
         IPointOfInterest target = node.poiTarget;
         if(node.poiTarget is TileObject && node.action.goapType == INTERACTION_TYPE.STEAL) {
@@ -130,37 +134,37 @@ public class ReactionComponent {
             string emotionsToActor = node.action.ReactionToActor(owner, node);
             if(emotionsToActor != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsToActor)) {
                 string error = "Action Error in Witness Reaction To Actor (Duplicate/Incompatible Emotions Triggered)";
-                error += "\n-Witness: " + owner;
-                error += "\n-Action: " + node.action.goapName;
-                error += "\n-Actor: " + node.actor.name;
-                error += "\n-Target: " + node.poiTarget.nameWithID;
+                error += $"\n-Witness: {owner}";
+                error += $"\n-Action: {node.action.goapName}";
+                error += $"\n-Actor: {node.actor.name}";
+                error += $"\n-Target: {node.poiTarget.nameWithID}";
                 owner.logComponent.PrintLogErrorIfActive(error);
             }
             string emotionsToTarget = node.action.ReactionToTarget(owner, node);
             if (emotionsToTarget != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsToTarget)) {
                 string error = "Action Error in Witness Reaction To Target (Duplicate/Incompatible Emotions Triggered)";
-                error += "\n-Witness: " + owner;
-                error += "\n-Action: " + node.action.goapName;
-                error += "\n-Actor: " + node.actor.name;
-                error += "\n-Target: " + node.poiTarget.nameWithID;
+                error += $"\n-Witness: {owner}";
+                error += $"\n-Action: {node.action.goapName}";
+                error += $"\n-Actor: {node.actor.name}";
+                error += $"\n-Target: {node.poiTarget.nameWithID}";
                 owner.logComponent.PrintLogErrorIfActive(error);
             }
-            string response = "Witness action reaction of " + owner.name + " to " + node.action.goapName + " of " + node.actor.name + " with target " + node.poiTarget.name
-                + ": " + emotionsToActor + emotionsToTarget;
+            string response =
+                $"Witness action reaction of {owner.name} to {node.action.goapName} of {node.actor.name} with target {node.poiTarget.name}: {emotionsToActor}{emotionsToTarget}";
             owner.logComponent.PrintLogIfActive(response);
         } else if (target == owner) {
             if (!node.isStealth || target.traitContainer.HasTrait("Vigilant")) {
                 string emotionsOfTarget = node.action.ReactionOfTarget(node);
                 if (emotionsOfTarget != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsOfTarget)) {
                     string error = "Action Error in Witness Reaction Of Target (Duplicate/Incompatible Emotions Triggered)";
-                    error += "\n-Witness: " + owner;
-                    error += "\n-Action: " + node.action.goapName;
-                    error += "\n-Actor: " + node.actor.name;
-                    error += "\n-Target: " + node.poiTarget.nameWithID;
+                    error += $"\n-Witness: {owner}";
+                    error += $"\n-Action: {node.action.goapName}";
+                    error += $"\n-Actor: {node.actor.name}";
+                    error += $"\n-Target: {node.poiTarget.nameWithID}";
                     owner.logComponent.PrintLogErrorIfActive(error);
                 }
-                string response = "Witness action reaction of " + owner.name + " to " + node.action.goapName + " of " + node.actor.name + " with target " + node.poiTarget.name
-                    + ": " + emotionsOfTarget;
+                string response =
+                    $"Witness action reaction of {owner.name} to {node.action.goapName} of {node.actor.name} with target {node.poiTarget.name}: {emotionsOfTarget}";
                 owner.logComponent.PrintLogIfActive(response);
             }
         }
@@ -172,7 +176,8 @@ public class ReactionComponent {
     }
     private string ReactToInformedAction(ActualGoapNode node) {
         if (node.descriptionLog == null) {
-            throw new Exception(GameManager.Instance.TodayLogString() + owner.name + " informed event " + node.action.goapName + " by " + node.actor.name + " with state " + node.currentStateName + " but it does not have a description log!");
+            throw new Exception(
+                $"{GameManager.Instance.TodayLogString()}{owner.name} informed event {node.action.goapName} by {node.actor.name} with state {node.currentStateName} but it does not have a description log!");
         }
         Log informedLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "informed_event", node);
         informedLog.AddToFillers(node.descriptionLog.fillers);
@@ -185,30 +190,30 @@ public class ReactionComponent {
             string emotionsToActor = node.action.ReactionToActor(owner, node);
             if (emotionsToActor != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsToActor)) {
                 string error = "Action Error in Witness Reaction To Actor (Duplicate/Incompatible Emotions Triggered)";
-                error += "\n-Witness: " + owner;
-                error += "\n-Action: " + node.action.goapName;
-                error += "\n-Actor: " + node.actor.name;
-                error += "\n-Target: " + node.poiTarget.nameWithID;
+                error += $"\n-Witness: {owner}";
+                error += $"\n-Action: {node.action.goapName}";
+                error += $"\n-Actor: {node.actor.name}";
+                error += $"\n-Target: {node.poiTarget.nameWithID}";
                 owner.logComponent.PrintLogErrorIfActive(error);
             }
             string emotionsToTarget = node.action.ReactionToTarget(owner, node);
             if (emotionsToTarget != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsToTarget)) {
                 string error = "Action Error in Witness Reaction To Target (Duplicate/Incompatible Emotions Triggered)";
-                error += "\n-Witness: " + owner;
-                error += "\n-Action: " + node.action.goapName;
-                error += "\n-Actor: " + node.actor.name;
-                error += "\n-Target: " + node.poiTarget.nameWithID;
+                error += $"\n-Witness: {owner}";
+                error += $"\n-Action: {node.action.goapName}";
+                error += $"\n-Actor: {node.actor.name}";
+                error += $"\n-Target: {node.poiTarget.nameWithID}";
                 owner.logComponent.PrintLogErrorIfActive(error);
             }
-            response += emotionsToActor + "/" + emotionsToTarget;
+            response += $"{emotionsToActor}/{emotionsToTarget}";
         } else if(node.poiTarget == owner && node.poiTarget is Character) {
             string emotionsOfTarget = node.action.ReactionOfTarget(node);
             if (emotionsOfTarget != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsOfTarget)) {
                 string error = "Action Error in Witness Reaction Of Target (Duplicate/Incompatible Emotions Triggered)";
-                error += "\n-Witness: " + owner;
-                error += "\n-Action: " + node.action.goapName;
-                error += "\n-Actor: " + node.actor.name;
-                error += "\n-Target: " + node.poiTarget.nameWithID;
+                error += $"\n-Witness: {owner}";
+                error += $"\n-Action: {node.action.goapName}";
+                error += $"\n-Actor: {node.actor.name}";
+                error += $"\n-Target: {node.poiTarget.nameWithID}";
                 owner.logComponent.PrintLogErrorIfActive(error);
             }
             response = emotionsOfTarget;
@@ -223,7 +228,7 @@ public class ReactionComponent {
         //}
     }
     private void ReactTo(Character targetCharacter, ref string debugLog) {
-        debugLog += owner.name + " is reacting to " + targetCharacter.name;
+        debugLog += $"{owner.name} is reacting to {targetCharacter.name}";
         if(owner.faction.IsHostileWith(targetCharacter.faction)) {
             debugLog += "\n-Target is hostile";
             if (!targetCharacter.isDead) {
@@ -234,7 +239,7 @@ public class ReactionComponent {
                     bool isLethal = !owner.behaviourComponent.isHarassing && !owner.behaviourComponent.isRaiding;
                     bool isTopPrioJobLethal = owner.jobQueue.jobsInQueue.Count <= 0 || owner.jobQueue.jobsInQueue[0].jobType.IsJobLethal();
                     if (owner.jobQueue.jobsInQueue.Count > 0) {
-                        debugLog += "\n-" + owner.jobQueue.jobsInQueue[0].jobType.ToString();
+                        debugLog += $"\n-{owner.jobQueue.jobsInQueue[0].jobType}";
                     }
                     if (!targetCharacter.traitContainer.HasTrait("Unconscious") || (isLethal && isTopPrioJobLethal)) {
                         owner.combatComponent.FightOrFlight(targetCharacter, isLethal);
@@ -253,7 +258,7 @@ public class ReactionComponent {
                     if (!owner.isConversing && !targetCharacter.isConversing && owner.nonActionEventsComponent.CanInteract(targetCharacter)) {
                         debugLog += "\n-Character and Target are not Chatting or Flirting and Character can interact with Target, has 3% chance to Chat";
                         int chance = UnityEngine.Random.Range(0, 100);
-                        debugLog += "\n-Roll: " + chance;
+                        debugLog += $"\n-Roll: {chance}";
                         if (chance < 3) {
                             debugLog += "\n-Chat triggered";
                             owner.interruptComponent.TriggerInterrupt(INTERRUPT.Chat, targetCharacter);
@@ -269,12 +274,12 @@ public class ReactionComponent {
                                     int value = 2;
                                     if (compatibility != -1) {
                                         value = 1 * compatibility;
-                                        debugLog += "\n-Chance: " + value;
+                                        debugLog += $"\n-Chance: {value}";
                                     } else {
-                                        debugLog += "\n-Chance: " + value + " (No Compatibility)";
+                                        debugLog += $"\n-Chance: {value} (No Compatibility)";
                                     }
                                     int flirtChance = UnityEngine.Random.Range(0, 100);
-                                    debugLog += "\n-Roll: " + flirtChance;
+                                    debugLog += $"\n-Roll: {flirtChance}";
                                     if (flirtChance < value) {
                                         owner.interruptComponent.TriggerInterrupt(INTERRUPT.Flirt, targetCharacter);
                                     } else {
@@ -370,7 +375,7 @@ public class ReactionComponent {
             //Minions or Summons cannot react to objects
             return;
         }
-        debugLog += owner.name + " is reacting to " + targetTileObject.nameWithID;
+        debugLog += $"{owner.name} is reacting to {targetTileObject.nameWithID}";
         if (!owner.hasSeenFire) {
             if (targetTileObject.traitContainer.HasTrait("Burning")
                 && targetTileObject.gridTileLocation != null

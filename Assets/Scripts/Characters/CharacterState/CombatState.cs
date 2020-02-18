@@ -95,7 +95,8 @@ public class CombatState : CharacterState {
         //         stateComponent.character.ChangeFactionTo(PlayerManager.Instance.player.playerFaction);
         //     }
         // }
-        stateComponent.character.logComponent.PrintLogIfActive("Starting combat state for " + stateComponent.character.name);
+        stateComponent.character.logComponent.PrintLogIfActive(
+            $"Starting combat state for {stateComponent.character.name}");
         stateComponent.character.marker.StartCoroutine(CheckIfCurrentHostileIsInRange());
     }
     protected override void EndState() {
@@ -107,7 +108,8 @@ public class CombatState : CharacterState {
 
         stateComponent.character.marker.HideHPBar();
         stateComponent.character.marker.SetAnimationBool("InCombat", false);
-        stateComponent.character.logComponent.PrintLogIfActive("Ending combat state for " + stateComponent.character.name);
+        stateComponent.character.logComponent.PrintLogIfActive(
+            $"Ending combat state for {stateComponent.character.name}");
         Messenger.RemoveListener<Character>(Signals.DETERMINE_COMBAT_REACTION, DetermineReaction);
         Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
 
@@ -138,8 +140,8 @@ public class CombatState : CharacterState {
                 // Region newHomeRegion = GetCriminalNewHomeLocation();
                 // stateComponent.character.MigrateHomeTo(newHomeRegion);
 
-                string log = stateComponent.character.name + " is a criminal and survived being apprehended." +
-                    " Changed faction to: " + stateComponent.character.faction.name + " and home to: " + stateComponent.character.homeRegion.name;
+                string log =
+                    $"{stateComponent.character.name} is a criminal and survived being apprehended. Changed faction to: {stateComponent.character.faction.name} and home to: {stateComponent.character.homeRegion.name}";
                 stateComponent.character.logComponent.PrintLogIfActive(log);
 
                 //stateComponent.character.CancelAllJobsAndPlans();
@@ -193,7 +195,7 @@ public class CombatState : CharacterState {
     private void DetermineReaction(Character character) {
         if (stateComponent.character == character && stateComponent.currentState == this && !isPaused && !isDone) {
             DetermineIsBeingApprehended();
-            string summary = character.name + " will determine a combat reaction";
+            string summary = $"{character.name} will determine a combat reaction";
             if (character.marker.hasFleePath) {
                 summary += "\n-Has flee path";
                 //Character is already fleeing
@@ -217,7 +219,7 @@ public class CombatState : CharacterState {
                         } else {
                             summary += "\n-Is not in Home Dwelling, 40%: Flee to Home, 40%: Flee, 20%: Cowering";
                             int roll = UnityEngine.Random.Range(0, 100);
-                            summary += "\n-Roll: " + roll;
+                            summary += $"\n-Roll: {roll}";
                             if (roll < 40) {
                                 summary += "\n-Triggered Flee to Home";
                                 SetIsFleeToHome(true);
@@ -247,7 +249,7 @@ public class CombatState : CharacterState {
                         } else {
                             summary += "\n-Is not in territory, 40%: Flee to territory, 40%: Flee, 20%: Cowering";
                             int roll = UnityEngine.Random.Range(0, 100);
-                            summary += "\n-Roll: " + roll;
+                            summary += $"\n-Roll: {roll}";
                             if (roll < 40) {
                                 summary += "\n-Triggered Flee to territory";
                                 SetIsFleeToHome(true);
@@ -329,15 +331,15 @@ public class CombatState : CharacterState {
                 SetIsAttacking(true);
             } else {
                 debugLog += "\n-Has no hostile that is still in range";
-                debugLog += "\n-" + fleeChance + "% chance to flee";
+                debugLog += $"\n-{fleeChance}% chance to flee";
                 int roll = UnityEngine.Random.Range(0, 100);
-                debugLog += "\n-Roll: " + roll; 
+                debugLog += $"\n-Roll: {roll}"; 
                 if (roll < fleeChance) {
                     debugLog += "\n-Stop fleeing";
                     FinishedTravellingFleePath();
                 } else {
                     fleeChance += 10;
-                    debugLog += "\n-Flee chance increased by 10%, new flee chance is " + fleeChance;
+                    debugLog += $"\n-Flee chance increased by 10%, new flee chance is {fleeChance}";
                 }
             }
         }
@@ -429,19 +431,21 @@ public class CombatState : CharacterState {
         if(stateComponent.currentState != this) {
             return;
         }
-        string log = "Reevaluating combat behavior of " + stateComponent.character.name;
+        string log = $"Reevaluating combat behavior of {stateComponent.character.name}";
         if (isAttacking) {
             //stateComponent.character.marker.StopPerTickFlee();
-            log += "\n" + stateComponent.character.name + " is attacking!";
+            log += $"\n{stateComponent.character.name} is attacking!";
             Trait taunted = stateComponent.character.traitContainer.GetNormalTrait<Trait>("Taunted");
             if (forcedTarget != null) {
-                log += "\n" + stateComponent.character.name + " has a forced target. Setting " + forcedTarget.name + " as target.";
+                log += $"\n{stateComponent.character.name} has a forced target. Setting {forcedTarget.name} as target.";
                 SetClosestHostile(forcedTarget);
             } else if (taunted != null) {
-                log += "\n" + stateComponent.character.name + " is taunted. Setting " + taunted.responsibleCharacter.name + " as target.";
+                log +=
+                    $"\n{stateComponent.character.name} is taunted. Setting {taunted.responsibleCharacter.name} as target.";
                 SetClosestHostile(taunted.responsibleCharacter);
             } else if (currentClosestHostile != null && !stateComponent.character.combatComponent.hostilesInRange.Contains(currentClosestHostile)) {
-                log += "\nCurrent closest hostile: " + currentClosestHostile.name + " is no longer in hostile list, setting another closest hostile...";
+                log +=
+                    $"\nCurrent closest hostile: {currentClosestHostile.name} is no longer in hostile list, setting another closest hostile...";
                 SetClosestHostile();
             } else if(currentClosestHostile == null) {
                 log += "\nNo current closest hostile, setting one...";
@@ -452,7 +456,7 @@ public class CombatState : CharacterState {
                 if(newClosestHostile != null && currentClosestHostile != newClosestHostile) {
                     SetClosestHostile(newClosestHostile);
                 } else if (currentClosestHostile != null && stateComponent.character.currentParty.icon.isTravelling && stateComponent.character.marker.targetPOI == currentClosestHostile) {
-                    log += "\nAlready in pursuit of current closest hostile: " + currentClosestHostile.name;
+                    log += $"\nAlready in pursuit of current closest hostile: {currentClosestHostile.name}";
                     stateComponent.character.logComponent.PrintLogIfActive(log);
                     return;
                 }
@@ -463,10 +467,10 @@ public class CombatState : CharacterState {
             } else {
                 float distance = Vector2.Distance(stateComponent.character.marker.transform.position, currentClosestHostile.worldPosition);
                 if (distance > stateComponent.character.characterClass.attackRange || !stateComponent.character.marker.IsCharacterInLineOfSightWith(currentClosestHostile)) {
-                    log += "\nPursuing closest hostile target: " + currentClosestHostile.name;
+                    log += $"\nPursuing closest hostile target: {currentClosestHostile.name}";
                     PursueClosestHostile();
                 } else {
-                    log += "\nAlready within range of: " + currentClosestHostile.name + ". Skipping pursuit...";
+                    log += $"\nAlready within range of: {currentClosestHostile.name}. Skipping pursuit...";
                 }
             }
             //stateComponent.character.PrintLogIfActive(log);
@@ -488,7 +492,7 @@ public class CombatState : CharacterState {
                 stateComponent.character.logComponent.PrintLogIfActive(log);
                 return;
             }
-            log += "\n" + stateComponent.character.name + " is fleeing!";
+            log += $"\n{stateComponent.character.name} is fleeing!";
             stateComponent.character.logComponent.PrintLogIfActive(log);
             if (isFleeToHome) {
                 stateComponent.character.marker.OnStartFleeToHome();
@@ -575,7 +579,7 @@ public class CombatState : CharacterState {
         }
     }
     private void Attack() {
-        string summary = stateComponent.character.name + " will attack " + currentClosestHostile?.name;
+        string summary = $"{stateComponent.character.name} will attack {currentClosestHostile?.name}";
 
         //When in range and in line of sight, stop movement
         if (stateComponent.character.currentParty.icon.isTravelling && stateComponent.character.currentParty.icon.travelLine == null) {
@@ -607,9 +611,11 @@ public class CombatState : CharacterState {
         if (damageable == null) {
             return; //NOTE: Sometimes this happens even though the passed value is this character's currentClosestHostile.
         }
-        string attackSummary = GameManager.Instance.TodayLogString() + stateComponent.character.name + " hit " + damageable.name;
+        string attackSummary =
+            $"{GameManager.Instance.TodayLogString()}{stateComponent.character.name} hit {damageable.name}";
         if (damageable != currentClosestHostile) {
-            attackSummary = stateComponent.character.name + " hit " + damageable.name + " instead of " + currentClosestHostile.name + "!";
+            attackSummary =
+                $"{stateComponent.character.name} hit {damageable.name} instead of {currentClosestHostile.name}!";
         }
 
         //Reset Attack Speed
@@ -618,7 +624,7 @@ public class CombatState : CharacterState {
 
         //If the hostile reaches 0 hp, evalueate if he/she dies, get knock out, or get injured
         if (damageable.currentHP > 0) {
-            attackSummary += "\n" + damageable.name + " still has remaining hp " + damageable.currentHP.ToString() + "/" + damageable.maxHP.ToString();
+            attackSummary += $"\n{damageable.name} still has remaining hp {damageable.currentHP}/{damageable.maxHP}";
             if (damageable is Character) {
                 Character hitCharacter = damageable as Character;
                 //if the character that attacked is not in the hostile/avoid list of the character that was hit, this means that it is not a retaliation, so the character that was hit must reduce its opinion of the character that attacked
@@ -650,23 +656,26 @@ public class CombatState : CharacterState {
             
         }
         if (stateComponent.currentState == this) { //so that if the combat state has been exited, this no longer executes that results in endless execution of this coroutine.
-            attackSummary += "\n" + stateComponent.character.name + "'s state is still this, running check coroutine.";
+            attackSummary += $"\n{stateComponent.character.name}'s state is still this, running check coroutine.";
             stateComponent.character.marker.StartCoroutine(CheckIfCurrentHostileIsInRange());
         } else {
-            attackSummary += "\n" + stateComponent.character.name + "'s state no longer this, NOT running check coroutine. Current state is" + stateComponent.currentState?.stateName ?? "Null";
+            attackSummary +=
+                $"\n{stateComponent.character.name}'s state no longer this, NOT running check coroutine. Current state is{stateComponent.currentState?.stateName}" ?? "Null";
         }
         //Debug.Log(attackSummary);
     }
     private void StartPursueTimer() {
         if (!_hasTimerStarted) {
-            stateComponent.character.logComponent.PrintLogIfActive("Starting pursue timer for " + stateComponent.character.name);
+            stateComponent.character.logComponent.PrintLogIfActive(
+                $"Starting pursue timer for {stateComponent.character.name}");
             _currentAttackTimer = 0;
             _hasTimerStarted = true;
         }
     }
     private void StopPursueTimer() {
         if (_hasTimerStarted) {
-            stateComponent.character.logComponent.PrintLogIfActive("Stopping pursue timer for " + stateComponent.character.name);
+            stateComponent.character.logComponent.PrintLogIfActive(
+                $"Stopping pursue timer for {stateComponent.character.name}");
             _hasTimerStarted = false;
         }
     }
@@ -674,7 +683,7 @@ public class CombatState : CharacterState {
 
     #region Flee
     public void FinishedTravellingFleePath() {
-        string log = "Finished travelling flee path of " + stateComponent.character.name;
+        string log = $"Finished travelling flee path of {stateComponent.character.name}";
         //After travelling flee path, check hostile characters if they are still in vision, every hostile character that is not in vision must be removed form hostile list
         //Consequently, the removed character must also remove this character from his/her hostile list
         //Then check if hostile list is empty
@@ -689,7 +698,7 @@ public class CombatState : CharacterState {
         stateComponent.character.marker.UpdateActionIcon();
     }
     public void OnReachLowFleeSpeedThreshold() {
-        string log = stateComponent.character.name + " has reached low flee speed threshold, determining action...";
+        string log = $"{stateComponent.character.name} has reached low flee speed threshold, determining action...";
         stateComponent.character.logComponent.PrintLogIfActive(log);
         DetermineReaction(stateComponent.character);
     }

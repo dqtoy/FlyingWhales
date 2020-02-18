@@ -43,7 +43,8 @@ public class CharacterStateJob : JobQueueItem {
                 assignedCharacter.SetCurrentJob(this);
                 return true;
             } else {
-                throw new System.Exception(assignedCharacter.name + " tried doing state " + targetState.ToString() + " but was unable to do so! This must not happen!");
+                throw new System.Exception(
+                    $"{assignedCharacter.name} tried doing state {targetState} but was unable to do so! This must not happen!");
             }
         } else {
             if(assignedState.isPaused && !assignedState.isDone) {
@@ -193,7 +194,8 @@ public class SaveDataCharacterStateJob : SaveDataJobQueueItem {
                 if (newState != null) {
                     stateJob.SetAssignedState(newState);
                 } else {
-                    throw new System.Exception(assignedCharacter.name + " tried doing state " + stateJob.targetState.ToString() + " but was unable to do so! This must not happen!");
+                    throw new System.Exception(
+                        $"{assignedCharacter.name} tried doing state {stateJob.targetState} but was unable to do so! This must not happen!");
                 }
             }
         }

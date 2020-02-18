@@ -33,7 +33,7 @@ public class DouseFireState : CharacterState {
             POIData poiData = dfSaveData.fires[i];
             IPointOfInterest poi = SaveUtilities.GetPOIFromData(poiData);
             if (poi == null) {
-                throw new System.Exception("No POI found: " + poiData.ToString());
+                throw new System.Exception($"No POI found: {poiData}");
             }
             AddFire(poi);
         }
@@ -184,7 +184,7 @@ public class DouseFireState : CharacterState {
             isFetchingWater = true;
             return true;
         }
-        Debug.LogWarning(stateComponent.character.name + " cannot find any sources of water!");
+        Debug.LogWarning($"{stateComponent.character.name} cannot find any sources of water!");
         return false;
     }
     private void ObtainWater() {
@@ -205,8 +205,8 @@ public class DouseFireState : CharacterState {
             currentTargetSource = fires.Keys.First();
         }
         
-        Assert.IsNotNull(currentTargetSource, $"{stateComponent.character.name} is trying to douse the nearest " +
-                                              $"fire, but could not get a target source. Fire dictionary is \n{CollectionUtilities.GetDictionaryLog(fires)}");
+        Assert.IsNotNull(currentTargetSource,
+            $"{stateComponent.character.name} is trying to douse the nearest fire, but could not get a target source. Fire dictionary is \n{CollectionUtilities.GetDictionaryLog(fires)}");
         
         for (int i = 0; i < fires[currentTargetSource].Count; i++) {
             ITraitable currFire = fires[currentTargetSource][i];

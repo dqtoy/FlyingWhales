@@ -60,18 +60,18 @@ public class GoapAction : IReactable {
 
     #region Virtuals
     private void CreateStates() {
-        string summary = "Creating states for goap action (Dynamic) " + goapType.ToString();
+        string summary = $"Creating states for goap action (Dynamic) {goapType}";
         states = new Dictionary<string, GoapActionState>();
         if (GoapActionStateDB.goapActionStates.ContainsKey(this.goapType)) {
             StateNameAndDuration[] statesSetup = GoapActionStateDB.goapActionStates[this.goapType];
             for (int i = 0; i < statesSetup.Length; i++) {
                 StateNameAndDuration state = statesSetup[i];
-                summary += "\nCreating " + state.name;
+                summary += $"\nCreating {state.name}";
                 string trimmedState = UtilityScripts.Utilities.RemoveAllWhiteSpace(state.name);
                 Type thisType = this.GetType();
-                string estimatedPreMethodName = "Pre" + trimmedState;
-                string estimatedPerTickMethodName = "PerTick" + trimmedState;
-                string estimatedAfterMethodName = "After" + trimmedState;
+                string estimatedPreMethodName = $"Pre{trimmedState}";
+                string estimatedPerTickMethodName = $"PerTick{trimmedState}";
+                string estimatedAfterMethodName = $"After{trimmedState}";
 
                 MethodInfo preMethod = thisType.GetMethod(estimatedPreMethodName, new Type[] { typeof(ActualGoapNode) }); //
                 MethodInfo perMethod = thisType.GetMethod(estimatedPerTickMethodName, new Type[] { typeof(ActualGoapNode) });
@@ -81,19 +81,19 @@ public class GoapAction : IReactable {
                 Action<ActualGoapNode> afterAction = null;
                 if (preMethod != null) {
                     preAction = (Action<ActualGoapNode>) Delegate.CreateDelegate(typeof(Action<ActualGoapNode>), this, preMethod, false);
-                    summary += "\n\tPre Method is " + preMethod.ToString();
+                    summary += $"\n\tPre Method is {preMethod}";
                 } else {
                     summary += "\n\tPre Method is null";
                 }
                 if (perMethod != null) {
                     perAction = (Action<ActualGoapNode>) Delegate.CreateDelegate(typeof(Action<ActualGoapNode>), this, perMethod, false);
-                    summary += "\n\tPer Tick Method is " + perAction.ToString();
+                    summary += $"\n\tPer Tick Method is {perAction}";
                 } else {
                     summary += "\n\tPer Tick Method is null";
                 }
                 if (afterMethod != null) {
                     afterAction = (Action<ActualGoapNode>) Delegate.CreateDelegate(typeof(Action<ActualGoapNode>), this, afterMethod, false);
-                    summary += "\n\tAfter Method is " + afterAction.ToString();
+                    summary += $"\n\tAfter Method is {afterAction}";
                 } else {
                     summary += "\n\tAfter Method is null";
                 }
@@ -378,7 +378,7 @@ public struct GoapEffect {
     }
 
     public override string ToString() {
-        return conditionType.ToString() + " - " + conditionKey + " - " + target.ToString();
+        return $"{conditionType} - {conditionKey} - {target}";
     }
     //public string conditionString() {
     //    if(conditionKey is string) {

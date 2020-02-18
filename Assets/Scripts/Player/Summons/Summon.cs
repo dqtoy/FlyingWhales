@@ -17,7 +17,7 @@ public class Summon : Character, IWorldObject {
     
     #region getters/setters
     public virtual string worldObjectName {
-        get { return name + " (" + UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(summonType.ToString()) + ")"; }
+        get { return $"{name} ({UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(summonType.ToString())})"; }
     }
     public WORLD_OBJECT_TYPE worldObjectType {
         get { return WORLD_OBJECT_TYPE.SUMMON; }
@@ -161,7 +161,7 @@ public class Summon : Character, IWorldObject {
             //Debug.Log(GameManager.Instance.TodayLogString() + this.name + " died of " + cause);
             Log deathLog;
             if (_deathLog == null) {
-                deathLog = new Log(GameManager.Instance.Today(), "Character", "Generic", "death_" + cause);
+                deathLog = new Log(GameManager.Instance.Today(), "Character", "Generic", $"death_{cause}");
                 deathLog.AddToFillers(this, name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
                 if (responsibleCharacter != null) {
                     deathLog.AddToFillers(responsibleCharacter, responsibleCharacter.name, LOG_IDENTIFIER.TARGET_CHARACTER);

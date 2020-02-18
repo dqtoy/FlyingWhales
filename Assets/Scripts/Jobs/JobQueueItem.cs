@@ -149,7 +149,7 @@ public class JobQueueItem {
             // if (jobThatPushedBack.IsAnInterruptionJob()) {
             //     stopText = "Interrupted";
             // }
-            assignedCharacter.StopCurrentActionNode(false, stopText);
+            assignedCharacter?.StopCurrentActionNode(false, stopText);
             //if (originalOwner.ownerType != JOB_OWNER.CHARACTER) {
             //    //NOTE! This is temporary only! All jobs, even settlement jobs are just pushed back right now
             //    //assignedCharacter.jobQueue.RemoveJobInQueue(this, false, "Have something important to do");
@@ -177,11 +177,11 @@ public class JobQueueItem {
         if (assignedCharacter != null) {
             previousAssignedCharacter = assignedCharacter;
             //assignedCharacter.SetCurrentJob(null);
-            assignedCharacter.logComponent.PrintLogIfActive(assignedCharacter.name + " quit job " + name);
+            assignedCharacter.logComponent.PrintLogIfActive($"{assignedCharacter.name} quit job {name}");
         }
         if (character != null) {
             //character.SetCurrentJob(this);
-            character.logComponent.PrintLogIfActive(character.name + " took job " + name);
+            character.logComponent.PrintLogIfActive($"{character.name} took job {name}");
         }
         
         assignedCharacter = character;
@@ -255,7 +255,7 @@ public class JobQueueItem {
         return CanCharacterTakeThisJob(character) && !blacklistedCharacters.Contains(character);
     }
     public override string ToString() {
-        return jobType.ToString() + " assigned to " + assignedCharacter?.name ?? "None";
+        return $"{jobType} assigned to {assignedCharacter?.name}" ?? "None";
     }
     public bool IsJobStillApplicable() {
         if (stillApplicable != null) {

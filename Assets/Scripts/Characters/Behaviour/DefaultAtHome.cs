@@ -12,27 +12,27 @@ public class DefaultAtHome : CharacterBehaviourComponent {
     public override bool TryDoBehaviour(Character character, ref string log) {
         if (character.currentStructure == character.homeStructure) {
             if (character.previousCurrentActionNode != null && character.previousCurrentActionNode.action.goapType == INTERACTION_TYPE.RETURN_HOME) {
-                log += "\n-" + character.name + " is in home structure and just returned home";
+                log += $"\n-{character.name} is in home structure and just returned home";
                 TileObject deskOrTable = character.currentStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.DESK, TILE_OBJECT_TYPE.TABLE);
                 log += "\n-Sit if there is still an unoccupied Table or Desk in the current location";
                 if (deskOrTable != null) {
-                    log += "\n  -" + character.name + " will do action Sit on " + deskOrTable.ToString();
+                    log += $"\n  -{character.name} will do action Sit on {deskOrTable}";
                     character.PlanIdle(JOB_TYPE.IDLE_SIT, INTERACTION_TYPE.SIT, deskOrTable);
                 } else {
                     log += "\n-Otherwise, stand idle";
-                    log += "\n  -" + character.name + " will do action Stand";
+                    log += $"\n  -{character.name} will do action Stand";
                     character.PlanIdle(JOB_TYPE.IDLE_STAND, INTERACTION_TYPE.STAND, character);
                 }
                 return true;
             } else {
-                log += "\n-" + character.name + " is in home structure and previous action is not returned home";
+                log += $"\n-{character.name} is in home structure and previous action is not returned home";
                 TIME_IN_WORDS currentTimeOfDay = GameManager.GetCurrentTimeInWordsOfTick(character);
 
                 log += "\n-If it is Early Night, 35% chance to go to the current Inn and then set it as the Base Structure for 2.5 hours";
                 if (currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT) {
-                    log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
+                    log += $"\n  -Time of Day: {currentTimeOfDay}";
                     int chance = UnityEngine.Random.Range(0, 100);
-                    log += "\n  -RNG roll: " + chance;
+                    log += $"\n  -RNG roll: {chance}";
                     if (chance < 35) {
                         if (character.traitContainer.HasTrait("Agoraphobic")) {
                             log += "\n  -Character is agoraphobic, not going to inn";
@@ -40,7 +40,8 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                             //StartGOAP(INTERACTION_TYPE.DRINK, null, GOAP_CATEGORY.IDLE);
                             LocationStructure structure = character.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.INN);
                             if (structure != null) {
-                                log += "\n  -Early Night: " + character.name + " will go to Inn and set Base Structure for 2.5 hours";
+                                log +=
+                                    $"\n  -Early Night: {character.name} will go to Inn and set Base Structure for 2.5 hours";
                                 character.PlanIdle(JOB_TYPE.VISIT_FRIEND, INTERACTION_TYPE.VISIT, character, new object[] { structure });
                                 return true;
                             } else {
@@ -49,20 +50,20 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                         }
                     }
                 } else {
-                    log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
+                    log += $"\n  -Time of Day: {currentTimeOfDay}";
                 }
                 log += "\n-Otherwise, if it is Lunch Time or Afternoon, 25% chance to nap if there is still an unoccupied Bed in the house";
                 if (currentTimeOfDay == TIME_IN_WORDS.LUNCH_TIME || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON) {
-                    log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
+                    log += $"\n  -Time of Day: {currentTimeOfDay}";
                     int chance = UnityEngine.Random.Range(0, 100);
-                    log += "\n  -RNG roll: " + chance;
+                    log += $"\n  -RNG roll: {chance}";
                     if (chance < 25) {
                         TileObject bed = character.currentStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.BED);
                         if (bed != null) {
                             if (character.traitContainer.HasTrait("Vampiric")) {
                                 log += "\n  -Character is vampiric, cannot do nap action";
                             } else {
-                                log += "\n  -Afternoon: " + character.name + " will do action Nap on " + bed.ToString();
+                                log += $"\n  -Afternoon: {character.name} will do action Nap on {bed}";
                                 character.PlanIdle(JOB_TYPE.IDLE_NAP, INTERACTION_TYPE.NAP, bed);
                                 return true;
                             }
@@ -71,21 +72,21 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                         }
                     }
                 } else {
-                    log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
+                    log += $"\n  -Time of Day: {currentTimeOfDay}";
                 }
                 log += "\n-Otherwise, if it is Morning or Afternoon or Early Night, and the character has a positive relationship with someone currently Paralyzed or Catatonic, 30% chance to Check Out one at random";
                 if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON || currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT) {
-                    log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
+                    log += $"\n  -Time of Day: {currentTimeOfDay}";
                     int chance = UnityEngine.Random.Range(0, 100);
-                    log += "\n  -RNG roll: " + chance;
+                    log += $"\n  -RNG roll: {chance}";
                     if (chance < 30) {
                         Character chosenCharacter = character.GetDisabledCharacterToCheckOut();
                         if (chosenCharacter != null) {
                             if(chosenCharacter.homeStructure != null) {
-                                log += "\n  -Will visit house of Disabled Character " + chosenCharacter.name;
+                                log += $"\n  -Will visit house of Disabled Character {chosenCharacter.name}";
                                 character.PlanIdle(JOB_TYPE.CHECK_PARALYZED_FRIEND, INTERACTION_TYPE.VISIT, character, new object[] { chosenCharacter.homeStructure });
                             } else {
-                                log += "\n  -" + chosenCharacter.name + " has no house. Will check out character instead";
+                                log += $"\n  -{chosenCharacter.name} has no house. Will check out character instead";
                                 character.PlanIdle(JOB_TYPE.CHECK_PARALYZED_FRIEND,  new GoapEffect(GOAP_EFFECT_CONDITION.IN_VISION, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), chosenCharacter);
                             }
                             return true;
@@ -94,28 +95,29 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                         }
                     }
                 } else {
-                    log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
+                    log += $"\n  -Time of Day: {currentTimeOfDay}";
                 }
                 log += "\n-Otherwise, if it is Morning or Lunch Time or Afternoon or Early Night, 25% chance to enter Stroll Outside Mode for 1 hour";
                 if ((currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.LUNCH_TIME || 
                      currentTimeOfDay == TIME_IN_WORDS.AFTERNOON || currentTimeOfDay == TIME_IN_WORDS.EARLY_NIGHT) 
                     && character.trapStructure.forcedStructure == null) {
-                    log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
+                    log += $"\n  -Time of Day: {currentTimeOfDay}";
                     int chance = UnityEngine.Random.Range(0, 100);
-                    log += "\n  -RNG roll: " + chance;
+                    log += $"\n  -RNG roll: {chance}";
                     if (chance < 25) {
-                        log += "\n  -Morning, Afternoon, or Early Night: " + character.name + " will enter Stroll Outside Mode";
+                        log +=
+                            $"\n  -Morning, Afternoon, or Early Night: {character.name} will enter Stroll Outside Mode";
                         character.PlanIdleStrollOutside(); //character.currentStructure
                         return true;
                     }
                 } else {
-                    log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
+                    log += $"\n  -Time of Day: {currentTimeOfDay}";
                 }
                 log += "\n-Otherwise, if it is Morning or Afternoon, 25% chance to someone with a positive relationship in current location and then set it as the Base Structure for 2.5 hours";
                 if (currentTimeOfDay == TIME_IN_WORDS.MORNING || currentTimeOfDay == TIME_IN_WORDS.LUNCH_TIME || currentTimeOfDay == TIME_IN_WORDS.AFTERNOON) {
-                    log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
+                    log += $"\n  -Time of Day: {currentTimeOfDay}";
                     int chance = UnityEngine.Random.Range(0, 100);
-                    log += "\n  -RNG roll: " + chance;
+                    log += $"\n  -RNG roll: {chance}";
                     if (chance < 25) {
                         List<Character> positiveRelatables = character.relationshipContainer.GetFriendCharacters();
                         if (positiveRelatables.Count > 0) {
@@ -135,7 +137,8 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                                 }
                             }
                             if (targetStructure != null) {
-                                log += "\n  -Morning or Afternoon: " + character.name + " will go to dwelling of character with positive relationship and set Base Structure for 2.5 hours";
+                                log +=
+                                    $"\n  -Morning or Afternoon: {character.name} will go to dwelling of character with positive relationship and set Base Structure for 2.5 hours";
                                 character.PlanIdle(JOB_TYPE.VISIT_FRIEND, INTERACTION_TYPE.VISIT, character, new object[] { targetStructure });
                                 return true;
                             } else {
@@ -146,12 +149,12 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                         }
                     }
                 } else {
-                    log += "\n  -Time of Day: " + currentTimeOfDay.ToString();
+                    log += $"\n  -Time of Day: {currentTimeOfDay}";
                 }
                 log += "\n-Otherwise, sit if there is still an unoccupied Table or Desk";
                 TileObject deskOrTable = character.currentStructure.GetUnoccupiedTileObject(TILE_OBJECT_TYPE.DESK, TILE_OBJECT_TYPE.TABLE);
                 if (deskOrTable != null) {
-                    log += "\n  -" + character.name + " will do action Sit on " + deskOrTable.ToString();
+                    log += $"\n  -{character.name} will do action Sit on {deskOrTable}";
                     character.PlanIdle(JOB_TYPE.IDLE_SIT, INTERACTION_TYPE.SIT, deskOrTable);
                     return true;
                 } else {
@@ -159,7 +162,7 @@ public class DefaultAtHome : CharacterBehaviourComponent {
                 }
 
                 log += "\n-Otherwise, stand idle";
-                log += "\n  -" + character.name + " will do action Stand";
+                log += $"\n  -{character.name} will do action Stand";
                 character.PlanIdle(JOB_TYPE.IDLE_STAND, INTERACTION_TYPE.STAND, character);
                 //PlanIdleStroll(currentStructure);
                 return true;

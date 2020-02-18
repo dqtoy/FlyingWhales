@@ -21,7 +21,7 @@ public class Ore : TileObject {
 
     #region Overrides
     public override string ToString() {
-        return "Ore " + id.ToString();
+        return $"Ore {id}";
     }
     public override void SetPOIState(POI_STATE state) {
         base.SetPOIState(state);

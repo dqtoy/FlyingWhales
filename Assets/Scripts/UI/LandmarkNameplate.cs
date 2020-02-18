@@ -12,7 +12,7 @@ public class LandmarkNameplate : PooledObject {
     [SerializeField] private FactionEmblem factionEmblem;
     public void SetLandmark(BaseLandmark landmark) {
         this.landmark = landmark;
-        name = landmark.tileLocation.region.name + " Nameplate";
+        name = $"{landmark.tileLocation.region.name} Nameplate";
         UpdateVisuals();
         UpdatePosition();
         UpdateFactionEmblem();

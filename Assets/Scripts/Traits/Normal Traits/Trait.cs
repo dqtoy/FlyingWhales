@@ -259,7 +259,7 @@ namespace Traits {
             if (isStacking && stacks.ContainsKey(name) && stacks[name] > 1) {
                 int num = stacks[name];
                 if(num > stackLimit) { num = stackLimit; }
-                return name + " (x" + num + ")";
+                return $"{name} (x{num})";
             }
             return name;
         }

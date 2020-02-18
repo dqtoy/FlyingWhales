@@ -47,7 +47,7 @@ namespace Traits {
             }
         }
         private void TriggerReactionToFireOnFirstTimeSeeing(IPointOfInterest burningPOI) {
-            string debugLog = owner.name + " saw a fire for the first time, reduce Happiness by 20, add Anxious status";
+            string debugLog = $"{owner.name} saw a fire for the first time, reduce Happiness by 20, add Anxious status";
             owner.needsComponent.AdjustHappiness(-20f);
             owner.traitContainer.AddTrait(owner, "Anxious");
             int chance = UnityEngine.Random.Range(0, 2);

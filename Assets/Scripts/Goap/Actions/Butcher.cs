@@ -25,7 +25,7 @@ public class Butcher : GoapAction {
         SetState("Transform Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
-        string costLog = "\n" + name + " " + target.nameWithID + ":";
+        string costLog = $"\n{name} {target.nameWithID}:";
         Character deadCharacter = GetDeadCharacter(target);
         int cost = 0;
         //int cost = GetFoodAmountTakenFromDead(deadCharacter);
@@ -53,21 +53,21 @@ public class Butcher : GoapAction {
             }
             if(deadCharacter.race == RACE.HUMANS) {
                 cost += UtilityScripts.Utilities.rng.Next(40, 51);
-                costLog += " +" + cost + "(Human)";
+                costLog += $" +{cost}(Human)";
             } else if (deadCharacter.race == RACE.ELVES) {
                 cost += UtilityScripts.Utilities.rng.Next(40, 51);
-                costLog += " +" + cost + "(Elf)";
+                costLog += $" +{cost}(Elf)";
             } else if (deadCharacter.race == RACE.WOLF) {
                 cost += UtilityScripts.Utilities.rng.Next(20, 31);
-                costLog += " +" + cost + "(Wolf)";
+                costLog += $" +{cost}(Wolf)";
             } else if (deadCharacter.race == RACE.DEMON) {
                 cost += UtilityScripts.Utilities.rng.Next(80, 91);
-                costLog += " +" + cost + "(Demon)";
+                costLog += $" +{cost}(Demon)";
             }
         }
         if(target is SmallAnimal) {
             cost += UtilityScripts.Utilities.rng.Next(60, 71);
-            costLog += " +" + cost + "(Small Animal)";
+            costLog += $" +{cost}(Small Animal)";
         }
         actor.logComponent.AppendCostLog(costLog);
         return cost;

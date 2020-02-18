@@ -29,7 +29,7 @@ public class LevelLoaderManager : MonoBehaviour {
     IEnumerator LoadLevelAsynchronously(string sceneName) {
         _progress = 0f;
         SetLoadingState(true);
-        UpdateLoadingInfo("Loading " + sceneName + "...");
+        UpdateLoadingInfo($"Loading {sceneName}...");
         yield return null;
         AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(sceneName);
         asyncOperation.allowSceneActivation = false;

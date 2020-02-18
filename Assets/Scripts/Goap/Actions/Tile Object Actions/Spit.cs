@@ -24,9 +24,9 @@ public class Spit : GoapAction {
         SetState("Spit Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
-        string costLog = "\n" + name + " " + target.nameWithID + ":";
+        string costLog = $"\n{name} {target.nameWithID}:";
         int cost = UtilityScripts.Utilities.rng.Next(80, 121);
-        costLog += " +" + cost + "(Initial)";
+        costLog += $" +{cost}(Initial)";
         int numOfTimesActionDone = actor.jobComponent.GetNumOfTimesActionDone(this);
         if (numOfTimesActionDone > 5) {
             cost += 2000;
@@ -34,7 +34,7 @@ public class Spit : GoapAction {
         } else {
             int timesCost = 10 * numOfTimesActionDone;
             cost += timesCost;
-            costLog += " +" + timesCost + "(10 x Times Spat)";
+            costLog += $" +{timesCost}(10 x Times Spat)";
         }
         if (actor.traitContainer.HasTrait("Evil")) {
             cost += -15;

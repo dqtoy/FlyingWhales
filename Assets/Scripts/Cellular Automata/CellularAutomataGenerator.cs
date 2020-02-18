@@ -131,11 +131,9 @@ namespace Cellular_Automata {
 		public static void DrawMap(LocationGridTile[,] tileMap, int[,] cellAutomata, TileBase wallAsset,
 			TileBase groundAsset, System.Action<LocationGridTile> wallAction, System.Action<LocationGridTile> groundAction) {
 			Assert.IsTrue(tileMap.GetUpperBound(0) == cellAutomata.GetUpperBound(0),
-				$"Provided tile map and cell map have inconsistent first dimension bounds. " +
-				$"{tileMap.GetUpperBound(0).ToString()}/{cellAutomata.GetUpperBound(0).ToString()}");
+				$"Provided tile map and cell map have inconsistent first dimension bounds. {tileMap.GetUpperBound(0).ToString()}/{cellAutomata.GetUpperBound(0).ToString()}");
 			Assert.IsTrue(tileMap.GetUpperBound(1) == cellAutomata.GetUpperBound(1),
-				$"Provided tile map and cell map have inconsistent first dimension bounds. " +
-				$"{tileMap.GetUpperBound(1).ToString()}/{cellAutomata.GetUpperBound(1).ToString()}");
+				$"Provided tile map and cell map have inconsistent first dimension bounds. {tileMap.GetUpperBound(1).ToString()}/{cellAutomata.GetUpperBound(1).ToString()}");
 
 			int upperBoundX = tileMap.GetUpperBound(0) + 1;
 			int upperBoundY = tileMap.GetUpperBound(1) + 1;

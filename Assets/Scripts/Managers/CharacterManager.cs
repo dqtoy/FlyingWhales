@@ -509,7 +509,7 @@ public class CharacterManager : MonoBehaviour {
         if (portraitFrames.ContainsKey(role)) {
             return portraitFrames[role];
         }
-        throw new System.Exception("There is no frame for role " + role.ToString());
+        throw new System.Exception($"There is no frame for role {role}");
     }
     public Sprite GetWholeImagePortraitSprite(string className) {
         if (classPortraits.ContainsKey(className)) {
@@ -770,12 +770,12 @@ public class CharacterManager : MonoBehaviour {
                 emotionData.Add(emotion, data);
                 this.allEmotions.Add(data);
             } else {
-                Debug.LogWarning(typeName + " has no data!");
+                Debug.LogWarning($"{typeName} has no data!");
             }
         }
     }
     public string TriggerEmotion(EMOTION emotionType, Character emoter, IPointOfInterest target) {
-        return " " + GetEmotion(emotionType).ProcessEmotion(emoter, target);
+        return $" {GetEmotion(emotionType).ProcessEmotion(emoter, target)}";
     }
     public Emotion GetEmotion(string name) {
         for (int i = 0; i < allEmotions.Count; i++) {

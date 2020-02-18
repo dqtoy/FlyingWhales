@@ -73,7 +73,8 @@ public class PlayerCharacterItem : PooledObject, IDragParentItem {
         if (_character == null) {
             lvlLbl.text = "??? ???";
         } else {
-            lvlLbl.text = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(_character.race.ToString()) + " " + _character.characterClass.className;
+            lvlLbl.text =
+                $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetterOnly(_character.race.ToString())} {_character.characterClass.className}";
         }
     }
     public void SetEnabledState(bool state) {

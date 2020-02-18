@@ -9,7 +9,7 @@ public class DefaultMinion : CharacterBehaviourComponent {
 	}
 	public override bool TryDoBehaviour(Character character, ref string log) {
 		if (character.minion != null) {
-			log += "\n-" + character.name + " is minion";
+			log += $"\n-{character.name} is minion";
 			if (character.gridTileLocation != null) {
 				HexTile portal = PlayerManager.Instance.player.portalTile;
 				List<HexTile> playerTiles = PlayerManager.Instance.player.playerSettlement.tiles;
@@ -23,7 +23,7 @@ public class DefaultMinion : CharacterBehaviourComponent {
 					} else {
 						log += "\n-50% chance Roam Around Corruption";
 						int roll = UnityEngine.Random.Range(0, 100);
-						log += "\n-Roll: " + roll;
+						log += $"\n-Roll: {roll}";
 						if (roll < 50) {
 							log += "\n-Roam Around Corruption";
 							character.jobComponent.TriggerRoamAroundCorruption();
@@ -41,7 +41,7 @@ public class DefaultMinion : CharacterBehaviourComponent {
 					} else {
 						log += "\n-50% chance to Roam Around Tile";
 						int roll = UnityEngine.Random.Range(0, 100);
-						log += "\n-Roll: " + roll;
+						log += $"\n-Roll: {roll}";
 						if (roll < 50) {
 							log += "\n-Roam Around Tile";
 							character.jobComponent.TriggerRoamAroundTile();

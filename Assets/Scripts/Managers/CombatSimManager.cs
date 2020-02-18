@@ -52,8 +52,8 @@ public class CombatSimManager : MonoBehaviour {
     }
 
     void Start () {
-        characterPath = UtilityScripts.Utilities.dataPath + "CharacterSims/";
-        monsterPath = UtilityScripts.Utilities.dataPath + "Monsters/";
+        characterPath = $"{UtilityScripts.Utilities.dataPath}CharacterSims/";
+        monsterPath = $"{UtilityScripts.Utilities.dataPath}Monsters/";
         _allMonsters = new List<string>();
         _allCharacters = new List<string>();
         _sideAList = new List<ICharacterSim>();
@@ -126,7 +126,7 @@ public class CombatSimManager : MonoBehaviour {
         string chosenCharacterName = sideAOptions.options[sideAOptions.value].text;
         ICharacterSim icharacterSim = null;
         if (_allCharacters.Contains(chosenCharacterName)) {
-            string path = characterPath + chosenCharacterName + ".json";
+            string path = $"{characterPath}{chosenCharacterName}.json";
             CharacterSim characterSim = JsonUtility.FromJson<CharacterSim>(System.IO.File.ReadAllText(path));
             icharacterSim = characterSim;
         } else {
@@ -143,7 +143,7 @@ public class CombatSimManager : MonoBehaviour {
         string chosenCharacterName = sideBOptions.options[sideBOptions.value].text;
         ICharacterSim icharacterSim = null;
         if (_allCharacters.Contains(chosenCharacterName)) {
-            string path = characterPath + chosenCharacterName + ".json";
+            string path = $"{characterPath}{chosenCharacterName}.json";
             CharacterSim characterSim = JsonUtility.FromJson<CharacterSim>(System.IO.File.ReadAllText(path));
             icharacterSim = characterSim;
         } else {

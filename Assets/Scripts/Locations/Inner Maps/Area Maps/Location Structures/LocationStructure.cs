@@ -24,7 +24,7 @@ namespace Inner_Maps.Location_Structures {
         public BuildSpotTileObject occupiedBuildSpot { get; private set; }
         //Inner Map
         public List<LocationGridTile> tiles { get; private set; }
-        public List<LocationGridTile> unoccupiedTiles { get; private set; }
+        public LinkedList<LocationGridTile> unoccupiedTiles { get; private set; }
         public bool isInterior { get; private set; }
 
         #region getters
@@ -43,7 +43,7 @@ namespace Inner_Maps.Location_Structures {
             pointsOfInterest = new HashSet<IPointOfInterest>();
             groupedTileObjects = new Dictionary<TILE_OBJECT_TYPE, List<TileObject>>();
             tiles = new List<LocationGridTile>();
-            unoccupiedTiles = new List<LocationGridTile>();
+            unoccupiedTiles = new LinkedList<LocationGridTile>();
             SetInteriorState(structureType.IsInterior());
         }
         public LocationStructure(ILocation location, SaveDataLocationStructure data) {
@@ -186,8 +186,7 @@ namespace Inner_Maps.Location_Structures {
             List<TileObject> objs = new List<TileObject>();
             for (int i = 0; i < pointsOfInterest.Count; i++) {
                 IPointOfInterest poi = pointsOfInterest.ElementAt(i); 
-                if (poi is TileObject) {
-                    TileObject obj = poi as TileObject;
+                if (poi is TileObject obj) {
                     if (obj.tileObjectType == type) {
                         objs.Add(obj);
                     }
@@ -199,8 +198,7 @@ namespace Inner_Maps.Location_Structures {
             List<TileObject> objs = new List<TileObject>();
             for (int i = 0; i < pointsOfInterest.Count; i++) {
                 IPointOfInterest poi = pointsOfInterest.ElementAt(i); 
-                if (poi is TileObject) {
-                    TileObject obj = poi as TileObject;
+                if (poi is TileObject obj) {
                     if (obj.tileObjectType == type) {
                         return true;
                     }
@@ -319,7 +317,7 @@ namespace Inner_Maps.Location_Structures {
                         return unoccupiedTiles.Where(x => x.tileType != LocationGridTile.Tile_Type.Structure_Entrance).ToList(); ;
                     }
                 case POINT_OF_INTEREST_TYPE.CHARACTER:
-                    return unoccupiedTiles;
+                    return unoccupiedTiles.ToList();
                 default:
                     return unoccupiedTiles.Where(x => !x.IsAdjacentTo(typeof(MagicCircle)) && x.tileType != LocationGridTile.Tile_Type.Structure_Entrance).ToList();
             }
@@ -352,7 +350,7 @@ namespace Inner_Maps.Location_Structures {
             RemoveUnoccupiedTile(tile);
         }
         public void AddUnoccupiedTile(LocationGridTile tile) {
-            unoccupiedTiles.Add(tile);
+            unoccupiedTiles.AddLast(tile);
         }
         public void RemoveUnoccupiedTile(LocationGridTile tile) {
             unoccupiedTiles.Remove(tile);
@@ -376,22 +374,23 @@ namespace Inner_Maps.Location_Structures {
                 case STRUCTURE_TYPE.INN:
                     return "the inn";
                 case STRUCTURE_TYPE.WAREHOUSE:
-                    return "the " + location.name + " warehouse";
+                    return $"the {location.name} warehouse";
                 case STRUCTURE_TYPE.PRISON:
-                    return "the " + location.name + " prison";
+                    return $"the {location.name} prison";
                 case STRUCTURE_TYPE.WILDERNESS:
-                    return "the outskirts of " + location.name;
+                    return $"the outskirts of {location.name}";
                 case STRUCTURE_TYPE.CEMETERY:
-                    return "the cemetery of " + location.name;
+                    return $"the cemetery of {location.name}";
                 case STRUCTURE_TYPE.DUNGEON:
                 case STRUCTURE_TYPE.WORK_AREA:
                 case STRUCTURE_TYPE.EXPLORE_AREA:
                 case STRUCTURE_TYPE.POND:
                     return location.name;
                 case STRUCTURE_TYPE.CITY_CENTER:
-                    return "the " + location.name + " city center";
+                    return $"the {location.name} city center";
                 default:
-                    return "the " + UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString());
+                    return
+                        $"the {UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(structureType.ToString())}";
             }
         }
         public List<LocationGridTile> GetOuterTiles() {
@@ -619,7 +618,7 @@ namespace Inner_Maps.Location_Structures {
         #endregion
 
         public override string ToString() {
-            return structureType.ToString() + " " + id.ToString() + " at " + location.name;
+            return $"{structureType} {id} at {location.name}";
         }
 
         #region Player Action Target

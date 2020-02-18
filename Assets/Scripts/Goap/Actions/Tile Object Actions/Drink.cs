@@ -24,9 +24,9 @@ public class Drink : GoapAction {
         SetState("Drink Success", goapNode);
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
-        string costLog = "\n" + name + " " + target.nameWithID + ":";
+        string costLog = $"\n{name} {target.nameWithID}:";
         int cost = UtilityScripts.Utilities.rng.Next(80, 121);
-        costLog += " +" + cost + "(Initial)";
+        costLog += $" +{cost}(Initial)";
         if (actor.traitContainer.HasTrait("Alcoholic")) {
             cost += -15;
             costLog += " -15(Alcoholic)";
@@ -43,7 +43,7 @@ public class Drink : GoapAction {
             } else {
                 int timesCost = 10 * numOfTimesActionDone;
                 cost += timesCost;
-                costLog += " +" + timesCost + "(10 x Times Drank)";
+                costLog += $" +{timesCost}(10 x Times Drank)";
             }
         }
         actor.logComponent.AppendCostLog(costLog);

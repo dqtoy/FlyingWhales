@@ -26,7 +26,7 @@ namespace Traits {
             if (responsibleCharacter == null) {
                 return description;
             }
-            return "This character has been knocked out by " + responsibleCharacter.name;
+            return $"This character has been knocked out by {responsibleCharacter.name}";
         }
         public override void OnAddTrait(ITraitable sourceCharacter) {
             base.OnAddTrait(sourceCharacter);

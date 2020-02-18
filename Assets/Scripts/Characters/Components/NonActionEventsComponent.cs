@@ -66,7 +66,7 @@ public class NonActionEventsComponent {
         return false;
     }
     private void TriggerChatCharacter(Character target, ref Log overrideLog) {
-        string strLog = owner.name + " chat with " + target.name;
+        string strLog = $"{owner.name} chat with {target.name}";
         chatWeights.Clear();
         chatWeights.AddElement(Warm_Chat, 100);
         chatWeights.AddElement(Awkward_Chat, 30);
@@ -74,7 +74,7 @@ public class NonActionEventsComponent {
         chatWeights.AddElement(Insult, 20);
         chatWeights.AddElement(Praise, 20);
 
-        strLog += "\n\n" + chatWeights.GetWeightsSummary("BASE WEIGHTS");
+        strLog += $"\n\n{chatWeights.GetWeightsSummary("BASE WEIGHTS")}";
 
         MOOD_STATE actorMood = owner.moodComponent.moodState;
         MOOD_STATE targetMood = target.moodComponent.moodState;
@@ -129,7 +129,7 @@ public class NonActionEventsComponent {
         }
 
         if(compatibility != -1) {
-            strLog += "\n\nActor and Target Compatibility is " + compatibility + ", modified weights...";
+            strLog += $"\n\nActor and Target Compatibility is {compatibility}, modified weights...";
             if (compatibility == 0) {
                 chatWeights.AddWeightToElement(Awkward_Chat, 15);
                 chatWeights.AddWeightToElement(Argument, 20);
@@ -175,15 +175,15 @@ public class NonActionEventsComponent {
             strLog += "\nInsult: -30, Praise: +30";
         }
 
-        strLog += "\n\n" + chatWeights.GetWeightsSummary("FINAL WEIGHTS");
+        strLog += $"\n\n{chatWeights.GetWeightsSummary("FINAL WEIGHTS")}";
 
         string result = chatWeights.PickRandomElementGivenWeights();
-        strLog += "\nResult: " + result;
+        strLog += $"\nResult: {result}";
 
         if (owner.traitContainer.HasTrait("Plagued") && !target.traitContainer.HasTrait("Plagued")) {
             strLog += "\n\nCharacter has Plague, 25% chance to infect the Target";
             int roll = UnityEngine.Random.Range(0, 100);
-            strLog += "\nRoll: " + roll;
+            strLog += $"\nRoll: {roll}";
             if (roll < 25) {
                 target.interruptComponent.TriggerInterrupt(INTERRUPT.Plagued, target);
                 // target.traitContainer.AddTrait(target, "Plagued", owner);
@@ -191,7 +191,7 @@ public class NonActionEventsComponent {
         } else if (!owner.traitContainer.HasTrait("Plagued") && target.traitContainer.HasTrait("Plagued")) {
             strLog += "\n\nTarget has Plague, 25% chance to infect the Character";
             int roll = UnityEngine.Random.Range(0, 100);
-            strLog += "\nRoll: " + roll;
+            strLog += $"\nRoll: {roll}";
             if (roll < 25) {
                 owner.interruptComponent.TriggerInterrupt(INTERRUPT.Plagued, owner);
                 // owner.traitContainer.AddTrait(owner, "Plagued", target);

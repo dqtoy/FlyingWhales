@@ -92,7 +92,6 @@ MonoBehaviour:
     type: 3}
   characterIconsParent: {fileID: 0}
   maxLevel: 30
-  heroSprite: {fileID: 0}
   _characterPortraitPrefab: {fileID: 1995387493181358, guid: cdfed07929227104599994075478446b,
     type: 3}
   portraitAssets:
@@ -503,8 +502,8 @@ MonoBehaviour:
     - {fileID: 21300000, guid: a2a9035f5a469f34299c98fa2ab01083, type: 3}
     - {fileID: 21300000, guid: 09f2377c0c409304cb48ab46e4145351, type: 3}
   hsvMaterial: {fileID: 2100000, guid: f635580cdf2e2344ea31e0dba17cb9b5, type: 2}
-  spriteLightingMaterial: {fileID: 10754, guid: 0000000000000000f000000000000000,
-    type: 0}
+  spriteLightingMaterial: {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3,
+    type: 2}
   maleHairSprite:
   - {fileID: 21300000, guid: 262b3712b96ca0b44824cc35aae3ec03, type: 3}
   femaleHairSprite:
@@ -2855,8 +2854,6 @@ MonoBehaviour:
           - {fileID: 21300000, guid: 5ce3525323251964c935f0787fd3e6ac, type: 3}
           - {fileID: 21300000, guid: 27d6a628a4be7d54fabf7480aca30051, type: 3}
           - {fileID: 21300000, guid: ad6bdabf045effc4cae98611d3d8d19c, type: 3}
-  baseAnimator: {fileID: 0}
-  corpseSprite: {fileID: 21300000, guid: 5255390e6fedf8140a25b567a5f57b6c, type: 3}
   summonSettings:
     m_keys: 00000000010000000200000003000000040000000500000006000000
     m_values:

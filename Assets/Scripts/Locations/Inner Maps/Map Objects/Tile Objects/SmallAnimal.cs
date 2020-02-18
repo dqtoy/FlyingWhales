@@ -43,7 +43,7 @@ public class SmallAnimal : TileObject {
         }
     }
     public override string ToString() {
-        return "Small Animal " + id.ToString();
+        return $"Small Animal {id}";
     }
     #endregion
 

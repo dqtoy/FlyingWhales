@@ -27,6 +27,6 @@ public class WaterWell : TileObject {
         return structureLocation.structureType != STRUCTURE_TYPE.POND && structureLocation.structureType != STRUCTURE_TYPE.OCEAN;
     }
     public override string ToString() {
-        return "Well " + id.ToString();
+        return $"Well {id}";
     }
 }

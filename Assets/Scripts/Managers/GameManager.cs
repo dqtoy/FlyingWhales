@@ -136,7 +136,7 @@ public class GameManager : MonoBehaviour {
         return new GameDate(month, days, year, tick);
     }
     public string TodayLogString() {
-        return "[" + continuousDays + " - " + ConvertTickToTime(tick) + "] ";
+        return $"[{continuousDays} - {ConvertTickToTime(tick)}] ";
     }
     public GameDate EndOfTheMonth() {
         return new GameDate(month, daysPerMonth, year, ticksPerDay);
@@ -282,7 +282,7 @@ public class GameManager : MonoBehaviour {
         if(hour == 0) {
             hour = 12;
         }
-        return hour + ":" + minutes.ToString("D2") + " " + timeOfDay;
+        return $"{hour}:{minutes:D2} {timeOfDay}";
     }
     public static TIME_IN_WORDS GetTimeInWordsOfTick(int tick) {
         if ((tick >= 265 && tick <= 288) || (tick >= 1 && tick <= 60)) {
@@ -362,7 +362,7 @@ public class GameManager : MonoBehaviour {
         if (timeInWords == TIME_IN_WORDS.LATE_NIGHT) {
             return Random.Range(241, 265);
         }
-        throw new Exception(timeInWords + " time in words has no tick!");
+        throw new Exception($"{timeInWords} time in words has no tick!");
     }
     public static int GetRandomTickFromTimeInWords(TIME_IN_WORDS timeInWords, int minimumThreshold) {
         if (timeInWords == TIME_IN_WORDS.AFTER_MIDNIGHT) {
@@ -388,7 +388,7 @@ public class GameManager : MonoBehaviour {
         if (timeInWords == TIME_IN_WORDS.LATE_NIGHT) {
             return Random.Range(minimumThreshold, 265);
         }
-        throw new Exception(timeInWords + " time in words has no tick!");
+        throw new Exception($"{timeInWords} time in words has no tick!");
     }
     public static TIME_IN_WORDS[] ConvertTimeInWordsWhenNocturnal(TIME_IN_WORDS[] currentTimeInWords) {
         TIME_IN_WORDS[] convertedTimeInWords = new TIME_IN_WORDS[currentTimeInWords.Length];

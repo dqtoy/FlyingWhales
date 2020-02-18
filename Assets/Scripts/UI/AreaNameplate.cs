@@ -20,7 +20,7 @@ public class AreaNameplate : MonoBehaviour {
 
     public void SetArea(Settlement settlement) {
         this._settlement = settlement;
-        name = settlement.name + " Nameplate";
+        name = $"{settlement.name} Nameplate";
         UpdateVisuals();
         UpdatePosition();
 

@@ -55,7 +55,9 @@ public class CharacterAIPath : AILerp {
             return;
         }
         if (newPath.CompleteState == PathCompleteState.Error) {
-            Debug.LogWarning(marker.character.name + " path request returned a path with errors! Arrival action is: " + marker.arrivalAction?.Method.Name ?? "None" + "Destination is " + destination.ToString());
+            Debug.LogWarning(
+                $"{marker.character.name} path request returned a path with errors! Arrival action is: {marker.arrivalAction?.Method.Name}" ??
+                $"NoneDestination is {destination}");
         }
         if (newPath is FleeMultiplePath) {
             currentPath = newPath;
@@ -63,8 +65,6 @@ public class CharacterAIPath : AILerp {
         } else {
             currentPath = newPath as CustomABPath;
             if (UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter == marker.character && currentPath.traversalProvider != null) { //&& marker.terrifyingCharacters.Count > 0
-                string costLog = "PATH FOR " + marker.character.name;
-                uint totalCost = 0;
                 for (int i = 0; i < currentPath.path.Count; i++) {
                     Vector3 nodePos = (Vector3)currentPath.path[i].position;
                     uint currentCost = currentPath.traversalProvider.GetTraversalCost(newPath, currentPath.path[i]);
@@ -73,16 +73,7 @@ public class CharacterAIPath : AILerp {
                     //float distSqr = dx * dx + dz * dz;
                     //costLog += "\n-> " + nodePos + "(" + currentCost + ")" + "[" + distSqr + "]";
                     Vector3 newNodePos = new Vector3((Mathf.Floor(nodePos.x)) + 0.5f, (Mathf.Floor(nodePos.y)) + 0.5f, Mathf.Floor(nodePos.z));
-                    costLog += "\n-> " + newNodePos + "(" + currentCost + ")";
-                    totalCost += currentCost;
                 }
-                costLog += "\nTOTAL COST: " + totalCost;
-
-                costLog += "\n\nVECTOR PATH";
-                for (int i = 0; i < currentPath.vectorPath.Count; i++) {
-                    costLog += "\n-> " + currentPath.vectorPath[i] + "(" + GetNodePenalty(currentPath.vectorPath[i]) + GetNodePenaltyForStructures(currentPath, currentPath.vectorPath[i]) + ")";
-                }
-                //Debug.LogWarning(costLog);
             }
         }
         base.OnPathComplete(newPath);

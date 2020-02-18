@@ -270,15 +270,15 @@ namespace Inner_Maps {
             }
         }
         public void CreateSeamlessEdgesForTile(InnerTileMap map) {
-            string summary = $"Creating seamless edges for tile {ToString()}";
+            // string summary = $"Creating seamless edges for tile {ToString()}";
             Dictionary<GridNeighbourDirection, LocationGridTile> neighbours;
             if (HasCardinalNeighbourOfDifferentGroundType(out neighbours)) {
-                summary += $"\nHas Neighbour of different ground type. Checking neighbours {neighbours.Count.ToString()}";
+                // summary += $"\nHas Neighbour of different ground type. Checking neighbours {neighbours.Count.ToString()}";
                 Dictionary<GridNeighbourDirection, LocationGridTile> fourNeighbours = FourNeighboursDictionary();
                 foreach (KeyValuePair<GridNeighbourDirection, LocationGridTile> keyValuePair in fourNeighbours) {
                     LocationGridTile currNeighbour = keyValuePair.Value;
                     bool createEdge = false;
-                    summary += $"\n\tChecking {currNeighbour.ToString()}. Ground type is {groundType.ToString()}. Neighbour Ground Type is {currNeighbour.groundType.ToString()}";
+                    // summary += $"\n\tChecking {currNeighbour.ToString()}. Ground type is {groundType.ToString()}. Neighbour Ground Type is {currNeighbour.groundType.ToString()}";
                     if (this.groundType != Ground_Type.Cave && currNeighbour.groundType == Ground_Type.Cave) {
                         createEdge = true;
                     } else if (currNeighbour.tileType == Tile_Type.Wall || currNeighbour.tileType == Tile_Type.Structure_Entrance) {
@@ -295,7 +295,7 @@ namespace Inner_Maps {
                         createEdge = false;
                     } else if (groundType != Ground_Type.Corrupted && currNeighbour.groundType == Ground_Type.Corrupted) {
                         createEdge = false;
-                    } else if (groundType == Ground_Type.Snow) {
+                    } else if (groundType == Ground_Type.Snow && currNeighbour.groundType != Ground_Type.Snow) {
                         createEdge = true;
                     } else if (groundType == Ground_Type.Cobble && currNeighbour.groundType != Ground_Type.Snow) {
                         createEdge = true;
@@ -316,7 +316,7 @@ namespace Inner_Maps {
                     } else if (groundType == Ground_Type.Sand && currNeighbour.groundType == Ground_Type.Stone) {
                         createEdge = true;
                     }
-                    summary += $"\n\tWill create edge? {createEdge.ToString()}. At {keyValuePair.Key.ToString()}";
+                    // summary += $"\n\tWill create edge? {createEdge.ToString()}. At {keyValuePair.Key.ToString()}";
                     Tilemap mapToUse;
                     switch (keyValuePair.Key) {
                         case GridNeighbourDirection.North:
@@ -335,7 +335,7 @@ namespace Inner_Maps {
                             mapToUse = null;
                             break;
                     }
-                    Assert.IsNotNull(mapToUse, nameof(mapToUse) + " != null");
+                    Assert.IsNotNull(mapToUse, $"{nameof(mapToUse)} != null");
                     if (createEdge) {
                         Assert.IsTrue(InnerMapManager.Instance.assetManager.edgeAssets.ContainsKey(groundType), 
                             $"No edge asset for {groundType.ToString()} for neighbour {currNeighbour.groundType.ToString()} ");
@@ -548,7 +548,7 @@ namespace Inner_Maps {
                     LocationGridTile nearestTile = null;
                     float nearestDist = 99999f;
                     for (int i = 0; i < structure.unoccupiedTiles.Count; i++) {
-                        LocationGridTile currTile = structure.unoccupiedTiles[i];
+                        LocationGridTile currTile = structure.unoccupiedTiles.ElementAt(i);
                         if (currTile != this && currTile.groundType != Ground_Type.Water) {
                             float dist = Vector2.Distance(currTile.localLocation, localLocation);
                             if (dist < nearestDist) {
@@ -774,7 +774,8 @@ namespace Inner_Maps {
                     return choices[Random.Range(0, choices.Count)];
                 }
             }
-            throw new Exception("Furniture spot at " + ToString() + " cannot provide facility " + facility.ToString() + "! Should not reach this point if that is the case!");
+            throw new Exception(
+                $"Furniture spot at {ToString()} cannot provide facility {facility}! Should not reach this point if that is the case!");
         }
         #endregion
 
@@ -951,9 +952,9 @@ namespace Inner_Maps {
             loadedGridTile = tile;
 
             //load tile assets
-            tile.SetGroundTilemapVisual(InnerMapManager.Instance.TryGetTileAsset(groundTileMapAssetName, tileAssetDB));
-            tile.parentMap.detailsTilemap.SetTile(tile.localPlace, InnerMapManager.Instance.TryGetTileAsset(detailTileMapAssetName, tileAssetDB));
-            tile.parentMap.structureTilemap.SetTile(tile.localPlace, InnerMapManager.Instance.TryGetTileAsset(structureTileMapAssetName, tileAssetDB));
+            // tile.SetGroundTilemapVisual(InnerMapManager.Instance.TryGetTileAsset(groundTileMapAssetName, tileAssetDB));
+            // tile.parentMap.detailsTilemap.SetTile(tile.localPlace, InnerMapManager.Instance.TryGetTileAsset(detailTileMapAssetName, tileAssetDB));
+            // tile.parentMap.structureTilemap.SetTile(tile.localPlace, InnerMapManager.Instance.TryGetTileAsset(structureTileMapAssetName, tileAssetDB));
 
             tile.parentMap.groundTilemap.SetTransformMatrix(tile.localPlace, groundTileMapMatrix);
             tile.parentMap.detailsTilemap.SetTransformMatrix(tile.localPlace, detailTileMapMatrix);
@@ -984,7 +985,8 @@ namespace Inner_Maps {
                 else if (objHereType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
                     TileObject obj = InnerMapManager.Instance.GetTileObject(objHereTileObjectType, objHereID);
                     if (obj == null) {
-                        throw new Exception("Could not find object of type " + objHereTileObjectType.ToString() + " with id " + objHereID.ToString() + " at " + loadedGridTile.structure.ToString());
+                        throw new Exception(
+                            $"Could not find object of type {objHereTileObjectType} with id {objHereID} at {loadedGridTile.structure}");
                     }
                     loadedGridTile.structure.AddPOI(obj, loadedGridTile);
                 }

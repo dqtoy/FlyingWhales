@@ -30,17 +30,17 @@ public class CombatLogsUI : UIMenu {
     }
 	private void CombatLogs() {
         string text = string.Empty;
-		text += "Winning Side: " + _currentlyShowingCombat.winningSide.ToString();
-        text += "\nLosing Side: " + _currentlyShowingCombat.losingSide.ToString();
+		text += $"Winning Side: {_currentlyShowingCombat.winningSide}";
+        text += $"\nLosing Side: {_currentlyShowingCombat.losingSide}";
         text += "\nDead Characters:";
         for (int i = 0; i < _currentlyShowingCombat.charactersSideA.Count; i++) {
             if (_currentlyShowingCombat.charactersSideA[i].isDead) {
-                text += "\n" + _currentlyShowingCombat.charactersSideA[i].name;
+                text += $"\n{_currentlyShowingCombat.charactersSideA[i].name}";
             }
         }
         for (int i = 0; i < _currentlyShowingCombat.charactersSideB.Count; i++) {
             if (_currentlyShowingCombat.charactersSideB[i].isDead) {
-                text += "\n" + _currentlyShowingCombat.charactersSideB[i].name;
+                text += $"\n{_currentlyShowingCombat.charactersSideB[i].name}";
             }
         }
         combatLogsLbl.text = text;
@@ -51,7 +51,7 @@ public class CombatLogsUI : UIMenu {
             if(_currentlyShowingCombat.charactersSideA.Count > 0) {
                 text += _currentlyShowingCombat.charactersSideA[0].name;
                 for (int i = 1; i < _currentlyShowingCombat.charactersSideA.Count; i++) {
-                    text += "\n" + _currentlyShowingCombat.charactersSideA[i].name;
+                    text += $"\n{_currentlyShowingCombat.charactersSideA[i].name}";
                 }
             }
         }
@@ -63,7 +63,7 @@ public class CombatLogsUI : UIMenu {
             if (_currentlyShowingCombat.charactersSideB.Count > 0) {
                 text += _currentlyShowingCombat.charactersSideB[0].name;
                 for (int i = 1; i < _currentlyShowingCombat.charactersSideB.Count; i++) {
-                    text += "\n" + _currentlyShowingCombat.charactersSideB[i].name;
+                    text += $"\n{_currentlyShowingCombat.charactersSideB[i].name}";
                 }
             }
         }

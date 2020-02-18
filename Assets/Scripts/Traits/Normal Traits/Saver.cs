@@ -11,7 +11,7 @@ namespace Traits {
 
         public Saver(Character target) : base(target) {
             name = "Saver";
-            description = "This character is a Saver of " + targetCharacter.name;
+            description = $"This character is a Saver of {targetCharacter.name}";
             relType = RELATIONSHIP_TYPE.SAVER;
             type = TRAIT_TYPE.RELATIONSHIP;
             effect = TRAIT_EFFECT.NEUTRAL;
@@ -20,7 +20,7 @@ namespace Traits {
             //effects = new List<TraitEffect>();
         }
         public override string GetNameInUI(ITraitable traitable) {
-            return "Saver: " + traitable.name;
+            return $"Saver: {traitable.name}";
         }
     }
 

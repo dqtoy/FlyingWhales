@@ -124,7 +124,7 @@ public class ActualGoapNode {
     public GoapActionState currentState {
         get {
             if (!action.states.ContainsKey(currentStateName)) {
-                throw new System.Exception(action.goapName + " does not have a state named " + currentStateName);
+                throw new System.Exception($"{action.goapName} does not have a state named {currentStateName}");
             }
             return action.states[currentStateName]; 
         }
@@ -184,7 +184,8 @@ public class ActualGoapNode {
     private void SetTargetToGoTo() {
         if (targetStructure == null) {
             targetStructure = action.GetTargetStructure(this);
-            if (targetStructure == null) { throw new System.Exception(actor.name + " target structure of action " + action.goapName + " is null."); }
+            if (targetStructure == null) { throw new System.Exception(
+                $"{actor.name} target structure of action {action.goapName} is null."); }
         }
         if (action.actionLocationType == ACTION_LOCATION_TYPE.NEAR_TARGET || action.actionLocationType == ACTION_LOCATION_TYPE.NEAR_OTHER_TARGET) {
             IPointOfInterest targetToGoTo = action.GetTargetToGoTo(this);
@@ -208,11 +209,12 @@ public class ActualGoapNode {
                 targetTile = actor.gridTileLocation;
             }
         } else if (action.actionLocationType == ACTION_LOCATION_TYPE.RANDOM_LOCATION) {
-            List<LocationGridTile> choices = targetStructure.unoccupiedTiles;
+            List<LocationGridTile> choices = targetStructure.unoccupiedTiles.ToList();
             if (choices.Count > 0) {
                 targetTile = choices[UtilityScripts.Utilities.rng.Next(0, choices.Count)];
             } else {
-                throw new System.Exception(actor.name + " target tile of action " + action.goapName + " for " + action.actionLocationType.ToString() + " is null.");
+                throw new System.Exception(
+                    $"{actor.name} target tile of action {action.goapName} for {action.actionLocationType} is null.");
             }
         } else if (action.actionLocationType == ACTION_LOCATION_TYPE.RANDOM_LOCATION_B) {
             targetTile = action.GetTargetTileToGoTo(this);
@@ -221,7 +223,8 @@ public class ActualGoapNode {
                 if (choices.Count > 0) {
                     targetTile = choices[UtilityScripts.Utilities.rng.Next(0, choices.Count)];
                 } else {
-                    throw new System.Exception(actor.name + " target tile of action " + action.goapName + " for " + action.actionLocationType.ToString() + " is null.");
+                    throw new System.Exception(
+                        $"{actor.name} target tile of action {action.goapName} for {action.actionLocationType} is null.");
                 }
             }
         } else if (action.actionLocationType == ACTION_LOCATION_TYPE.RANDOM_LOCATION_B) {
@@ -229,7 +232,8 @@ public class ActualGoapNode {
             if (choices.Count > 0) {
                 targetTile = choices[UtilityScripts.Utilities.rng.Next(0, choices.Count)];
             } else {
-                throw new System.Exception(actor.name + " target tile of action " + action.goapName + " for " + action.actionLocationType.ToString() + " is null.");
+                throw new System.Exception(
+                    $"{actor.name} target tile of action {action.goapName} for {action.actionLocationType} is null.");
             }
         } else if (action.actionLocationType == ACTION_LOCATION_TYPE.TARGET_IN_VISION) {
             if (actor.marker.inVisionPOIs.Contains(poiTarget)) {
@@ -244,7 +248,8 @@ public class ActualGoapNode {
             if (tile != null) {
                 targetTile = tile;
             } else {
-                throw new System.Exception(actor.name + " override target tile of action " + action.goapName + " for " + action.actionLocationType.ToString() + " is null.");
+                throw new System.Exception(
+                    $"{actor.name} override target tile of action {action.goapName} for {action.actionLocationType} is null.");
             }
 
         }
@@ -270,7 +275,8 @@ public class ActualGoapNode {
         } else {
             if (targetTile == null) {
                 //Here we check if there is a target tile to go to because if there is not, the target might already be destroyed/taken/disabled, if that happens, we must cancel job
-                Debug.LogWarning(GameManager.Instance.TodayLogString() + actor.name + " is trying to move to do action " + action.goapName + " with target " + poiTarget.name + " but target tile is null, will cancel job " + job.name + " instead.");
+                Debug.LogWarning(
+                    $"{GameManager.Instance.TodayLogString()}{actor.name} is trying to move to do action {action.goapName} with target {poiTarget.name} but target tile is null, will cancel job {job.name} instead.");
                 job.CancelJob(false);
                 return false;
             }
@@ -434,7 +440,8 @@ public class ActualGoapNode {
         //}
     }
     public void ActionInterruptedWhilePerforming() {
-        string log = GameManager.Instance.TodayLogString() + actor.name + " is interrupted while doing goap action: " + action.goapName;
+        string log =
+            $"{GameManager.Instance.TodayLogString()}{actor.name} is interrupted while doing goap action: {action.goapName}";
         string result = GoapActionStateDB.GetStateResult(action.goapType, currentState.name);
         if (result == InteractionManager.Goap_State_Success) {
             actionStatus = ACTION_STATUS.SUCCESS;
@@ -529,16 +536,17 @@ public class ActualGoapNode {
 
     #region Action State
     public void OnActionStateSet(string stateName) {
-        Debug.Log("Set action state of " + actor.name + "'s " + action.goapName + " to " + stateName);
+        Debug.Log($"Set action state of {actor.name}'s {action.goapName} to {stateName}");
         currentStateName = stateName;
         OnPerformActualActionToTarget();
         ExecuteCurrentActionState();
     }
     private void ExecuteCurrentActionState() {
         if (!action.states.ContainsKey(currentStateName)) {
-            Debug.LogError("Failed to execute current action state for " + actor.name + " because " + action.goapName + " does not have state with name: " + currentStateName);
+            Debug.LogError(
+                $"Failed to execute current action state for {actor.name} because {action.goapName} does not have state with name: {currentStateName}");
         }
-        Debug.Log("Executing action state of " + actor.name + "'s " + action.goapName + ", " + currentStateName);
+        Debug.Log($"Executing action state of {actor.name}'s {action.goapName}, {currentStateName}");
         GoapActionState currentState = action.states[currentStateName];
 
         IPointOfInterest target = poiTarget;
@@ -766,7 +774,7 @@ public class ActualGoapNode {
         descriptionLog = log;
     }
     public string StringText() {
-        return action.goapName + " with actor => " + actor.name + ", and target => " + poiTarget.name;
+        return $"{action.goapName} with actor => {actor.name}, and target => {poiTarget.name}";
     }
     #endregion
 

@@ -551,6 +551,22 @@
             <e p="Readme.txt" t="Include" />
           </e>
         </e>
+        <e p="DOTween Examples" t="Include">
+          <e p="Basics.cs" t="Include" />
+          <e p="CustomPlugin Example" t="Include">
+            <e p="CustomPluginExampleBrain.cs" t="Include" />
+            <e p="CustomRange.cs" t="Include" />
+            <e p="CustomRangePlugin.cs" t="Include" />
+          </e>
+          <e p="Example Assets" t="Include">
+            <e p="DragTarget.cs" t="Include" />
+          </e>
+          <e p="Follow.cs" t="Include" />
+          <e p="Materials.cs" t="Include" />
+          <e p="Paths.cs" t="Include" />
+          <e p="Sequences.cs" t="Include" />
+          <e p="UGUI.cs" t="Include" />
+        </e>
         <e p="Editor" t="Include">
           <e p="Steamworks.NET" t="Include">
             <e p="RedistCopy.cs" t="Include" />
@@ -1142,6 +1158,7 @@
             <e p="Projectile.cs" t="Include" />
           </e>
           <e p="Editor" t="Include">
+            <e p="ArtifactUnlockableDrawer.cs" t="Include" />
             <e p="BuildingSpotMonobehaviourEditor.cs" t="Include" />
             <e p="CharacterManagerEditor.cs" t="Include" />
             <e p="HexTileEditor.cs" t="Include" />

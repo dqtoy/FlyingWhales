@@ -42,7 +42,7 @@ public class Exclusive : FactionIdeology {
         return character.traitContainer.HasTrait(traitRequirement);
     }
     public override string GetRequirementsForJoiningAsString() {
-        return category + ": " + GetRequirementAsString();
+        return $"{category}: {GetRequirementAsString()}";
     }
     #endregion
 

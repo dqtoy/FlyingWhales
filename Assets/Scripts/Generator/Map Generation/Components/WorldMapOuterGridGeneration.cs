@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class WorldMapOuterGridGeneration : MapGenerationComponent {
@@ -22,7 +23,7 @@ public class WorldMapOuterGridGeneration : MapGenerationComponent {
 
         int id = 0;
 
-        List<HexTile> outerGridList = new List<HexTile>();
+        HashSet<HexTile> outerGridList = new HashSet<HexTile>();
         GridMap.Instance.borderParent.transform.localPosition = new Vector2(-newX, -newY);
 
         int batchCount = 0;
@@ -68,9 +69,11 @@ public class WorldMapOuterGridGeneration : MapGenerationComponent {
             }
         }
 
+        GridMap.Instance.SetOuterGridList(outerGridList);
+
         batchCount = 0;
         for (int i = 0; i < outerGridList.Count; i++) {
-            HexTile tile = outerGridList[i];
+            HexTile tile = outerGridList.ElementAt(i);
             tile.FindNeighboursForBorders();
             batchCount++;
             if (batchCount == MapGenerationData.WorldMapOuterGridGenerationBatches) {
@@ -78,7 +81,6 @@ public class WorldMapOuterGridGeneration : MapGenerationComponent {
                 yield return null;    
             }
         }
-        GridMap.Instance.SetOuterGridList(outerGridList);
     }
 
     private HexTile GetTileToCopy(int x, int y, int width, int height) {

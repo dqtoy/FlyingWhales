@@ -8,7 +8,7 @@ public class DazedBehaviour : CharacterBehaviourComponent {
         //attributes = new[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.WITHIN_HOME_SETTLEMENT_ONLY };
     }
     public override bool TryDoBehaviour(Character character, ref string log) {
-        log += "\n-" + character.name + " is dazed, will only stroll";
+        log += $"\n-{character.name} is dazed, will only stroll";
         character.PlanIdleStrollOutside();
         return true;
     }

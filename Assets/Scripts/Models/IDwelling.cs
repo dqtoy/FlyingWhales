@@ -21,7 +21,7 @@ public interface IDwelling {
 
     //Inner Map
     List<LocationGridTile> tiles { get; }
-    List<LocationGridTile> unoccupiedTiles { get; }
+    LinkedList<LocationGridTile> unoccupiedTiles { get; }
 
     void AddResident(Character character);
     void RemoveResident(Character character);

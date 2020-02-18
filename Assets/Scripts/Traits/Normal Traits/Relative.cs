@@ -10,7 +10,7 @@ namespace Traits {
 
         public Relative(Character target) : base(target) {
             name = "Relative";
-            description = "This character is a relative of " + targetCharacter.name;
+            description = $"This character is a relative of {targetCharacter.name}";
             type = TRAIT_TYPE.RELATIONSHIP;
             effect = TRAIT_EFFECT.NEUTRAL;
             relType = RELATIONSHIP_TYPE.RELATIVE;
@@ -24,7 +24,7 @@ namespace Traits {
             return false;
         }
         public override string GetNameInUI(ITraitable traitable) {
-            return "Relative: " + traitable.name;
+            return $"Relative: {traitable.name}";
         }
         #endregion
     }

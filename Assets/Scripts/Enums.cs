@@ -1414,14 +1414,14 @@ public static class Extensions {
     public static bool IsSubcategoryOf(this CRIME sub, CRIME_TYPE cat) {
         System.Type t = typeof(CRIME);
         MemberInfo mi = t.GetMember(sub.ToString()).FirstOrDefault(m => m.GetCustomAttribute(typeof(SubcategoryOf)) != null);
-        if (mi == null) throw new System.ArgumentException("Subcategory " + sub + " has no category.");
+        if (mi == null) throw new System.ArgumentException($"Subcategory {sub} has no category.");
         SubcategoryOf subAttr = (SubcategoryOf) mi.GetCustomAttribute(typeof(SubcategoryOf));
         return subAttr.Category == cat;
     }
     public static CRIME_TYPE GetCategory(this CRIME sub) {
         System.Type t = typeof(CRIME);
         MemberInfo mi = t.GetMember(sub.ToString()).FirstOrDefault(m => m.GetCustomAttribute(typeof(SubcategoryOf)) != null);
-        if (mi == null) throw new System.ArgumentException("Subcategory " + sub + " has no category.");
+        if (mi == null) throw new System.ArgumentException($"Subcategory {sub} has no category.");
         SubcategoryOf subAttr = (SubcategoryOf) mi.GetCustomAttribute(typeof(SubcategoryOf));
         return subAttr.Category;
     }
@@ -1585,7 +1585,7 @@ public static class Extensions {
             case Cardinal_Direction.West:
                 return Cardinal_Direction.East;
         }
-        throw new System.Exception("No opposite direction for " + dir.ToString());
+        throw new System.Exception($"No opposite direction for {dir}");
     }
     public static bool IsCardinalDirection(this GridNeighbourDirection dir) {
         switch (dir) {

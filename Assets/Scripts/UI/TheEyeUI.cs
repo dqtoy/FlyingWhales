@@ -52,9 +52,9 @@ public class TheEyeUI : MonoBehaviour {
         if (!CanChooseMinion(character)) {
             string message = string.Empty;
             if (character.minion.isAssigned) {
-                message = character.name + " is already doing something else.";
+                message = $"{character.name} is already doing something else.";
             } else if (!character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.SABOTEUR) && !character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.FIGHTER)) {
-                message = character.name + " does not have the required trait: Saboteur or Fighter";
+                message = $"{character.name} does not have the required trait: Saboteur or Fighter";
             }
             UIManager.Instance.ShowSmallInfo(message);
         }

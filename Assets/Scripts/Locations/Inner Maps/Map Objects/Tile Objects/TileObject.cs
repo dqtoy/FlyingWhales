@@ -207,7 +207,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             //List<GoapAction> usableActions = new List<GoapAction>();
             GoapAction lowestCostAction = null;
             int currentLowestCost = 0;
-            log += "\n--Choices for " + precondition.ToString();
+            log += $"\n--Choices for {precondition}";
             log += "\n--";
             for (int i = 0; i < advertisedActions.Count; i++) {
                 INTERACTION_TYPE currType = advertisedActions[i];
@@ -232,7 +232,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
                     if (action.CanSatisfyRequirements(actor, this, data)
                         && action.WillEffectsSatisfyPrecondition(precondition, actor, this, data)) { //&& InteractionManager.Instance.CanSatisfyGoapActionRequirementsOnBuildTree(currType, actor, this, data)
                         int actionCost = action.GetCost(actor, this, job, data);
-                        log += "(" + actionCost + ")" + action.goapName + "-" + nameWithID + ", ";
+                        log += $"({actionCost}){action.goapName}-{nameWithID}, ";
                         if (lowestCostAction == null || actionCost < currentLowestCost) {
                             lowestCostAction = action;
                             currentLowestCost = actionCost;
@@ -414,9 +414,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             return; //if hp is already 0, do not deal damage
         }
         AdjustHP(-characterThatAttacked.attackPower, source: characterThatAttacked);
-        attackSummary += "\nDealt damage " + characterThatAttacked.attackPower.ToString();
+        attackSummary += $"\nDealt damage {characterThatAttacked.attackPower}";
         if (currentHP <= 0) {
-            attackSummary += "\n" + name + "'s hp has reached 0.";
+            attackSummary += $"\n{name}'s hp has reached 0.";
         }
         //Messenger.Broadcast(Signals.CHARACTER_WAS_HIT, this, characterThatAttacked);
     }
@@ -508,7 +508,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             List<TileObjectSlotSetting> slotSettings = InnerMapManager.Instance.GetTileObjectSlotSettings(usedAsset);
             slotsParent = Object.Instantiate(InnerMapManager.Instance.tileObjectSlotsParentPrefab, mapVisual.transform);
             slotsParent.transform.localPosition = Vector3.zero;
-            slotsParent.name = ToString() + " Slots";
+            slotsParent.name = $"{ToString()} Slots";
             slots = new TileObjectSlotItem[slotSettings.Count];
             for (int i = 0; i < slotSettings.Count; i++) {
                 TileObjectSlotSetting currSetting = slotSettings[i];

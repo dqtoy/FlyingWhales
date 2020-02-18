@@ -48,7 +48,8 @@ public class ReplaceUI : MonoBehaviour {
         if(objectToAdd is Minion) {
             newObjectLbl.text = "New Minion!";
         } else {
-            newObjectLbl.text = "New " + UtilityScripts.Utilities.NormalizeNoSpaceString(objectToAdd.GetType().BaseType.ToString()) + "!";
+            newObjectLbl.text =
+                $"New {UtilityScripts.Utilities.NormalizeNoSpaceString(objectToAdd.GetType().BaseType.ToString())}!";
         }
         UpdateObjectToAdd(objectToAdd);
         for (int i = 0; i < choices.Count; i++) {
@@ -71,9 +72,9 @@ public class ReplaceUI : MonoBehaviour {
         if (obj is Summon) {
             Summon summon = obj as Summon;
             otaImage.sprite = CharacterManager.Instance.GetSummonSettings(summon.summonType).summonPortrait;
-            string text = summon.name + " (" + summon.summonType.SummonName() + ")";
-            text += "\nLevel: " + summon.level.ToString();
-            text += "\nDescription: " + PlayerManager.Instance.player.GetSummonDescription(summon.summonType);
+            string text = $"{summon.name} ({summon.summonType.SummonName()})";
+            text += $"\nLevel: {summon.level}";
+            text += $"\nDescription: {PlayerManager.Instance.player.GetSummonDescription(summon.summonType)}";
             otaText.text = text;
             otaImage.gameObject.SetActive(true);
         } 
@@ -89,21 +90,21 @@ public class ReplaceUI : MonoBehaviour {
         else if (obj is PlayerSpell) {
             PlayerSpell action = obj as PlayerSpell;
             string text = action.name;
-            text += "\nDescription: " + action.description;
+            text += $"\nDescription: {action.description}";
             otaText.text = text;
             otaImage.sprite = PlayerManager.Instance.GetJobActionSprite(action.name);
             otaImage.gameObject.SetActive(true);
         } else if (obj is CombatAbility) {
             CombatAbility ability = obj as CombatAbility;
             string text = ability.name;
-            text += "\nDescription: " + ability.description;
+            text += $"\nDescription: {ability.description}";
             otaText.text = text;
             otaImage.sprite = PlayerManager.Instance.GetCombatAbilitySprite(ability.name);
             otaImage.gameObject.SetActive(true);
         } else if (obj is Minion) {
             Minion minion = obj as Minion;
             string text = minion.character.name;
-            text += "\nLvl. " + minion.character.level + " " + minion.character.raceClassName;
+            text += $"\nLvl. {minion.character.level} {minion.character.raceClassName}";
             otaText.text = text;
             portrait.GeneratePortrait(minion.character);
             portrait.gameObject.SetActive(true);

@@ -60,9 +60,9 @@ public class LevelUpChoiceItem : PooledObject {
         if (obj is SummonSlot) {
             SummonSlot summonSlot = obj as SummonSlot;
             string text = "Summon Slot";
-            text += "\nLevel: " + summonSlot.level.ToString();
+            text += $"\nLevel: {summonSlot.level}";
             if (summonSlot.summon != null) {
-                text += "\nAttached Summon: " + summonSlot.summon.summonType.SummonName();
+                text += $"\nAttached Summon: {summonSlot.summon.summonType.SummonName()}";
             } else {
                 text += "\nAttached Summon: None";
             }
@@ -70,9 +70,9 @@ public class LevelUpChoiceItem : PooledObject {
         } else if (obj is ArtifactSlot) {
             ArtifactSlot artifactSlot = obj as ArtifactSlot;
             string text = "Artifact Slot";
-            text += "\nLevel: " + artifactSlot.level.ToString();
+            text += $"\nLevel: {artifactSlot.level}";
             if(artifactSlot.artifact != null) {
-                text += "\nAttached Artifact: " + artifactSlot.artifact.name;
+                text += $"\nAttached Artifact: {artifactSlot.artifact.name}";
             } else {
                 text += "\nAttached Artifact: None";
             }
@@ -80,12 +80,12 @@ public class LevelUpChoiceItem : PooledObject {
         } else if (obj is PlayerSpell) {
             PlayerSpell action = obj as PlayerSpell;
             string text = action.name;
-            text += "\nDescription: " + action.description;
+            text += $"\nDescription: {action.description}";
             info.text = text;
         } else if (obj is CombatAbility) {
             CombatAbility ability = obj as CombatAbility;
             string text = ability.name;
-            text += "\nDescription: " + ability.description;
+            text += $"\nDescription: {ability.description}";
             info.text = text;
         }
     }

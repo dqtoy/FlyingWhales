@@ -51,7 +51,7 @@ public class LocationStructureObject : PooledObject {
     void Awake() {
         allTilemaps = this.transform.GetComponentsInChildren<Tilemap>();
         wallVisuals = this.transform.GetComponentsInChildren<WallVisual>();
-        _groundTileMap.CompressBounds();
+        // _groundTileMap.CompressBounds();
     }
     #endregion
 
@@ -346,13 +346,13 @@ public class LocationStructureObject : PooledObject {
             LocationGridTile tile = tiles[i];
             switch (resource) {
                 case RESOURCE.WOOD:
-                    tile.SetGroundTilemapVisual(InnerMapManager.Instance.GetTileAsset("Structure Floor Tile"));
+                    tile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.woodFloorTile);
                     break;
                 case RESOURCE.STONE:
-                    tile.SetGroundTilemapVisual(InnerMapManager.Instance.GetTileAsset("Stone Floor Tile"));
+                    tile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.stoneFloorTile);
                     break;
                 case RESOURCE.METAL:
-                    tile.SetGroundTilemapVisual(InnerMapManager.Instance.GetTileAsset("Stone Floor Tile"));
+                    tile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.stoneFloorTile);
                     break;
             }
         }

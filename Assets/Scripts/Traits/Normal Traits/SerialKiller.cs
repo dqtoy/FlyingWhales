@@ -539,7 +539,7 @@ namespace Traits {
             } else {
                 secondText = GetDescriptionText(isFirstTypeProcessed);
             }
-            this.text = firstText + " " + secondText;
+            this.text = $"{firstText} {secondText}";
         }
         private string GetDescriptionText(bool fromSecondType) {
             List<string> secondDescriptions = victimSecondDescription;

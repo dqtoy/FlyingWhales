@@ -50,7 +50,8 @@ public class BehaviourComponent {
     }
     public bool AddBehaviourComponent(CharacterBehaviourComponent component) {
         if(component == null) {
-            throw new System.Exception(GameManager.Instance.TodayLogString() + owner.name + " is trying to add a new behaviour component but it is null!");
+            throw new System.Exception(
+                $"{GameManager.Instance.TodayLogString()}{owner.name} is trying to add a new behaviour component but it is null!");
         }
         return AddBehaviourComponentInOrder(component);
     }

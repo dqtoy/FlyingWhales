@@ -30,7 +30,7 @@ namespace Traits {
             if (responsibleCharacter == null) {
                 return description;
             }
-            return "This character has been charmed by " + responsibleCharacter.name;
+            return $"This character has been charmed by {responsibleCharacter.name}";
         }
         #endregion
     }

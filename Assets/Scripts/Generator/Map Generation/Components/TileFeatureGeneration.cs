@@ -148,8 +148,8 @@ public class TileFeatureGeneration : MapGenerationComponent {
 		List<Region> choices = new List<Region>(GridMap.Instance.allRegions);
 		List<Region> settlementRegions = new List<Region>();
 
-		Assert.IsTrue(choices.Count >= count, $"There are not enough regions for the number of " +
-		                                      $"settlements needed. Regions are {choices.Count.ToString()}. Needed settlements are {count.ToString()}");
+		Assert.IsTrue(choices.Count >= count,
+			$"There are not enough regions for the number of settlements needed. Regions are {choices.Count.ToString()}. Needed settlements are {count.ToString()}");
 		
 		for (int i = 0; i < count; i++) {
 			Region chosen = CollectionUtilities.GetRandomElement(choices);

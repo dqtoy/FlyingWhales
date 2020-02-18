@@ -11,7 +11,7 @@ public class LocationEvent {
 
     #region Virtuals
     public virtual void TriggerEvent(Settlement location) {
-        Debug.Log(GameManager.Instance.TodayLogString() + "TRIGGER SETTLEMENT EVENT: " + name + " FOR " + location);
+        Debug.Log($"{GameManager.Instance.TodayLogString()}TRIGGER SETTLEMENT EVENT: {name} FOR {location}");
     }
     #endregion
 }

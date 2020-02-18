@@ -399,7 +399,7 @@ public class GoapPlanJob : JobQueueItem {
             case JOB_TYPE.REMOVE_STATUS:
                 string text = UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(jobType.ToString());
                 if (!string.IsNullOrEmpty(goal.conditionKey)) {
-                    text += " " + UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(goal.conditionKey);
+                    text += $" {UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(goal.conditionKey)}";
                 }
                 return text;
             case JOB_TYPE.FULLNESS_RECOVERY_NORMAL:

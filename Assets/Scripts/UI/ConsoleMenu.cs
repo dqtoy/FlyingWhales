@@ -134,34 +134,34 @@ public class ConsoleMenu : UIMenu {
     }
     private string GetMainCharacterInfo() {
         Character character = UIManager.Instance.characterInfoUI.activeCharacter;
-        string text = character.name + "'s info:";
-        text += "\n<b>Gender:</b> " + character.gender.ToString();
-        text += "\n<b>Race:</b> " + character.race.ToString();
-        text += "\n<b>Class:</b> " + character.characterClass.className;
-        text += "\n<b>Is Dead?:</b> " + character.isDead.ToString();
-        text += "\n<b>Home Location:</b> " + character.homeStructure?.ToString() ?? "None";
+        string text = $"{character.name}'s info:";
+        text += $"\n<b>Gender:</b> {character.gender}";
+        text += $"\n<b>Race:</b> {character.race}";
+        text += $"\n<b>Class:</b> {character.characterClass.className}";
+        text += $"\n<b>Is Dead?:</b> {character.isDead}";
+        text += $"\n<b>Home Location:</b> {character.homeStructure}" ?? "None";
 
         text += "\n<b>LOCATION INFO:</b>";
-        text += "\n\t<b>Region Location:</b> " + character.currentRegion?.name ?? "None";
-        text += "\n\t<b>Structure Location:</b> " + character.currentStructure?.ToString() ?? "None";
-        text += "\n\t<b>Grid Location:</b> " + character.gridTileLocation?.localPlace.ToString() ?? "None";
+        text += $"\n\t<b>Region Location:</b> {character.currentRegion?.name}" ?? "None";
+        text += $"\n\t<b>Structure Location:</b> {character.currentStructure}" ?? "None";
+        text += $"\n\t<b>Grid Location:</b> {character.gridTileLocation?.localPlace}" ?? "None";
 
-        text += "\n<b>Faction:</b> " + character.faction?.name ?? "None";
-        text += "\n<b>Current Action:</b> " + character.currentActionNode?.goapName ?? "None";
+        text += $"\n<b>Faction:</b> {character.faction?.name}" ?? "None";
+        text += $"\n<b>Current Action:</b> {character.currentActionNode?.goapName}" ?? "None";
         //if (character.currentActionNode != null) {
         //    text += "\n<b>Current Plan:</b> " + character.currentActionNode.parentPlan.GetGoalSummary();
         //}
         if (character.currentParty.icon != null) {
-            text += "\n<b>Is Travelling:</b> " + character.currentParty.icon.isTravelling.ToString();
-            text += "\n<b>Target Location:</b> " + character.currentParty.icon.targetLocation?.name ?? "None";
-            text += "\n<b>Target Structure:</b> " + character.currentParty.icon.targetStructure?.ToString() ?? "None";
+            text += $"\n<b>Is Travelling:</b> {character.currentParty.icon.isTravelling}";
+            text += $"\n<b>Target Location:</b> {character.currentParty.icon.targetLocation?.name}" ?? "None";
+            text += $"\n<b>Target Structure:</b> {character.currentParty.icon.targetStructure}" ?? "None";
         }
 
         if (character.marker != null) {
             text += "\n<b>MARKER DETAILS:</b>";
-            text += "\n<b>Target POI:</b> " + character.marker.targetPOI?.name ?? "None";
-            text += "\n<b>Destination Tile:</b> " + character.marker.destinationTile?.ToString() ?? "None";
-            text += "\n<b>Stop Movement?:</b> " + character.marker.pathfindingAI.isStopMovement.ToString();
+            text += $"\n<b>Target POI:</b> {character.marker.targetPOI?.name}" ?? "None";
+            text += $"\n<b>Destination Tile:</b> {character.marker.destinationTile}" ?? "None";
+            text += $"\n<b>Stop Movement?:</b> {character.marker.pathfindingAI.isStopMovement}";
         }
 
         //text += "\n<b>All Plans:</b> ";
@@ -179,7 +179,7 @@ public class ConsoleMenu : UIMenu {
         reverseHistory.Reverse();
         if (reverseHistory.Count > 0) {
             for (int i = 0; i < reverseHistory.Count; i++) {
-                text += "\n\n" + reverseHistory[i];
+                text += $"\n\n{reverseHistory[i]}";
             }
         } else {
             text += "\nNone";
@@ -196,9 +196,9 @@ public class ConsoleMenu : UIMenu {
         //    counter++;
         //}
 
-        string text = "\n" + character.name + "'s Location History:";
+        string text = $"\n{character.name}'s Location History:";
         for (int i = 0; i < character.locationHistory.Count; i++) {
-            text += "\n\t" + character.locationHistory[i];
+            text += $"\n\t{character.locationHistory[i]}";
         }
         return text;
     }
@@ -250,29 +250,30 @@ public class ConsoleMenu : UIMenu {
             _consoleActions[mainCommand](parameters);
         } else {
             AddCommandHistory(command);
-            AddErrorMessage("Error: there is no such command as " + mainCommand + "![-]");
+            AddErrorMessage($"Error: there is no such command as {mainCommand}![-]");
         }
     }
     private void AddCommandHistory(string history) {
-        commandHistoryLbl.text += history + "\n";
+        commandHistoryLbl.text += $"{history}\n";
         commandHistory.Add(history);
         //currentHistoryIndex = commandHistory.Count - 1;
         ShowCommandHistory();
     }
     private void AddErrorMessage(string errorMessage) {
         errorMessage += ". Use /help for a list of commands";
-        commandHistoryLbl.text += "<color=#FF0000>" + errorMessage + "</color>\n";
+        commandHistoryLbl.text += $"<color=#FF0000>{errorMessage}</color>\n";
         ShowCommandHistory();
     }
     private void AddSuccessMessage(string successMessage) {
-        commandHistoryLbl.text += "<color=#00FF00>" + successMessage + "</color>\n";
+        commandHistoryLbl.text += $"<color=#00FF00>{successMessage}</color>\n";
         ShowCommandHistory();
     }
 
     #region Listeners
     private void OnCharacterDoingAction(Character character, ActualGoapNode actionNode) {
         if (typesSubscribedTo.Contains(actionNode.goapType)) {
-            Messenger.Broadcast<string, int, UnityAction>(Signals.SHOW_DEVELOPER_NOTIFICATION, character.name + " is doing " + actionNode.goapType.ToString(),
+            Messenger.Broadcast<string, int, UnityAction>(Signals.SHOW_DEVELOPER_NOTIFICATION,
+                $"{character.name} is doing {actionNode.goapType}",
                 100, () => UIManager.Instance.ShowCharacterInfo(character, true));
             UIManager.Instance.Pause();
         }
@@ -335,11 +336,11 @@ public class ConsoleMenu : UIMenu {
         }
     }
     public void AddText(string text) {
-        consoleInputField.text += " " + text;
+        consoleInputField.text += $" {text}";
     }
     public void ShowFullDebug(string[] parameters) {
         GameManager.Instance.showFullDebug = !GameManager.Instance.showFullDebug;
-        AddSuccessMessage("Show Full Debug Info Set to " + GameManager.Instance.showFullDebug.ToString());
+        AddSuccessMessage($"Show Full Debug Info Set to {GameManager.Instance.showFullDebug}");
     }
     public void MoveNextPage(TextMeshProUGUI text) {
         text.pageToDisplay += 1;
@@ -406,7 +407,8 @@ public class ConsoleMenu : UIMenu {
         FactionRelationship rel = FactionManager.Instance.GetRelationshipBetween(faction1, faction2);
         rel.SetRelationshipStatus(newRelStatus);
 
-        AddSuccessMessage("Changed relationship status of " + faction1.name + " and " + faction2.name + " to " + rel.relationshipStatus.ToString());
+        AddSuccessMessage(
+            $"Changed relationship status of {faction1.name} and {faction2.name} to {rel.relationshipStatus}");
     }
     #endregion
 
@@ -429,7 +431,7 @@ public class ConsoleMenu : UIMenu {
         }
 
         if (landmark == null) {
-            AddErrorMessage("There was an error in the command format of " + parameters[0]);
+            AddErrorMessage($"There was an error in the command format of {parameters[0]}");
             return;
         }
         landmark.CenterOnLandmark();
@@ -547,7 +549,7 @@ public class ConsoleMenu : UIMenu {
             return;
         }
 
-        string logSummary = character.name + "'s location history: ";
+        string logSummary = $"{character.name}'s location history: ";
         //List<string> logs = character.ownParty.specificLocationHistory;
         //for (int i = 0; i < logs.Count; i++) {
         //    logSummary += "\n" + logs[i];
@@ -569,12 +571,12 @@ public class ConsoleMenu : UIMenu {
                 characters.Add(currCharacter);
             }
         }
-        string summary = "Characters that have " + itemParameterString + ": ";
+        string summary = $"Characters that have {itemParameterString}: ";
         if (characters.Count == 0) {
             summary += "\nNONE";
         } else {
             for (int i = 0; i < characters.Count; i++) {
-                summary += "\n" + characters[i].name;
+                summary += $"\n{characters[i].name}";
             }
         }
         AddSuccessMessage(summary);
@@ -591,7 +593,7 @@ public class ConsoleMenu : UIMenu {
         Character character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
 
         if (character == null) {
-            AddErrorMessage("There is no character named " + characterParameterString);
+            AddErrorMessage($"There is no character named {characterParameterString}");
             return;
         }
 
@@ -607,7 +609,7 @@ public class ConsoleMenu : UIMenu {
         //            return;
         //    }
         //}
-        AddSuccessMessage("Added " + traitParameterString + " to " + character.name);
+        AddSuccessMessage($"Added {traitParameterString} to {character.name}");
     }
     private void RemoveTraitToCharacter(string[] parameters) {
         if (parameters.Length != 2) { //parameters command, item
@@ -621,14 +623,14 @@ public class ConsoleMenu : UIMenu {
         Character character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
 
         if (character == null) {
-            AddErrorMessage("There is no character named " + characterParameterString);
+            AddErrorMessage($"There is no character named {characterParameterString}");
             return;
         }
 
         if (character.traitContainer.RemoveTrait(character, traitParameterString)) {
-            AddSuccessMessage("Removed " + traitParameterString + " to " + character.name);
+            AddSuccessMessage($"Removed {traitParameterString} to {character.name}");
         } else {
-            AddErrorMessage(character.name + " has no trait named " + traitParameterString);
+            AddErrorMessage($"{character.name} has no trait named {traitParameterString}");
         }
 
 
@@ -644,17 +646,17 @@ public class ConsoleMenu : UIMenu {
 
         Character character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
         if (character == null) {
-            AddErrorMessage("There is no character named " + characterParameterString);
+            AddErrorMessage($"There is no character named {characterParameterString}");
             return;
         }
         Faction faction = FactionManager.Instance.GetFactionBasedOnName(factionParameterString);
         if (faction == null) {
-            AddErrorMessage("There is no faction named " + factionParameterString);
+            AddErrorMessage($"There is no faction named {factionParameterString}");
             return;
         }
 
         character.ChangeFactionTo(faction);
-        AddSuccessMessage("Transferred " + character.name + " to " + faction.name);
+        AddSuccessMessage($"Transferred {character.name} to {faction.name}");
     }
     private void ToggleFreezeCharacter(string[] parameter) {
         if (parameter.Length < 1) {
@@ -666,7 +668,7 @@ public class ConsoleMenu : UIMenu {
 
         Character character = CharacterManager.Instance.GetCharacterByName(characterParameter);
         if (character == null) {
-            AddErrorMessage("There is no character with name " + characterParameter);
+            AddErrorMessage($"There is no character with name {characterParameter}");
             return;
         }
 
@@ -688,18 +690,18 @@ public class ConsoleMenu : UIMenu {
         Character character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
 
         if (character == null) {
-            AddErrorMessage("There is no character named " + characterParameterString);
+            AddErrorMessage($"There is no character named {characterParameterString}");
             return;
         }
         string moodParameterString = parameters[1];
 
         int moodValue;
         if (!int.TryParse(moodParameterString, out moodValue)) {
-            AddErrorMessage("Mood value parameter is not an integer: " + moodParameterString);
+            AddErrorMessage($"Mood value parameter is not an integer: {moodParameterString}");
             return;
         }
         character.moodComponent.SetMoodValue(moodValue);
-        AddSuccessMessage("Set Mood Value of " + character.name + " to " + moodValue);
+        AddSuccessMessage($"Set Mood Value of {character.name} to {moodValue}");
     }
     private void SetFullness(string[] parameters) {
         if (parameters.Length != 2) { //parameters command, item
@@ -712,18 +714,18 @@ public class ConsoleMenu : UIMenu {
         Character character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
 
         if (character == null) {
-            AddErrorMessage("There is no character named " + characterParameterString);
+            AddErrorMessage($"There is no character named {characterParameterString}");
             return;
         }
         string fullnessParameterString = parameters[1];
 
         float fullness = character.needsComponent.fullness;
         if (!float.TryParse(fullnessParameterString, out fullness)) {
-            AddErrorMessage("Fullness parameter is not a float: " + fullnessParameterString);
+            AddErrorMessage($"Fullness parameter is not a float: {fullnessParameterString}");
             return;
         }
         character.needsComponent.SetFullness(fullness);
-        AddSuccessMessage("Set Fullness Value of " + character.name + " to " + fullness);
+        AddSuccessMessage($"Set Fullness Value of {character.name} to {fullness}");
     }
     private void SetHappiness(string[] parameters) {
         if (parameters.Length != 2) { //parameters command, item
@@ -736,18 +738,18 @@ public class ConsoleMenu : UIMenu {
         Character character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
 
         if (character == null) {
-            AddErrorMessage("There is no character named " + characterParameterString);
+            AddErrorMessage($"There is no character named {characterParameterString}");
             return;
         }
         string happinessParameterString = parameters[1];
 
         float happiness = character.needsComponent.happiness;
         if (!float.TryParse(happinessParameterString, out happiness)) {
-            AddErrorMessage("Happiness parameter is not a float: " + happinessParameterString);
+            AddErrorMessage($"Happiness parameter is not a float: {happinessParameterString}");
             return;
         }
         character.needsComponent.SetHappiness(happiness);
-        AddSuccessMessage("Set Happiness Value of " + character.name + " to " + happiness);
+        AddSuccessMessage($"Set Happiness Value of {character.name} to {happiness}");
     }
     private void SetTiredness(string[] parameters) {
         if (parameters.Length != 2) { //parameters command, item
@@ -760,18 +762,18 @@ public class ConsoleMenu : UIMenu {
         Character character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
 
         if (character == null) {
-            AddErrorMessage("There is no character named " + characterParameterString);
+            AddErrorMessage($"There is no character named {characterParameterString}");
             return;
         }
         string tirednessParameterString = parameters[1];
 
         float tiredness = character.needsComponent.tiredness;
         if (!float.TryParse(tirednessParameterString, out tiredness)) {
-            AddErrorMessage("Tiredness parameter is not a float: " + tirednessParameterString);
+            AddErrorMessage($"Tiredness parameter is not a float: {tirednessParameterString}");
             return;
         }
         character.needsComponent.SetTiredness(tiredness);
-        AddSuccessMessage("Set Tiredness Value of " + character.name + " to " + tiredness);
+        AddSuccessMessage($"Set Tiredness Value of {character.name} to {tiredness}");
     }
     private void SetComfort(string[] parameters) {
         if (parameters.Length != 2) { //parameters command, item
@@ -784,18 +786,18 @@ public class ConsoleMenu : UIMenu {
         Character character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
 
         if (character == null) {
-            AddErrorMessage("There is no character named " + characterParameterString);
+            AddErrorMessage($"There is no character named {characterParameterString}");
             return;
         }
         string comfortParameterString = parameters[1];
 
         float comfort = character.needsComponent.comfort;
         if (!float.TryParse(comfortParameterString, out comfort)) {
-            AddErrorMessage("Comfort parameter is not a float: " + comfortParameterString);
+            AddErrorMessage($"Comfort parameter is not a float: {comfortParameterString}");
             return;
         }
         character.needsComponent.SetComfort(comfort);
-        AddSuccessMessage("Set Comfort Value of " + character.name + " to " + comfort);
+        AddSuccessMessage($"Set Comfort Value of {character.name} to {comfort}");
     }
     private void SetHope(string[] parameters) {
         if (parameters.Length != 2) { //parameters command, item
@@ -808,18 +810,18 @@ public class ConsoleMenu : UIMenu {
         Character character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
 
         if (character == null) {
-            AddErrorMessage("There is no character named " + characterParameterString);
+            AddErrorMessage($"There is no character named {characterParameterString}");
             return;
         }
         string hopeParameterString = parameters[1];
 
         float hope = character.needsComponent.hope;
         if (!float.TryParse(hopeParameterString, out hope)) {
-            AddErrorMessage("Hope parameter is not a float: " + hopeParameterString);
+            AddErrorMessage($"Hope parameter is not a float: {hopeParameterString}");
             return;
         }
         character.needsComponent.SetHope(hope);
-        AddSuccessMessage("Set Hope Value of " + character.name + " to " + hope);
+        AddSuccessMessage($"Set Hope Value of {character.name} to {hope}");
     }
     private void LogAwareness(string[] parameters) {
         if (parameters.Length != 1) { //parameters command, item
@@ -832,7 +834,7 @@ public class ConsoleMenu : UIMenu {
         Character character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
 
         if (character == null) {
-            AddErrorMessage("There is no character named " + characterParameterString);
+            AddErrorMessage($"There is no character named {characterParameterString}");
             return;
         }
 
@@ -848,21 +850,21 @@ public class ConsoleMenu : UIMenu {
         string typeParameterString = parameters[0];
         RELATIONSHIP_TYPE rel;
         if (!Enum.TryParse<RELATIONSHIP_TYPE>(typeParameterString, out rel)) {
-            AddErrorMessage("There is no relationship of type " + typeParameterString);
+            AddErrorMessage($"There is no relationship of type {typeParameterString}");
         }
         string character1ParameterString = parameters[1];
         string character2ParameterString = parameters[2];
 
         Character character1 = CharacterManager.Instance.GetCharacterByName(character1ParameterString);
         if (character1 == null) {
-            AddErrorMessage("There is no character with name " + character1ParameterString);
+            AddErrorMessage($"There is no character with name {character1ParameterString}");
         }
         Character character2 = CharacterManager.Instance.GetCharacterByName(character2ParameterString);
         if (character2 == null) {
-            AddErrorMessage("There is no character with name " + character2ParameterString);
+            AddErrorMessage($"There is no character with name {character2ParameterString}");
         }
         RelationshipManager.Instance.CreateNewRelationshipBetween(character1, character2, rel);
-        AddSuccessMessage(character1.name + " and " + character2.name + " now have relationship " + rel.ToString());
+        AddSuccessMessage($"{character1.name} and {character2.name} now have relationship {rel}");
     }
     private void ForcedRelationshipDegradation(string[] parameters) {
         if (parameters.Length != 2) { //parameters: Character, Character
@@ -875,14 +877,15 @@ public class ConsoleMenu : UIMenu {
 
         Character character1 = CharacterManager.Instance.GetCharacterByName(character1ParameterString);
         if (character1 == null) {
-            AddErrorMessage("There is no character with name " + character1ParameterString);
+            AddErrorMessage($"There is no character with name {character1ParameterString}");
         }
         Character character2 = CharacterManager.Instance.GetCharacterByName(character2ParameterString);
         if (character2 == null) {
-            AddErrorMessage("There is no character with name " + character2ParameterString);
+            AddErrorMessage($"There is no character with name {character2ParameterString}");
         }
         RelationshipManager.Instance.RelationshipDegradation(character1, character2);
-        AddSuccessMessage("Relationship degradation between " + character1.name + " and " + character2.name + " has been executed.");
+        AddSuccessMessage(
+            $"Relationship degradation between {character1.name} and {character2.name} has been executed.");
     }
     private void SetHP(string[] parameters) {
         if (parameters.Length != 2) { //parameters: Character, hp amount
@@ -896,11 +899,11 @@ public class ConsoleMenu : UIMenu {
         Character character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
         int amount = 0;
         if (!int.TryParse(amountParameterString, out amount)) {
-            AddErrorMessage("HP value parameter is not an integer: " + amountParameterString);
+            AddErrorMessage($"HP value parameter is not an integer: {amountParameterString}");
             return;
         }
         character.SetHP(amount);
-        AddSuccessMessage("Set HP of " + character.name + " to " + amount);
+        AddSuccessMessage($"Set HP of {character.name} to {amount}");
 
     }
     private void AddHostile(string[] parameters) {
@@ -916,28 +919,28 @@ public class ConsoleMenu : UIMenu {
 
         Character character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
         if (character == null) {
-            AddErrorMessage("There is no character with name " + characterParameterString);
+            AddErrorMessage($"There is no character with name {characterParameterString}");
             return;
         }
         POINT_OF_INTEREST_TYPE targetType;
         if (!System.Enum.TryParse(poiTypeString, out targetType)) {
-            AddErrorMessage("There is no poi type of " + poiTypeString);
+            AddErrorMessage($"There is no poi type of {poiTypeString}");
             return;
         }
         TILE_OBJECT_TYPE targetTileObjectType;
         if (!System.Enum.TryParse(tileObjectTypeString, out targetTileObjectType)) {
-            AddErrorMessage("There is no tile object type of " + tileObjectTypeString);
+            AddErrorMessage($"There is no tile object type of {tileObjectTypeString}");
             return;
         }
         int targetID;
         if (!int.TryParse(targetIDString, out targetID)) {
-            AddErrorMessage("ID parameter is not an integer: " + targetIDString);
+            AddErrorMessage($"ID parameter is not an integer: {targetIDString}");
             return;
         }
 
         IPointOfInterest targetPOI = SaveUtilities.GetPOIFromData(new POIData{ poiType = targetType, poiID = targetID, tileObjectType = targetTileObjectType });
         if (targetPOI == null) {
-            AddErrorMessage("Could not find POI of type " + targetType.ToString() + " with id " + targetID.ToString());
+            AddErrorMessage($"Could not find POI of type {targetType} with id {targetID}");
             return;
         }
 
@@ -953,7 +956,7 @@ public class ConsoleMenu : UIMenu {
 
         Character character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
         if (character == null) {
-            AddErrorMessage("There is no character with name " + characterParameterString);
+            AddErrorMessage($"There is no character with name {characterParameterString}");
             return;
         }
         character.marker.UpdateAnimation();
@@ -971,22 +974,22 @@ public class ConsoleMenu : UIMenu {
         Character character2 = CharacterManager.Instance.GetCharacterByName(character2ParameterString);
 
         if (character1 == null) {
-            AddErrorMessage("There is no character named " + character1ParameterString);
+            AddErrorMessage($"There is no character named {character1ParameterString}");
             return;
         }
         if (character2 == null) {
-            AddErrorMessage("There is no character named " + character2ParameterString);
+            AddErrorMessage($"There is no character named {character2ParameterString}");
             return;
         }
         string opinionParameterString = parameters[2];
 
         int value = 0;
         if (!int.TryParse(opinionParameterString, out value)) {
-            AddErrorMessage("Opinion parameter is not an integer: " + opinionParameterString);
+            AddErrorMessage($"Opinion parameter is not an integer: {opinionParameterString}");
             return;
         }
         character1.relationshipContainer.AdjustOpinion(character1, character2, "Base", value);
-        AddSuccessMessage("Adjusted Opinion of " + character1.name + " towards " + character2.name + " by " + value);
+        AddSuccessMessage($"Adjusted Opinion of {character1.name} towards {character2.name} by {value}");
     }
     private void JoinFaction(string[] parameters) {
         if (parameters.Length != 2) { //parameters command, item
@@ -1001,15 +1004,15 @@ public class ConsoleMenu : UIMenu {
         Faction faction = FactionManager.Instance.GetFactionBasedOnName(factionParameterString);
 
         if (character1 == null) {
-            AddErrorMessage("There is no character named " + character1ParameterString);
+            AddErrorMessage($"There is no character named {character1ParameterString}");
             return;
         }
         if (faction == null) {
-            AddErrorMessage("There is no faction named " + factionParameterString);
+            AddErrorMessage($"There is no faction named {factionParameterString}");
             return;
         }
         character1.interruptComponent.TriggerInterrupt(INTERRUPT.Join_Faction, faction.characters[0], "join_faction_normal");
-        AddSuccessMessage(character1.name + " joined faction " + faction.name);
+        AddSuccessMessage($"{character1.name} joined faction {faction.name}");
     }
     private void TriggerEmotion(string[] parameters) {
         if (parameters.Length != 3) { //parameters command, item
@@ -1024,22 +1027,22 @@ public class ConsoleMenu : UIMenu {
         Character character2 = CharacterManager.Instance.GetCharacterByName(character2ParameterString);
 
         if (character1 == null) {
-            AddErrorMessage("There is no character named " + character1ParameterString);
+            AddErrorMessage($"There is no character named {character1ParameterString}");
             return;
         }
         if (character2 == null) {
-            AddErrorMessage("There is no character named " + character2ParameterString);
+            AddErrorMessage($"There is no character named {character2ParameterString}");
             return;
         }
         string emotionParameterString = parameters[2];
 
         Emotion emotion = CharacterManager.Instance.GetEmotion(emotionParameterString);
         if (emotion == null) {
-            AddErrorMessage("Emotion parameter has no data: " + emotionParameterString);
+            AddErrorMessage($"Emotion parameter has no data: {emotionParameterString}");
             return;
         }
         CharacterManager.Instance.TriggerEmotion(emotion.emotionType, character1, character2);
-        AddSuccessMessage("Trigger " + emotion.name + " Emotion of " + character1.name + " towards " + character2.name);
+        AddSuccessMessage($"Trigger {emotion.name} Emotion of {character1.name} towards {character2.name}");
     }
     #endregion
 
@@ -1128,13 +1131,13 @@ public class ConsoleMenu : UIMenu {
         } else if (Enum.TryParse<INTERACTION_TYPE>(typeParameterString, out type)) {
             if (typesSubscribedTo.Contains(type)) {
                 typesSubscribedTo.Remove(type);
-                AddSuccessMessage("Unsubscribed from " + type + " interactions");
+                AddSuccessMessage($"Unsubscribed from {type} interactions");
             } else {
                 typesSubscribedTo.Add(type);
-                AddSuccessMessage("Subscribed to " + type + " interactions");
+                AddSuccessMessage($"Subscribed to {type} interactions");
             }
         } else {
-            AddErrorMessage("There is no interaction of type " + typeParameterString);
+            AddErrorMessage($"There is no interaction of type {typeParameterString}");
         }
     }
     #endregion
@@ -1152,7 +1155,7 @@ public class ConsoleMenu : UIMenu {
     }
     private void ConstructClassDropdown() {
         List<string> allClasses = new List<string>();
-        string path = UtilityScripts.Utilities.dataPath + "CharacterClasses/";
+        string path = $"{UtilityScripts.Utilities.dataPath}CharacterClasses/";
         foreach (string file in Directory.GetFiles(path, "*.json")) {
             allClasses.Add(Path.GetFileNameWithoutExtension(file));
         }
@@ -1190,9 +1193,9 @@ public class ConsoleMenu : UIMenu {
             }
         } else if (Enum.TryParse(typeParameterString, out type)) {
             PlayerManager.Instance.player.AddSummon(type);
-            AddSuccessMessage("Gained new summon: " + type);
+            AddSuccessMessage($"Gained new summon: {type}");
         } else {
-            AddErrorMessage("There is no summon of type " + typeParameterString);
+            AddErrorMessage($"There is no summon of type {typeParameterString}");
         }
     }
     //private void GainSummonSlot (string[] parameters) {
@@ -1231,9 +1234,9 @@ public class ConsoleMenu : UIMenu {
             }
         } else if (Enum.TryParse(typeParameterString, out type)) {
             PlayerManager.Instance.player.AddArtifact(type);
-            AddSuccessMessage("Gained new artifact: " + type);
+            AddSuccessMessage($"Gained new artifact: {type}");
         } else {
-            AddErrorMessage("There is no artifact of type " + typeParameterString);
+            AddErrorMessage($"There is no artifact of type {typeParameterString}");
         }
 
     }
@@ -1267,9 +1270,9 @@ public class ConsoleMenu : UIMenu {
         SPELL_TYPE type;
         if (Enum.TryParse(typeParameterString, out type)) {
             PlayerManager.Instance.player.GainNewInterventionAbility(type, true);
-            AddSuccessMessage("Gained new Spell: " + type);
+            AddSuccessMessage($"Gained new Spell: {type}");
         } else {
-            AddErrorMessage("There is no spell of type " + typeParameterString);
+            AddErrorMessage($"There is no spell of type {typeParameterString}");
         }
 
     }
@@ -1283,9 +1286,9 @@ public class ConsoleMenu : UIMenu {
         PLAYER_ARCHETYPE type;
         if (Enum.TryParse(typeParameterString, out type)) {
             PlayerManager.Instance.player.SetArchetype(type);
-            AddSuccessMessage("Changed Player Archetype to: " + type);
+            AddSuccessMessage($"Changed Player Archetype to: {type}");
         } else {
-            AddErrorMessage("There is no archetype " + typeParameterString);
+            AddErrorMessage($"There is no archetype {typeParameterString}");
         }
 
     }
@@ -1312,14 +1315,15 @@ public class ConsoleMenu : UIMenu {
                 for (int j = 0; j < objs.Count; j++) {
                     TileObject currObj = objs[j];
                     if (currObj.id == id) {
-                        AddSuccessMessage("Removed " + currObj.ToString() + " from " + currObj.gridTileLocation.ToString() + " at " + currObj.gridTileLocation.structure.ToString());
+                        AddSuccessMessage(
+                            $"Removed {currObj} from {currObj.gridTileLocation} at {currObj.gridTileLocation.structure}");
                         currObj.gridTileLocation.structure.RemovePOI(currObj);
                         break;
                     }
                 }
             }
         } else {
-            AddErrorMessage("There is no tile object of type " + typeParameterString);
+            AddErrorMessage($"There is no tile object of type {typeParameterString}");
         }
     }
     #endregion
@@ -1339,13 +1343,13 @@ public class ConsoleMenu : UIMenu {
 
         STRUCTURE_TYPE structureType;
         if (System.Enum.TryParse(typeParameterString, out structureType) == false) {
-            AddErrorMessage("There is no structure type named " + typeParameterString.ToString());
+            AddErrorMessage($"There is no structure type named {typeParameterString}");
             return;
         }
 
         LocationStructure structure = InnerMapManager.Instance.currentlyShowingMap.location.GetStructureByID(structureType, id);
         if (structure == null) {
-            AddErrorMessage("There is no " + structureType.ToString() + " with id " + id.ToString());
+            AddErrorMessage($"There is no {structureType} with id {id}");
             return;
         }
 
@@ -1375,19 +1379,19 @@ public class ConsoleMenu : UIMenu {
 
         POINT_OF_INTEREST_TYPE poiType;
         if (System.Enum.TryParse(poiTypeStr, out poiType) == false) {
-            AddErrorMessage("There is no poi of type " + poiTypeStr);
+            AddErrorMessage($"There is no poi of type {poiTypeStr}");
         }
         int id = Int32.Parse(idStr);
         if (poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
             TILE_OBJECT_TYPE tileObjType;
             if (System.Enum.TryParse(objTypeStr, out tileObjType) == false) {
-                AddErrorMessage("There is no tile object of type " + objTypeStr);
+                AddErrorMessage($"There is no tile object of type {objTypeStr}");
             }
 
             TileObject tileObj = InnerMapManager.Instance.GetTileObject(tileObjType, id);
             string log = $"Advertised actions of {tileObj.name}:";
             for (int i = 0; i < tileObj.advertisedActions.Count; i++) {
-                log += "\n" + tileObj.advertisedActions[i].ToString();
+                log += $"\n{tileObj.advertisedActions[i]}";
             }
             AddSuccessMessage(log);
         } 

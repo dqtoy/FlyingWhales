@@ -74,7 +74,8 @@ public class LocationClassManager {
         string currentClassRequirement = characterClassOrder[currentIndex];
 
         if (!DoesCharacterClassFitCurrentClass(residentAdded)) {
-            throw new System.Exception("New resident " + residentAdded.name + "'s class which is " + residentAdded.characterClass.className + " does not match current location class requirement: " + currentClassRequirement);
+            throw new System.Exception(
+                $"New resident {residentAdded.name}'s class which is {residentAdded.characterClass.className} does not match current location class requirement: {currentClassRequirement}");
         }
 
         LocationClassNumberGuide temp = characterClassGuide[currentClassRequirement];
@@ -95,7 +96,8 @@ public class LocationClassManager {
             if(characterClassGuide["Civilian"].currentNumber > 0) {
                 AdjustCurrentNumberOfClass("Civilian", -1);
             } else {
-                throw new System.Exception("Wrong location class requirement data!" + " Removal of resident" + residentClassName + " " + residentRemoved.name + " but current number of Civilian is " + characterClassGuide["Civilian"].currentNumber + " (supposed number: " + characterClassGuide["Civilian"].supposedNumber + ")");
+                throw new System.Exception(
+                    $"Wrong location class requirement data! Removal of resident{residentClassName} {residentRemoved.name} but current number of Civilian is {characterClassGuide["Civilian"].currentNumber} (supposed number: {characterClassGuide["Civilian"].supposedNumber})");
             }
         } else if(residentClassName == "Peasant" || residentClassName == "Craftsman") {
             if (characterClassGuide[residentClassName].currentNumber > 0) {
@@ -103,10 +105,8 @@ public class LocationClassManager {
             } else if (characterClassGuide["Civilian"].currentNumber > 0) {
                 AdjustCurrentNumberOfClass("Civilian", -1);
             } else {
-                throw new System.Exception("Wrong location class requirement data!" 
-                    + " Removal of resident" + residentClassName + " " + residentRemoved.name + " but current number of Civilian is " 
-                    + characterClassGuide["Civilian"].currentNumber + " (supposed number: " + characterClassGuide["Civilian"].supposedNumber + ")" + " and current number of " + residentClassName + " is "
-                    + characterClassGuide[residentClassName].currentNumber + " (supposed number: " + characterClassGuide[residentClassName].supposedNumber + ")");
+                throw new System.Exception(
+                    $"Wrong location class requirement data! Removal of resident{residentClassName} {residentRemoved.name} but current number of Civilian is {characterClassGuide["Civilian"].currentNumber} (supposed number: {characterClassGuide["Civilian"].supposedNumber}) and current number of {residentClassName} is {characterClassGuide[residentClassName].currentNumber} (supposed number: {characterClassGuide[residentClassName].supposedNumber})");
             }
         } else if (residentClassName == "Noble") {
             if (characterClassGuide[residentClassName].currentNumber > 0) {
@@ -116,26 +116,22 @@ public class LocationClassManager {
             //     AdjustCurrentNumberOfClass("Combatant", -1);
             // }
             else {
-                throw new System.Exception("Wrong location class requirement data!"
-                    + " Removal of resident" + residentClassName + " " + residentRemoved.name + " but current number of Combatant is "
-                    + characterClassGuide["Combatant"].currentNumber + " (supposed number: " + characterClassGuide["Combatant"].supposedNumber + ")" + " and current number of " + residentClassName + " is "
-                    + characterClassGuide[residentClassName].currentNumber + " (supposed number: " + characterClassGuide[residentClassName].supposedNumber + ")");
+                throw new System.Exception(
+                    $"Wrong location class requirement data! Removal of resident{residentClassName} {residentRemoved.name} but current number of Combatant is {characterClassGuide["Combatant"].currentNumber} (supposed number: {characterClassGuide["Combatant"].supposedNumber}) and current number of {residentClassName} is {characterClassGuide[residentClassName].currentNumber} (supposed number: {characterClassGuide[residentClassName].supposedNumber})");
             }
         } else if (residentRemoved.traitContainer.HasTrait("Combatant")) {
             if (characterClassGuide["Combatant"].currentNumber > 0) {
                 AdjustCurrentNumberOfClass("Combatant", -1);
             } else {
-                throw new System.Exception("Wrong location class requirement data!"
-                    + " Removal of resident" + residentClassName + " " + residentRemoved.name + " but current number of Combatant is "
-                    + characterClassGuide["Combatant"].currentNumber + " (supposed number: " + characterClassGuide["Combatant"].supposedNumber + ")");
+                throw new System.Exception(
+                    $"Wrong location class requirement data! Removal of resident{residentClassName} {residentRemoved.name} but current number of Combatant is {characterClassGuide["Combatant"].currentNumber} (supposed number: {characterClassGuide["Combatant"].supposedNumber})");
             }
         } else {
             if (characterClassGuide[residentClassName].currentNumber > 0) {
                 AdjustCurrentNumberOfClass(residentClassName, -1);
             } else {
-                throw new System.Exception("Wrong location class requirement data!"
-                    + " Removal of resident" + residentClassName + " " + residentRemoved.name + " but current number of " + residentClassName + " is "
-                    + characterClassGuide[residentClassName].currentNumber + " (supposed number: " + characterClassGuide[residentClassName].supposedNumber + ")");
+                throw new System.Exception(
+                    $"Wrong location class requirement data! Removal of resident{residentClassName} {residentRemoved.name} but current number of {residentClassName} is {characterClassGuide[residentClassName].currentNumber} (supposed number: {characterClassGuide[residentClassName].supposedNumber})");
             }
         }
         RevertCharacterClassOrderByOne();
@@ -237,9 +233,10 @@ public class LocationClassManager {
         }
     }
     public void LogLocationRequirementsData(string regionName) {
-        string log = "Location Character Class Requirements Data For " + regionName;
+        string log = $"Location Character Class Requirements Data For {regionName}";
         foreach (KeyValuePair<string, LocationClassNumberGuide> kvp in characterClassGuide) {
-            log += "\n" + kvp.Key + " - Supposed Number: " + kvp.Value.supposedNumber + ", Current Number: " + kvp.Value.currentNumber; 
+            log +=
+                $"\n{kvp.Key} - Supposed Number: {kvp.Value.supposedNumber}, Current Number: {kvp.Value.currentNumber}"; 
         }
         Debug.Log(log);
     }

@@ -357,8 +357,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
             if (isCorrupted) {
                 displayName = "Corrupted ";
             }
-            displayName += $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(biomeType.ToString())} " +
-                           $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(elevationType.ToString())}";
+            displayName +=
+                $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(biomeType.ToString())} {UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(elevationType.ToString())}";
             return displayName;
         }
     }
@@ -446,7 +446,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
             return HEXTILE_DIRECTION.NONE;
         }
         if (!AllNeighbours.Contains(neighbour)) {
-            throw new System.Exception(neighbour.name + " is not a neighbour of " + name);
+            throw new System.Exception($"{neighbour.name} is not a neighbour of {name}");
         }
         int thisXCoordinate = xCoordinate;
         int thisYCoordinate = yCoordinate;
@@ -764,8 +764,8 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     }
     public void ShowTileInfo() {
         string summary = $"{ToString()}";
-        summary += "\nLeft Most: " + (region.GetLeftMostTile()?.ToString() ?? "Null");
-        summary += "\nRight Most: " + (region.GetRightMostTile()?.ToString() ?? "Null");
+        summary += $"\nLeft Most: {(region.GetLeftMostTile()?.ToString() ?? "Null")}";
+        summary += $"\nRight Most: {(region.GetRightMostTile()?.ToString() ?? "Null")}";
         summary += "\nFeatures:";
         for (int i = 0; i < featureComponent.features.Count; i++) {
             TileFeature feature = featureComponent.features[i];
@@ -1117,9 +1117,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         if (!CanChooseMinion(character)) {
             string message = string.Empty;
             if (character.minion.isAssigned) {
-                message = character.name + " is already doing something else.";
+                message = $"{character.name} is already doing something else.";
             } else if (!character.minion.deadlySin.CanDoDeadlySinAction(DEADLY_SIN_ACTION.BUILDER)) {
-                message = character.name + " does not have the required trait: Builder";
+                message = $"{character.name} does not have the required trait: Builder";
             }
             UIManager.Instance.ShowSmallInfo(message);
         }

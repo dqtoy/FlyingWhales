@@ -59,7 +59,7 @@ public class Nap : GoapAction {
         //    return 45;
         //}
         //return 100;
-        string costLog = "\n" + name + " " + target.nameWithID + ":";
+        string costLog = $"\n{name} {target.nameWithID}:";
         int cost = 0;
         if (target is Bed) {
             Bed targetBed = target as Bed;
@@ -69,7 +69,7 @@ public class Nap : GoapAction {
             } else {
                 if (targetBed.IsOwnedBy(actor)) {
                     cost += UtilityScripts.Utilities.rng.Next(30, 36);
-                    costLog += " +" + cost + "(Owned)";
+                    costLog += $" +{cost}(Owned)";
                 } else {
                     List<Character> tableOwners = targetBed.GetOwners();
                     bool isTargetObjectOwnedByFriend = false;
@@ -87,13 +87,13 @@ public class Nap : GoapAction {
                     }
                     if (isTargetObjectOwnedByFriend) {
                         cost = UtilityScripts.Utilities.rng.Next(55, 66);
-                        costLog += " +" + cost + "(Owned by Friend)";
+                        costLog += $" +{cost}(Owned by Friend)";
                     } else if (isTargetObjectOwnedByEnemy) {
                         cost += 2000;
                         costLog += " +2000(Owned by Enemy)";
                     } else {
                         cost = UtilityScripts.Utilities.rng.Next(50, 71);
-                        costLog += " +" + cost + "(Else)";
+                        costLog += $" +{cost}(Else)";
                     }
                 }
 

@@ -237,7 +237,8 @@ public class UIManager : MonoBehaviour {
     }
     private void UpdateUI() {
         //dateLbl.SetText(GameManager.Instance.continuousDays + "/" + GameManager.ConvertTickToTime(GameManager.Instance.tick));
-        dateLbl.SetText("Day " + GameManager.Instance.continuousDays + "\n" + GameManager.ConvertTickToTime(GameManager.Instance.tick));
+        dateLbl.SetText(
+            $"Day {GameManager.Instance.continuousDays}\n{GameManager.ConvertTickToTime(GameManager.Instance.tick)}");
         //timeLbl.SetText(GameManager.GetTimeInWordsOfTick(GameManager.Instance.tick).ToString());
         //timeLbl.SetText("");
 
@@ -362,9 +363,9 @@ public class UIManager : MonoBehaviour {
     public void ShowSmallInfo(string info, string header = "") {
         string message = string.Empty;
         if (!string.IsNullOrEmpty(header)) {
-            message = "<font=\"Eczar-Medium\"><line-height=100%><size=18>" + header + "</font>\n";
+            message = $"<font=\"Eczar-Medium\"><line-height=100%><size=18>{header}</font>\n";
         }
-        message += "<line-height=70%><size=16>" + info;
+        message += $"<line-height=70%><size=16>{info}";
 
         message = message.Replace("\\n", "\n");
 
@@ -384,9 +385,9 @@ public class UIManager : MonoBehaviour {
     public void ShowSmallInfo(string info, UIHoverPosition pos, string header = "") {
         string message = string.Empty;
         if (!string.IsNullOrEmpty(header)) {
-            message = "<font=\"Eczar-Medium\"><line-height=100%><size=18>" + header + "</font>\n";
+            message = $"<font=\"Eczar-Medium\"><line-height=100%><size=18>{header}</font>\n";
         }
-        message += "<line-height=70%><size=16>" + info;
+        message += $"<line-height=70%><size=16>{info}";
 
         message = message.Replace("\\n", "\n");
 
@@ -454,7 +455,7 @@ public class UIManager : MonoBehaviour {
         if (cornersOutside.Count != 0) {
             string log = "Corners outside are: ";
             for (int i = 0; i < cornersOutside.Count; i++) {
-                log += cornersOutside[i].ToString() + ", ";
+                log += $"{cornersOutside[i]}, ";
             }
             //Debug.Log(log);
             if (cornersOutside.Contains(2) && cornersOutside.Contains(3)) {
@@ -683,7 +684,7 @@ public class UIManager : MonoBehaviour {
         this.gameObject.SetActive(state);
     }
     public void DateHover() {
-        ShowSmallInfo("Day: " +  GameManager.Instance.continuousDays.ToString() + " Tick: " + GameManager.Instance.tick.ToString());
+        ShowSmallInfo($"Day: {GameManager.Instance.continuousDays} Tick: {GameManager.Instance.tick}");
     }
     [ExecuteInEditMode]
     [ContextMenu("Set All Scroll Rect Scroll Speed")]
@@ -956,7 +957,7 @@ public class UIManager : MonoBehaviour {
 
     #region Player
     private void OnCombatDone(Combat combat) {
-        ShowDeveloperNotification("Combat at <b>" + combat.location.name + "</b>!", 5, () => ShowCombatLog(combat));
+        ShowDeveloperNotification($"Combat at <b>{combat.location.name}</b>!", 5, () => ShowCombatLog(combat));
     }
     #endregion
 
@@ -986,12 +987,12 @@ public class UIManager : MonoBehaviour {
     }
     public void ToggleMapsHover() {
         if (InnerMapManager.Instance.isAnInnerMapShowing) {
-            ShowSmallInfo("Click to exit " + InnerMapManager.Instance.currentlyShowingLocation.name + ".", returnToWorldBtnTooltipPos);
+            ShowSmallInfo($"Click to exit {InnerMapManager.Instance.currentlyShowingLocation.name}.", returnToWorldBtnTooltipPos);
         } else {
             if (regionInfoUI.activeRegion != null) {
-                ShowSmallInfo("Click to enter " + regionInfoUI.activeRegion.name + ".", returnToWorldBtnTooltipPos);
+                ShowSmallInfo($"Click to enter {regionInfoUI.activeRegion.name}.", returnToWorldBtnTooltipPos);
             } else if(hexTileInfoUI.currentlyShowingHexTile != null) {
-                ShowSmallInfo("Click to enter " + hexTileInfoUI.currentlyShowingHexTile.region.name + ".", returnToWorldBtnTooltipPos);
+                ShowSmallInfo($"Click to enter {hexTileInfoUI.currentlyShowingHexTile.region.name}.", returnToWorldBtnTooltipPos);
             }
         }
     }

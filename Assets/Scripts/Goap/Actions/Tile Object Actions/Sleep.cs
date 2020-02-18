@@ -27,7 +27,7 @@ public class Sleep : GoapAction {
         SetState("Rest Success", goapNode); 
     }
     protected override int GetBaseCost(Character actor, IPointOfInterest target, JobQueueItem job, object[] otherData) {
-        string costLog = "\n" + name + " " + target.nameWithID + ":";
+        string costLog = $"\n{name} {target.nameWithID}:";
         int cost = 0;
         if (target is Bed) {
             Bed bed = target as Bed;
@@ -37,7 +37,7 @@ public class Sleep : GoapAction {
             } else {
                 if (bed.IsOwnedBy(actor)) {
                     cost = UtilityScripts.Utilities.rng.Next(10, 16);
-                    costLog += " +" + cost + "(Owned)";
+                    costLog += $" +{cost}(Owned)";
                 } else {
                     List<Character> tableOwners = bed.GetOwners();
                     bool isTargetObjectOwnedByFriend = false;
@@ -55,13 +55,13 @@ public class Sleep : GoapAction {
                     }
                     if (isTargetObjectOwnedByFriend) {
                         cost = UtilityScripts.Utilities.rng.Next(25, 46);
-                        costLog += " +" + cost + "(Owned by Friend)";
+                        costLog += $" +{cost}(Owned by Friend)";
                     } else if (isTargetObjectOwnedByEnemy) {
                         cost += 2000;
                         costLog += " +2000(Owned by Enemy)";
                     } else {
                         cost += UtilityScripts.Utilities.rng.Next(40, 51);
-                        costLog += " +" + cost + "(Else)";
+                        costLog += $" +{cost}(Else)";
                     }
 
                     Character alreadySleepingCharacter = null;

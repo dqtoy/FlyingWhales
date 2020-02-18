@@ -54,7 +54,11 @@ namespace Inner_Maps {
         public TileBase corruptedDetailTile;
         public Sprite[] corruptedTreeAssets;
         public Sprite[] corruptedBigTreeAssets;
-        
+
+        [Header("Structure Floor Tiles")] 
+        public TileBase woodFloorTile;
+        public TileBase stoneFloorTile;
+
         public TileBase GetOutsideFloorTile(ILocation location) {
             switch (location.coreTile.biomeType) {
                 case BIOMES.SNOW:

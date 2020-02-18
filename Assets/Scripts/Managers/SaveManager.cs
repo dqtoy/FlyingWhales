@@ -26,7 +26,7 @@ public class SaveManager : MonoBehaviour {
     public void SaveCurrentStateOfWorld() {
         Save save = new Save((int)GridMap.Instance.width, (int)GridMap.Instance.height, GridMap.Instance._borderThickness);
         save.SaveHextiles(GridMap.Instance.normalHexTiles);
-        save.SaveOuterHextiles(GridMap.Instance.outerGridList);
+        // save.SaveOuterHextiles(GridMap.Instance.outerGridList);
         save.SaveRegions(GridMap.Instance.allRegions);
         save.SavePlayerArea(PlayerManager.Instance.player.playerSettlement);
         save.SaveNonPlayerAreas();
@@ -52,7 +52,7 @@ public class SaveManager : MonoBehaviour {
             return null;
         }
         SaveDataTrait saveDataTrait = null;
-        System.Type type = System.Type.GetType("SaveData" + trait.name);
+        System.Type type = System.Type.GetType($"SaveData{trait.name}");
         if (type != null) {
             saveDataTrait = System.Activator.CreateInstance(type) as SaveDataTrait;
         } else {

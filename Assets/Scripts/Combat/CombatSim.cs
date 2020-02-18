@@ -43,7 +43,7 @@ public class CombatSim {
 
     public void CharacterDeath(ICharacterSim character) {
         if (RemoveCharacter(character)) {
-            AddCombatLog(character.idName + " died horribly!", character.currentSide);
+            AddCombatLog($"{character.idName} died horribly!", character.currentSide);
         }
     }
     //This simulates the whole combat system
@@ -56,14 +56,15 @@ public class CombatSim {
         AddCombatLog("Combat starts", SIDES.A);
         int rounds = 1;
         while (this.charactersSideA.Count > 0 && this.charactersSideB.Count > 0) {
-            Debug.Log("========== Round " + rounds.ToString() + " ==========");
+            Debug.Log($"========== Round {rounds} ==========");
             ICharacterSim characterThatWillAct = GetCharacterThatWillAct(this.charactersSideA, this.charactersSideB);
             if (characterThatWillAct != null) {
                 CharacterSim actingCharacter = null;
                 if (characterThatWillAct.icharacterType == ICHARACTER_TYPE.CHARACTER) {
                     actingCharacter = characterThatWillAct as CharacterSim;
                 }
-                Debug.Log((actingCharacter != null ? actingCharacter.characterClass.className : "") + characterThatWillAct.name + " will act.");
+                Debug.Log(
+                    $"{(actingCharacter != null ? actingCharacter.characterClass.className : "")}{characterThatWillAct.name} will act.");
 
                 //Debug.Log((targetCharacter.icharacterType == ICHARACTER_TYPE.CHARACTER ? (targetCharacter as CharacterSim).characterClass.className : "") + targetCharacter.name + " is the target. (hp lost: " + targetCharacter.battleOnlyTracker.hpLostPercent
                 //        + ", last damage taken: " + targetCharacter.battleOnlyTracker.lastDamageTaken);
@@ -77,7 +78,7 @@ public class CombatSim {
                 //    }
                 //}
             }
-            Debug.Log("========== End Round " + rounds.ToString() + " ==========");
+            Debug.Log($"========== End Round {rounds} ==========");
             rounds++;
             yield return new WaitForSeconds(0.05f);
         }
@@ -87,7 +88,7 @@ public class CombatSim {
             winner = SIDES.B;
             winnerCharacters = CombatSimManager.Instance.sideBList;
         }
-        AddCombatLog("Combat Ends! Winning Side: " + winner.ToString(), SIDES.A);
+        AddCombatLog($"Combat Ends! Winning Side: {winner}", SIDES.A);
         AddCombatLog("Winners:", SIDES.A);
         for (int i = 0; i < winnerCharacters.Count; i++) {
             ICharacterSim character = winnerCharacters[i];
@@ -181,7 +182,7 @@ public class CombatSim {
             //    }
             //    CombatManager.Instance.PartyContinuesActionAfterCombat(targetCharacter.iparty as CharacterParty, false);
             //}
-            AddCombatLog(targetCharacter.idName + " chickened out and ran away!", targetCharacter.currentSide);
+            AddCombatLog($"{targetCharacter.idName} chickened out and ran away!", targetCharacter.currentSide);
         }
     }
     #endregion
@@ -189,7 +190,7 @@ public class CombatSim {
     #region Obtain Item Skill
     private void ObtainItemSkill(ICharacterSim sourceCharacter, ICharacterSim targetCharacter) {
         //TODO: ICharacter obtains an item
-        AddCombatLog(targetCharacter.idName + " obtained an item.", targetCharacter.currentSide);
+        AddCombatLog($"{targetCharacter.idName} obtained an item.", targetCharacter.currentSide);
     }
     #endregion
 
@@ -198,11 +199,11 @@ public class CombatSim {
     public void AddCombatLog(string combatLog, SIDES side) {
         string newLog = combatLog;
         if(side == SIDES.B) {
-            newLog = "<color=#FF0000>" + combatLog + "</color>";
+            newLog = $"<color=#FF0000>{combatLog}</color>";
         }
         //resultsLog.Add(combatLog);
         Debug.Log(combatLog);
-        CombatSimManager.Instance.combatText.text += newLog + "\n";
+        CombatSimManager.Instance.combatText.text += $"{newLog}\n";
     }
     public void ClearCombatLogs() {
         //resultsLog.Clear();

@@ -77,7 +77,8 @@ public class HuntState : CharacterState {
         if (chosenTile != null) {
             return chosenTile;
         } else {
-            throw new System.Exception("No tile in " + chosenStructure.name + " for " + stateComponent.character.name + " to go to in " + stateName);
+            throw new System.Exception(
+                $"No tile in {chosenStructure.name} for {stateComponent.character.name} to go to in {stateName}");
         }
     }
 }

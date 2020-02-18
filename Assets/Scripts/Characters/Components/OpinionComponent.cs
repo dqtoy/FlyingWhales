@@ -52,7 +52,8 @@ public class OpinionComponent {
             Psychopath serialKiller = owner.traitContainer.GetNormalTrait<Psychopath>("Psychopath");
             serialKiller.AdjustOpinion(target, opinionText, opinionValue);
             //Psychopaths do not gain or lose Opinion towards other characters (ensure that logs related to Opinion changes also do not show up)
-            owner.logComponent.PrintLogIfActive(owner.name + " wants to adjust " + opinionText + " opinion towards " + target.name + " by " + opinionValue + " but " + owner.name + " is a Serial Killer");
+            owner.logComponent.PrintLogIfActive(
+                $"{owner.name} wants to adjust {opinionText} opinion towards {target.name} by {opinionValue} but {owner.name} is a Serial Killer");
             opinionValue = 0;
         }
         opinions[target].AdjustOpinion(opinionText, opinionValue);
@@ -87,7 +88,8 @@ public class OpinionComponent {
         }
         if (owner.traitContainer.HasTrait("Psychopath")) {
             //Psychopaths do not gain or lose Opinion towards other characters (ensure that logs related to Opinion changes also do not show up)
-            owner.logComponent.PrintLogIfActive(owner.name + " wants to adjust " + opinionText + " opinion towards " + target.name + " by " + opinionValue + " but " + owner.name + " is a Serial Killer, setting the value to zero...");
+            owner.logComponent.PrintLogIfActive(
+                $"{owner.name} wants to adjust {opinionText} opinion towards {target.name} by {opinionValue} but {owner.name} is a Serial Killer, setting the value to zero...");
             opinionValue = 0;
         }
         opinions[target].SetOpinion(opinionText, opinionValue);

@@ -145,7 +145,7 @@ public class NewCombat : MonoBehaviour {
                 previousCombatCharacter = sourceCombatCharacter;
                 UIManager.Instance.combatUI.HighlightAttacker(sourceCombatCharacter.character, sourceCombatCharacter.side);
                 //Messenger.Broadcast(Signals.HIGHLIGHT_ATTACKER, sourceCombatCharacter.character, sourceCombatCharacter.side);
-                UIManager.Instance.combatUI.AddCombatLogs(sourceCombatCharacter.character.name + " will now attack!", sourceCombatCharacter.side);
+                UIManager.Instance.combatUI.AddCombatLogs($"{sourceCombatCharacter.character.name} will now attack!", sourceCombatCharacter.side);
                 //Messenger.Broadcast(Signals.ADD_TO_COMBAT_LOGS, sourceCombatCharacter.character.name + " will now attack!");
 
                 //Get and Hit Targets
@@ -164,13 +164,13 @@ public class NewCombat : MonoBehaviour {
                 List<CombatCharacter> targetCharacters = GetTargetCharacters(sourceCombatCharacter);
                 string attackLog = string.Empty;
                 if (targetCharacters != null && targetCharacters.Count > 0) {
-                    attackLog = sourceCombatCharacter.character.name + " attacks ";
+                    attackLog = $"{sourceCombatCharacter.character.name} attacks ";
                     for (int j = 0; j < targetCharacters.Count; j++) {
                         CombatCharacter target = targetCharacters[j];
                         if (j == 0) {
                             attackLog += target.character.name;
                         } else {
-                            attackLog += ", " + target.character.name;
+                            attackLog += $", {target.character.name}";
                         }
                         int finalAttack = GetFinalAttack(sourceCombatCharacter, target, targetCharacters);
                         target.character.AdjustHP(-finalAttack);
@@ -183,7 +183,7 @@ public class NewCombat : MonoBehaviour {
                                 }
                             }
                         }
-                        attackLog += " for " + finalAttack.ToString();
+                        attackLog += $" for {finalAttack}";
                     }
                     attackLog += ".";
                     UIManager.Instance.combatUI.AddCombatLogs(attackLog, sourceCombatCharacter.side);
@@ -195,7 +195,7 @@ public class NewCombat : MonoBehaviour {
                             if (deathLog == string.Empty) {
                                 deathLog += targetCharacters[j].character.name;
                             } else {
-                                deathLog += ", " + targetCharacters[j].character.name;
+                                deathLog += $", {targetCharacters[j].character.name}";
                             }
                         }
                     }
@@ -205,7 +205,8 @@ public class NewCombat : MonoBehaviour {
                     }
                     //Messenger.Broadcast(Signals.ADD_TO_COMBAT_LOGS, deathLog);
                 } else {
-                    attackLog = "No target for " + sourceCombatCharacter.character.name + ": " + sourceCombatCharacter.character.characterClass.combatTarget.ToString();
+                    attackLog =
+                        $"No target for {sourceCombatCharacter.character.name}: {sourceCombatCharacter.character.characterClass.combatTarget}";
                     UIManager.Instance.combatUI.AddCombatLogs(attackLog, sourceCombatCharacter.side);
                     //Messenger.Broadcast(Signals.ADD_TO_COMBAT_LOGS, attackLog);
                 }

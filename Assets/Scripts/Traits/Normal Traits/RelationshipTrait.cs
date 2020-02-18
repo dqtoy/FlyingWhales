@@ -15,7 +15,7 @@ namespace Traits {
         public RelationshipTrait(Character target) {
             targetCharacter = target;
             name = "Relationship";
-            description = "This character has a relationship with " + targetCharacter.name;
+            description = $"This character has a relationship with {targetCharacter.name}";
             type = TRAIT_TYPE.RELATIONSHIP;
             effect = TRAIT_EFFECT.POSITIVE;
             

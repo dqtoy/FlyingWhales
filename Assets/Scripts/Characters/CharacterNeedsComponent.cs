@@ -149,17 +149,17 @@ public class CharacterNeedsComponent {
     #endregion
 
     public void CheckExtremeNeeds(Interrupt interruptThatTriggered = null) {
-        string summary = GameManager.Instance.TodayLogString() + _character.name + " will check his/her needs.";
+        string summary = $"{GameManager.Instance.TodayLogString()}{_character.name} will check his/her needs.";
         if (isStarving && (interruptThatTriggered == null || interruptThatTriggered.interrupt != INTERRUPT.Grieving)) {
-            summary += "\n" + _character.name + " is starving. Planning fullness recovery actions...";
+            summary += $"\n{_character.name} is starving. Planning fullness recovery actions...";
             PlanFullnessRecoveryActions(_character);
         }
         if (isExhausted && (interruptThatTriggered == null || interruptThatTriggered.interrupt != INTERRUPT.Feeling_Spooked)) {
-            summary += "\n" + _character.name + " is exhausted. Planning tiredness recovery actions...";
+            summary += $"\n{_character.name} is exhausted. Planning tiredness recovery actions...";
             PlanTirednessRecoveryActions(_character);
         }
         if (isSulking && (interruptThatTriggered == null || interruptThatTriggered.interrupt != INTERRUPT.Feeling_Brokenhearted)) {
-            summary += "\n" + _character.name + " is sulking. Planning happiness recovery actions...";
+            summary += $"\n{_character.name} is sulking. Planning happiness recovery actions...";
             PlanHappinessRecoveryActions(_character);
         }
         Debug.Log(summary);
@@ -187,11 +187,11 @@ public class CharacterNeedsComponent {
         }
     }
     public string GetNeedsSummary() {
-        string summary = "Fullness: " + fullness + "/" + FULLNESS_DEFAULT;
-        summary += "\nTiredness: " + tiredness + "/" + TIREDNESS_DEFAULT;
-        summary += "\nHappiness: " + happiness + "/" + HAPPINESS_DEFAULT;
-        summary += "\nComfort: " + comfort + "/" + COMFORT_DEFAULT;
-        summary += "\nHope: " + hope + "/" + HOPE_DEFAULT;
+        string summary = $"Fullness: {fullness}/{FULLNESS_DEFAULT}";
+        summary += $"\nTiredness: {tiredness}/{TIREDNESS_DEFAULT}";
+        summary += $"\nHappiness: {happiness}/{HAPPINESS_DEFAULT}";
+        summary += $"\nComfort: {comfort}/{COMFORT_DEFAULT}";
+        summary += $"\nHope: {hope}/{HOPE_DEFAULT}";
         return summary;
     }
     public void AdjustFullnessDecreaseRate(float amount) {

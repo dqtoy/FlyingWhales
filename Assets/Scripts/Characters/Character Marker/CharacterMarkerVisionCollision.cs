@@ -53,7 +53,7 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
                 }
             }
             
-            string collisionSummary = parentMarker.name + " collided with " + collidedWith.poi.name;
+            string collisionSummary = $"{parentMarker.name} collided with {collidedWith.poi.name}";
             if (collidedWith.poi.gridTileLocation == null) {
                 return; //ignore, Usually happens if an item is picked up just as this character sees it.
             }
@@ -61,7 +61,7 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
             //check if the poi trigger is in the same structure as this
             if (collidedWith.poi.gridTileLocation.structure == parentMarker.character.gridTileLocation.structure || collidedWith.IgnoresStructureDifference()) {
                 //if it is, just follow the normal procedure when a poi becomes in range
-                collisionSummary += "\n-has same structure as " + parentMarker.character.name + " adding as in range";
+                collisionSummary += $"\n-has same structure as {parentMarker.character.name} adding as in range";
                 NormalEnterHandling(collidedWith.poi);
             } else {
                 //if it is not, check both character's structure types
@@ -70,14 +70,15 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
                 if (collidedWith.poi.gridTileLocation != null && collidedWith.poi.gridTileLocation.structure != null 
                     && parentMarker.character.gridTileLocation != null && parentMarker.character.gridTileLocation.structure != null
                     && collidedWith.poi.gridTileLocation.structure.structureType.IsOpenSpace() && parentMarker.character.gridTileLocation.structure.structureType.IsOpenSpace()) {
-                    collisionSummary += "\n-has different structure with " + parentMarker.character.name + " but both are in open space, allowing vision collision.";
+                    collisionSummary +=
+                        $"\n-has different structure with {parentMarker.character.name} but both are in open space, allowing vision collision.";
                     NormalEnterHandling(collidedWith.poi);
                 }
                 //if not, add the poi to the list of pois in different structures instead
                 //once there, it can only be removed from there if the poi exited this trigger or the poi moved 
                 //to the same structure that this character is in
                 else {
-                    collisionSummary += "\n-has different structure with " + parentMarker.character.name + " queuing...";
+                    collisionSummary += $"\n-has different structure with {parentMarker.character.name} queuing...";
                     AddPOIAsInRangeButDifferentStructure(collidedWith.poi);
                 }
             }
@@ -184,9 +185,9 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
 
     [ContextMenu("Log Diff Struct")]
     public void LogCharactersInDifferentStructures() {
-        string summary = parentMarker.character.name + "'s diff structure pois";
+        string summary = $"{parentMarker.character.name}'s diff structure pois";
         for (int i = 0; i < poisInRangeButDiffStructure.Count; i++) {
-            summary += "\n" + poisInRangeButDiffStructure[i].name;
+            summary += $"\n{poisInRangeButDiffStructure[i].name}";
         }
         Debug.Log(summary);
     }

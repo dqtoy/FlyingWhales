@@ -35,7 +35,7 @@ public class SeizeComponent {
                 //    poi.gridTileLocation.structure.RemovePOI(poi);
                 //}
             } else {
-                Debug.LogError("Cannot seize. " + poi.name + " has no tile");
+                Debug.LogError($"Cannot seize. {poi.name} has no tile");
                 return;
             }
             seizedPOI = poi;

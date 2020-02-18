@@ -16,12 +16,12 @@ namespace Traits {
         public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
             if (targetPOI is Character) {
                 Character targetCharacter = targetPOI as Character;
-                string debugLog = characterThatWillDoJob.name + " saw " + targetPOI.name + " and has " + name;
+                string debugLog = $"{characterThatWillDoJob.name} saw {targetPOI.name} and has {name}";
                 debugLog += "\n-20% chance to trigger Inspired interrupt if Target is part of Faction or Settlement";
                 if (characterThatWillDoJob.faction == targetCharacter.faction || characterThatWillDoJob.homeSettlement == targetCharacter.homeSettlement) {
                     debugLog += "\n-Target is part of Faction or Settlement";
                     int chance = UnityEngine.Random.Range(0, 100);
-                    debugLog += "\n-Roll: " + chance;
+                    debugLog += $"\n-Roll: {chance}";
                     if (chance < 8) {
                         debugLog += "\n-Triggered Inspired interrupt";
                         characterThatWillDoJob.logComponent.PrintLogIfActive(debugLog);

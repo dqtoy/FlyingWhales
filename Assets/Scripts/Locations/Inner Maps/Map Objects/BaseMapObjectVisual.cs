@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using Inner_Maps;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -20,6 +21,9 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
     public GameObject gameObjectVisual => this.gameObject;
     public Sprite usedSprite => objectVisual.sprite;
     public ISelectable selectable { get; protected set; }
+    
+    private Tweener tween;
+    private Vector3 targetLastPos;
 
     #region Visuals
     public void SetRotation(float rotation) {
@@ -100,6 +104,21 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
         if (objectVisual != null ) {
             SetVisualAlpha(255f / 255f);    
         }
+    }
+    #endregion
+    
+    #region Tweening
+    public bool IsTweening() {
+        return tween != null;
+    }
+    public void TweenTo(Transform _target, float duration, System.Action _onReachTargetAction) {
+        var position = _target.position;
+        tween = transform.DOMove(position, duration).SetAutoKill(false).OnComplete(_onReachTargetAction.Invoke);
+        tween.OnUpdate (() => tween.ChangeEndValue (_target.position, true));
+
+    }
+    public void OnReachTarget() {
+        tween = null;
     }
     #endregion
 }

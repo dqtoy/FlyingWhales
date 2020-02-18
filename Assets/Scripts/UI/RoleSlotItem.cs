@@ -147,9 +147,9 @@ public class RoleSlotItem : MonoBehaviour, IDragParentItem {
     private void ShowActionBtnTooltip(string message, string header) {
         string m = string.Empty;   
         if (!string.IsNullOrEmpty(header)) {
-            m = "<font=\"Eczar-Medium\"><line-height=100%><size=18>" + header + "</font>\n";
+            m = $"<font=\"Eczar-Medium\"><line-height=100%><size=18>{header}</font>\n";
         }
-        m += "<line-height=70%><size=16>" + message;
+        m += $"<line-height=70%><size=16>{message}";
 
         m = m.Replace("\\n", "\n");
 

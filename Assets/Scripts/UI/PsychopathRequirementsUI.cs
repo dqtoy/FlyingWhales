@@ -97,7 +97,7 @@ public class PsychopathRequirementsUI : MonoBehaviour {
                 desc = "None";
             }
         }
-        reqDescriptionsLabel.text = victimType.ToString() + ": " + desc;
+        reqDescriptionsLabel.text = $"{victimType}: {desc}";
     }
 
     #region On Value Change

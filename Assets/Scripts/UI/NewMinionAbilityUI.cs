@@ -58,15 +58,15 @@ public class NewMinionAbilityUI : MonoBehaviour {
         if (obj is PlayerSpell) {
             PlayerSpell action = obj as PlayerSpell;
             string text = action.name;
-            text += "\nLevel: " + action.level;
-            text += "\nDescription: " + action.description;
+            text += $"\nLevel: {action.level}";
+            text += $"\nDescription: {action.description}";
             otaText.text = text;
             otaImage.sprite = PlayerManager.Instance.GetJobActionSprite(action.name);
         } else if (obj is CombatAbility) {
             CombatAbility ability = obj as CombatAbility;
             string text = ability.name;
-            text += "\nLevel: " + ability.lvl;
-            text += "\nDescription: " + ability.description;
+            text += $"\nLevel: {ability.lvl}";
+            text += $"\nDescription: {ability.description}";
             otaText.text = text;
             otaImage.sprite = PlayerManager.Instance.GetCombatAbilitySprite(ability.name);
         }

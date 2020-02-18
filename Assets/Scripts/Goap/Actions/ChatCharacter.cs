@@ -175,7 +175,7 @@ public class ChatCharacter : GoapAction {
 
         string chatResult = weights.PickRandomElementGivenWeights();
 
-        weights.LogDictionaryValues("Chat Weights of " + goapNode.actor.name + " and " + targetCharacter.name);
+        weights.LogDictionaryValues($"Chat Weights of {goapNode.actor.name} and {targetCharacter.name}");
 
         CreateChatLog(goapNode, chatResult);
 
