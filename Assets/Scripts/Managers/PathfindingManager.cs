@@ -113,6 +113,7 @@ public class PathfindingManager : MonoBehaviour {
             }
         }
     }
+    
     #region Monobehaviours
 #if !WORLD_CREATION_TOOL
     private void Update() {
@@ -125,5 +126,18 @@ public class PathfindingManager : MonoBehaviour {
         }
     }
 #endif
+    #endregion
+
+    #region Graph Updates
+    public void ApplyGraphUpdateSceneCoroutine(GraphUpdateScene gus) {
+        StartCoroutine(UpdateGraph(gus));
+    }
+    public void ApplyGraphUpdateScene(GraphUpdateScene gus) {
+        gus.Apply();
+    }
+    private IEnumerator UpdateGraph(GraphUpdateScene gus) {
+        yield return null;
+        gus.Apply();
+    }
     #endregion
 }

@@ -7,16 +7,7 @@ namespace Inner_Maps {
     public class LocationGridTileGUS : PooledObject {
         [SerializeField] private GraphUpdateScene gus;
         [SerializeField] private BoxCollider2D boxCollider;
-
-        [ContextMenu("Apply")]
-        public void Apply() {
-            // gus.Apply();
-            StartCoroutine(ApplyCoroutine());
-        }
-        private IEnumerator ApplyCoroutine() {
-            yield return null;
-            gus.Apply();
-        }
+        
         public void Initialize(Vector2 offset, Vector2 size, IPointOfInterest poi) {
             name = poi.name;
             boxCollider.offset = offset;
@@ -24,12 +15,12 @@ namespace Inner_Maps {
             gus.setWalkability = false;
             transform.localPosition = Vector3.zero;
             gameObject.SetActive(true);
-            Apply();
+            PathfindingManager.Instance.ApplyGraphUpdateSceneCoroutine(gus);
         }
 
         public void Destroy() {
             gus.setWalkability = true;
-            Apply();
+            PathfindingManager.Instance.ApplyGraphUpdateScene(gus);
             ObjectPoolManager.Instance.DestroyObject(this);
         }
     }
