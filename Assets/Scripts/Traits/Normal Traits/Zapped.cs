@@ -18,7 +18,9 @@ namespace Traits {
 
         #region Overrides
         public override void OnAddTrait(ITraitable sourcePOI) {
-            GameManager.Instance.CreateElectricEffectAt(sourcePOI);
+            if(sourcePOI is IPointOfInterest) {
+                GameManager.Instance.CreateElectricEffectAt(sourcePOI as IPointOfInterest);
+            }
             if (sourcePOI is Character) {
                 Character character = sourcePOI as Character;
                 if (character.currentParty.icon.isTravelling) {

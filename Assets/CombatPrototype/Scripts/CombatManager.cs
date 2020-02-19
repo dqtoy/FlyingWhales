@@ -70,5 +70,37 @@ public class CombatManager : MonoBehaviour {
         PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
         log.AddLogToInvolvedObjects();
     }
+    public void FrozenExplosion(IPointOfInterest target, int stacks) {
+        List<ITraitable> traitables = new List<ITraitable>();
+        List<LocationGridTile> affectedTiles = target.gridTileLocation.GetTilesInRadius(2);
+        float damagePercentage = 0.2f * stacks;
+        if (damagePercentage > 1) {
+            damagePercentage = 1;
+        }
+        for (int i = 0; i < affectedTiles.Count; i++) {
+            LocationGridTile tile = affectedTiles[i];
+            traitables.AddRange(tile.GetTraitablesOnTile());
+        }
+        // flammables = flammables.Where(x => !x.traitContainer.HasTrait("Burning", "Burnt", "Wet", "Fireproof")).ToList();
+        BurningSource bs = null;
+        for (int i = 0; i < traitables.Count; i++) {
+            ITraitable traitable = traitables[i];
+            int damage = Mathf.RoundToInt(traitable.maxHP * damagePercentage);
+            GameManager.Instance.CreateExplodeEffectAt(traitable.gridTileLocation);
+            traitable.AdjustHP(-damage, ELEMENTAL_TYPE.Water);
+            Burning burningTrait = traitable.traitContainer.GetNormalTrait<Burning>();
+            if (burningTrait != null && burningTrait.sourceOfBurning == null) {
+                if (bs == null) {
+                    bs = new BurningSource(InnerMapManager.Instance.currentlyShowingLocation);
+                }
+                burningTrait.SetSourceOfBurning(bs, traitable);
+            }
+        }
+
+        Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Frozen Explosion", "effect");
+        log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+        PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+        log.AddLogToInvolvedObjects();
+    }
     #endregion
 }

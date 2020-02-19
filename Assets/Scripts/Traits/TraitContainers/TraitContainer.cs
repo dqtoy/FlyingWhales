@@ -171,19 +171,12 @@ namespace Traits {
                     shouldAddTrait = false;
                 }
             } else if (traitName == "Zapped") {
-                if(addTo.gridTileLocation != null) {
-                    List<LocationGridTile> tiles = addTo.gridTileLocation.GetTilesInRadius(1, includeTilesInDifferentStructure: true);
-                    traitables.Clear();
-                    for (int i = 0; i < tiles.Count; i++) {
-                        if (tiles[i].genericTileObject.traitContainer.HasTrait("Wet")) {
-                            traitables.AddRange(tiles[i].GetTraitablesOnTile());
-                        }
+                if (HasTrait("Frozen")) {
+                    RemoveTrait(addTo, "Frozen");
+                    if(addTo is IPointOfInterest) {
+                        CombatManager.Instance.FrozenExplosion(addTo as IPointOfInterest, 1);
                     }
-                    for (int i = 0; i < traitables.Count; i++) {
-                        if(!traitables[i].traitContainer.HasTrait("Zapped")) {
-                            traitables[i].traitContainer.AddTrait(traitables[i], "Zapped");
-                        }
-                    }
+                    shouldAddTrait = false;
                 }
             }
             return shouldAddTrait;
@@ -193,6 +186,21 @@ namespace Traits {
                 if (stacks[trait.name] >= trait.stackLimit) {
                     RemoveTraitAndStacks(traitable, trait);
                     AddTrait(traitable, "Frozen");
+                }
+            } else if (trait.name == "Zapped") {
+                if (traitable.gridTileLocation != null) {
+                    List<LocationGridTile> tiles = traitable.gridTileLocation.GetTilesInRadius(1, includeTilesInDifferentStructure: true);
+                    traitables.Clear();
+                    for (int i = 0; i < tiles.Count; i++) {
+                        if (tiles[i].genericTileObject.traitContainer.HasTrait("Wet")) {
+                            traitables.AddRange(tiles[i].GetTraitablesOnTile());
+                        }
+                    }
+                    for (int i = 0; i < traitables.Count; i++) {
+                        if (!traitables[i].traitContainer.HasTrait("Zapped")) {
+                            traitables[i].traitContainer.AddTrait(traitables[i], "Zapped");
+                        }
+                    }
                 }
             }
         }
