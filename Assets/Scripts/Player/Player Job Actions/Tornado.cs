@@ -67,4 +67,29 @@ public class TornadoData : SpellData {
     public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.DEVASTATION; } }
     public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
     public override int abilityRadius => 1;
+
+    public TornadoData() : base() {
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
+    }
+
+    public override void ActivateAbility(LocationGridTile targetTile) {
+        TornadoTileObject tornadoTileObject = new TornadoTileObject();
+        tornadoTileObject.SetRadius(abilityRadius);
+        tornadoTileObject.SetDuration(GameManager.Instance.GetTicksBasedOnHour(Random.Range(1, 4)));
+        tornadoTileObject.SetGridTileLocation(targetTile);
+        tornadoTileObject.OnPlacePOI();
+    }
+    public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
+        return targetTile.structure != null;
+    }
+    public override void ShowRange(LocationGridTile targetTile) {
+        base.ShowRange(targetTile);
+        List<LocationGridTile> tiles = targetTile.GetTilesInRadius(abilityRadius, 0, true);
+        InnerMapManager.Instance.HighlightTiles(tiles);
+    }
+    public override void HideRange(LocationGridTile targetTile) {
+        base.HideRange(targetTile);
+        List<LocationGridTile> tiles = targetTile.GetTilesInRadius(abilityRadius, 0, true);
+        InnerMapManager.Instance.UnhighlightTiles(tiles);
+    }
 }

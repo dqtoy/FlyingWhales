@@ -238,6 +238,7 @@ public class SpellData {
     public virtual SPELL_CATEGORY category { get { return SPELL_CATEGORY.NONE; } }
     public virtual INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.NONE;
     public virtual int abilityRadius => 0; //0 means single target
+    public SPELL_TARGET[] targetTypes { get; protected set; }
 
     public int tier { get; protected set; }
     public int manaCost { get; protected set; }
@@ -258,6 +259,7 @@ public class SpellData {
         return true;
     }
     public virtual bool CanPerformAbilityTowards(TileObject tileObject) { return true; }
+    public virtual bool CanPerformAbilityTowards(LocationGridTile targetTile) { return true; }
     // public virtual bool CanPerformAbilityTowards(SpecialToken item) { return true; }
 
     /// <summary>
@@ -274,6 +276,41 @@ public class SpellData {
             List<LocationGridTile> tiles = tile.GetTilesInRadius(abilityRadius, includeCenterTile: true, includeTilesInDifferentStructure: true);
             InnerMapManager.Instance.UnhighlightTiles(tiles);
         }
+    }
+    #endregion
+
+    #region General
+    public bool CanPerformAbilityTowards(IPointOfInterest poi) {
+        if(poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+            return CanPerformAbilityTowards(poi as Character);
+        } else if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
+            return CanPerformAbilityTowards(poi as TileObject);
+        }
+        return true;
+    }
+    /// <summary>
+    /// Function that determines whether this action can target the given character or not.
+    /// Regardless of cooldown state.
+    /// </summary>
+    /// <param name="poi">The target poi</param>
+    /// <returns>true or false</returns>
+    public bool CanTarget(IPointOfInterest poi, ref string hoverText) {
+        if (poi.traitContainer.HasTrait("Blessed")) {
+            hoverText = "Blessed characters cannot be targetted.";
+            return false;
+        }
+        //Quick fix only, remove this later
+        if (poi is Character) {
+            Character targetCharacter = poi as Character;
+            if (targetCharacter.race != RACE.HUMANS && targetCharacter.race != RACE.ELVES) {
+                return false;
+            }
+        }
+        hoverText = string.Empty;
+        return CanPerformAbilityTowards(poi);
+    }
+    public bool CanTarget(LocationGridTile tile) {
+        return CanPerformAbilityTowards(tile);
     }
     #endregion
 }

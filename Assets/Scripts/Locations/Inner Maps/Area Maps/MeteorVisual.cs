@@ -37,6 +37,8 @@ public class MeteorVisual : MonoBehaviour {
                     if (obj.gridTileLocation == null) {
                         continue; //object was destroyed, do not add burning trait
                     }
+                } else {
+                    obj.AdjustHP(0, ELEMENTAL_TYPE.Fire);
                 }
             } else if (traitable is Character character) {
                 GameManager.Instance.CreateExplodeEffectAt(character.gridTileLocation);

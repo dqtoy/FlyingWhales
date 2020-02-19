@@ -47,6 +47,10 @@ public class DestroyData : SpellData {
     public override string description { get { return "Destroys an object"; } }
     public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.SABOTAGE; } }
 
+    public DestroyData() : base() {
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE_OBJECT };
+    }
+
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         targetPOI.gridTileLocation.structure.RemovePOI(targetPOI);

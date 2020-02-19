@@ -125,6 +125,10 @@ public class ZapData : SpellData {
     public override string description { get { return "Stops a character from his/her action and temporarily paralyzes him/her."; } }
     public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.SABOTAGE; } }
 
+    public ZapData() : base() {
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER, SPELL_TARGET.TILE_OBJECT };
+    }
+
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         targetPOI.traitContainer.AddTrait(targetPOI, "Zapped");

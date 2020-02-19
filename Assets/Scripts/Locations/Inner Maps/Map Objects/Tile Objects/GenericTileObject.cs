@@ -90,7 +90,7 @@ public class GenericTileObject : TileObject {
             //floor has been fully repaired
             structureLocation.OnTileRepaired(gridTileLocation);
         }
-        if (amount < 0 && currentHP > 0) {
+        if (amount <= 0) {
             Character responsibleCharacter = null;
             if (source != null && source is Character) {
                 responsibleCharacter = source as Character;

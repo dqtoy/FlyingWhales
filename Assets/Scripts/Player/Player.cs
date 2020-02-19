@@ -245,9 +245,9 @@ public class Player : ILeader {
     #endregion
 
     #region Role Actions
-    public PlayerSpell currentActivePlayerSpell { get; private set; }
-    public void SetCurrentlyActivePlayerJobAction(PlayerSpell action) {
-        PlayerSpell previousActiveAction = currentActivePlayerSpell;
+    public SpellData currentActivePlayerSpell { get; private set; }
+    public void SetCurrentlyActivePlayerSpell(SpellData action) {
+        SpellData previousActiveAction = currentActivePlayerSpell;
         currentActivePlayerSpell = action;
         if (currentActivePlayerSpell == null) {
             Messenger.RemoveListener<KeyCode>(Signals.KEY_DOWN, OnSpellCast);
@@ -260,10 +260,10 @@ public class Player : ILeader {
     private void OnSpellCast(KeyCode key) {
         if (key == KeyCode.Mouse0) {
             TryExecuteCurrentActiveAction();
-            SetCurrentlyActivePlayerJobAction(null);
+            SetCurrentlyActivePlayerSpell(null);
             // Messenger.RemoveListener<KeyCode>(Signals.KEY_DOWN, OnSpellCast);
         } else if (key == KeyCode.Mouse1) {
-            SetCurrentlyActivePlayerJobAction(null);
+            SetCurrentlyActivePlayerSpell(null);
         }
     }
 
@@ -278,8 +278,8 @@ public class Player : ILeader {
                     break;
                 case SPELL_TARGET.CHARACTER:
                     if (InnerMapManager.Instance.currentlyShowingMap != null && InnerMapManager.Instance.currentlyHoveredPoi is Character) {
-                        if (currentActivePlayerSpell.CanPerformActionTowards(InnerMapManager.Instance.currentlyHoveredPoi)) {
-                            currentActivePlayerSpell.ActivateAction(InnerMapManager.Instance.currentlyHoveredPoi);
+                        if (currentActivePlayerSpell.CanPerformAbilityTowards(InnerMapManager.Instance.currentlyHoveredPoi)) {
+                            currentActivePlayerSpell.ActivateAbility(InnerMapManager.Instance.currentlyHoveredPoi);
                             activatedAction = true;
                         } else {
                         }
@@ -288,8 +288,8 @@ public class Player : ILeader {
                     break;
                 case SPELL_TARGET.TILE_OBJECT:
                     if (InnerMapManager.Instance.currentlyHoveredPoi is TileObject) {
-                        if (currentActivePlayerSpell.CanPerformActionTowards(InnerMapManager.Instance.currentlyHoveredPoi)) {
-                            currentActivePlayerSpell.ActivateAction(InnerMapManager.Instance.currentlyHoveredPoi);
+                        if (currentActivePlayerSpell.CanPerformAbilityTowards(InnerMapManager.Instance.currentlyHoveredPoi)) {
+                            currentActivePlayerSpell.ActivateAbility(InnerMapManager.Instance.currentlyHoveredPoi);
                             activatedAction = true;
                         }
                         UIManager.Instance.SetTempDisableShowInfoUI(true);
@@ -298,8 +298,8 @@ public class Player : ILeader {
                 case SPELL_TARGET.TILE:
                     LocationGridTile hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
                     if (hoveredTile != null) {
-                        if (currentActivePlayerSpell.CanPerformActionTowards(hoveredTile)) {
-                            currentActivePlayerSpell.ActivateAction(hoveredTile);
+                        if (currentActivePlayerSpell.CanPerformAbilityTowards(hoveredTile)) {
+                            currentActivePlayerSpell.ActivateAbility(hoveredTile);
                             activatedAction = true;
                         } 
                         UIManager.Instance.SetTempDisableShowInfoUI(true);

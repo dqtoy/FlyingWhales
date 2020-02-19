@@ -2908,7 +2908,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             if (marker.hpBarGO.activeSelf) {
                 marker.UpdateHP();
             } else {
-                if (amount < 0) {
+                if (amount <= 0) {
                     if (_currentHP > 0) {
                         //only show hp bar if hp was reduced and hp is greater than 0
                         marker.QuickShowHPBar();

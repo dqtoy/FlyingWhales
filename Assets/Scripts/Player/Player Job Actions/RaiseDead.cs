@@ -85,4 +85,8 @@ public class RaiseDeadData : SpellData {
     public override string name { get { return "Raise Dead"; } }
     public override string description { get { return "Returns a character to life."; } }
     public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.MONSTER; } }
+
+    public RaiseDeadData() : base() {
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER, SPELL_TARGET.TILE_OBJECT };
+    }
 }

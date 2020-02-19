@@ -60,4 +60,8 @@ public class ReleaseData : SpellData {
     public override string name { get { return "Release"; } }
     public override string description { get { return "Release a prisoner from captivity."; } }
     public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.SABOTAGE; } }
+
+    public ReleaseData() : base() {
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
+    }
 }

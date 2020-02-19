@@ -26,6 +26,7 @@ public class CombatComponent {
         avoidInRange = new List<IPointOfInterest>();
         lethalCharacters = new Dictionary<Character, bool>();
         SetCombatMode(COMBAT_MODE.Aggressive);
+        SetElementalDamage(ELEMENTAL_TYPE.Normal);
 	}
 
     #region Fight or Flight

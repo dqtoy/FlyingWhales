@@ -60,4 +60,8 @@ public class ProvokeData : SpellData {
     public override string name { get { return "Provoke"; } }
     public override string description { get { return "Makes a character undermine his/her enemies."; } }
     public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.SABOTAGE; } }
+
+    public ProvokeData() : base() {
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
+    }
 }

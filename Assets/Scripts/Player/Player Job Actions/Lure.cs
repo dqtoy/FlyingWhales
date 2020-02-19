@@ -155,4 +155,8 @@ public class LureData : SpellData {
     public override string name { get { return "Lure"; } }
     public override string description { get { return "Force a character to go to a specified nearby location."; } }
     public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.SABOTAGE; } }
+
+    public LureData() : base() {
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
+    }
 }

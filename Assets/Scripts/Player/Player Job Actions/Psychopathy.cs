@@ -65,6 +65,9 @@ public class PsychopathyData : SpellData {
     public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.MONSTER; } }
     public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.AFFLICTION;
 
+    public PsychopathyData() : base() {
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
+    }
 
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {

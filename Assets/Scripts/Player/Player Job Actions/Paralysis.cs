@@ -104,6 +104,10 @@ public class ParalysisData : SpellData {
     public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.HEX; } }
     public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.AFFLICTION;
 
+    public ParalysisData() : base() {
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER, SPELL_TARGET.TILE_OBJECT };
+    }
+
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         targetPOI.traitContainer.AddTrait(targetPOI, "Paralyzed");

@@ -18,7 +18,8 @@ namespace Traits {
             description = "This character is on fire!";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
-            ticksDuration = GameManager.Instance.GetTicksBasedOnHour(12);
+            ticksDuration = GameManager.Instance.GetTicksBasedOnHour(1);
+            moodEffect = -25;
             //effects = new List<TraitEffect>();
         }
 

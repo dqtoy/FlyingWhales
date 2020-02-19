@@ -41,4 +41,8 @@ public class AccessMemoriesData : SpellData {
     public override SPELL_TYPE ability => SPELL_TYPE.ACCESS_MEMORIES;
     public override string name { get { return "Access Memories"; } }
     public override string description { get { return "Access the memories of a character."; } }
+
+    public AccessMemoriesData() : base() {
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
+    }
 }

@@ -122,4 +122,8 @@ public class EnrageData : SpellData {
     public override string name { get { return "Enrage"; } }
     public override string description { get { return "Temporarily enrages a character to attack any character he/she sees."; } }
     public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.HEX; } }
+
+    public EnrageData() : base() {
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER, SPELL_TARGET.TILE_OBJECT };
+    }
 }

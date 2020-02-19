@@ -190,7 +190,7 @@ public class PlayerUI : MonoBehaviour {
     private void OnKeyPressed(KeyCode pressedKey) {
         if (pressedKey == KeyCode.Escape) {
             if (PlayerManager.Instance.player.currentActivePlayerSpell != null) {
-                PlayerManager.Instance.player.SetCurrentlyActivePlayerJobAction(null);
+                PlayerManager.Instance.player.SetCurrentlyActivePlayerSpell(null);
                 CursorManager.Instance.ClearLeftClickActions();
             } else {
                 //only toggle options menu if doing nothing else
@@ -1157,9 +1157,8 @@ public class PlayerUI : MonoBehaviour {
             return;
         }
         SPELL_TYPE spell = (SPELL_TYPE) System.Enum.Parse(typeof(SPELL_TYPE), spellName.ToUpper().Replace(' ', '_'));
-        //This is temporary only because we will eliminate instanced intervention abilities in the future, they will become singleton
-        PlayerSpell ability = PlayerManager.Instance.CreateNewInterventionAbility(spell);
-        PlayerManager.Instance.player.SetCurrentlyActivePlayerJobAction(ability);
+        SpellData ability = PlayerManager.Instance.GetSpellData(spell);
+        PlayerManager.Instance.player.SetCurrentlyActivePlayerSpell(ability);
     }
     #endregion
 

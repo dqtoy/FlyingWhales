@@ -64,7 +64,7 @@ public class PlayerJobActionButton : MonoBehaviour {
             //!action.parentData.hasActionInCooldown &&
             InnerMapManager.Instance.isAnInnerMapShowing 
             && actionSlot.ability != null
-            && PlayerManager.Instance.player.currentActivePlayerSpell != this.actionSlot.ability && !actionSlot.ability.isInCooldown
+            && /*PlayerManager.Instance.player.currentActivePlayerSpell != this.actionSlot.ability &&*/ !actionSlot.ability.isInCooldown
         );
     }
     private void SetInteractableState(bool state) {

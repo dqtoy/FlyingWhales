@@ -56,19 +56,17 @@ public class StructureWallObject : MapObject<StructureWallObject>, ITraitable {
             _visual.UpdateWallState(this);
             Messenger.Broadcast(Signals.WALL_REPAIRED, this);
         }
-        if (amount < 0) {
+        if (amount <= 0) {
             //ELEMENTAL_TYPE elementalType = ELEMENTAL_TYPE.Normal;
             //if(source != null && source is Character) {
             //    elementalType = (source as Character).combatComponent.elementalDamage.type;
             //}
             CombatManager.Instance.CreateHitEffectAt(this, elementalDamageType);
-            if(currentHP > 0) {
-                Character responsibleCharacter = null;
-                if (source != null && source is Character) {
-                    responsibleCharacter = source as Character;
-                }
-                CombatManager.Instance.ApplyElementalDamage(elementalDamageType, this, responsibleCharacter);
+            Character responsibleCharacter = null;
+            if (source != null && source is Character) {
+                responsibleCharacter = source as Character;
             }
+            CombatManager.Instance.ApplyElementalDamage(elementalDamageType, this, responsibleCharacter);
         }
     }
     public void OnHitByAttackFrom(Character characterThatAttacked, CombatState state, ref string attackSummary) {

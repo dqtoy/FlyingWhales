@@ -109,4 +109,8 @@ public class AbductData : SpellData {
     public override string name { get { return "Abduct"; } }
     public override string description { get { return "Makes a character abduct other characters of different race."; } }
     public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.SABOTAGE; } }
+
+    public AbductData() : base() {
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.CHARACTER };
+    }
 }

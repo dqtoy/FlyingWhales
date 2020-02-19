@@ -404,7 +404,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         } else if (currentHP == maxHP) {
             Messenger.Broadcast(Signals.OBJECT_REPAIRED, this as IPointOfInterest);
         }
-        if (amount < 0 && source != null) {
+        if (amount <= 0 && source != null) {
             //ELEMENTAL_TYPE elementalType = ELEMENTAL_TYPE.Normal;
             //if (source is Character) {
             //    elementalType = (source as Character).combatComponent.elementalDamage.type;

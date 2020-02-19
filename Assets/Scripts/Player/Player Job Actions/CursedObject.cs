@@ -52,4 +52,8 @@ public class CursedObjectData : SpellData {
     public override string name { get { return "Cursed Object"; } }
     public override string description { get { return "Put a curse on an object"; } }
     public override SPELL_CATEGORY category { get { return SPELL_CATEGORY.HEX; } }
+
+    public CursedObjectData() : base() {
+        targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE_OBJECT };
+    }
 }
