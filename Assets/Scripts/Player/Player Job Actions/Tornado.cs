@@ -43,12 +43,12 @@ public class Tornado : PlayerSpell {
     }
     public override void ShowRange(LocationGridTile targetTile) {
         base.ShowRange(targetTile);
-        List<LocationGridTile> tiles = targetTile.parentMap.GetTilesInRadius(targetTile, radius, 0, true);
+        List<LocationGridTile> tiles = targetTile.GetTilesInRadius(radius, 0, true);
         InnerMapManager.Instance.HighlightTiles(tiles);
     }
     public override void HideRange(LocationGridTile targetTile) {
         base.HideRange(targetTile);
-        List<LocationGridTile> tiles = targetTile.parentMap.GetTilesInRadius(targetTile, radius, 0, true);
+        List<LocationGridTile> tiles = targetTile.GetTilesInRadius(radius, 0, true);
         InnerMapManager.Instance.UnhighlightTiles(tiles);
     }
     public override bool CanTarget(LocationGridTile tile) {

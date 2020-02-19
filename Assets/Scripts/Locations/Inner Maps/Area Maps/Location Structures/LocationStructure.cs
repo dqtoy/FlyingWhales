@@ -308,9 +308,9 @@ namespace Inner_Maps.Location_Structures {
                                                           && !x.HasNeighbourOfElevation(ELEVATION.WATER)
                         ).ToList();
                     } else if (poi is WaterWell) {
-                        return unoccupiedTiles.Where(x => !x.HasOccupiedNeighbour() && !x.parentMap.GetTilesInRadius(x, 3).Any(y => y.objHere is WaterWell) && !x.HasNeighbouringWalledStructure()).ToList();
+                        return unoccupiedTiles.Where(x => !x.HasOccupiedNeighbour() && !x.GetTilesInRadius(3).Any(y => y.objHere is WaterWell) && !x.HasNeighbouringWalledStructure()).ToList();
                     } else if (poi is GoddessStatue) {
-                        return unoccupiedTiles.Where(x => !x.HasOccupiedNeighbour() && !x.parentMap.GetTilesInRadius(x, 3).Any(y => y.objHere is GoddessStatue) && !x.HasNeighbouringWalledStructure()).ToList();
+                        return unoccupiedTiles.Where(x => !x.HasOccupiedNeighbour() && !x.GetTilesInRadius(3).Any(y => y.objHere is GoddessStatue) && !x.HasNeighbouringWalledStructure()).ToList();
                     } else if (poi is Guitar || poi is Bed || poi is Table) {
                         return GetOuterTiles().Where(x => unoccupiedTiles.Contains(x) && x.tileType != LocationGridTile.Tile_Type.Structure_Entrance).ToList();
                     } else {
@@ -507,7 +507,7 @@ namespace Inner_Maps.Location_Structures {
                 tile.RevertToPreviousGroundVisual();
                 tile.CreateSeamlessEdgesForTile(location.innerMap);
                 tile.SetPreviousGroundVisual(null); //so that the tile will never revert to the structure tile, unless a new structure is put on it.
-                tile.genericTileObject.AdjustHP(tile.genericTileObject.maxHP);
+                tile.genericTileObject.AdjustHP(tile.genericTileObject.maxHP, ELEMENTAL_TYPE.Normal);
             }
         
             occupiedBuildSpot.RemoveOccupyingStructure(this);

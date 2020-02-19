@@ -110,9 +110,11 @@ public class EventLabel : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
                     UIManager.Instance.ShowFactionInfo((obj as Faction));
                 } else if (obj is Minion) {
                     UIManager.Instance.ShowCharacterInfo((obj as Minion).character, true);
-                } else if (obj is Combat) {
-                    UIManager.Instance.ShowCombatLog(obj as Combat);
-                } else if (obj is Party) {
+                } 
+                //else if (obj is Combat) {
+                //    UIManager.Instance.ShowCombatLog(obj as Combat);
+                //} 
+                else if (obj is Party) {
                     Party party = obj as Party;
                     UIManager.Instance.ShowCharacterInfo(party.owner, true);
                 } else if (obj is IPointOfInterest) {

@@ -405,7 +405,7 @@ public class Minion {
         Messenger.RemoveListener(Signals.TICK_STARTED, OnTickStarted);
     }
     private void UnsummonedHPRecovery() {
-        this.character.AdjustHP((int)(character.maxHP * 0.02f));
+        this.character.AdjustHP((int)(character.maxHP * 0.02f), ELEMENTAL_TYPE.Normal);
         if (character.currentHP >= character.maxHP) {
             //minion can be summoned again
             Messenger.RemoveListener(Signals.TICK_ENDED, UnsummonedHPRecovery);

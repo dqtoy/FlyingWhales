@@ -11,7 +11,7 @@ public class TraitManager : MonoBehaviour {
     public static TraitManager Instance;
 
     private Dictionary<string, Trait> _allTraits;
-    private Trait[] instancedTraits { get; set; }
+    private string[] instancedTraits { get; set; }
     [SerializeField] private StringSpriteDictionary traitIconDictionary;
 
     //Trait Processors
@@ -60,8 +60,8 @@ public class TraitManager : MonoBehaviour {
         //Categorize traits from trait pool
         for (int i = 0; i < traitPool.Length; i++) {
             string currTraitName = traitPool[i];
-            if (TraitManager.Instance.allTraits.ContainsKey(currTraitName)) {
-                Trait trait = TraitManager.Instance.allTraits[currTraitName];
+            if (allTraits.ContainsKey(currTraitName)) {
+                Trait trait = allTraits[currTraitName];
                 if (trait.type == TRAIT_TYPE.BUFF) {
                     buffTraitPool.Add(currTraitName);
                 } else if (trait.type == TRAIT_TYPE.FLAW) {
@@ -77,88 +77,92 @@ public class TraitManager : MonoBehaviour {
 
     #region Utilities
     private void AddInstancedTraits() {
-        instancedTraits = new Trait[] {
-            //new Builder(),
-            new Grudge(),
-            new PatrollingCharacter(),
-            new Reanimated(),
-            new Restrained(),
-            //new Assaulter(),
-            //new AttemptedMurderer(),
-            new Cursed(),
-            new Injured(),
-            new Kleptomaniac(),
-            new Lycanthrope(),
-            new Vampiric(),
-            //new Murderer(),
-            new Poisoned(),
-            new Resting(),
-            new Sick(),
-            //new Thief(),
-            new Unconscious(),
-            new Zapped(),
-            new Spooked(),
-            new Jolted(),
-            new Taunted(),
-            new Cannibal(),
-            new Lethargic(),
-            new BerserkBuff(),
-            //new Aberration(),
-            new Dead(),
-            new Disabled(),
-            new Invisible(),
-            new Unfaithful(),
-            new Drunk(),
-            new Burning(),
-            new Burnt(),
-            new Agoraphobic(),
-            new Infected(),
-            new MusicLover(),
-            new MusicHater(),
-            new Psychopath(),
-            new Plagued(),
-            new Vigilant(),
-            new Curious(),
-            //new Healer(),
-            new Diplomatic(),
-            new AccidentProne(),
-            new Wet(),
-            new CharacterTrait(),
-            new Nocturnal(),
-            new Herbalist(),
-            new Hardworking(),
-            new Glutton(),
-            new Suspicious(),
-            new Narcoleptic(),
-            new Hothead(),
-            new Inspiring(),
-            new Pyrophobic(),
-            new Angry(),
-            new Drunkard(),
-            new Pessimist(),
-            new Lazy(),
-            new Coward(),
-            new Berserked(),
-            new Catatonic(),
-            new Griefstricken(),
-            new Heartbroken(),
-            new Cultist(),
-            //new Disillusioned(),
-            new Chaste(),
-            new Lustful(),
-            new Edible(),
-            new ElementalMaster(),
-            new Paralyzed(),
-            new Malnourished(),
-            new Withdrawal(),
-            new Suicidal(),
-            new Criminal(),
-            new Dazed(), 
-            new Hiding(), 
-            new Bored(), 
+        instancedTraits = new string[] {
+            //"Builder",
+            "Grudge",
+            "PatrollingCharacter",
+            "Reanimated",
+            "Restrained",
+            //"Assaulter",
+            //"AttemptedMurderer",
+            "Cursed",
+            "Injured",
+            "Kleptomaniac",
+            "Lycanthrope",
+            "Vampiric",
+            //"Murderer",
+            "Poisoned",
+            "Resting",
+            "Sick",
+            //"Thief",
+            "Unconscious",
+            "Zapped",
+            "Spooked",
+            "Jolted",
+            "Taunted",
+            "Cannibal",
+            "Lethargic",
+            "BerserkBuff",
+            //"Aberration",
+            "Dead",
+            "Disabled",
+            "Invisible",
+            "Unfaithful",
+            "Drunk",
+            "Burning",
+            "Burnt",
+            "Agoraphobic",
+            "Infected",
+            "MusicLover",
+            "MusicHater",
+            "Psychopath",
+            "Plagued",
+            "Vigilant",
+            "Curious",
+            //"Healer",
+            "Diplomatic",
+            "AccidentProne",
+            "Wet",
+            "CharacterTrait",
+            "Nocturnal",
+            "Herbalist",
+            "Hardworking",
+            "Glutton",
+            "Suspicious",
+            "Narcoleptic",
+            "Hothead",
+            "Inspiring",
+            "Pyrophobic",
+            "Angry",
+            "Drunkard",
+            "Pessimist",
+            "Lazy",
+            "Coward",
+            "Berserked",
+            "Catatonic",
+            "Griefstricken",
+            "Heartbroken",
+            "Cultist",
+            //"Disillusioned",
+            "Chaste",
+            "Lustful",
+            "Edible",
+            "ElementalMaster",
+            "Paralyzed",
+            "Malnourished",
+            "Withdrawal",
+            "Suicidal",
+            "Criminal",
+            "Dazed", 
+            "Hiding", 
+            "Bored", 
+            "Overheating",
+            "Freezing",
+            "Frozen",
         };
+        //TODO: REDO INSTANCED TRAITS, USE SCRIPTABLE OBJECTS for FIXED DATA
         for (int i = 0; i < instancedTraits.Length; i++) {
-            Trait trait = instancedTraits[i];
+            Trait trait = CreateNewInstancedTraitClass(instancedTraits[i]);
             _allTraits.Add(trait.name, trait);
         }
     }
@@ -173,12 +177,14 @@ public class TraitManager : MonoBehaviour {
     }
     public bool IsInstancedTrait(string traitName) {
         for (int i = 0; i < instancedTraits.Length; i++) {
-            Trait currTrait = instancedTraits[i];
-            if (string.Equals(currTrait.name, traitName, StringComparison.OrdinalIgnoreCase)) { //|| string.Equals(currTrait.GetType().ToString(), traitName, StringComparison.OrdinalIgnoreCase)
+            if (string.Equals(instancedTraits[i], traitName, StringComparison.OrdinalIgnoreCase)) { //|| string.Equals(currTrait.GetType().ToString(), traitName, StringComparison.OrdinalIgnoreCase)
                 return true;
             }
         }
         return false;
+    }
+    public bool IsTraitElemental(string traitName) {
+        return traitName == "Burning" || traitName == "Freezing" || traitName == "Poisoned" || traitName == "Wet" || traitName == "Zapped" || traitName == "Overheating";
     }
     public Trait CreateNewInstancedTraitClass(string traitName) {
         string noSpacesTraitName = UtilityScripts.Utilities.RemoveAllWhiteSpace(traitName);

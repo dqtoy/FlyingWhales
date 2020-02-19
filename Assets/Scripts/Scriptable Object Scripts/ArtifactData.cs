@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Artifact Data", menuName = "Artifact Data")]
+[CreateAssetMenu(fileName = "New Artifact Data", menuName = "Scriptable Objects/Artifact Data")]
 public class ArtifactData : ScriptableObject {
     [SerializeField] private ARTIFACT_TYPE _type;
     [SerializeField] private Sprite _sprite;

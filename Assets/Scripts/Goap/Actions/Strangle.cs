@@ -116,7 +116,7 @@ public class Strangle : GoapAction {
 
     #region State Effects
     public void PerTickStrangleSuccess(ActualGoapNode goapNode) {
-        goapNode.actor.AdjustHP(-(int)(goapNode.actor.maxHP * 0.18f));
+        goapNode.actor.AdjustHP(-(int)(goapNode.actor.maxHP * 0.18f), ELEMENTAL_TYPE.Normal);
     }
     public void AfterStrangleSuccess(ActualGoapNode goapNode) {
         //Character target = goapNode.poiTarget as Character;

@@ -721,8 +721,8 @@ namespace Inner_Maps {
 
             if (tileObject.tileObjectType == TILE_OBJECT_TYPE.ARTIFACT) {
                 Artifact artifact = tileObject as Artifact;
-                if (PlayerManager.Instance.artifactDataDictionary.ContainsKey(artifact.type)) {
-                    return PlayerManager.Instance.artifactDataDictionary[artifact.type].sprite;
+                if (ScriptableObjectsManager.Instance.artifactDataDictionary.ContainsKey(artifact.type)) {
+                    return ScriptableObjectsManager.Instance.artifactDataDictionary[artifact.type].sprite;
                 }
             } else {
                 if (tileObjectTiles.ContainsKey(tileObject.tileObjectType)) {

@@ -213,7 +213,7 @@ public class TraitPanelUI : MonoBehaviour {
             type = (TRAIT_TYPE) System.Enum.Parse(typeof(TRAIT_TYPE), traitTypeOptions.options[traitTypeOptions.value].text),
             effect = (TRAIT_EFFECT) System.Enum.Parse(typeof(TRAIT_EFFECT), traitEffectOptions.options[traitEffectOptions.value].text),
             ticksDuration = int.Parse(durationInput.text),
-            effects = _effects,
+            //effects = _effects,
             isHidden = _isHidden.isOn,
             mutuallyExclusive = GetMutuallyExclusiveTraits(),
             advertisedInteractions = _advertisedInteractions,
@@ -263,12 +263,12 @@ public class TraitPanelUI : MonoBehaviour {
         stackModInput.text = trait.stackModifier.ToString();
         UpdateAdvertisedInteractionsText();
 
-        for (int i = 0; i < trait.effects.Count; i++) {
-            TraitEffect traitEffect = trait.effects[i];
-            _effects.Add(traitEffect);
-            GameObject go = GameObject.Instantiate(traitEffectBtnGO, effectsScrollRect.content);
-            go.GetComponent<TraitEffectButton>().SetTraitEffect(traitEffect);
-        }
+        //for (int i = 0; i < trait.effects.Count; i++) {
+        //    TraitEffect traitEffect = trait.effects[i];
+        //    _effects.Add(traitEffect);
+        //    GameObject go = GameObject.Instantiate(traitEffectBtnGO, effectsScrollRect.content);
+        //    go.GetComponent<TraitEffectButton>().SetTraitEffect(traitEffect);
+        //}
     }
     private void PopulateRequirements(List<string> requirements) {
         if(requirements != null) {

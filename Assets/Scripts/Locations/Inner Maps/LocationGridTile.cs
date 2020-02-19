@@ -703,44 +703,78 @@ namespace Inner_Maps {
         public bool IsNextToOrPartOfSettlement(Settlement settlement) {
             return IsPartOfSettlement(settlement) || IsNextToSettlement(settlement);
         }
+        public List<LocationGridTile> GetTilesInRadius(int radius, int radiusLimit = 0, bool includeCenterTile = false, bool includeTilesInDifferentStructure = false) {
+            List<LocationGridTile> tiles = new List<LocationGridTile>();
+            int mapSizeX = parentMap.map.GetUpperBound(0);
+            int mapSizeY = parentMap.map.GetUpperBound(1);
+            int x = localPlace.x;
+            int y = localPlace.y;
+            if (includeCenterTile) {
+                tiles.Add(this);
+            }
+            int xLimitLower = x - radiusLimit;
+            int xLimitUpper = x + radiusLimit;
+            int yLimitLower = y - radiusLimit;
+            int yLimitUpper = y + radiusLimit;
+
+
+            for (int dx = x - radius; dx <= x + radius; dx++) {
+                for (int dy = y - radius; dy <= y + radius; dy++) {
+                    if (dx >= 0 && dx <= mapSizeX && dy >= 0 && dy <= mapSizeY) {
+                        if (dx == x && dy == y) {
+                            continue;
+                        }
+                        if (radiusLimit > 0 && dx > xLimitLower && dx < xLimitUpper && dy > yLimitLower && dy < yLimitUpper) {
+                            continue;
+                        }
+                        LocationGridTile result = parentMap.map[dx, dy];
+                        if (result.structure == null) { continue; } //do not include tiles with no structures
+                        if (!includeTilesInDifferentStructure 
+                            && (result.structure != structure && (!result.structure.structureType.IsOpenSpace() || !structure.structureType.IsOpenSpace()))) { continue; }
+                        tiles.Add(result);
+                    }
+                }
+            }
+            return tiles;
+        }
         #endregion
 
         #region Mouse Actions
-//        public void OnClickTileActions(PointerEventData.InputButton inputButton) {
-//            if (InnerMapManager.Instance.IsMouseOnMarker()) {
-//                return;
-//            }
-//            if (objHere == null) {
-//#if UNITY_EDITOR
-//                if (inputButton == PointerEventData.InputButton.Right) {
-//                    UIManager.Instance.poiTestingUI.ShowUI(this);
-//                } else {
-//                    Messenger.Broadcast(Signals.HIDE_MENUS);
-//                }
-//#else
-//             Messenger.Broadcast(Signals.HIDE_MENUS);
-//#endif
-//            } else if (objHere is TileObject || objHere is SpecialToken) {
-//#if UNITY_EDITOR
-//                if (inputButton == PointerEventData.InputButton.Right) {
-//                    if (objHere is TileObject) {
-//                        UIManager.Instance.poiTestingUI.ShowUI(objHere);
-//                    }
-//                }
-//                //else {
-//                //    if (objHere is TileObject) {
-//                //        UIManager.Instance.ShowTileObjectInfo(objHere as TileObject);
-//                //    }
-//                //}
-//#else
-//              //if (inputButton == PointerEventData.InputButton.Left) {
-//              //   if (objHere is TileObject) {
-//              //       UIManager.Instance.ShowTileObjectInfo(objHere as TileObject);
-//              //   }
-//              //}
-//#endif
-//            }
-//        }
+        //        public void OnClickTileActions(PointerEventData.InputButton inputButton) {
+        //            if (InnerMapManager.Instance.IsMouseOnMarker()) {
+        //                return;
+        //            }
+        //            if (objHere == null) {
+        //#if UNITY_EDITOR
+        //                if (inputButton == PointerEventData.InputButton.Right) {
+        //                    UIManager.Instance.poiTestingUI.ShowUI(this);
+        //                } else {
+        //                    Messenger.Broadcast(Signals.HIDE_MENUS);
+        //                }
+        //#else
+        //             Messenger.Broadcast(Signals.HIDE_MENUS);
+        //#endif
+        //            } else if (objHere is TileObject || objHere is SpecialToken) {
+        //#if UNITY_EDITOR
+        //                if (inputButton == PointerEventData.InputButton.Right) {
+        //                    if (objHere is TileObject) {
+        //                        UIManager.Instance.poiTestingUI.ShowUI(objHere);
+        //                    }
+        //                }
+        //                //else {
+        //                //    if (objHere is TileObject) {
+        //                //        UIManager.Instance.ShowTileObjectInfo(objHere as TileObject);
+        //                //    }
+        //                //}
+        //#else
+        //              //if (inputButton == PointerEventData.InputButton.Left) {
+        //              //   if (objHere is TileObject) {
+        //              //       UIManager.Instance.ShowTileObjectInfo(objHere as TileObject);
+        //              //   }
+        //              //}
+        //#endif
+        //            }
+        //        }
         #endregion
 
         #region Tile Objects

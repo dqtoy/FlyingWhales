@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Inner_Maps;
 
 namespace Traits {
     public class TraitContainer : ITraitContainer {
@@ -12,6 +13,7 @@ namespace Traits {
         public Dictionary<string, List<string>> scheduleTickets { get; private set; }
         public Dictionary<string, bool> traitSwitches { get; private set; }
         //public Dictionary<Trait, int> currentDurations { get; private set; } //Temporary only, fix this by making all traits instanced based and just object pool them
+        private List<ITraitable> traitables;
 
         #region getters/setters
         public List<Trait> allTraits { get { return _allTraits; } }
@@ -22,6 +24,7 @@ namespace Traits {
             stacks = new Dictionary<string, int>();
             scheduleTickets = new Dictionary<string, List<string>>();
             traitSwitches = new Dictionary<string, bool>();
+            traitables = new List<ITraitable>();
             //currentDurations = new Dictionary<Trait, int>();
         }
 
@@ -67,6 +70,140 @@ namespace Traits {
             return true;
         }
         public bool AddTrait(ITraitable addTo, string traitName, out Trait trait, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null) {
+            if (TraitManager.Instance.IsTraitElemental(traitName)) {
+                return TryAddElementalTrait(addTo, traitName, out trait, characterResponsible, gainedFromDoing);
+            }
+            return TraitAddition(addTo, traitName, out trait, characterResponsible, gainedFromDoing);
+        }
+        public bool AddTrait(ITraitable addTo, string traitName, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null) {
+            if (TraitManager.Instance.IsTraitElemental(traitName)) {
+                return TryAddElementalTrait(addTo, traitName, characterResponsible, gainedFromDoing);
+            }
+            return TraitAddition(addTo, traitName, characterResponsible, gainedFromDoing);
+        }
+        private bool TryAddElementalTrait(ITraitable addTo, string traitName, Character characterResponsible, ActualGoapNode gainedFromDoing) {
+            bool shouldAddTrait = ProcessBeforeAddingElementalTrait(addTo, traitName);
+            if (shouldAddTrait) {
+                shouldAddTrait = ProcessBeforeSuccessfullyAddingElementalTrait(addTo, traitName);
+                if (shouldAddTrait) {
+                    Trait trait = null;
+                    if (TraitAddition(addTo, traitName, out trait, characterResponsible, gainedFromDoing)) {
+                        ProcessAfterSuccessfulAddingElementalTrait(addTo, trait);
+                    }
+                }
+            }
+            return false;
+        }
+        private bool TryAddElementalTrait(ITraitable addTo, string traitName, out Trait trait, Character characterResponsible, ActualGoapNode gainedFromDoing) {
+            trait = null;
+            bool shouldAddTrait = ProcessBeforeAddingElementalTrait(addTo, traitName);
+            if (shouldAddTrait) {
+                shouldAddTrait = ProcessBeforeSuccessfullyAddingElementalTrait(addTo, traitName);
+                if (shouldAddTrait) {
+                    if (TraitAddition(addTo, traitName, out trait, characterResponsible, gainedFromDoing)) {
+                        ProcessAfterSuccessfulAddingElementalTrait(addTo, trait);
+                    }
+                }
+            }
+            return false;
+        }
+        //Returns true or false, if trait should be added or not
+        private bool ProcessBeforeAddingElementalTrait(ITraitable addTo, string traitName) {
+            bool shouldAddTrait = true;
+            if (traitName == "Burning") {
+                if (HasTrait("Freezing")) {
+                    RemoveTrait(addTo, "Freezing");
+                    shouldAddTrait = false;
+                }
+                if (HasTrait("Frozen")) {
+                    RemoveTrait(addTo, "Frozen");
+                    shouldAddTrait = false;
+                }
+                if (HasTrait("Poisoned")) {
+                    int poisonStacks = stacks["Poisoned"];
+                    RemoveTraitAndStacks(addTo, "Poisoned");
+                    if (addTo is IPointOfInterest) {
+                        CombatManager.Instance.PoisonExplosion(addTo as IPointOfInterest, poisonStacks);
+                    }
+                    shouldAddTrait = false;
+                }
+            } else if (traitName == "Overheating") {
+                if (HasTrait("Wet")) {
+                    RemoveTraitAndStacks(addTo, "Wet");
+                    shouldAddTrait = false;
+                }
+                if (HasTrait("Freezing")) {
+                    RemoveTrait(addTo, "Freezing");
+                    shouldAddTrait = false;
+                }
+                if (HasTrait("Frozen")) {
+                    RemoveTrait(addTo, "Frozen");
+                    shouldAddTrait = false;
+                }
+            } else if (traitName == "Freezing") {
+                if (addTo is Character && HasTrait("Overheating")) {
+                    RemoveTrait(addTo, "Overheating");
+                    //shouldAddTrait = false;
+                }
+                if (HasTrait("Poisoned")) {
+                    RemoveTrait(addTo, "Poisoned");
+                    shouldAddTrait = false;
+                }
+                //else if (HasTrait("Frozen")) {
+                //    RemoveTrait(addTo, "Frozen");
+                //    shouldAddTrait = false;
+                //}
+            }
+            if (shouldAddTrait) {
+                int roll = UnityEngine.Random.Range(0, 100);
+                int chance = GetElementalTraitChanceToBeAdded(traitName);
+                if (roll < chance) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        private bool ProcessBeforeSuccessfullyAddingElementalTrait(ITraitable addTo, string traitName) {
+            bool shouldAddTrait = true;
+            if (traitName == "Freezing") {
+                if (HasTrait("Frozen")) {
+                    AddTrait(addTo, "Frozen");
+                    shouldAddTrait = false;
+                }
+            } else if (traitName == "Zapped") {
+                if(addTo.gridTileLocation != null) {
+                    List<LocationGridTile> tiles = addTo.gridTileLocation.GetTilesInRadius(1, includeTilesInDifferentStructure: true);
+                    traitables.Clear();
+                    for (int i = 0; i < tiles.Count; i++) {
+                        if (tiles[i].genericTileObject.traitContainer.HasTrait("Wet")) {
+                            traitables.AddRange(tiles[i].GetTraitablesOnTile());
+                        }
+                    }
+                    for (int i = 0; i < traitables.Count; i++) {
+                        if(!traitables[i].traitContainer.HasTrait("Zapped")) {
+                            traitables[i].traitContainer.AddTrait(traitables[i], "Zapped");
+                        }
+                    }
+                }
+            }
+            return shouldAddTrait;
+        }
+        private void ProcessAfterSuccessfulAddingElementalTrait(ITraitable traitable, Trait trait) {
+            if (trait.name == "Freezing") {
+                if (stacks[trait.name] >= trait.stackLimit) {
+                    RemoveTraitAndStacks(traitable, trait);
+                    AddTrait(traitable, "Frozen");
+                }
+            }
+        }
+        private bool TraitAddition(ITraitable addTo, string traitName, Character characterResponsible, ActualGoapNode gainedFromDoing) {
+            if (TraitManager.Instance.IsInstancedTrait(traitName)) {
+                return AddTrait(addTo, TraitManager.Instance.CreateNewInstancedTraitClass(traitName), characterResponsible, gainedFromDoing);
+            } else {
+                return AddTrait(addTo, TraitManager.Instance.allTraits[traitName], characterResponsible, gainedFromDoing);
+            }
+        }
+        private bool TraitAddition(ITraitable addTo, string traitName, out Trait trait, Character characterResponsible, ActualGoapNode gainedFromDoing) {
             if (TraitManager.Instance.IsInstancedTrait(traitName)) {
                 trait = TraitManager.Instance.CreateNewInstancedTraitClass(traitName);
                 return AddTrait(addTo, trait, characterResponsible, gainedFromDoing);
@@ -75,12 +212,24 @@ namespace Traits {
                 return AddTrait(addTo, trait, characterResponsible, gainedFromDoing);
             }
         }
-        public bool AddTrait(ITraitable addTo, string traitName, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null) {
-            if (TraitManager.Instance.IsInstancedTrait(traitName)) {
-                return AddTrait(addTo, TraitManager.Instance.CreateNewInstancedTraitClass(traitName), characterResponsible, gainedFromDoing);
-            } else {
-                return AddTrait(addTo, TraitManager.Instance.allTraits[traitName], characterResponsible, gainedFromDoing);
+        private int GetElementalTraitChanceToBeAdded(string traitName) {
+            int chance = 100;
+            if (traitName == "Burning") {
+                chance = 15;
+                if(HasTrait("Fireproof", "Wet", "Burnt") || !HasTrait("Flammable")) {
+                    chance = 0;
+                } else if (HasTrait("Poisoned")) {
+                    chance = 100;
+                }
+            } else if (traitName == "Freezing") {
+                chance = 20;
+                if (HasTrait("Cold Blooded", "Burning")) {
+                    chance = 0;
+                } else if (HasTrait("Wet")) {
+                    chance = 100;
+                }
             }
+            return chance;
         }
         #endregion
 
@@ -205,7 +354,11 @@ namespace Traits {
             //return removedTraits;
         }
         public bool RemoveTraitOnSchedule(ITraitable removeFrom, Trait trait) {
-            return RemoveTrait(removeFrom, trait, bySchedule: true);
+            if(RemoveTrait(removeFrom, trait, bySchedule: true)) {
+                trait.OnRemoveTraitBySchedule(removeFrom);
+                return true;
+            }
+            return false;
         }
         /// <summary>
         /// Remove all traits that are not persistent.

@@ -10,7 +10,7 @@ namespace Traits {
             description = "This character cannot move.";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEUTRAL;
-            ticksDuration = 3;
+            ticksDuration = GameManager.Instance.GetTicksBasedOnMinutes(15);
             hindersMovement = true;
             hindersWitness = true;
             hindersPerform = true;
@@ -18,6 +18,7 @@ namespace Traits {
 
         #region Overrides
         public override void OnAddTrait(ITraitable sourcePOI) {
+            GameManager.Instance.CreateElectricEffectAt(sourcePOI);
             if (sourcePOI is Character) {
                 Character character = sourcePOI as Character;
                 if (character.currentParty.icon.isTravelling) {

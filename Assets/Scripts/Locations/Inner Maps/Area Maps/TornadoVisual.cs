@@ -45,7 +45,7 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
     public override void UpdateTileObjectVisual(TileObject obj) { }
     public override void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) { }
     private void GoToRandomTileInRadius() {
-        List<LocationGridTile> tilesInRadius = gridTileLocation.parentMap.GetTilesInRadius(gridTileLocation, 8, 6, false, true);
+        List<LocationGridTile> tilesInRadius = gridTileLocation.GetTilesInRadius(8, 6, false, true);
         LocationGridTile chosen = tilesInRadius[Random.Range(0, tilesInRadius.Count)];
         GoTo(chosen);
     }
@@ -227,11 +227,11 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
         if (gameObject.activeSelf == false) {
             return;
         }
-        List<LocationGridTile> tiles = gridTileLocation.parentMap.GetTilesInRadius(gridTileLocation, _radius, includeCenterTile: true, includeTilesInDifferentStructure: true);
+        List<LocationGridTile> tiles = gridTileLocation.GetTilesInRadius(_radius, includeCenterTile: true, includeTilesInDifferentStructure: true);
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile tile = tiles[i];
             if (tile.genericTileObject.CanBeDamaged()) {
-                tile.genericTileObject.AdjustHP(-(int)(tile.genericTileObject.maxHP * 0.35f), true, this);
+                tile.genericTileObject.AdjustHP(-(int)(tile.genericTileObject.maxHP * 0.35f), ELEMENTAL_TYPE.Normal, true, this);
             }
         }
         for (int i = 0; i < _damagablesInTornado.Count; i++) {
@@ -250,7 +250,7 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
     private void DealDamage(IDamageable damageable) {
         if (damageable.CanBeDamaged()) {
             //0.35f
-            damageable.AdjustHP(-(int)(damageable.maxHP * 0.55f), true, _tornado);
+            damageable.AdjustHP(-(int)(damageable.maxHP * 0.55f), ELEMENTAL_TYPE.Normal, true, _tornado);
         }
     }
     private void TrySuckIn(IDamageable damageable) {
@@ -263,7 +263,7 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
     }
     private void OnDamagableReachedThis(IDamageable damageable) {
         damageable.mapObjectVisual?.OnReachTarget();
-        damageable.AdjustHP(-damageable.maxHP, true, _tornado);
+        damageable.AdjustHP(-damageable.maxHP, ELEMENTAL_TYPE.Normal, true, _tornado);
     }
 
     private bool CanBeSuckedIn(IDamageable damageable) {

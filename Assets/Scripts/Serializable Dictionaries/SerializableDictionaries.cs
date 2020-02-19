@@ -28,6 +28,8 @@ public class CombatModeSpriteDictionary : SerializableDictionary<COMBAT_MODE, Sp
 public class TileObjectAssetDictionary : SerializableDictionary<TILE_OBJECT_TYPE, TileObjectTileSetting> { }
 [System.Serializable]
 public class ArtifactDataDictionary : SerializableDictionary<ARTIFACT_TYPE, ArtifactData> { }
+[System.Serializable]
+public class ElementalDamageDataDictionary : SerializableDictionary<ELEMENTAL_TYPE, ElementalDamageData> { }
 // [System.Serializable]
 // public class ItemSpriteDictionary : SerializableDictionary<SPECIAL_TOKEN, Sprite> { }
 [System.Serializable]

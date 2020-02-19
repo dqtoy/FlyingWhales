@@ -35,8 +35,8 @@ public class Taunt : CombatAbility {
         if (targetPOI is Character) {
             Character character = targetPOI as Character;
 
-            character.AdjustHP(1000);
-            List<LocationGridTile> tilesInRadius = character.gridTileLocation.parentMap.GetTilesInRadius(character.gridTileLocation, 3, includeCenterTile: true, includeTilesInDifferentStructure: true);
+            character.AdjustHP(1000, ELEMENTAL_TYPE.Normal);
+            List<LocationGridTile> tilesInRadius = character.gridTileLocation.GetTilesInRadius(3, includeCenterTile: true, includeTilesInDifferentStructure: true);
             List<Character> affectedByTaunt = new List<Character>();
             for (int i = 0; i < character.currentRegion.charactersAtLocation.Count; i++) {
                 Character currCharacter = character.currentRegion.charactersAtLocation[i];

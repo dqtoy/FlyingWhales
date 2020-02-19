@@ -15,7 +15,7 @@ public class Artifact : TileObject {
     #endregion
 
     public Artifact(ARTIFACT_TYPE type) {
-        data = PlayerManager.Instance.GetArtifactData(type);
+        data = ScriptableObjectsManager.Instance.GetArtifactData(type);
         // TILE_OBJECT_TYPE parsed = (TILE_OBJECT_TYPE) Enum.Parse(typeof(TILE_OBJECT_TYPE), type.ToString(), true);
         advertisedActions = new List<INTERACTION_TYPE>();
         Initialize(TILE_OBJECT_TYPE.ARTIFACT);
@@ -28,7 +28,7 @@ public class Artifact : TileObject {
     //    Initialize(data, parsed);
     //}
     public Artifact(SaveDataArtifact data) {
-        this.data = PlayerManager.Instance.GetArtifactData(data.artifactType);
+        this.data = ScriptableObjectsManager.Instance.GetArtifactData(data.artifactType);
         advertisedActions = new List<INTERACTION_TYPE>();
         Initialize(data);
     }

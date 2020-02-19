@@ -27,12 +27,12 @@ public class Meteor : PlayerSpell {
     }
     public override void ShowRange(LocationGridTile targetTile) {
         base.ShowRange(targetTile);
-        List<LocationGridTile> tiles = targetTile.parentMap.GetTilesInRadius(targetTile, abilityRadius, 0, true);
+        List<LocationGridTile> tiles = targetTile.GetTilesInRadius(abilityRadius, 0, true);
         InnerMapManager.Instance.HighlightTiles(tiles);
     }
     public override void HideRange(LocationGridTile targetTile) {
         base.HideRange(targetTile);
-        List<LocationGridTile> tiles = targetTile.parentMap.GetTilesInRadius(targetTile, abilityRadius, 0, true);
+        List<LocationGridTile> tiles = targetTile.GetTilesInRadius(abilityRadius, 0, true);
         InnerMapManager.Instance.UnhighlightTiles(tiles);
     }
     #endregion
@@ -56,7 +56,7 @@ public class MeteorData : SpellData {
     public override void ActivateAbility(LocationGridTile targetTile) {
         // LocationGridTile tile = targetPOI.gridTileLocation;
         List<ITraitable> flammables = new List<ITraitable>();
-        List<LocationGridTile> tiles = targetTile.parentMap.GetTilesInRadius(targetTile, abilityRadius, 0, true);
+        List<LocationGridTile> tiles = targetTile.GetTilesInRadius(abilityRadius, 0, true);
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile tile = tiles[i];
             flammables.AddRange(tile.GetTraitablesOnTileWithTrait("Flammable"));
@@ -69,7 +69,7 @@ public class MeteorData : SpellData {
                 TileObject obj = flammable as TileObject;
                 GameManager.Instance.CreateExplodeEffectAt(obj.gridTileLocation);
                 if (obj.tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
-                    obj.AdjustHP(-obj.currentHP);
+                    obj.AdjustHP(-obj.currentHP, ELEMENTAL_TYPE.Normal);
                     if (obj.gridTileLocation == null) {
                         continue; //object was destroyed, do not add burning trait
                     }
@@ -86,7 +86,7 @@ public class MeteorData : SpellData {
             else if (flammable is Character) {
                 Character character = flammable as Character;
                 GameManager.Instance.CreateExplodeEffectAt(character.gridTileLocation);
-                character.AdjustHP(-(int)(character.maxHP * 0.4f), true);
+                character.AdjustHP(-(int)(character.maxHP * 0.4f), ELEMENTAL_TYPE.Normal, true);
             }
             if (Random.Range(0, 100) < 60) {
                 Burning burning = new Burning();
@@ -99,12 +99,12 @@ public class MeteorData : SpellData {
     }
     public override void ShowRange(LocationGridTile targetTile) {
         base.ShowRange(targetTile);
-        List<LocationGridTile> tiles = targetTile.parentMap.GetTilesInRadius(targetTile, abilityRadius, 0, true);
+        List<LocationGridTile> tiles = targetTile.GetTilesInRadius(abilityRadius, 0, true);
         InnerMapManager.Instance.HighlightTiles(tiles);
     }
     public override void HideRange(LocationGridTile targetTile) {
         base.HideRange(targetTile);
-        List<LocationGridTile> tiles = targetTile.parentMap.GetTilesInRadius(targetTile, abilityRadius, 0, true);
+        List<LocationGridTile> tiles = targetTile.GetTilesInRadius(abilityRadius, 0, true);
         InnerMapManager.Instance.UnhighlightTiles(tiles);
     }
 }

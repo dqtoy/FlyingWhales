@@ -23,7 +23,7 @@ namespace Traits {
         public int ticksDuration; //Zero (0) means Permanent
         public int level;
         public int moodEffect;
-        public List<TraitEffect> effects;
+        //public List<TraitEffect> effects;
         public bool isHidden;
         public string[] mutuallyExclusive; //list of traits that this trait cannot be with.
         public bool canBeTriggered;
@@ -78,6 +78,8 @@ namespace Traits {
                     character.RemoveOverrideThought(thoughtText);
                 }
             }
+        }
+        public virtual void OnRemoveTraitBySchedule(ITraitable removedFrom) {
         }
         public virtual void OnStackTrait(ITraitable addedTo) {
             if (addedTo is Character) {
@@ -230,9 +232,9 @@ namespace Traits {
         public void SetDateEstablished(GameDate date) {
             dateEstablished = date;
         }
-        public void SetTraitEffects(List<TraitEffect> effects) {
-            this.effects = effects;
-        }
+        //public void SetTraitEffects(List<TraitEffect> effects) {
+        //    this.effects = effects;
+        //}
         protected bool TryTransferJob(JobQueueItem currentJob, Character characterThatWillDoJob) {
             if (currentJob.originalOwner.ownerType == JOB_OWNER.LOCATION || currentJob.originalOwner.ownerType == JOB_OWNER.QUEST) {
                 bool canBeTransfered = false;

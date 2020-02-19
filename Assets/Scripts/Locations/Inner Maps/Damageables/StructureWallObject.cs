@@ -31,12 +31,9 @@ public class StructureWallObject : MapObject<StructureWallObject>, ITraitable {
     }
 
     #region HP
-    public void AdjustHP(int amount, bool triggerDeath = false, object source = null) {
+    public void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false, object source = null) {
         if (currentHP <= 0 && amount < 0) {
             return; //ignore
-        }
-        if (amount < 0) {
-            GameManager.Instance.CreateHitEffectAt(this);
         }
         currentHP += amount;
         currentHP = Mathf.Clamp(currentHP, 0, maxHP);
@@ -59,10 +56,24 @@ public class StructureWallObject : MapObject<StructureWallObject>, ITraitable {
             _visual.UpdateWallState(this);
             Messenger.Broadcast(Signals.WALL_REPAIRED, this);
         }
+        if (amount < 0) {
+            //ELEMENTAL_TYPE elementalType = ELEMENTAL_TYPE.Normal;
+            //if(source != null && source is Character) {
+            //    elementalType = (source as Character).combatComponent.elementalDamage.type;
+            //}
+            CombatManager.Instance.CreateHitEffectAt(this, elementalDamageType);
+            if(currentHP > 0) {
+                Character responsibleCharacter = null;
+                if (source != null && source is Character) {
+                    responsibleCharacter = source as Character;
+                }
+                CombatManager.Instance.ApplyElementalDamage(elementalDamageType, this, responsibleCharacter);
+            }
+        }
     }
     public void OnHitByAttackFrom(Character characterThatAttacked, CombatState state, ref string attackSummary) {
-        GameManager.Instance.CreateHitEffectAt(this);
-        AdjustHP(-characterThatAttacked.attackPower, source: characterThatAttacked);
+        //GameManager.Instance.CreateHitEffectAt(this, characterThatAttacked.combatComponent.elementalDamage.type);
+        AdjustHP(-characterThatAttacked.attackPower, characterThatAttacked.combatComponent.elementalDamage.type, source: characterThatAttacked);
     }
     #endregion
 

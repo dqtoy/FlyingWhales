@@ -18,7 +18,7 @@ namespace Traits {
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = 0;
-            effects = new List<TraitEffect>();
+            //effects = new List<TraitEffect>();
         }
 
         #region Overrides

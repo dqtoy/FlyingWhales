@@ -6,6 +6,7 @@ using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using UnityEngine;
 using UnityEngine.Serialization;
+using Traits;
 
 public class PlayerManager : MonoBehaviour {
     public static PlayerManager Instance;
@@ -28,9 +29,6 @@ public class PlayerManager : MonoBehaviour {
 
     [Header("Chaos Orbs")] 
     [SerializeField] private GameObject chaosOrbPrefab;
-
-    [Header("Artifacts")] 
-    public ArtifactDataDictionary artifactDataDictionary;
     
     private void Awake() {
         Instance = this;
@@ -253,12 +251,6 @@ public class PlayerManager : MonoBehaviour {
         var typeName = UtilityScripts.Utilities.NotNormalizedConversionEnumToStringNoSpaces(data.artifactType.ToString());
         return System.Activator.CreateInstance(System.Type.GetType(typeName), data);
     }
-    public ArtifactData GetArtifactData(ARTIFACT_TYPE type) {
-        if (artifactDataDictionary.ContainsKey(type)) {
-            return artifactDataDictionary[type];
-        }
-        return null;
-    }
     #endregion
 
     #region Unit Selection
@@ -381,5 +373,4 @@ public class PlayerManager : MonoBehaviour {
         }
     }
     #endregion
-    
 }

@@ -1008,9 +1008,9 @@ public enum INTERRUPT {
     Feeling_Lazy,
     Invite_To_Make_Love,
     Plagued,
-    Poisoned,
+    Ingested_Poison,
     Mental_Break,
-    Being_Tortured
+    Being_Tortured,
 }
 
 public enum TRAIT_TYPE {
@@ -1389,6 +1389,7 @@ public enum BEHAVIOUR_COMPONENT_ATTRIBUTE { WITHIN_HOME_SETTLEMENT_ONLY, ONCE_PE
 public enum EXCLUSIVE_IDEOLOGY_CATEGORIES { RACE, GENDER, TRAIT, }
 public enum EMOTION { None, Fear, Approval, Embarassment, Disgust, Anger, Betrayal, Concern, Disappointment, Scorn, Sadness, Threatened, Arousal, Disinterest, Despair, Shock, Resentment, Disapproval, Gratefulness, }
 public enum PLAYER_ARCHETYPE { Normal, Ravager, Lich, Puppet_Master, }
+public enum ELEMENTAL_TYPE { Normal, Fire, Poison, Water, Ice, Electric }
 /// <summary>
 /// STARTED - actor is moving towards the target but is not yet performing action
 /// PERFORMING - actor arrived at the target and is performing action

@@ -99,7 +99,7 @@ public class Repair : GoapAction {
         }
     }
     public void PerTickRepairSuccess(ActualGoapNode goapNode) {
-        goapNode.poiTarget.AdjustHP(20);
+        goapNode.poiTarget.AdjustHP(20, ELEMENTAL_TYPE.Normal);
     }
     public void AfterRepairSuccess(ActualGoapNode goapNode) {
         goapNode.poiTarget.traitContainer.RemoveTrait(goapNode.poiTarget, "Burnt");

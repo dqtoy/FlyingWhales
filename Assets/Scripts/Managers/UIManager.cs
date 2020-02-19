@@ -74,7 +74,7 @@ public class UIManager : MonoBehaviour {
 
     [Space(10)]
     [Header("Combat")]
-    public CombatUI combatUI;
+    //public CombatUI combatUI;
     public CombatModeSpriteDictionary combatModeSpriteDictionary;
 
     [Space(10)]
@@ -147,7 +147,7 @@ public class UIManager : MonoBehaviour {
         Messenger.AddListener<HexTile>(Signals.TILE_HOVERED_OVER, OnHoverOverTile);
         Messenger.AddListener<HexTile>(Signals.TILE_HOVERED_OUT, OnHoverOutTile);
 
-        Messenger.AddListener<Combat>(Signals.COMBAT_DONE, OnCombatDone);
+        //Messenger.AddListener<Combat>(Signals.COMBAT_DONE, OnCombatDone);
         //Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);
         //Messenger.AddListener<IInteractable, Interaction>(Signals.ADDED_INTERACTION, OnInteractionAdded);
 
@@ -824,23 +824,6 @@ public class UIManager : MonoBehaviour {
     // }
     // #endregion
 
-    #region Combat Info
-    [Space(10)]
-    [Header("Combat History")]
-    [SerializeField] internal CombatLogsUI combatLogUI;
-    public void ShowCombatLog(Combat combat) {
-        //if(questLogUI.isShowing){
-        //	questLogUI.HideQuestLogs ();
-        //}
-        combatLogUI.ShowCombatLogs(combat);
-    }
-    //public void UpdateCombatLogs() {
-    //    if (combatLogUI.isShowing) {
-    //        combatLogUI.UpdateCombatLogs();
-    //    }
-    //}
-    #endregion
-
     #region Quest Info
     [Space(10)]
     [Header("Quest UI")]
@@ -955,11 +938,11 @@ public class UIManager : MonoBehaviour {
     }
     #endregion
 
-    #region Player
-    private void OnCombatDone(Combat combat) {
-        ShowDeveloperNotification($"Combat at <b>{combat.location.name}</b>!", 5, () => ShowCombatLog(combat));
-    }
-    #endregion
+    //#region Player
+    //private void OnCombatDone(Combat combat) {
+    //    ShowDeveloperNotification($"Combat at <b>{combat.location.name}</b>!", 5, () => ShowCombatLog(combat));
+    //}
+    //#endregion
 
     #region Inner Map
     [Header("Inner Maps")]

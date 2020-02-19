@@ -5,7 +5,7 @@ using Traits;
 
 public interface ICharacter {
     //getters
-    SIDES currentSide { get; }
+    //SIDES currentSide { get; }
     float actRate { get; set; }
     int level { get; }
     //int maxHP { get; }
@@ -64,7 +64,7 @@ public interface ICharacter {
     void LevelUp();
     void OnRemovedFromParty();
     void OnAddedToParty();
-    void SetSide(SIDES side);
+    //void SetSide(SIDES side);
     void SetRowNumber(int row);
     void AdjustSP(int amount);
     void AdjustExperience(int amount);

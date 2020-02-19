@@ -31,7 +31,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     protected Region _currentRegion;
 
     //Stats
-    protected SIDES _currentSide;
+    //protected SIDES _currentSide;
     protected int _currentHP;
     protected int _maxHP;
     protected int _level;
@@ -650,9 +650,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     #endregion
 
     //Changes character's side
-    public void SetSide(SIDES side) {
-        this._currentSide = side;
-    }
+    //public void SetSide(SIDES side) {
+    //    this._currentSide = side;
+    //}
     //Character's death
     public void SetIsDead(bool isDead) {
         _isDead = isDead;
@@ -2554,7 +2554,8 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     /// <param name="state">The combat state that the attacker is in.</param>
     /// <param name="attackSummary">reference log of what happened.</param>
     public void OnHitByAttackFrom(Character characterThatAttacked, CombatState state, ref string attackSummary) {
-        GameManager.Instance.CreateHitEffectAt(this);
+        ELEMENTAL_TYPE elementalType = characterThatAttacked.combatComponent.elementalDamage.type;
+        CombatManager.Instance.CreateHitEffectAt(this, elementalType);
         if (this.currentHP <= 0) {
             return; //if hp is already 0, do not deal damage
         }
@@ -2574,7 +2575,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
 
-        this.AdjustHP(-characterThatAttacked.attackPower, source: characterThatAttacked);
+        this.AdjustHP(-characterThatAttacked.attackPower, elementalType, source: characterThatAttacked);
         attackSummary += $"\nDealt damage {stateComponent.character.attackPower}";
         //If the hostile reaches 0 hp, evalueate if he/she dies, get knock out, or get injured
         if (this.currentHP <= 0) {
@@ -2879,20 +2880,10 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         this._currentHP = amount;
     }
     //Adjust current HP based on specified paramater, but HP must not go below 0
-    public virtual void AdjustHP(int amount, bool triggerDeath = false, object source = null) {
+    public virtual void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false, object source = null) {
         int previous = this._currentHP;
         this._currentHP += amount;
         this._currentHP = Mathf.Clamp(this._currentHP, 0, maxHP);
-         if (marker != null) {
-            if (marker.hpBarGO.activeSelf) {
-                marker.UpdateHP();
-            } else {
-                if (amount < 0 && _currentHP > 0) {
-                    //only show hp bar if hp was reduced and hp is greater than 0
-                    marker.QuickShowHPBar();
-                }
-            }    
-        }
         Messenger.Broadcast(Signals.ADJUSTED_HP, this);
         if (triggerDeath && previous != this._currentHP && this._currentHP <= 0) {
             if(source != null) {
@@ -2912,6 +2903,23 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         } else if (amount < 0 && IsHealthCriticallyLow()) {
             combatComponent.FlightAll();
             // Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, this, "critically low health");
+        }
+        if (marker != null) {
+            if (marker.hpBarGO.activeSelf) {
+                marker.UpdateHP();
+            } else {
+                if (amount < 0) {
+                    if (_currentHP > 0) {
+                        //only show hp bar if hp was reduced and hp is greater than 0
+                        marker.QuickShowHPBar();
+                    }
+                    Character responsibleCharacter = null;
+                    if (source is Character) {
+                        responsibleCharacter = source as Character;
+                    }
+                    CombatManager.Instance.ApplyElementalDamage(elementalDamageType, this, responsibleCharacter);
+                }
+            }
         }
     }
     public void AdjustAttackMod(int amount) {
@@ -2986,7 +2994,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
     public void HPRecovery(float maxHPPercentage) {
         if (doNotRecoverHP <= 0 && currentHP < maxHP && currentHP > 0) {
-            AdjustHP(Mathf.CeilToInt(maxHPPercentage * maxHP));
+            AdjustHP(Mathf.CeilToInt(maxHPPercentage * maxHP), ELEMENTAL_TYPE.Normal);
         }
     }
     public void AdjustSpeedMod(int amount) {

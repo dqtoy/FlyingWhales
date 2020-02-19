@@ -83,6 +83,7 @@ public class ConsoleMenu : UIMenu {
             {"/emotion", TriggerEmotion },
             // {"/adjust_resource", TriggerEmotion },
             {"/change_archetype", ChangeArchetype },
+            {"/elemental_damage", ChangeCharacterElementalDamage },
         };
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
@@ -1043,6 +1044,29 @@ public class ConsoleMenu : UIMenu {
         }
         CharacterManager.Instance.TriggerEmotion(emotion.emotionType, character1, character2);
         AddSuccessMessage($"Trigger {emotion.name} Emotion of {character1.name} towards {character2.name}");
+    }
+    private void ChangeCharacterElementalDamage(string[] parameters) {
+        if (parameters.Length != 2) { //parameters command, item
+            AddCommandHistory(consoleLbl.text);
+            AddErrorMessage("There was an error in the command format of ChangeCharacterElementalDamage");
+            return;
+        }
+        string characterParameterString = parameters[0];
+        string elementalParameterString = parameters[1];
+
+        Character character = CharacterManager.Instance.GetCharacterByName(characterParameterString);
+
+        if (character == null) {
+
+        }
+        ELEMENTAL_TYPE elementalType = ELEMENTAL_TYPE.Normal;
+        if(!System.Enum.TryParse(elementalParameterString, out elementalType)) {
+            AddErrorMessage($"There is no elemental damage type {elementalParameterString}");
+            return;
+        }
+
+        character.combatComponent.SetElementalDamage(elementalType);
+        AddSuccessMessage($"Changed {character.name} elemental damage to {elementalParameterString}");
     }
     #endregion
 

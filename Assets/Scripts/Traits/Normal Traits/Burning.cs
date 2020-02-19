@@ -18,8 +18,8 @@ namespace Traits {
             description = "This character is on fire!";
             type = TRAIT_TYPE.STATUS;
             effect = TRAIT_EFFECT.NEGATIVE;
-            ticksDuration = 0;
-            effects = new List<TraitEffect>();
+            ticksDuration = GameManager.Instance.GetTicksBasedOnHour(12);
+            //effects = new List<TraitEffect>();
         }
 
         #region Overrides
@@ -57,6 +57,10 @@ namespace Traits {
                 }
             } 
             sourceOfBurning.RemoveObjectOnFire(owner);
+        }
+        public override void OnRemoveTraitBySchedule(ITraitable removedFrom) {
+            base.OnRemoveTraitBySchedule(removedFrom);
+            removedFrom.traitContainer.AddTrait(removedFrom, "Burnt");
         }
         public override bool OnDeath(Character character) {
             //base.OnDeath(character);
@@ -97,6 +101,30 @@ namespace Traits {
         public override string GetTestingData() {
             return sourceOfBurning.ToString();
         }
+        public override void ExecuteActionPreEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) {
+            base.ExecuteActionPreEffects(action, goapNode);
+            if (goapNode.action.actionCategory == ACTION_CATEGORY.CONSUME || goapNode.action.actionCategory == ACTION_CATEGORY.DIRECT) {
+                if (Random.Range(0, 100) < 10) { //5
+                    Trait trait = null;
+                    goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Burning", out trait);
+                    if (trait != null) {
+                        (trait as Burning).SetSourceOfBurning(sourceOfBurning, goapNode.actor);
+                    }
+                }
+            }
+        }
+        public override void ExecuteActionPerTickEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) {
+            base.ExecuteActionPerTickEffects(action, goapNode);
+            if (goapNode.action.actionCategory == ACTION_CATEGORY.CONSUME || goapNode.action.actionCategory == ACTION_CATEGORY.DIRECT) {
+                if (Random.Range(0, 100) < 10) { //5
+                    Trait trait = null;
+                    goapNode.actor.traitContainer.AddTrait(goapNode.actor, "Burning", out trait);
+                    if (trait != null) {
+                        (trait as Burning).SetSourceOfBurning(sourceOfBurning, goapNode.actor);
+                    }
+                }
+            }
+        }
         // public override void OnTickEnded() {
         //     base.OnTickEnded();
         //     PerTickEnded();
@@ -126,6 +154,7 @@ namespace Traits {
                 return;
             }
             if (Random.Range(0, 100) < 10) { //5
+                //TODO: CAN BE OPTIMIZED?
                 List<ITraitable> choices = new List<ITraitable>();
                 LocationGridTile origin = owner.gridTileLocation;
                 choices.AddRange(origin.GetTraitablesOnTileWithTrait("Flammable"));
@@ -136,34 +165,36 @@ namespace Traits {
                 choices = choices.Where(x => !x.traitContainer.HasTrait("Burning", "Burnt", "Wet", "Fireproof")).ToList();
                 if (choices.Count > 0) {
                     ITraitable chosen = choices[Random.Range(0, choices.Count)];
-                    Burning burning = new Burning();
-                    burning.SetSourceOfBurning(sourceOfBurning, chosen);
-                    chosen.traitContainer.AddTrait(chosen, burning);
+                    Trait trait = null;
+                    chosen.traitContainer.AddTrait(chosen, "Burning", out trait);
+                    if(trait != null) {
+                        (trait as Burning).SetSourceOfBurning(sourceOfBurning, chosen);
+                    }
                 }
             }
 
-            owner.AdjustHP(-(int)(owner.maxHP * 0.02f), true, this);
-            if (owner is Character) {
-                //Burning characters reduce their current hp by 2% of maxhp every tick. 
-                //They also have a 6% chance to remove Burning effect but will not gain a Burnt trait afterwards. 
-                //If a character dies and becomes a corpse, it may still continue to burn.
-                if (Random.Range(0, 100) < 6) {
-                    owner.traitContainer.RemoveTrait(owner, this);
-                }
-            } else {
-                if (owner.currentHP == 0) {
-                    owner.traitContainer.RemoveTrait(owner, this);
-                    // owner.traitContainer.AddTrait(owner, "Burnt");
-                } else {
-                    //Every tick, a Burning tile or object also has a 3% chance to remove Burning effect. 
-                    //Afterwards, it will have a Burnt trait, which disables its Flammable trait (meaning it can no longer gain a Burning status).
-                    if (Random.Range(0, 100) < 3) {
-                        owner.traitContainer.RemoveTrait(owner, this);
-                        owner.traitContainer.AddTrait(owner, "Burnt");
-                    }
-                }
+            owner.AdjustHP(-(int)(owner.maxHP * 0.02f), ELEMENTAL_TYPE.Normal, true, this);
+            //if (owner is Character) {
+            //    //Burning characters reduce their current hp by 2% of maxhp every tick. 
+            //    //They also have a 6% chance to remove Burning effect but will not gain a Burnt trait afterwards. 
+            //    //If a character dies and becomes a corpse, it may still continue to burn.
+            //    if (Random.Range(0, 100) < 6) {
+            //        owner.traitContainer.RemoveTrait(owner, this);
+            //    }
+            //} else {
+            //    if (owner.currentHP == 0) {
+            //        owner.traitContainer.RemoveTrait(owner, this);
+            //        // owner.traitContainer.AddTrait(owner, "Burnt");
+            //    } else {
+            //        //Every tick, a Burning tile or object also has a 3% chance to remove Burning effect. 
+            //        //Afterwards, it will have a Burnt trait, which disables its Flammable trait (meaning it can no longer gain a Burning status).
+            //        if (Random.Range(0, 100) < 3) {
+            //            owner.traitContainer.RemoveTrait(owner, this);
+            //            owner.traitContainer.AddTrait(owner, "Burnt");
+            //        }
+            //    }
                 
-            }
+            //}
         }
 
     }

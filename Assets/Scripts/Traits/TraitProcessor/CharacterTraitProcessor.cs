@@ -146,30 +146,30 @@ namespace Traits {
             else if (trait.name == "Ashamed") {
                 character.needsComponent.AdjustComfortDecreaseRate(5);
             }
-            if (trait.effects != null) {
-                for (int i = 0; i < trait.effects.Count; i++) {
-                    TraitEffect traitEffect = trait.effects[i];
-                    if (!traitEffect.hasRequirement && traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF) {
-                        if (traitEffect.isPercentage) {
-                            if (traitEffect.stat == STAT.ATTACK) {
-                                character.AdjustAttackPercentMod((int)traitEffect.amount);
-                            } else if (traitEffect.stat == STAT.HP) {
-                                character.AdjustMaxHPPercentMod((int)traitEffect.amount);
-                            } else if (traitEffect.stat == STAT.SPEED) {
-                                character.AdjustSpeedPercentMod((int)traitEffect.amount);
-                            }
-                        } else {
-                            if (traitEffect.stat == STAT.ATTACK) {
-                                character.AdjustAttackMod((int)traitEffect.amount);
-                            } else if (traitEffect.stat == STAT.HP) {
-                                character.AdjustMaxHPMod((int)traitEffect.amount);
-                            } else if (traitEffect.stat == STAT.SPEED) {
-                                character.AdjustSpeedMod((int)traitEffect.amount);
-                            }
-                        }
-                    }
-                }
-            }
+            //if (trait.effects != null) {
+            //    for (int i = 0; i < trait.effects.Count; i++) {
+            //        TraitEffect traitEffect = trait.effects[i];
+            //        if (!traitEffect.hasRequirement && traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF) {
+            //            if (traitEffect.isPercentage) {
+            //                if (traitEffect.stat == STAT.ATTACK) {
+            //                    character.AdjustAttackPercentMod((int)traitEffect.amount);
+            //                } else if (traitEffect.stat == STAT.HP) {
+            //                    character.AdjustMaxHPPercentMod((int)traitEffect.amount);
+            //                } else if (traitEffect.stat == STAT.SPEED) {
+            //                    character.AdjustSpeedPercentMod((int)traitEffect.amount);
+            //                }
+            //            } else {
+            //                if (traitEffect.stat == STAT.ATTACK) {
+            //                    character.AdjustAttackMod((int)traitEffect.amount);
+            //                } else if (traitEffect.stat == STAT.HP) {
+            //                    character.AdjustMaxHPMod((int)traitEffect.amount);
+            //                } else if (traitEffect.stat == STAT.SPEED) {
+            //                    character.AdjustSpeedMod((int)traitEffect.amount);
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
             Messenger.Broadcast(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, character as IPointOfInterest);
         }
 
@@ -263,30 +263,30 @@ namespace Traits {
                 character.needsComponent.AdjustComfortDecreaseRate(-5);
             }
 
-            if (trait.effects != null) {
-                for (int i = 0; i < trait.effects.Count; i++) {
-                    TraitEffect traitEffect = trait.effects[i];
-                    if (!traitEffect.hasRequirement && traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF) {
-                        if (traitEffect.isPercentage) {
-                            if (traitEffect.stat == STAT.ATTACK) {
-                                character.AdjustAttackPercentMod(-(int)traitEffect.amount);
-                            } else if (traitEffect.stat == STAT.HP) {
-                                character.AdjustMaxHPPercentMod(-(int)traitEffect.amount);
-                            } else if (traitEffect.stat == STAT.SPEED) {
-                                character.AdjustSpeedPercentMod(-(int)traitEffect.amount);
-                            }
-                        } else {
-                            if (traitEffect.stat == STAT.ATTACK) {
-                                character.AdjustAttackMod(-(int)traitEffect.amount);
-                            } else if (traitEffect.stat == STAT.HP) {
-                                character.AdjustMaxHPMod(-(int)traitEffect.amount);
-                            } else if (traitEffect.stat == STAT.SPEED) {
-                                character.AdjustSpeedMod(-(int)traitEffect.amount);
-                            }
-                        }
-                    }
-                }
-            }
+            //if (trait.effects != null) {
+            //    for (int i = 0; i < trait.effects.Count; i++) {
+            //        TraitEffect traitEffect = trait.effects[i];
+            //        if (!traitEffect.hasRequirement && traitEffect.target == TRAIT_REQUIREMENT_TARGET.SELF) {
+            //            if (traitEffect.isPercentage) {
+            //                if (traitEffect.stat == STAT.ATTACK) {
+            //                    character.AdjustAttackPercentMod(-(int)traitEffect.amount);
+            //                } else if (traitEffect.stat == STAT.HP) {
+            //                    character.AdjustMaxHPPercentMod(-(int)traitEffect.amount);
+            //                } else if (traitEffect.stat == STAT.SPEED) {
+            //                    character.AdjustSpeedPercentMod(-(int)traitEffect.amount);
+            //                }
+            //            } else {
+            //                if (traitEffect.stat == STAT.ATTACK) {
+            //                    character.AdjustAttackMod(-(int)traitEffect.amount);
+            //                } else if (traitEffect.stat == STAT.HP) {
+            //                    character.AdjustMaxHPMod(-(int)traitEffect.amount);
+            //                } else if (traitEffect.stat == STAT.SPEED) {
+            //                    character.AdjustSpeedMod(-(int)traitEffect.amount);
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
             
             Messenger.Broadcast(Signals.CHECK_APPLICABILITY_OF_ALL_JOBS_TARGETING, character as IPointOfInterest);
         }

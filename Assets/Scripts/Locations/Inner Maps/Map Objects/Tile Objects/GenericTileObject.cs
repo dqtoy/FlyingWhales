@@ -73,7 +73,7 @@ public class GenericTileObject : TileObject {
     public override string ToString() {
         return $"Generic Obj at tile {gridTileLocation}";
     }
-    public override void AdjustHP(int amount, bool triggerDeath = false, object source = null) {
+    public override void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false, object source = null) {
         if (currentHP == 0 && amount < 0) {
             return; //hp is already at minimum, do not allow any more negative adjustments
         }
@@ -89,6 +89,13 @@ public class GenericTileObject : TileObject {
         } else if (currentHP == maxHP) {
             //floor has been fully repaired
             structureLocation.OnTileRepaired(gridTileLocation);
+        }
+        if (amount < 0 && currentHP > 0) {
+            Character responsibleCharacter = null;
+            if (source != null && source is Character) {
+                responsibleCharacter = source as Character;
+            }
+            CombatManager.Instance.ApplyElementalDamage(elementalDamageType, this, responsibleCharacter);
         }
     }
     public override bool CanBeDamaged() {

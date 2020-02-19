@@ -46,7 +46,7 @@ public class Stumble : GoapAction {
         int actualHPToLose = Mathf.CeilToInt(goapNode.actor.maxHP * percentMaxHPToLose);
         Debug.Log(
             $"Stumble of {goapNode.actor.name} percent: {percentMaxHPToLose}, max hp: {goapNode.actor.maxHP}, lost hp: {actualHPToLose}");
-        goapNode.actor.AdjustHP(-actualHPToLose);
+        goapNode.actor.AdjustHP(-actualHPToLose, ELEMENTAL_TYPE.Normal);
     }
     public void AfterStumbleSuccess(ActualGoapNode goapNode) {
         if (goapNode.actor.currentHP <= 0) {

@@ -21,37 +21,44 @@ public class MeteorVisual : MonoBehaviour {
             meteorExplosionParticles[i].Play();
         }
         List<ITraitable> traitables = new List<ITraitable>();
-        List<LocationGridTile> tiles = targetTile.parentMap.GetTilesInRadius(targetTile, radius, 0, true);
+        List<LocationGridTile> tiles = targetTile.GetTilesInRadius(radius, 0, true);
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile tile = tiles[i];
             traitables.AddRange(tile.GetTraitablesOnTile());
         }
         // flammables = flammables.Where(x => !x.traitContainer.HasTrait("Burning", "Burnt", "Wet", "Fireproof")).ToList();
-        BurningSource bs = new BurningSource(InnerMapManager.Instance.currentlyShowingLocation);
+        BurningSource bs = null;
         for (int i = 0; i < traitables.Count; i++) {
             ITraitable traitable = traitables[i];
             if (traitable is TileObject obj) {
                 GameManager.Instance.CreateExplodeEffectAt(obj.gridTileLocation);
                 if (obj.tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
-                    obj.AdjustHP(-obj.currentHP);
+                    obj.AdjustHP(-obj.currentHP, ELEMENTAL_TYPE.Fire);
                     if (obj.gridTileLocation == null) {
                         continue; //object was destroyed, do not add burning trait
                     }
                 }
             } else if (traitable is Character character) {
                 GameManager.Instance.CreateExplodeEffectAt(character.gridTileLocation);
-                character.AdjustHP(-(int)(character.maxHP * 0.4f), true);
+                character.AdjustHP(-(int)(character.maxHP * 0.4f), ELEMENTAL_TYPE.Fire, true);
             } else {
-                traitable.AdjustHP(-traitable.currentHP);
+                traitable.AdjustHP(-traitable.currentHP, ELEMENTAL_TYPE.Fire);
             }
-            if (traitable.currentHP > 0 && Random.Range(0, 100) < 60) {
-                if (traitable.traitContainer.HasTrait("Flammable") &&
-                    !traitable.traitContainer.HasTrait("Burning", "Burnt", "Wet", "Fireproof")) {
-                    Burning burning = new Burning();
-                    burning.SetSourceOfBurning(bs, traitable);
-                    traitable.traitContainer.AddTrait(traitable, burning);
+            Burning burningTrait = traitable.traitContainer.GetNormalTrait<Burning>();
+            if(burningTrait != null && burningTrait.sourceOfBurning == null) {
+                if(bs == null) {
+                    bs = new BurningSource(InnerMapManager.Instance.currentlyShowingLocation);
                 }
+                burningTrait.SetSourceOfBurning(bs, traitable);
             }
+            //if (traitable.currentHP > 0 && Random.Range(0, 100) < 60) {
+            //    if (traitable.traitContainer.HasTrait("Flammable") &&
+            //        !traitable.traitContainer.HasTrait("Burning", "Burnt", "Wet", "Fireproof")) {
+            //        Burning burning = new Burning();
+            //        burning.SetSourceOfBurning(bs, traitable);
+            //        traitable.traitContainer.AddTrait(traitable, burning);
+            //    }
+            //}
         }
         InnerMapCameraMove.Instance.ShakeCamera();
         GameManager.Instance.StartCoroutine(ExpireCoroutine(gameObject));

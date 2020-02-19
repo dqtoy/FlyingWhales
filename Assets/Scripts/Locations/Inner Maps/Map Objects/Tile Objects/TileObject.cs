@@ -385,12 +385,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
         return null;
     }
-    public virtual void AdjustHP(int amount, bool triggerDeath = false, object source = null) {
+    public virtual void AdjustHP(int amount, ELEMENTAL_TYPE elementalDamageType, bool triggerDeath = false, object source = null) {
         if (currentHP == 0 && amount < 0) {
             return; //hp is already at minimum, do not allow any more negative adjustments
-        }
-        if (amount < 0 && source != null) {
-            GameManager.Instance.CreateHitEffectAt(this);
         }
         currentHP += amount;
         currentHP = Mathf.Clamp(currentHP, 0, maxHP);
@@ -407,13 +404,28 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         } else if (currentHP == maxHP) {
             Messenger.Broadcast(Signals.OBJECT_REPAIRED, this as IPointOfInterest);
         }
+        if (amount < 0 && source != null) {
+            //ELEMENTAL_TYPE elementalType = ELEMENTAL_TYPE.Normal;
+            //if (source is Character) {
+            //    elementalType = (source as Character).combatComponent.elementalDamage.type;
+            //}
+            CombatManager.Instance.CreateHitEffectAt(this, elementalDamageType);
+            if(currentHP > 0) {
+                Character responsibleCharacter = null;
+                if (source is Character) {
+                    responsibleCharacter = source as Character;
+                }
+                CombatManager.Instance.ApplyElementalDamage(elementalDamageType, this, responsibleCharacter);
+            }
+        }
     }
     public void OnHitByAttackFrom(Character characterThatAttacked, CombatState state, ref string attackSummary) {
-        GameManager.Instance.CreateHitEffectAt(this);
+        ELEMENTAL_TYPE elementalType = characterThatAttacked.combatComponent.elementalDamage.type;
+        //GameManager.Instance.CreateHitEffectAt(this, elementalType);
         if (currentHP <= 0) {
             return; //if hp is already 0, do not deal damage
         }
-        AdjustHP(-characterThatAttacked.attackPower, source: characterThatAttacked);
+        AdjustHP(-characterThatAttacked.attackPower, elementalType, source: characterThatAttacked);
         attackSummary += $"\nDealt damage {characterThatAttacked.attackPower}";
         if (currentHP <= 0) {
             attackSummary += $"\n{name}'s hp has reached 0.";

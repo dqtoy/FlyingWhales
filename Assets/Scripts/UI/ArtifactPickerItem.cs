@@ -26,7 +26,7 @@ public class ArtifactPickerItem : NameplateItem<Artifact> {
     //}
 
     private void UpdateVisuals() {
-        portrait.sprite = PlayerManager.Instance.GetArtifactData(artifact.type).portrait;
+        portrait.sprite = ScriptableObjectsManager.Instance.GetArtifactData(artifact.type).portrait;
         mainLbl.text = artifact.name;
         subLbl.text = string.Empty;
     }

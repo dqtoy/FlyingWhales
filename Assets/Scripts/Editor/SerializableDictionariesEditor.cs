@@ -69,5 +69,5 @@ public class LandmarkTypeListStoragePropertyDrawer : SerializableDictionaryStora
 public class GameObjectListStoragePropertyDrawer : SerializableDictionaryStoragePropertyDrawer { }
 [CustomPropertyDrawer(typeof(ArtifactDataDictionary))]
 public class ArtifactDataDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
-
-
+[CustomPropertyDrawer(typeof(ElementalDamageDataDictionary))]
+public class ElementalDamageDataDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }

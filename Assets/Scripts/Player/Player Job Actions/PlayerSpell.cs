@@ -265,13 +265,13 @@ public class SpellData {
     /// </summary>
     public virtual void ShowRange(LocationGridTile tile) {
         if(abilityRadius > 0) {
-            List<LocationGridTile> tiles = tile.parentMap.GetTilesInRadius(tile, abilityRadius, includeCenterTile: true, includeTilesInDifferentStructure: true);
+            List<LocationGridTile> tiles = tile.GetTilesInRadius(abilityRadius, includeCenterTile: true, includeTilesInDifferentStructure: true);
             InnerMapManager.Instance.HighlightTiles(tiles);
         }
     }
     public virtual void HideRange(LocationGridTile tile) {
         if (abilityRadius > 0) {
-            List<LocationGridTile> tiles = tile.parentMap.GetTilesInRadius(tile, abilityRadius, includeCenterTile: true, includeTilesInDifferentStructure: true);
+            List<LocationGridTile> tiles = tile.GetTilesInRadius(abilityRadius, includeCenterTile: true, includeTilesInDifferentStructure: true);
             InnerMapManager.Instance.UnhighlightTiles(tiles);
         }
     }

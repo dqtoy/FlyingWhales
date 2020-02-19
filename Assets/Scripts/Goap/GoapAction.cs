@@ -214,10 +214,17 @@ public class GoapAction : IReactable {
         return false;
     }
     public bool CanSatisfyRequirements(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        bool requirementActionSatisfied = AreRequirementsSatisfied(actor, poiTarget, otherData);
+        bool requirementActionSatisfied = true;
+        if (poiTarget.poiType != POINT_OF_INTEREST_TYPE.CHARACTER && poiTarget.traitContainer.HasTrait("Frozen") && (actionCategory == ACTION_CATEGORY.DIRECT || actionCategory == ACTION_CATEGORY.CONSUME)) {
+            //Object - Disable all advertised Direct or Consume type actions except for combat.
+            requirementActionSatisfied = false;
+        }
         if (requirementActionSatisfied) {
-            if (goapType.IsDirectCombatAction()) { //Reference: https://trello.com/c/uxZxcOEo/2343-critical-characters-shouldnt-attempt-hostile-actions
-                requirementActionSatisfied = actor.IsCombatReady();
+            requirementActionSatisfied = AreRequirementsSatisfied(actor, poiTarget, otherData);
+            if (requirementActionSatisfied) {
+                if (goapType.IsDirectCombatAction()) { //Reference: https://trello.com/c/uxZxcOEo/2343-critical-characters-shouldnt-attempt-hostile-actions
+                    requirementActionSatisfied = actor.IsCombatReady();
+                }
             }
         }
         return requirementActionSatisfied; //&& (validTimeOfDays == null || validTimeOfDays.Contains(GameManager.GetCurrentTimeInWordsOfTick()));

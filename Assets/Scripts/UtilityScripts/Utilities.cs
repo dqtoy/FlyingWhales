@@ -31,7 +31,7 @@ namespace UtilityScripts {
         public static int lastMonsterID = 0;
         public static int lastPartyID = 0;
         public static int lastSquadID = 0;
-        public static int lastCharacterSimID = 0;
+        //public static int lastCharacterSimID = 0;
         //public static int lastInteractionID = 0;
         public static int lastTileObjectID = 0;
         public static int lastStructureID = 0;
@@ -95,10 +95,12 @@ namespace UtilityScripts {
             } else if (obj is Party) {
                 lastPartyID += 1;
                 return lastPartyID;
-            } else if (obj is CharacterSim) {
-                lastCharacterSimID += 1;
-                return lastCharacterSimID;
-            } else if (obj is TileObject) {
+            } 
+            //else if (obj is CharacterSim) {
+            //    lastCharacterSimID += 1;
+            //    return lastCharacterSimID;
+            //} 
+            else if (obj is TileObject) {
                 lastTileObjectID += 1;
                 return lastTileObjectID;
             } else if (obj is LocationStructure) {
@@ -144,9 +146,11 @@ namespace UtilityScripts {
                 if (lastAreaID <= idToUse) { lastAreaID = idToUse; }
             } else if (obj is Party) {
                 if (lastPartyID <= idToUse) { lastPartyID = idToUse; }
-            } else if (obj is CharacterSim) {
-                if (lastCharacterSimID <= idToUse) { lastCharacterSimID = idToUse; }
-            } else if (obj is LocationStructure) {
+            }
+            //else if (obj is CharacterSim) {
+            //    if (lastCharacterSimID <= idToUse) { lastCharacterSimID = idToUse; }
+            //} 
+            else if (obj is LocationStructure) {
                 if (lastStructureID <= idToUse) { lastStructureID = idToUse; }
             } else if (obj is TileObject) {
                 if (lastTileObjectID <= idToUse) { lastTileObjectID = idToUse; }

@@ -10,7 +10,7 @@ namespace Interrupts {
             "Glutton", "Suspicious", "Music Hater", "Evil"
         };
         private readonly string[] _negativeStatus = new[] {
-            "Injured", "Sick", "Traumatized", "Spooked", "Unconscious"
+            "Injured", "Traumatized", "Spooked", "Unconscious" //, "Sick"
         };
         
         public BeingTortured() : base(INTERRUPT.Being_Tortured) {

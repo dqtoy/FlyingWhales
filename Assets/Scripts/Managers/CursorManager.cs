@@ -151,7 +151,7 @@ public class CursorManager : MonoBehaviour {
                     LocationGridTile hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
                     if (hoveredTile != null) {
                         SetCursorTo(Cursor_Type.Check);
-                        List<LocationGridTile> highlightTiles = hoveredTile.parentMap.GetTilesInRadius(hoveredTile, ability.abilityRadius, includeCenterTile: true, includeTilesInDifferentStructure: true);
+                        List<LocationGridTile> highlightTiles = hoveredTile.GetTilesInRadius(ability.abilityRadius, includeCenterTile: true, includeTilesInDifferentStructure: true);
                         if (InnerMapManager.Instance.currentlyHighlightedTiles != null) {
                             InnerMapManager.Instance.UnhighlightTiles();
                             InnerMapManager.Instance.HighlightTiles(highlightTiles);

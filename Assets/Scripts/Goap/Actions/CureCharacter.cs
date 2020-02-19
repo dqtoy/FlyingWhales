@@ -16,7 +16,7 @@ public class CureCharacter : GoapAction {
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
         AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, TILE_OBJECT_TYPE.HEALING_POTION.ToString(), false, GOAP_EFFECT_TARGET.ACTOR), HasItemInInventory);
-        AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.REMOVE_TRAIT, "Sick", false, GOAP_EFFECT_TARGET.TARGET));
+        AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.REMOVE_TRAIT, "Poisoned", false, GOAP_EFFECT_TARGET.TARGET));
         AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.REMOVE_TRAIT, "Infected", false, GOAP_EFFECT_TARGET.TARGET));
         AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.REMOVE_TRAIT, "Plagued", false, GOAP_EFFECT_TARGET.TARGET));
 
@@ -81,7 +81,7 @@ public class CureCharacter : GoapAction {
     public void AfterCureSuccess(ActualGoapNode goapNode) {
         Character targetCharacter = goapNode.poiTarget as Character;
         targetCharacter.relationshipContainer.AdjustOpinion(targetCharacter, goapNode.actor, "Base", 3);
-        goapNode.poiTarget.traitContainer.RemoveTraitAndStacks(goapNode.poiTarget, "Sick", goapNode.actor);
+        goapNode.poiTarget.traitContainer.RemoveTraitAndStacks(goapNode.poiTarget, "Poisoned", goapNode.actor);
         goapNode.poiTarget.traitContainer.RemoveTraitAndStacks(goapNode.poiTarget, "Plagued", goapNode.actor);
         goapNode.poiTarget.traitContainer.RemoveTraitAndStacks(goapNode.poiTarget, "Infected", goapNode.actor);
         //**After Effect 2**: Remove Healing Potion from Actor's Inventory
@@ -94,6 +94,16 @@ public class CureCharacter : GoapAction {
     private bool HasItemInInventory(Character actor, IPointOfInterest poiTarget, object[] otherData) {
         return actor.HasItem(TILE_OBJECT_TYPE.HEALING_POTION);
         //return true;
+    }
+    #endregion
+
+    #region Requirements
+    protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) {
+        bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
+        if (satisfied) {
+            return poiTarget is Character;
+        }
+        return false;
     }
     #endregion
 
@@ -144,6 +154,6 @@ public class CureCharacterData : GoapActionData {
         requirementAction = Requirement;
     }
     private bool Requirement(Character actor, IPointOfInterest poiTarget, object[] otherData) {
-        return poiTarget.traitContainer.HasTrait("Sick", "Infected", "Plagued");
+        return poiTarget.traitContainer.HasTrait("Poisoned", "Infected", "Plagued");
     }
 }

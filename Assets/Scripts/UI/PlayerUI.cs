@@ -110,8 +110,8 @@ public class PlayerUI : MonoBehaviour {
 
     private bool _isScrollingUp;
     private bool _isScrollingDown;
-    public CombatGrid attackGridReference { get; private set; }
-    public CombatGrid defenseGridReference { get; private set; }
+    //public CombatGrid attackGridReference { get; private set; }
+    //public CombatGrid defenseGridReference { get; private set; }
 
     private PlayerJobActionButton[] interventionAbilityBtns;
     public string harassRaidInvade { get; private set; }

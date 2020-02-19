@@ -21,7 +21,7 @@ public class Lullaby : PlayerSpell {
     public override void ActivateAction(LocationGridTile targetTile) {
         base.ActivateAction(targetTile);
         //List<ITraitable> flammables = new List<ITraitable>();
-        List<LocationGridTile> tiles = targetTile.parentMap.GetTilesInRadius(targetTile, abilityRadius, includeCenterTile: true, includeTilesInDifferentStructure: true);
+        List<LocationGridTile> tiles = targetTile.GetTilesInRadius(abilityRadius, includeCenterTile: true, includeTilesInDifferentStructure: true);
 
         List<Character> charactersInHighlightedTiles = new List<Character>();
         for (int i = 0; i < InnerMapManager.Instance.currentlyShowingLocation.charactersAtLocation.Count; i++) {
@@ -62,12 +62,12 @@ public class Lullaby : PlayerSpell {
     }
     public override void ShowRange(LocationGridTile targetTile) {
         base.ShowRange(targetTile);
-        List<LocationGridTile> tiles = targetTile.parentMap.GetTilesInRadius(targetTile, abilityRadius, includeCenterTile: true, includeTilesInDifferentStructure: true);
+        List<LocationGridTile> tiles = targetTile.GetTilesInRadius(abilityRadius, includeCenterTile: true, includeTilesInDifferentStructure: true);
         InnerMapManager.Instance.HighlightTiles(tiles);
     }
     public override void HideRange(LocationGridTile targetTile) {
         base.HideRange(targetTile);
-        List<LocationGridTile> tiles = targetTile.parentMap.GetTilesInRadius(targetTile, abilityRadius, includeCenterTile: true, includeTilesInDifferentStructure: true);
+        List<LocationGridTile> tiles = targetTile.GetTilesInRadius(abilityRadius, includeCenterTile: true, includeTilesInDifferentStructure: true);
         InnerMapManager.Instance.UnhighlightTiles(tiles);
     }
     #endregion

@@ -215,39 +215,6 @@ namespace Inner_Maps {
             }
             return tiles;
         }
-        public List<LocationGridTile> GetTilesInRadius(LocationGridTile centerTile, int radius, int radiusLimit = 0, bool includeCenterTile = false, bool includeTilesInDifferentStructure = false) {
-            List<LocationGridTile> tiles = new List<LocationGridTile>();
-            int mapSizeX = map.GetUpperBound(0);
-            int mapSizeY = map.GetUpperBound(1);
-            int x = centerTile.localPlace.x;
-            int y = centerTile.localPlace.y;
-            if (includeCenterTile) {
-                tiles.Add(centerTile);
-            }
-            int xLimitLower = x - radiusLimit;
-            int xLimitUpper = x + radiusLimit;
-            int yLimitLower = y - radiusLimit;
-            int yLimitUpper = y + radiusLimit;
-
-
-            for (int dx = x - radius; dx <= x + radius; dx++) {
-                for (int dy = y - radius; dy <= y + radius; dy++) {
-                    if(dx >= 0 && dx <= mapSizeX && dy >= 0 && dy <= mapSizeY) {
-                        if(dx == x && dy == y) {
-                            continue;
-                        }
-                        if(radiusLimit > 0 && dx > xLimitLower && dx < xLimitUpper && dy > yLimitLower && dy < yLimitUpper) {
-                            continue;
-                        }
-                        LocationGridTile result = map[dx, dy];
-                        if(result.structure == null) { continue; } //do not include tiles with no structures
-                        if(!includeTilesInDifferentStructure && result.structure != centerTile.structure) { continue; }
-                        tiles.Add(result);
-                    }
-                }
-            }
-            return tiles;
-        }
         public LocationGridTile GetRandomUnoccupiedEdgeTile() {
             List<LocationGridTile> unoccupiedEdgeTiles = new List<LocationGridTile>();
             for (int i = 0; i < allEdgeTiles.Count; i++) {

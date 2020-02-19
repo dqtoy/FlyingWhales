@@ -11,6 +11,7 @@ public class CombatComponent {
     public List<IPointOfInterest> avoidInRange { get; private set; } //POI's in this characters hostility collider
     public Dictionary<Character, bool> lethalCharacters { get; private set; }
     public string avoidReason { get; private set; }
+    public ElementalDamageData elementalDamage { get; private set; }
     private bool willProcessCombat;
     
     // public ActualGoapNode combatConnectedActionNode { get; private set; }
@@ -357,6 +358,9 @@ public class CombatComponent {
     }
     public void SetCombatMode(COMBAT_MODE mode) {
         combatMode = mode;
+    }
+    public void SetElementalDamage(ELEMENTAL_TYPE elementalType) {
+        elementalDamage = ScriptableObjectsManager.Instance.GetElementalDamageData(elementalType);
     }
     // public void SetCombatConnectedActionNode(ActualGoapNode node) {
     //     combatConnectedActionNode = node;

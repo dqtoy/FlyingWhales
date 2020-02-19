@@ -439,7 +439,19 @@ public class GameManager : MonoBehaviour {
     //}
 
     #region Particle Effects
-    public void CreateElectricEffectAt(Character character) {
+    public void CreateElectricEffectAt(IPointOfInterest poi) {
+        if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+            CreateElectricEffectAt(poi as Character);
+        } else {
+            if (poi.gridTileLocation == null) {
+                return;
+            }
+            GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(electricEffectPrefab.name, Vector3.zero, Quaternion.identity, poi.gridTileLocation.parentMap.objectsParent);
+            go.transform.localPosition = poi.gridTileLocation.centeredLocalLocation;
+            go.SetActive(true);
+        }
+    }
+    private void CreateElectricEffectAt(Character character) {
         //StartCoroutine(ElectricEffect(character));
         if (character.marker == null) {
             return;
@@ -447,12 +459,6 @@ public class GameManager : MonoBehaviour {
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(electricEffectPrefab.name, Vector3.zero, Quaternion.identity, character.marker.transform);
         go.transform.localPosition = Vector3.zero;
         go.SetActive(true);
-    }
-    public void CreateHitEffectAt(IDamageable poi) {
-        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(hitEffectPrefab.name, Vector3.zero, Quaternion.identity, poi.gridTileLocation.parentMap.objectsParent);
-        go.transform.position = poi.projectileReceiver.transform.position;
-        go.SetActive(true);
-       
     }
     public void CreateFireEffectAt(IPointOfInterest poi) {
         if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
@@ -466,7 +472,7 @@ public class GameManager : MonoBehaviour {
             go.SetActive(true);
         }
     }
-    public void CreateFireEffectAt(Character character) {
+    private void CreateFireEffectAt(Character character) {
         if (character.marker == null) {
             return;
         }
