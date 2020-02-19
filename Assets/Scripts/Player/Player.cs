@@ -260,7 +260,7 @@ public class Player : ILeader {
     private void OnSpellCast(KeyCode key) {
         if (key == KeyCode.Mouse0) {
             TryExecuteCurrentActiveAction();
-            SetCurrentlyActivePlayerSpell(null);
+            //SetCurrentlyActivePlayerSpell(null);
             // Messenger.RemoveListener<KeyCode>(Signals.KEY_DOWN, OnSpellCast);
         } else if (key == KeyCode.Mouse1) {
             SetCurrentlyActivePlayerSpell(null);
