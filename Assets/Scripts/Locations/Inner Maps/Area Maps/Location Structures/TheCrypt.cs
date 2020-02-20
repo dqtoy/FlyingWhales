@@ -5,6 +5,7 @@ using UnityEngine;
 namespace Inner_Maps.Location_Structures {
     public class TheCrypt : LocationStructure{
         public override Vector2 selectableSize { get; }
+        private Artifact _activatedArtifact;
         
         public TheCrypt(ILocation location) : base(STRUCTURE_TYPE.THE_CRYPT, location){
             selectableSize = new Vector2(10f, 10f);
@@ -37,13 +38,15 @@ namespace Inner_Maps.Location_Structures {
             UIManager.Instance.ShowClickableObjectPicker(artifacts, ActivateArtifact, null, CanActivateArtifact, "Activate an Artifact");
         }
         private void ActivateArtifact(object obj) {
+            _activatedArtifact?.Deactivate();
             Artifact artifact = obj as Artifact;
             artifact.Activate();
+            _activatedArtifact = artifact;
             PlayerManager.Instance.player.AdjustMana(-50);
             UIManager.Instance.HideObjectPicker();
         }
         private bool CanActivateArtifact(Artifact artifact) {
-            return artifact.hasBeenActivated == false;
+            return artifact.hasBeenActivated == false && artifact.CanGainSomethingNewByActivating();
         }
         #endregion
     }

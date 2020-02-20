@@ -53,6 +53,33 @@ public class Artifact : TileObject {
             Unlock(unlockable);    
         }
     }
+    public virtual void Deactivate() {
+        hasBeenActivated = false;
+        for (int i = 0; i < data.unlocks.Length; i++) {
+            ArtifactUnlockable unlockable = data.unlocks[i];
+            Relock(unlockable);    
+        }
+    }
+    public bool CanGainSomethingNewByActivating() {
+        for (int i = 0; i < data.unlocks.Length; i++) {
+            ArtifactUnlockable unlockable = data.unlocks[i];
+            if (CanGainSomethingNewByActivating(unlockable)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    private bool CanGainSomethingNewByActivating(ArtifactUnlockable unlockable) {
+        switch (unlockable.unlockableType) {
+            case ARTIFACT_UNLOCKABLE_TYPE.Action:
+                return PlayerManager.Instance.player.archetype.actions.Contains(unlockable.identifier) == false;
+            case ARTIFACT_UNLOCKABLE_TYPE.Structure:
+                LANDMARK_TYPE landmarkType = (LANDMARK_TYPE)Enum.Parse(typeof(LANDMARK_TYPE), unlockable.identifier);
+                return PlayerManager.Instance.player.archetype.demonicStructures.Contains(landmarkType) == false;
+            default:
+                return false;
+        }
+    }
     private void Unlock(ArtifactUnlockable unlockable) {
         switch (unlockable.unlockableType) {
             case ARTIFACT_UNLOCKABLE_TYPE.Action:
@@ -64,16 +91,24 @@ public class Artifact : TileObject {
                 break;
         }
     }
+    private void Relock(ArtifactUnlockable unlockable) {
+        switch (unlockable.unlockableType) {
+            case ARTIFACT_UNLOCKABLE_TYPE.Action:
+                PlayerManager.Instance.player.archetype.RemoveAction(unlockable.identifier);
+                break;
+            case ARTIFACT_UNLOCKABLE_TYPE.Structure:
+                LANDMARK_TYPE landmarkType = (LANDMARK_TYPE)Enum.Parse(typeof(LANDMARK_TYPE), unlockable.identifier);
+                PlayerManager.Instance.player.archetype.RemoveDemonicStructure(landmarkType);
+                break;
+        }
+    }
     
 }
 
 public class ArtifactSlot {
     public int level;
     public Artifact artifact;
-    public bool isLocked {
-        get { return false; } //PlayerManager.Instance.player.GetIndexForArtifactSlot(this) >= PlayerManager.Instance.player.maxArtifactSlots
-    }
-
+    public bool isLocked => false; //PlayerManager.Instance.player.GetIndexForArtifactSlot(this) >= PlayerManager.Instance.player.maxArtifactSlots
     public ArtifactSlot() {
         level = 1;
         artifact = null;
