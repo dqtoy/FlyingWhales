@@ -26,7 +26,7 @@ public class DropResource : GoapAction {
         if (target is Table) {
             ee.Add(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, "Food Pile", false, GOAP_EFFECT_TARGET.TARGET));
         } else {
-            ee.Add(new GoapEffect(GOAP_EFFECT_CONDITION.TAKE_POI, target.name, false, GOAP_EFFECT_TARGET.TARGET));
+            ee.Add(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, target.name, false, GOAP_EFFECT_TARGET.TARGET));
             //ResourcePile pile = target as ResourcePile;
             //switch (pile.providedResource) {
             //    case RESOURCE.FOOD:

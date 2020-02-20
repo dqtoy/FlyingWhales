@@ -8,9 +8,10 @@ public class DefaultOutside : CharacterBehaviourComponent {
         //attributes = new BEHAVIOUR_COMPONENT_ATTRIBUTE[] { BEHAVIOUR_COMPONENT_ATTRIBUTE.WITHIN_HOME_SETTLEMENT_ONLY };
     }
     public override bool TryDoBehaviour(Character character, ref string log) {
-        if ((character.currentStructure.structureType == STRUCTURE_TYPE.WORK_AREA || character.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS || 
-            character.currentStructure.structureType == STRUCTURE_TYPE.CEMETERY || character.currentStructure.structureType == STRUCTURE_TYPE.CITY_CENTER) && character.isAtHomeRegion) {
-            log += $"\n-{character.name} is in the Work Settlement/Wilderness/Cemetery/City Center of home location";
+        if (!character.currentStructure.isInterior && character.isAtHomeRegion) {
+            // if ((character.currentStructure.structureType == STRUCTURE_TYPE.WORK_AREA || character.currentStructure.structureType == STRUCTURE_TYPE.WILDERNESS || 
+            //      character.currentStructure.structureType == STRUCTURE_TYPE.CEMETERY || character.currentStructure.structureType == STRUCTURE_TYPE.CITY_CENTER) && character.isAtHomeRegion) {
+            log += $"\n-{character.name} is in the Exterior structure of home location";
 
             log += "\n-If it is Morning or Afternoon, 25% chance to enter Stroll Outside Mode";
             TIME_IN_WORDS currentTimeOfDay = GameManager.GetCurrentTimeInWordsOfTick(character);

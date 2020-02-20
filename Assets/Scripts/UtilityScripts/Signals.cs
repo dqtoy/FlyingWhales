@@ -500,6 +500,7 @@ public static class Signals {
     /// Parameters (IPointOfInterest repairedObj)
     /// </summary>
     public static string OBJECT_REPAIRED = "OnObjectRepaired";
+    public static string SPIRIT_OBJECT_NO_DESTINATION = "OnSpiritObjectNoDestination";
     #endregion
 
     #region Settlements

@@ -5,8 +5,10 @@ using UnityEngine;
 public abstract class MapObjectVisual<T> : BaseMapObjectVisual where T : IDamageable {
     public BaseCollisionTrigger<T> collisionTrigger { get; protected set; }
 
+    public T obj { get; private set; }
     public virtual void Initialize(T obj) {
         selectable = obj as ISelectable;
+        this.obj = obj;
         onHoverOverAction = () => OnPointerEnter(obj);
         onHoverExitAction = () => OnPointerExit(obj);
         onLeftClickAction = () => OnPointerLeftClick(obj);
@@ -15,12 +17,13 @@ public abstract class MapObjectVisual<T> : BaseMapObjectVisual where T : IDamage
 
     #region Placement
     public virtual void PlaceObjectAt(LocationGridTile tile) {
-        if (ReferenceEquals(tile.structure.structureObj, null) == false) {
-            tile.structure.structureObj.ReceiveMapObject(this);
-        } else {
-            //TODO: Make it so that work settlement and wilderness can also have a structure object to prevent this checking.
-            this.transform.SetParent(tile.parentMap.structureParent);
-        }
+        // if (ReferenceEquals(tile.structure.structureObj, null) == false) {
+        //     tile.structure.structureObj.ReceiveMapObject(this);
+        // } else {
+        //     //TODO: Make it so that work settlement and wilderness can also have a structure object to prevent this checking.
+        //     this.transform.SetParent(tile.parentMap.structureParent);
+        // }
+        this.transform.SetParent(tile.parentMap.structureParent);
         Vector3 worldPos = tile.centeredWorldLocation;
         this.transform.position = worldPos;
     }
@@ -78,6 +81,12 @@ public abstract class MapObjectVisual<T> : BaseMapObjectVisual where T : IDamage
         yield return new WaitForFixedUpdate();
         collisionTrigger.SetColliderLayer(layerName);
         collisionTrigger.SetCollidersState(true);
+    }
+    #endregion
+    
+    #region General
+    public bool IsNear(Vector3 pos) {
+        return Vector3.Distance(transform.position, pos) <= 0.75f;
     }
     #endregion
 }

@@ -9,8 +9,8 @@ namespace Traits {
     public class TraitContainer : ITraitContainer {
 
         private List<Trait> _allTraits;
-        public List<Trait> onOthersSeeEvenCannotWitnessTraits { get; private set; }
-        public List<Trait> onOthersSeeInDiffStructureEvenCannotWitnessTraits { get; private set; }
+        public List<Trait> onCollideWithTraits { get; private set; }
+        
         public Dictionary<string, int> stacks { get; private set; }
         public Dictionary<string, List<string>> scheduleTickets { get; private set; }
         public Dictionary<string, bool> traitSwitches { get; private set; }
@@ -22,8 +22,7 @@ namespace Traits {
 
         public TraitContainer() {
             _allTraits = new List<Trait>();
-            onOthersSeeEvenCannotWitnessTraits = new List<Trait>();
-            onOthersSeeInDiffStructureEvenCannotWitnessTraits = new List<Trait>();
+            onCollideWithTraits = new List<Trait>();
             stacks = new Dictionary<string, int>();
             scheduleTickets = new Dictionary<string, List<string>>();
             traitSwitches = new Dictionary<string, bool>();
@@ -542,17 +541,11 @@ namespace Traits {
         #endregion
         
         #region Trait Override Functions
-        public void AddOnOthersSeeEvenCannotWitnessTrait(Trait trait) {
-            onOthersSeeEvenCannotWitnessTraits.Add(trait);
+        public void AddOnCollideWithTrait(Trait trait) {
+            onCollideWithTraits.Add(trait);
         }
-        public bool RemoveOnOthersSeeEvenCannotWitnessTrait(Trait trait) {
-            return onOthersSeeEvenCannotWitnessTraits.Remove(trait);
-        }
-        public void AddOnOthersSeeInDiffStructureEvenCannotWitnessTrait(Trait trait) {
-            onOthersSeeInDiffStructureEvenCannotWitnessTraits.Add(trait);
-        }
-        public bool RemoveOnOthersSeeInDiffStructureEvenCannotWitnessTrait(Trait trait) {
-            return onOthersSeeInDiffStructureEvenCannotWitnessTraits.Remove(trait);
+        public bool RemoveOnCollideWithTrait(Trait trait) {
+            return onCollideWithTraits.Remove(trait);
         }
         #endregion
     }

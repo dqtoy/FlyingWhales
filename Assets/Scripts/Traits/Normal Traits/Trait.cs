@@ -31,8 +31,9 @@ namespace Traits {
         public bool hindersMovement; //if a character has this trait, and this is true, then he/she cannot move
         public bool hindersAttackTarget; //if a character has this trait, and this is true, then he/she cannot be attacked
         public bool hindersPerform; //if a character has this trait, and this is true, then he/she cannot be attacked
-        public bool hasOnOthersSeeOverride;
-        public bool hasOnOthersSeeInDiffStructureOverride;
+        // public bool hasOnOthersSeeOverride;
+        // public bool hasOnOthersSeeInDiffStructureOverride;
+        public bool hasOnCollideWith;
         public bool isStacking;
         public int stackLimit;
         public float stackModifier;
@@ -113,8 +114,9 @@ namespace Traits {
         public virtual void OnReturnToLife(Character character) { }
         public virtual string GetTestingData() { return string.Empty; }
         public virtual bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) { return false; } //What jobs a character can create based on the target's traits?
-        public virtual bool OnOthersSeeThisEvenCannotWitness(Character characterThatSaw, IPointOfInterest owner) { return false; }
-        public virtual bool OnOthersSeeThisInDiffStructureEvenCannotWitness(Character characterThatSaw, IPointOfInterest owner) { return false; }
+        // public virtual bool OnOthersSeeThisEvenCannotWitness(Character characterThatSaw, IPointOfInterest owner) { return false; }
+        // public virtual bool OnOthersSeeThisInDiffStructureEvenCannotWitness(Character characterThatSaw, IPointOfInterest owner) { return false; }
+        public virtual bool OnCollideWith(IPointOfInterest collidedWith, IPointOfInterest owner) { return false; }
         public virtual bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) { return false; } //What jobs a character can create based on the his/her own traits, considering the target?
         public virtual void OnSeePOIEvenCannotWitness(IPointOfInterest targetPOI, Character character) { }
         protected virtual void OnChangeLevel() { }

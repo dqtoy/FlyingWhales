@@ -2159,9 +2159,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         for (int i = 0; i < traitContainer.allTraits.Count; i++) {
             traitContainer.allTraits[i].OnSeePOIEvenCannotWitness(target, this);
         }
-        for (int i = 0; i < target.traitContainer.onOthersSeeEvenCannotWitnessTraits.Count; i++) {
-            target.traitContainer.allTraits[i].OnOthersSeeThisEvenCannotWitness(this, target);
-        }
+        // for (int i = 0; i < target.traitContainer.onOthersSeeEvenCannotWitnessTraits.Count; i++) {
+        //     target.traitContainer.onOthersSeeEvenCannotWitnessTraits[i].OnOthersSeeThisEvenCannotWitness(this, target);
+        // }
 
         if (!canWitness) {
             return;
@@ -3749,9 +3749,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             item.carriedByCharacter.UnobtainItem(item);
         }
         if (ObtainItem(item, changeCharacterOwnership)) {
-            // if (item.gridTileLocation != null) {
-            //     item.gridTileLocation.structure.RemoveItem(item);
-            // }
+            if (item.gridTileLocation != null) {
+                item.gridTileLocation.structure.RemovePOI(item);
+            }
         }
     }
     public void DestroyItem(TileObject item) {

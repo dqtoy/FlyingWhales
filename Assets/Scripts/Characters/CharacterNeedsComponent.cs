@@ -165,7 +165,7 @@ public class CharacterNeedsComponent {
         Debug.Log(summary);
     }
 
-    private bool HasNeeds() {
+    public bool HasNeeds() {
         return _character.race != RACE.SKELETON && _character.characterClass.className != "Zombie" && !_character.returnedToLife && _character.minion == null && !(_character is Summon)
             /*&& _character.isAtHomeRegion && _character.homeSettlement != null*/; //Characters living on a region without a settlement must not decrease needs
     }

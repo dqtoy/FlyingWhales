@@ -160,8 +160,8 @@ public class TraitManager : MonoBehaviour {
             "Freezing",
             "Frozen",
             "Ravenous",
-            // "Feeble",
-            // "Forlorn",
+            "Feeble",
+            "Forlorn",
             "Accident Prone",
         };
         //TODO: REDO INSTANCED TRAITS, USE SCRIPTABLE OBJECTS for FIXED DATA

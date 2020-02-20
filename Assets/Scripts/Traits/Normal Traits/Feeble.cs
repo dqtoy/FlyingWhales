@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Traits {
-    public class Ravenous : Trait {
+    public class Feeble : Trait {
 
-        public RavenousSpirit owner { get; private set; }
-        public Ravenous() {
-            name = "Ravenous";
-            description = "This is ravenous.";
+        public FeebleSpirit owner { get; private set; }
+        public Feeble() {
+            name = "Feeble";
+            description = "This is feeble.";
             type = TRAIT_TYPE.PERSONALITY;
             effect = TRAIT_EFFECT.NEUTRAL;
             ticksDuration = 0;
@@ -19,8 +19,8 @@ namespace Traits {
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
-            if (addedTo is RavenousSpirit) {
-                owner = addedTo as RavenousSpirit;
+            if (addedTo is FeebleSpirit) {
+                owner = addedTo as FeebleSpirit;
             }
         }
         public override bool OnCollideWith(IPointOfInterest collidedWith, IPointOfInterest owner) {
