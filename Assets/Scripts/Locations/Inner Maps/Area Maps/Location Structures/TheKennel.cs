@@ -105,6 +105,7 @@ namespace Inner_Maps.Location_Structures {
             CharacterManager.Instance.PlaceSummon(summon, CollectionUtilities.GetRandomElement(unoccupiedTiles));
             summon.AddTerritory(occupiedBuildSpot.spot.hexTileOwner);
             AddOwnedSummon(summon);
+            PlayerManager.Instance.player.AddSummon(summon);
         }
         private void AddOwnedSummon(Summon summon) {
             if (_ownedSummons.Contains(summon) == false) {
@@ -134,6 +135,7 @@ namespace Inner_Maps.Location_Structures {
         private void OnCharacterDied(Character character) {
             if (character is Summon summon && _ownedSummons.Contains(character)) {
                 RemoveOwnedSummon(summon);
+                PlayerManager.Instance.player.RemoveSummon(summon);
             }
         }
         #endregion

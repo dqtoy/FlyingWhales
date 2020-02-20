@@ -90,7 +90,7 @@ public static class PlayerDB {
         Zap_Action,
     };
     private static string[] unlockableStructures = new[] {
-        "THE_KENNELS",
+        "THE_KENNEL",
         "THE_PIT",
         "TORTURE_CHAMBER",
         "THE_EYE",

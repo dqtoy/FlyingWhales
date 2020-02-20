@@ -7,8 +7,9 @@ using UnityEngine;
 
 public class TornadoVisual : MapObjectVisual<TileObject> {
 
+    [Header("Particles")]
     [SerializeField] private ParticleSystem[] particles;
-
+    
     [Header("Movement")]
     [SerializeField] private float baseSpeed = 1.0F; // Movement speed in units per second.
     private float _startTime;  // Time when the movement started.
@@ -127,6 +128,7 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
         _tornado.OnExpire();
     }
 
+    #region Object Pooling
     public override void Reset() {
         base.Reset();
         isSpawned = false;
@@ -144,6 +146,8 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
         Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
         Messenger.RemoveListener<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, OnTileObjectRemovedFromTile);
     }
+    #endregion
+    
 
     #region Monobehaviours
     private void Update() {
@@ -255,7 +259,7 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
     }
     private void TrySuckIn(IDamageable damageable) {
         if (CanBeSuckedIn(damageable) && Random.Range(0, 100) < 35) {
-            damageable.mapObjectVisual.TweenTo(transform, 1f, () => OnDamagableReachedThis(damageable));
+            damageable.mapObjectVisual.TweenTo(transform, 0.5f, () => OnDamagableReachedThis(damageable));
             if (damageable is IPointOfInterest poi) {
                 poi.SetPOIState(POI_STATE.INACTIVE);
             }
@@ -265,7 +269,6 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
         damageable.mapObjectVisual?.OnReachTarget();
         damageable.AdjustHP(-damageable.maxHP, ELEMENTAL_TYPE.Normal, true, _tornado);
     }
-
     private bool CanBeSuckedIn(IDamageable damageable) {
         return damageable.CanBeDamaged() && (damageable is GenericTileObject) == false 
             && (damageable is Character) == false && damageable.mapObjectVisual.IsTweening() == false;
@@ -273,7 +276,6 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
     public override bool IsMapObjectMenuVisible() {
         return true;
     }
-    
     public override void UpdateCollidersState(TileObject obj) { }
 
     #region Listeners

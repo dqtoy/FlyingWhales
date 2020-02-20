@@ -119,7 +119,7 @@ public class UnleashSummonUI : MonoBehaviour {
                 chosenSummons[i].behaviourComponent.SetIsInvading(true);
             }
         }
-
+        gameObject.SetActive(false);
         //entrances.Clear();
         //InnerTileMap innerMap = InnerMapManager.Instance.currentlyShowingMap;
         //LocationGridTile mainEntrance = innerMap.GetRandomUnoccupiedEdgeTile();

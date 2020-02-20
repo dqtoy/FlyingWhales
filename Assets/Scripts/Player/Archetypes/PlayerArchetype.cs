@@ -57,7 +57,11 @@ namespace Archetype {
         }
         public bool RemoveAction(string actionName) {
             if (actions == null) { return false; }
-            return actions.Remove(actionName);
+            bool wasRemoved = actions.Remove(actionName);
+            if (wasRemoved) {
+                Debug.Log($"Action was removed from player {actionName}");
+            }
+            return wasRemoved;
         }
         #endregion
 
@@ -138,7 +142,11 @@ namespace Archetype {
         }
         public bool RemoveDemonicStructure(LANDMARK_TYPE type) {
             if (demonicStructures == null) { return false; }
-            return demonicStructures.Remove(type);
+            bool wasRemoved = demonicStructures.Remove(type);
+            if (wasRemoved) {
+                Debug.Log($"Demonic structure was removed from player {type.ToString()}");
+            }
+            return wasRemoved;
         }
         #endregion
     }

@@ -14,6 +14,7 @@ namespace Archetype {
                 new RaceClass(RACE.WOLF, "Ravager"), new RaceClass(RACE.GOLEM, "Golem"),
                 new RaceClass(RACE.SKELETON, "Archer"), new RaceClass(RACE.SKELETON, "Marauder")
             };
+            actions = new List<string>();
             SetCanTriggerFlaw(true);
             SetCanRemoveTraits(true);
         }

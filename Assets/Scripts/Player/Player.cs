@@ -627,7 +627,7 @@ public class Player : ILeader {
     //    }
     //    return count;
     //}
-    private void AddSummon(Summon newSummon, bool showNewSummonUI = false) {
+    public void AddSummon(Summon newSummon, bool showNewSummonUI = false) {
         if (!summons.Contains(newSummon)) {
             summons.Add(newSummon);
             playerSettlement.AddResident(newSummon, ignoreCapacity: true);
