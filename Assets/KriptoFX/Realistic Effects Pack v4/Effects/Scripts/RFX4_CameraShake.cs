@@ -78,7 +78,7 @@ public class RFX4_CameraShake : MonoBehaviour
 
             yield return null;
         }
-        camT.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f);
+        camT.rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
         // isPlaying = true;
     }
 }
