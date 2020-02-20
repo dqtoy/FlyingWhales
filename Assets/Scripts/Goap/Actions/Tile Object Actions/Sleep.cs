@@ -121,10 +121,11 @@ public class Sleep : GoapAction {
         Character actor = node.actor;
         IPointOfInterest poiTarget = node.poiTarget;
         if (goapActionInvalidity.isInvalid == false) {
-            if (CanSleepInBed(actor, poiTarget as TileObject) == false) {
-                goapActionInvalidity.isInvalid = true;
-                goapActionInvalidity.stateName = "Rest Fail";
-            } else if (poiTarget.IsAvailable() == false) {
+            // if (CanSleepInBed(actor, poiTarget as TileObject) == false) {
+            //     goapActionInvalidity.isInvalid = true;
+            //     goapActionInvalidity.stateName = "Rest Fail";
+            // } else 
+            if (poiTarget.IsAvailable() == false) {
                 goapActionInvalidity.isInvalid = true;
             }
         }
@@ -139,9 +140,9 @@ public class Sleep : GoapAction {
             //if (poiTarget.gridTileLocation != null && actor.trapStructure.structure != null && actor.trapStructure.structure != poiTarget.gridTileLocation.structure) {
             //    return false;
             //}
-            if (CanSleepInBed(actor, poiTarget as TileObject) == false) {
-                return false;
-            }
+            // if (CanSleepInBed(actor, poiTarget as TileObject) == false) {
+            //     return false;
+            // }
             return poiTarget.IsAvailable() && poiTarget.gridTileLocation != null;
         }
         return false;
@@ -192,9 +193,9 @@ public class Sleep : GoapAction {
     //}
     #endregion
 
-    private bool CanSleepInBed(Character character, TileObject tileObject) {
-        return (tileObject as Bed).CanSleepInBed(character);
-    }
+    // private bool CanSleepInBed(Character character, TileObject tileObject) {
+    //     return (tileObject as Bed).CanSleepInBed(character);
+    // }
 }
 
 public class SleepData : GoapActionData {

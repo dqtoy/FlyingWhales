@@ -24,6 +24,9 @@ namespace Traits {
                 traitable.traitContainer.AddScheduleTicket(trait.name, ticket);
                 //trait.SetExpiryTicket(traitable, ticket);
             }
+            if (trait.hasOnOthersSeeOverride) {
+                traitable.traitContainer.AddOnOthersSeeEvenCannotWitnessTrait(trait);
+            }
             Messenger.Broadcast(Signals.TRAITABLE_GAINED_TRAIT, traitable, trait);
         }
         protected void DefaultProcessOnRemoveTrait(ITraitable traitable, Trait trait, Character removedBy) {
@@ -35,6 +38,9 @@ namespace Traits {
             traitable.traitContainer.SwitchOffTrait(trait.name);
             UnapplyPOITraitInteractions(traitable, trait);
             trait.OnRemoveTrait(traitable, removedBy);
+            if (trait.hasOnOthersSeeOverride) {
+                traitable.traitContainer.RemoveOnOthersSeeEvenCannotWitnessTrait(trait);
+            }
             Messenger.Broadcast(Signals.TRAITABLE_LOST_TRAIT, traitable, trait, removedBy);
         }
         protected bool DefaultProcessOnStackTrait(ITraitable traitable, Trait trait, Character characterResponsible, ActualGoapNode gainedFromDoing) {

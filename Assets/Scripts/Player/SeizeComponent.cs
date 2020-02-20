@@ -118,7 +118,7 @@ public class SeizeComponent {
             return;
         }
         Vector3 targetPos = InnerMapManager.Instance.currentlyShowingMap.worldUiCanvas.worldCamera.ScreenToWorldPoint(Input.mousePosition) + followOffset;
-        iTween.MoveUpdate(seizedPOI.visualGO, targetPos, 1f);
+        iTween.MoveUpdate(seizedPOI.visualGO, targetPos, 0.5f);
     }
     public void DisableFollowMousePosition() {
         if (!seizedPOI.visualGO.activeSelf) {

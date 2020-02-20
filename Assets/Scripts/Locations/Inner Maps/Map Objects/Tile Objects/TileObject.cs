@@ -391,6 +391,20 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         }
         currentHP += amount;
         currentHP = Mathf.Clamp(currentHP, 0, maxHP);
+        if (amount <= 0 && source != null) {
+            //ELEMENTAL_TYPE elementalType = ELEMENTAL_TYPE.Normal;
+            //if (source is Character) {
+            //    elementalType = (source as Character).combatComponent.elementalDamage.type;
+            //}
+            CombatManager.Instance.CreateHitEffectAt(this, elementalDamageType);
+            // if(currentHP > 0) {
+            Character responsibleCharacter = null;
+            if (source is Character) {
+                responsibleCharacter = source as Character;
+            }
+            CombatManager.Instance.ApplyElementalDamage(elementalDamageType, this, responsibleCharacter);
+            // }
+        }
         if (currentHP == 0) {
             //object has been destroyed
             Character removed = null;
@@ -403,20 +417,6 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             Messenger.Broadcast(Signals.OBJECT_DAMAGED, this as IPointOfInterest);    
         } else if (currentHP == maxHP) {
             Messenger.Broadcast(Signals.OBJECT_REPAIRED, this as IPointOfInterest);
-        }
-        if (amount <= 0 && source != null) {
-            //ELEMENTAL_TYPE elementalType = ELEMENTAL_TYPE.Normal;
-            //if (source is Character) {
-            //    elementalType = (source as Character).combatComponent.elementalDamage.type;
-            //}
-            CombatManager.Instance.CreateHitEffectAt(this, elementalDamageType);
-            if(currentHP > 0) {
-                Character responsibleCharacter = null;
-                if (source is Character) {
-                    responsibleCharacter = source as Character;
-                }
-                CombatManager.Instance.ApplyElementalDamage(elementalDamageType, this, responsibleCharacter);
-            }
         }
     }
     public void OnHitByAttackFrom(Character characterThatAttacked, CombatState state, ref string attackSummary) {

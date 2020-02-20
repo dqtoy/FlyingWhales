@@ -37,6 +37,18 @@ public class StructureWallObject : MapObject<StructureWallObject>, ITraitable {
         }
         currentHP += amount;
         currentHP = Mathf.Clamp(currentHP, 0, maxHP);
+        if (amount <= 0) {
+            //ELEMENTAL_TYPE elementalType = ELEMENTAL_TYPE.Normal;
+            //if(source != null && source is Character) {
+            //    elementalType = (source as Character).combatComponent.elementalDamage.type;
+            //}
+            CombatManager.Instance.CreateHitEffectAt(this, elementalDamageType);
+            Character responsibleCharacter = null;
+            if (source != null && source is Character) {
+                responsibleCharacter = source as Character;
+            }
+            CombatManager.Instance.ApplyElementalDamage(elementalDamageType, this, responsibleCharacter);
+        }
         if (currentHP <= 0) {
             //wall has been destroyed
             _visual.UpdateWallState(this);
@@ -55,18 +67,6 @@ public class StructureWallObject : MapObject<StructureWallObject>, ITraitable {
             _visual.UpdateWallAssets(this);
             _visual.UpdateWallState(this);
             Messenger.Broadcast(Signals.WALL_REPAIRED, this);
-        }
-        if (amount <= 0) {
-            //ELEMENTAL_TYPE elementalType = ELEMENTAL_TYPE.Normal;
-            //if(source != null && source is Character) {
-            //    elementalType = (source as Character).combatComponent.elementalDamage.type;
-            //}
-            CombatManager.Instance.CreateHitEffectAt(this, elementalDamageType);
-            Character responsibleCharacter = null;
-            if (source != null && source is Character) {
-                responsibleCharacter = source as Character;
-            }
-            CombatManager.Instance.ApplyElementalDamage(elementalDamageType, this, responsibleCharacter);
         }
     }
     public void OnHitByAttackFrom(Character characterThatAttacked, CombatState state, ref string attackSummary) {

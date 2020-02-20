@@ -9,11 +9,12 @@ namespace Traits {
     public class TraitContainer : ITraitContainer {
 
         private List<Trait> _allTraits;
+        public List<Trait> onOthersSeeEvenCannotWitnessTraits { get; private set; }
+        public List<Trait> onOthersSeeInDiffStructureEvenCannotWitnessTraits { get; private set; }
         public Dictionary<string, int> stacks { get; private set; }
         public Dictionary<string, List<string>> scheduleTickets { get; private set; }
         public Dictionary<string, bool> traitSwitches { get; private set; }
         //public Dictionary<Trait, int> currentDurations { get; private set; } //Temporary only, fix this by making all traits instanced based and just object pool them
-        private List<ITraitable> traitables;
 
         #region getters/setters
         public List<Trait> allTraits { get { return _allTraits; } }
@@ -21,10 +22,11 @@ namespace Traits {
 
         public TraitContainer() {
             _allTraits = new List<Trait>();
+            onOthersSeeEvenCannotWitnessTraits = new List<Trait>();
+            onOthersSeeInDiffStructureEvenCannotWitnessTraits = new List<Trait>();
             stacks = new Dictionary<string, int>();
             scheduleTickets = new Dictionary<string, List<string>>();
             traitSwitches = new Dictionary<string, bool>();
-            traitables = new List<ITraitable>();
             //currentDurations = new Dictionary<Trait, int>();
         }
 
@@ -188,20 +190,7 @@ namespace Traits {
                     AddTrait(traitable, "Frozen");
                 }
             } else if (trait.name == "Zapped") {
-                if (traitable.gridTileLocation != null) {
-                    List<LocationGridTile> tiles = traitable.gridTileLocation.GetTilesInRadius(1, includeTilesInDifferentStructure: true);
-                    traitables.Clear();
-                    for (int i = 0; i < tiles.Count; i++) {
-                        if (tiles[i].genericTileObject.traitContainer.HasTrait("Wet")) {
-                            traitables.AddRange(tiles[i].GetTraitablesOnTile());
-                        }
-                    }
-                    for (int i = 0; i < traitables.Count; i++) {
-                        if (!traitables[i].traitContainer.HasTrait("Zapped")) {
-                            traitables[i].traitContainer.AddTrait(traitables[i], "Zapped");
-                        }
-                    }
-                }
+                CombatManager.Instance.ChainElectricEffect(traitable);
             }
         }
         private bool TraitAddition(ITraitable addTo, string traitName, Character characterResponsible, ActualGoapNode gainedFromDoing) {
@@ -549,6 +538,21 @@ namespace Traits {
                 }
             }
             return false;
+        }
+        #endregion
+        
+        #region Trait Override Functions
+        public void AddOnOthersSeeEvenCannotWitnessTrait(Trait trait) {
+            onOthersSeeEvenCannotWitnessTraits.Add(trait);
+        }
+        public bool RemoveOnOthersSeeEvenCannotWitnessTrait(Trait trait) {
+            return onOthersSeeEvenCannotWitnessTraits.Remove(trait);
+        }
+        public void AddOnOthersSeeInDiffStructureEvenCannotWitnessTrait(Trait trait) {
+            onOthersSeeInDiffStructureEvenCannotWitnessTraits.Add(trait);
+        }
+        public bool RemoveOnOthersSeeInDiffStructureEvenCannotWitnessTrait(Trait trait) {
+            return onOthersSeeInDiffStructureEvenCannotWitnessTraits.Remove(trait);
         }
         #endregion
     }

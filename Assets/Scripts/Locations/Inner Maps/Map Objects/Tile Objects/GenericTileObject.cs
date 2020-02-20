@@ -79,6 +79,13 @@ public class GenericTileObject : TileObject {
         }
         this.currentHP += amount;
         this.currentHP = Mathf.Clamp(this.currentHP, 0, maxHP);
+        if (amount <= 0) {
+            Character responsibleCharacter = null;
+            if (source != null && source is Character) {
+                responsibleCharacter = source as Character;
+            }
+            CombatManager.Instance.ApplyElementalDamage(elementalDamageType, this, responsibleCharacter);
+        }
         if (currentHP <= 0) {
             //floor has been destroyed
             gridTileLocation.RevertToPreviousGroundVisual();
@@ -89,13 +96,6 @@ public class GenericTileObject : TileObject {
         } else if (currentHP == maxHP) {
             //floor has been fully repaired
             structureLocation.OnTileRepaired(gridTileLocation);
-        }
-        if (amount <= 0) {
-            Character responsibleCharacter = null;
-            if (source != null && source is Character) {
-                responsibleCharacter = source as Character;
-            }
-            CombatManager.Instance.ApplyElementalDamage(elementalDamageType, this, responsibleCharacter);
         }
     }
     public override bool CanBeDamaged() {

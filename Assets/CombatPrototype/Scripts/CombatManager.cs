@@ -10,6 +10,7 @@ public class CombatManager : MonoBehaviour {
     public static CombatManager Instance = null;
 
     public const int pursueDuration = 10;
+    private List<ITraitable> traitables;
 
     private void Awake() {
         Instance = this;
@@ -39,6 +40,10 @@ public class CombatManager : MonoBehaviour {
     }
     #region Explosion
     public void PoisonExplosion(IPointOfInterest target, int stacks) {
+        StartCoroutine(PoisonExplosionCoroutine(target, stacks));
+    }
+    private IEnumerator PoisonExplosionCoroutine(IPointOfInterest target, int stacks) {
+        yield return new WaitForSeconds(0.2f);
         List<ITraitable> traitables = new List<ITraitable>();
         List<LocationGridTile> affectedTiles = target.gridTileLocation.GetTilesInRadius(2);
         float damagePercentage = 0.1f * stacks;
@@ -54,7 +59,7 @@ public class CombatManager : MonoBehaviour {
         for (int i = 0; i < traitables.Count; i++) {
             ITraitable traitable = traitables[i];
             int damage = Mathf.RoundToInt(traitable.maxHP * damagePercentage);
-            GameManager.Instance.CreateExplodeEffectAt(traitable.gridTileLocation);
+            GameManager.Instance.CreateFireEffectAt(traitable.gridTileLocation);
             traitable.AdjustHP(-damage, ELEMENTAL_TYPE.Fire);
             Burning burningTrait = traitable.traitContainer.GetNormalTrait<Burning>();
             if (burningTrait != null && burningTrait.sourceOfBurning == null) {
@@ -71,6 +76,11 @@ public class CombatManager : MonoBehaviour {
         log.AddLogToInvolvedObjects();
     }
     public void FrozenExplosion(IPointOfInterest target, int stacks) {
+        StartCoroutine(FrozenExplosionCoroutine(target, stacks));
+        
+    }
+    private IEnumerator FrozenExplosionCoroutine(IPointOfInterest target, int stacks) {
+        yield return new WaitForSeconds(0.2f);
         List<ITraitable> traitables = new List<ITraitable>();
         List<LocationGridTile> affectedTiles = target.gridTileLocation.GetTilesInRadius(2);
         float damagePercentage = 0.2f * stacks;
@@ -86,7 +96,7 @@ public class CombatManager : MonoBehaviour {
         for (int i = 0; i < traitables.Count; i++) {
             ITraitable traitable = traitables[i];
             int damage = Mathf.RoundToInt(traitable.maxHP * damagePercentage);
-            GameManager.Instance.CreateExplodeEffectAt(traitable.gridTileLocation);
+            GameManager.Instance.CreateFireEffectAt(traitable.gridTileLocation);
             traitable.AdjustHP(-damage, ELEMENTAL_TYPE.Water);
             Burning burningTrait = traitable.traitContainer.GetNormalTrait<Burning>();
             if (burningTrait != null && burningTrait.sourceOfBurning == null) {
@@ -101,6 +111,31 @@ public class CombatManager : MonoBehaviour {
         log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
         PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
         log.AddLogToInvolvedObjects();
+    }
+    public void ChainElectricEffect(ITraitable traitable) {
+        if (traitables == null) {
+            traitables = new List<ITraitable>();
+        }
+        if (traitable.gridTileLocation != null) {
+            List<LocationGridTile> tiles = traitable.gridTileLocation.GetTilesInRadius(1, includeTilesInDifferentStructure: true);
+            traitables.Clear();
+            for (int i = 0; i < tiles.Count; i++) {
+                if (tiles[i].genericTileObject.traitContainer.HasTrait("Wet")) {
+                    traitables.AddRange(tiles[i].GetTraitablesOnTile());
+                }
+            }
+            if (traitables.Count > 0) {
+                StartCoroutine(ChainElectricCoroutine());
+            }
+        }
+    }
+    private IEnumerator ChainElectricCoroutine() {
+        for (int i = 0; i < traitables.Count; i++) {
+            yield return new WaitForSeconds(0.1f);
+            if (!traitables[i].traitContainer.HasTrait("Zapped")) {
+                traitables[i].traitContainer.AddTrait(traitables[i], "Zapped");
+            }
+        }
     }
     #endregion
 }

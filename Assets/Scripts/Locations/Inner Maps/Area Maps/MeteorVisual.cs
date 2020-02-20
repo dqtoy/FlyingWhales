@@ -31,7 +31,7 @@ public class MeteorVisual : MonoBehaviour {
         for (int i = 0; i < traitables.Count; i++) {
             ITraitable traitable = traitables[i];
             if (traitable is TileObject obj) {
-                GameManager.Instance.CreateExplodeEffectAt(obj.gridTileLocation);
+                GameManager.Instance.CreateFireEffectAt(obj.gridTileLocation);
                 if (obj.tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
                     obj.AdjustHP(-obj.currentHP, ELEMENTAL_TYPE.Fire);
                     if (obj.gridTileLocation == null) {
@@ -41,7 +41,7 @@ public class MeteorVisual : MonoBehaviour {
                     obj.AdjustHP(0, ELEMENTAL_TYPE.Fire);
                 }
             } else if (traitable is Character character) {
-                GameManager.Instance.CreateExplodeEffectAt(character.gridTileLocation);
+                GameManager.Instance.CreateFireEffectAt(character.gridTileLocation);
                 character.AdjustHP(-(int)(character.maxHP * 0.4f), ELEMENTAL_TYPE.Fire, true);
             } else {
                 traitable.AdjustHP(-traitable.currentHP, ELEMENTAL_TYPE.Fire);

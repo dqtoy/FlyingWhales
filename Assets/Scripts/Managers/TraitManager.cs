@@ -159,6 +159,10 @@ public class TraitManager : MonoBehaviour {
             "Overheating",
             "Freezing",
             "Frozen",
+            "Ravenous",
+            "Feeble",
+            "Forlorn",
+            "Accident Prone",
         };
         //TODO: REDO INSTANCED TRAITS, USE SCRIPTABLE OBJECTS for FIXED DATA
         for (int i = 0; i < instancedTraits.Length; i++) {

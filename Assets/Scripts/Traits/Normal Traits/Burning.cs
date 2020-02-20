@@ -100,7 +100,10 @@ namespace Traits {
             return true;
         }
         public override string GetTestingData() {
-            return sourceOfBurning.ToString();
+            if (sourceOfBurning != null) {
+                return sourceOfBurning.ToString();
+            }
+            return string.Empty;
         }
         public override void ExecuteActionPreEffects(INTERACTION_TYPE action, ActualGoapNode goapNode) {
             base.ExecuteActionPreEffects(action, goapNode);
