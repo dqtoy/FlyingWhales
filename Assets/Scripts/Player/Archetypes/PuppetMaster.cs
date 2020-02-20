@@ -13,7 +13,7 @@ namespace Archetype {
                     , PlayerDB.Activate_Artifact_Action
             };
             monsters = new List<RaceClass> { }; //No initial monsters
-            demonicStructures = new List<LANDMARK_TYPE>() { LANDMARK_TYPE.THE_EYE, LANDMARK_TYPE.GOADER, LANDMARK_TYPE.DEMONIC_PRISON};
+            demonicStructures = new List<LANDMARK_TYPE>() { LANDMARK_TYPE.THE_EYE, LANDMARK_TYPE.GOADER, LANDMARK_TYPE.DEMONIC_PRISON, LANDMARK_TYPE.THE_SPIRE, LANDMARK_TYPE.THE_CRYPT};
             minionClasses = new List<string>() { "Lust", "Envy", "Greed", "Gluttony" };
             afflictions = new List<SPELL_TYPE>() { SPELL_TYPE.PARALYSIS, SPELL_TYPE.UNFAITHFULNESS, SPELL_TYPE.KLEPTOMANIA, SPELL_TYPE.AGORAPHOBIA, SPELL_TYPE.PSYCHOPATHY, /*Pyromania, Cowardice, Bewitch*/ };
             spells = new List<string>() { PlayerDB.Ravenous_Spirit, PlayerDB.Manifest_Food, PlayerDB.Spider_Rain, PlayerDB.Wild_Growth, PlayerDB.Fertility, PlayerDB.Spawn_Bandit_Camp };
