@@ -94,7 +94,7 @@ public class RavenousSpirit : TileObject {
             yield return new WaitForFixedUpdate();
             if (!GameManager.Instance.isPaused) {
                 if (possessionTarget != null && possessionTarget.marker != null && possessionTarget.gridTileLocation != null) {
-                    iTween.MoveTo(mapVisual.gameObject, possessionTarget.marker.transform.position, 1f);
+                    iTween.MoveUpdate(mapVisual.gameObject, possessionTarget.marker.transform.position, 1f);
                 } else {
                     possessionTarget = null;
                     break;
