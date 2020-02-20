@@ -1402,6 +1402,7 @@ public enum ELEMENTAL_TYPE { Normal, Fire, Poison, Water, Ice, Electric }
 public enum ACTION_STATUS { NONE, STARTED, PERFORMING, SUCCESS, FAIL }
 public enum ARTIFACT_UNLOCKABLE_TYPE { Structure, Action }
 public enum COMBAT_MODE { Aggressive, Passive, Defend, }
+public enum WALL_TYPE { Stone, Flesh, Demon_Stone }
 
 #region Crime Subcategories
 [System.AttributeUsage(System.AttributeTargets.Field)]

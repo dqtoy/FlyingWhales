@@ -55,6 +55,9 @@ namespace Inner_Maps {
         public Sprite[] corruptedTreeAssets;
         public Sprite[] corruptedBigTreeAssets;
 
+        [Header("Demon Tiles")] 
+        public TileBase demonicWallTile;
+        
         [Header("Structure Floor Tiles")] 
         public TileBase woodFloorTile;
         public TileBase stoneFloorTile;
@@ -68,6 +71,18 @@ namespace Inner_Maps {
                     return desertOutsideTile;
                 default:
                     return outsideTile;
+            }
+        }
+        public TileBase GetWallAssetBasedOnWallType(WALL_TYPE wallType) {
+            switch (wallType) {
+                case WALL_TYPE.Stone:
+                    return caveWallTile;
+                case WALL_TYPE.Flesh:
+                    return monsterLairWallTile;
+                case WALL_TYPE.Demon_Stone:
+                    return demonicWallTile;
+                default:
+                    return null;
             }
         }
     }

@@ -8362,30 +8362,10 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
-    - target: {fileID: 867156388610820630, guid: af544682ce629014cbd330544a76975d,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 71.59961
-      objectReference: {fileID: 0}
-    - target: {fileID: 867602182158347526, guid: af544682ce629014cbd330544a76975d,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 147.59961
-      objectReference: {fileID: 0}
-    - target: {fileID: 867898610753266290, guid: af544682ce629014cbd330544a76975d,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 180.29883
-      objectReference: {fileID: 0}
     - target: {fileID: 1086249575366272666, guid: af544682ce629014cbd330544a76975d,
         type: 3}
       propertyPath: m_Name
       value: StructureInfoUI
-      objectReference: {fileID: 0}
-    - target: {fileID: 1086249575366272666, guid: af544682ce629014cbd330544a76975d,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: af544682ce629014cbd330544a76975d, type: 3}
@@ -87174,8 +87154,9 @@ MonoBehaviour:
   corruptedBigTreeAssets:
   - {fileID: 21300000, guid: b70306f1d978865459ad97b9221c25e8, type: 3}
   - {fileID: 21300000, guid: 8f0518dd59fee494a97f26c057d3cdaa, type: 3}
-  woodFloorTile: {fileID: 0}
-  stoneFloorTile: {fileID: 0}
+  demonicWallTile: {fileID: 11400000, guid: 6d573d413fddb9645b4619987a76240e, type: 2}
+  woodFloorTile: {fileID: 11400000, guid: 4c0a1b3069ff1ab4eba18e4b8362b997, type: 2}
+  stoneFloorTile: {fileID: 11400000, guid: 016c45b2f2cc25a4c870fcfb895e0177, type: 2}
 --- !u!1 &1538653383
 GameObject:
   m_ObjectHideFlags: 0

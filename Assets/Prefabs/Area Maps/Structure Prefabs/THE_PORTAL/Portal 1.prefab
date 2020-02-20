@@ -1023,6 +1023,7 @@ GameObject:
   - component: {fileID: 4450596484258216}
   - component: {fileID: 8195094280245978910}
   - component: {fileID: 3664157343079170732}
+  - component: {fileID: 5109910284496649524}
   m_Layer: 9
   m_Name: Structure Walls
   m_TagString: Untagged
@@ -1409,6 +1410,22 @@ TilemapRenderer:
   m_Mode: 0
   m_DetectChunkCullingBounds: 0
   m_MaskInteraction: 0
+--- !u!19719996 &5109910284496649524
+TilemapCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1360382606996524}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_MaximumTileChangeCount: 1000
+  m_ExtrusionFactor: 0.00001
 --- !u!1 &1618103192106202
 GameObject:
   m_ObjectHideFlags: 0
@@ -3549,10 +3566,12 @@ MonoBehaviour:
   _detailTileMap: {fileID: 8195094282542714980}
   _groundTileMapRenderer: {fileID: 3664157343774448910}
   _detailTileMapRenderer: {fileID: 3664157344635471214}
+  _blockWallsTilemap: {fileID: 8195094280245978910}
   _size: {x: 14, y: 14}
   _center: {x: 7, y: 7, z: 0}
   _objectsParent: {fileID: 4213304009371114}
   _furnitureSpotsParent: {fileID: 0}
+  _wallType: 2
   predeterminedOccupiedCoordinates: []
   wallTileMap: {fileID: 8195094280245978910}
   leftWall: {fileID: 1585498277213060, guid: 2e2e9509b5333aa4bbbeeabbd9cbec70, type: 3}

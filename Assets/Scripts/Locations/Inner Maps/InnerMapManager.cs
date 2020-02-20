@@ -88,7 +88,11 @@ namespace Inner_Maps {
         }
         private void OnClickMapObject(KeyCode keyCode) {
             if (keyCode == KeyCode.Mouse0) {
-                if (UIManager.Instance.IsMouseOnUI() == false && ReferenceEquals(currentlyShowingMap, null) == false) {
+                //TODO: Create system that disables normal clicks.
+                if (UIManager.Instance.IsMouseOnUI() == false 
+                    && ReferenceEquals(currentlyShowingMap, null) == false 
+                    && PlayerManager.Instance.player.currentActivePlayerSpell == null
+                    && PlayerManager.Instance.player.seizeComponent.hasSeizedPOI == false) {
                     LocationGridTile clickedTile = GetTileFromMousePosition();
                     if (TryGetSelectablesOnTile(clickedTile, out var selectables)) {
                         if (selectables.Count > 0) {
@@ -127,8 +131,7 @@ namespace Inner_Maps {
         }
         
         private ISelectable GetFirstSelectableOnTile(LocationGridTile tile) {
-            PointerEventData pointer = new PointerEventData(EventSystem.current);
-            pointer.position = Input.mousePosition;
+            PointerEventData pointer = new PointerEventData(EventSystem.current) {position = Input.mousePosition};
 
             raycastResults.Clear();
             EventSystem.current.RaycastAll(pointer, raycastResults);
@@ -394,7 +397,15 @@ namespace Inner_Maps {
                 } else {
                     summary = $"{summary}None";
                 }
-            
+                // summary = $"{summary}\nPOI's at {tile.structure}: \n";
+                // if (tile.structure.pointsOfInterest.Count > 0) {
+                //     for (int i = 0; i < tile.structure.pointsOfInterest.Count; i++) {
+                //         IPointOfInterest currPOI = tile.structure.pointsOfInterest.ElementAt(i);
+                //         summary = $"{summary}{currPOI.ToString()}, ";
+                //     }
+                // } else {
+                //     summary = $"{summary}None";
+                // }
             } else {
                 summary = $"{summary}\nStructure: None";
             }

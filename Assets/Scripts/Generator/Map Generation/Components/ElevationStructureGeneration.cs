@@ -186,7 +186,8 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 		tile.SetStructure(structure);
 		
 		//create wall tile object
-		TileObject blockWall = InnerMapManager.Instance.CreateNewTileObject<TileObject>(TILE_OBJECT_TYPE.BLOCK_WALL);
+		BlockWall blockWall = InnerMapManager.Instance.CreateNewTileObject<BlockWall>(TILE_OBJECT_TYPE.BLOCK_WALL);
+		blockWall.SetWallType(WALL_TYPE.Stone);
 		structure.AddPOI(blockWall, tile);
 	}
 	private void SetAsMountainGround(LocationGridTile tile, LocationStructure structure) {

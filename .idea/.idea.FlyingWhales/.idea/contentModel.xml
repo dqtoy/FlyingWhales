@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="C:\Users\12myk\.Rider2019.3\system\extResources" t="IncludeRecursive" />
-    <e p="C:\Users\12myk\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_FlyingWhales.-362142238.00" t="ExcludeRecursive" />
-    <e p="D:\Repositories\FlyingWhales" t="IncludeRecursive">
+    <e p="C:\Users\Mykel Abania\.Rider2019.3\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\Mykel Abania\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_FlyingWhales.1985073317.00" t="ExcludeRecursive" />
+    <e p="C:\Users\Mykel Abania\Repositories\FlyingWhales" t="IncludeRecursive">
       <e p="Assembly-CSharp-Editor.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp-firstpass.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
@@ -1071,7 +1071,6 @@
             <e p="CharacterDatabase.cs" t="Include" />
             <e p="CharacterFilter.cs" t="Include" />
             <e p="CharacterNeedsComponent.cs" t="Include" />
-            <e p="CharacterSim.cs" t="Include" />
             <e p="CharacterState" t="Include">
               <e p="BerserkedState.cs" t="Include" />
               <e p="CharacterState.cs" t="Include" />
@@ -1146,15 +1145,6 @@
             <e p="RaceSetting.cs" t="Include" />
           </e>
           <e p="Combat" t="Include">
-            <e p="Combat.cs" t="Include" />
-            <e p="CombatGrid.cs" t="Include" />
-            <e p="CombatSim.cs" t="Include" />
-            <e p="CombatSlot.cs" t="Include" />
-            <e p="CombatThread.cs" t="Include" />
-            <e p="CombatThreadPool.cs" t="Include" />
-            <e p="ICombatInitializer.cs" t="Include" />
-            <e p="NewCombat.cs" t="Include" />
-            <e p="PairCombatStats.cs" t="Include" />
             <e p="Projectile.cs" t="Include" />
           </e>
           <e p="Editor" t="Include">
@@ -1381,6 +1371,7 @@
             <e p="FeelingSpooked.cs" t="Include" />
             <e p="Flirt.cs" t="Include" />
             <e p="Grieving.cs" t="Include" />
+            <e p="IngestedPoison.cs" t="Include" />
             <e p="Inspired.cs" t="Include" />
             <e p="Interrupt.cs" t="Include" />
             <e p="InviteToMakeLove.cs" t="Include" />
@@ -1391,7 +1382,6 @@
             <e p="Mock.cs" t="Include" />
             <e p="NarcolepticAttack.cs" t="Include" />
             <e p="Plagued.cs" t="Include" />
-            <e p="Poisoned.cs" t="Include" />
             <e p="Puke.cs" t="Include" />
             <e p="ReduceConflict.cs" t="Include" />
             <e p="RevertToNormal.cs" t="Include" />
@@ -1515,10 +1505,12 @@
                   <e p="Crate.cs" t="Include" />
                   <e p="Desk.cs" t="Include" />
                   <e p="EdiblePlant.cs" t="Include" />
+                  <e p="FeebleSpirit.cs" t="Include" />
                   <e p="Fireplace.cs" t="Include" />
                   <e p="Flower.cs" t="Include" />
                   <e p="FoodBaskets.cs" t="Include" />
                   <e p="FoodPile.cs" t="Include" />
+                  <e p="ForlornSpirit.cs" t="Include" />
                   <e p="GenericTileObject.cs" t="Include" />
                   <e p="GoddessStatue.cs" t="Include" />
                   <e p="Grave.cs" t="Include" />
@@ -1536,6 +1528,7 @@
                   <e p="RackStaves.cs" t="Include" />
                   <e p="RackTools.cs" t="Include" />
                   <e p="RackWeapons.cs" t="Include" />
+                  <e p="RavenousSpirit.cs" t="Include" />
                   <e p="RegionTileObject.cs" t="Include" />
                   <e p="ResourcePile.cs" t="Include" />
                   <e p="Rock.cs" t="Include" />
@@ -1633,7 +1626,6 @@
             <e p="BezierCurveManager.cs" t="Include" />
             <e p="CharacterClassManager.cs" t="Include" />
             <e p="CharacterManager.cs" t="Include" />
-            <e p="CombatSimManager.cs" t="Include" />
             <e p="CrimeManager.cs" t="Include" />
             <e p="CursorManager.cs" t="Include" />
             <e p="FactionManager.cs" t="Include" />
@@ -1647,6 +1639,7 @@
             <e p="RaceManager.cs" t="Include" />
             <e p="SaveManager.cs" t="Include" />
             <e p="SchedulingManager.cs" t="Include" />
+            <e p="ScriptableObjectsManager.cs" t="Include" />
             <e p="SecretManager.cs" t="Include" />
             <e p="SettingsManager.cs" t="Include" />
             <e p="StartupManager.cs" t="Include" />
@@ -1659,7 +1652,6 @@
           <e p="Models" t="Include">
             <e p="ICharacter.cs" t="Include" />
             <e p="ICharacterBase.cs" t="Include" />
-            <e p="ICharacterSim.cs" t="Include" />
             <e p="IDwelling.cs" t="Include" />
             <e p="IJobOwner.cs" t="Include" />
             <e p="ILeader.cs" t="Include" />
@@ -1803,6 +1795,7 @@
           </e>
           <e p="Scriptable Object Scripts" t="Include">
             <e p="ArtifactData.cs" t="Include" />
+            <e p="ElementalDamageData.cs" t="Include" />
           </e>
           <e p="Serializable Dictionaries" t="Include">
             <e p="SerializableDictionaries.cs" t="Include" />
@@ -1875,6 +1868,8 @@
               <e p="Drunkard.cs" t="Include" />
               <e p="Edible.cs" t="Include" />
               <e p="ElementalMaster.cs" t="Include" />
+              <e p="Freezing.cs" t="Include" />
+              <e p="Frozen.cs" t="Include" />
               <e p="Glutton.cs" t="Include" />
               <e p="Griefstricken.cs" t="Include" />
               <e p="Grudge.cs" t="Include" />
@@ -1900,6 +1895,7 @@
               <e p="MusicLover.cs" t="Include" />
               <e p="Narcoleptic.cs" t="Include" />
               <e p="Nocturnal.cs" t="Include" />
+              <e p="Overheating.cs" t="Include" />
               <e p="Paralyzed.cs" t="Include" />
               <e p="Paramour.cs" t="Include" />
               <e p="PatrollingCharacter.cs" t="Include" />
@@ -1907,6 +1903,7 @@
               <e p="Plagued.cs" t="Include" />
               <e p="Poisoned.cs" t="Include" />
               <e p="Pyrophobic.cs" t="Include" />
+              <e p="Ravenous.cs" t="Include" />
               <e p="Reanimated.cs" t="Include" />
               <e p="RelationshipTrait.cs" t="Include" />
               <e p="Relative.cs" t="Include" />
@@ -1954,11 +1951,9 @@
             <e p="AreaPickerItem.cs" t="Include" />
             <e p="ArtifactPickerItem.cs" t="Include" />
             <e p="AttackPickerItem.cs" t="Include" />
-            <e p="AttackSlotItem.cs" t="Include" />
             <e p="Button Clicks" t="Include">
               <e p="AttributeBtn.cs" t="Include" />
               <e p="BehaviorBtn.cs" t="Include" />
-              <e p="CharacterSimButton.cs" t="Include" />
               <e p="ClassTraitButton.cs" t="Include" />
               <e p="InvestigateButton.cs" t="Include" />
               <e p="ItemDropBtn.cs" t="Include" />
@@ -1975,10 +1970,6 @@
             <e p="CharacterPickerItem.cs" t="Include" />
             <e p="CharacterRelationshipItem.cs" t="Include" />
             <e p="CombatAbilityButton.cs" t="Include" />
-            <e p="CombatLogItem.cs" t="Include" />
-            <e p="CombatLogsUI.cs" t="Include" />
-            <e p="CombatSlotItem.cs" t="Include" />
-            <e p="CombatUI.cs" t="Include" />
             <e p="Comparers.cs" t="Include" />
             <e p="ConsoleMenu.cs" t="Include" />
             <e p="CustomDDListItem.cs" t="Include" />
@@ -1994,7 +1985,6 @@
               <e p="SkillPanelUI.cs" t="Include" />
               <e p="TraitPanelUI.cs" t="Include" />
             </e>
-            <e p="DefenseSlotItem.cs" t="Include" />
             <e p="DeveloperNotificationArea.cs" t="Include" />
             <e p="DeveloperNotificationItem.cs" t="Include" />
             <e p="DialogItem.cs" t="Include" />
@@ -2087,7 +2077,6 @@
             <e p="SecretItem.cs" t="Include" />
             <e p="Selector.cs" t="Include" />
             <e p="ShareIntelMenu.cs" t="Include" />
-            <e p="SkirmishUI.cs" t="Include" />
             <e p="SlotItem.cs" t="Include" />
             <e p="SlotItemDraggable.cs" t="Include" />
             <e p="StringPickerItem.cs" t="Include" />

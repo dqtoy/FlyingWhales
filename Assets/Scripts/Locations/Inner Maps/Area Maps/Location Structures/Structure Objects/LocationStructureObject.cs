@@ -20,6 +20,7 @@ public class LocationStructureObject : PooledObject {
     [SerializeField] protected Tilemap _detailTileMap;
     [SerializeField] protected TilemapRenderer _groundTileMapRenderer;
     [SerializeField] protected TilemapRenderer _detailTileMapRenderer;
+    [SerializeField] protected Tilemap _blockWallsTilemap;
 
     [Header("Template Data")]
     [SerializeField] protected Vector2Int _size;
@@ -30,6 +31,10 @@ public class LocationStructureObject : PooledObject {
 
     [Header("Furniture Spots")]
     [SerializeField] protected Transform _furnitureSpotsParent;
+
+    [Header("Walls")] 
+    [Tooltip("This is only relevant if blockWallsTilemap is not null.")]
+    [SerializeField] private WALL_TYPE _wallType;
     
     [Header("Helpers")]
     [Tooltip("If this has elements, then only the provided coordinates will be set as part of the actual structure. Otherwise all the tiles inside the ground tilemap will be considered as part of the structure.")]
@@ -224,8 +229,21 @@ public class LocationStructureObject : PooledObject {
             //set the ground asset of the parent settlement map to what this objects ground map uses, then clear this objects ground map
             ApplyGroundTileAssetForTile(tile);
             tile.CreateSeamlessEdgesForTile(innerMap);
-            
             tile.parentMap.detailsTilemap.SetTile(tile.localPlace, null);
+
+            if (_blockWallsTilemap != null) {
+                TileBase blockWallAsset = _blockWallsTilemap.GetTile(_blockWallsTilemap.WorldToCell(tile.worldLocation));
+                if (blockWallAsset != null) {
+                    BlockWall blockWall = InnerMapManager.Instance.CreateNewTileObject<BlockWall>(TILE_OBJECT_TYPE.BLOCK_WALL);
+                    blockWall.SetWallType(_wallType);
+                    structure.AddPOI(blockWall, tile);
+                    // innerMap.structureTilemap.SetTile(tile.localPlace, blockWallAsset);
+                }
+            }
+        }
+        if (_blockWallsTilemap != null) {
+            //disable block walls tilemap
+            _blockWallsTilemap.gameObject.SetActive(false);
         }
         RegisterWalls(innerMap, structure);
         _groundTileMap.gameObject.SetActive(false);
@@ -335,7 +353,8 @@ public class LocationStructureObject : PooledObject {
             structureWallObject.SetGridTileLocation(tile);
             tile.AddWallObject(structureWallObject);
             walls[i] = structureWallObject;
-        }
+        }    
+        
     }
     internal void ChangeResourceMadeOf(RESOURCE resource) {
         for (int i = 0; i < walls.Length; i++) {
