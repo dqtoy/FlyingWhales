@@ -46,7 +46,7 @@ namespace Traits {
             //bool hasCreatedJob = false;
             if (accidentChance < 10) {
                 willStillContinueAction = false;
-                return owner.interruptComponent.TriggerInterrupt(INTERRUPT.Accident, owner);
+                return node.actor.interruptComponent.TriggerInterrupt(INTERRUPT.Accident, node.actor);
                 //if (node != null && !excludedActionsFromAccidentProneTrait.Contains(node.action.goapType)) {
                 //    DoAccident(node.action);
                 //    hasCreatedJob = true;
