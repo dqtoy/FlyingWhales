@@ -16,33 +16,33 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public string name { get; protected set; }
     public int id { get; private set; }
     public TILE_OBJECT_TYPE tileObjectType { get; private set; }
-    public Character characterOwner { get; protected set; }
+    public Character characterOwner { get; private set; }
     public List<INTERACTION_TYPE> advertisedActions { get; protected set; }
     public Region currentRegion => gridTileLocation.structure.location.coreTile.region;
-    public List<string> actionHistory { get; private set; } //list of actions that was done to this object
+    private List<string> actionHistory { get; set; } //list of actions that was done to this object
     public LocationStructure structureLocation => gridTileLocation.structure;
-    public bool isDisabledByPlayer { get; protected set; }
-    public bool isSummonedByPlayer { get; protected set; }
-    public List<JobQueueItem> allJobsTargetingThis { get; protected set; }
-    public List<Character> owners { get; private set; }
+    public bool isDisabledByPlayer { get; private set; }
+    public bool isSummonedByPlayer { get; private set; }
+    public List<JobQueueItem> allJobsTargetingThis { get; private set; }
+    private List<Character> owners { get; set; }
     public Character carriedByCharacter { get; private set; }
-    public virtual Character[] users {
+    public virtual Character[] users { //array of characters, currently using the tile object
         get {
             return slots?.Where(x => x != null && x.user != null).Select(x => x.user).ToArray() ?? null;
         }
-    }//array of characters, currently using the tile object
-    public Character removedBy { get; private set; }
+    }
+    private Character removedBy { get; set; }
     public BaseMapObjectVisual mapObjectVisual => mapVisual;
 
     //hp
-    public int maxHP { get; protected set; }
+    public int maxHP { get; private set; }
     public int currentHP { get; protected set; }
 
     ///this is null by default. This is responsible for updating the pathfinding graph when a tileobject that should be unapassable is placed <see cref="LocationGridTileGUS.Initialize(Vector3[])"/>, this should also destroyed when the object is removed. <see cref="LocationGridTileGUS.Destroy"/>
-    public LocationGridTileGUS graphUpdateScene { get; protected set; } 
+    private LocationGridTileGUS graphUpdateScene { get; set; } 
 
     //tile slots
-    public TileObjectSlotItem[] slots { get; protected set; } //for users
+    private TileObjectSlotItem[] slots { get; set; } //for users
     private GameObject slotsParent;
     protected bool hasCreatedSlots;
 
@@ -756,7 +756,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     #endregion
 
     #region Map Object
-    protected override void CreateAreaMapGameObject() {
+    protected override void CreateMapObjectVisual() {
         GameObject obj = InnerMapManager.Instance.mapObjectFactory.CreateNewTileObjectAreaMapObject(tileObjectType);
         mapVisual = obj.GetComponent<TileObjectGameObject>();
     }

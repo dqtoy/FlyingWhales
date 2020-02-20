@@ -6,14 +6,14 @@ using UnityEngine.Assertions;
 /// </summary>
 public abstract class MapObject<T> where T: IDamageable {
     public BaseCollisionTrigger<T> collisionTrigger => mapVisual.collisionTrigger;
-    public virtual MapObjectVisual<T> mapVisual { get; protected set; } ///this is set in each inheritors implementation of <see cref="CreateAreaMapGameObject"/>
+    public virtual MapObjectVisual<T> mapVisual { get; protected set; } ///this is set in each inheritors implementation of <see cref="CreateMapObjectVisual"/>
     public MAP_OBJECT_STATE mapObjectState { get; private set; }
 
     #region Initialization
-    protected abstract void CreateAreaMapGameObject();
+    protected abstract void CreateMapObjectVisual();
 
     public void InitializeMapObject(T obj) {
-        CreateAreaMapGameObject();
+        CreateMapObjectVisual();
         mapVisual.Initialize(obj);
         InitializeCollisionTrigger(obj);
     }

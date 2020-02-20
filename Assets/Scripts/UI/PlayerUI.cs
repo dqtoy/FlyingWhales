@@ -1144,7 +1144,7 @@ public class PlayerUI : MonoBehaviour {
         customDropdownList.ShowDropdown(PlayerManager.Instance.player.archetype.spells, OnClickSpell, CanChooseItem);
     }
     private bool CanChooseItem(string item) {
-        if (item == PlayerDB.Tornado || item == PlayerDB.Meteor) {
+        if (item == PlayerDB.Tornado || item == PlayerDB.Meteor || item == PlayerDB.Poison_Cloud) {
             return true;
         }
         return false;

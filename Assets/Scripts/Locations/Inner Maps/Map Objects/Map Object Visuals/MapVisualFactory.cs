@@ -22,6 +22,9 @@ public class MapVisualFactory {
             case TILE_OBJECT_TYPE.TORNADO:
                 obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("TornadoVisualObject", Vector3.zero, Quaternion.identity, null);
                 break;
+            case TILE_OBJECT_TYPE.POISON_CLOUD:
+                obj = ObjectPoolManager.Instance.InstantiateObjectFromPool("PoisonCloudMapObject", Vector3.zero, Quaternion.identity, null);
+                break;
             default:
                 obj = ObjectPoolManager.Instance.InstantiateObjectFromPool(Tile_Object_Prefab_Name, Vector3.zero, Quaternion.identity, null);
                 break;

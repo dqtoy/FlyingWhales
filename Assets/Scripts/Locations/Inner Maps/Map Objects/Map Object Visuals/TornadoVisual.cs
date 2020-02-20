@@ -1,11 +1,13 @@
-﻿using Pathfinding;
+﻿using System;
+using Pathfinding;
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using Inner_Maps;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
-public class TornadoVisual : MapObjectVisual<TileObject> {
+public class TornadoVisual : MovingMapObjectVisual<TileObject> {
 
     [Header("Particles")]
     [SerializeField] private ParticleSystem[] particles;
@@ -19,57 +21,40 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
     private float _speed;
     private int _radius;
     private List<IDamageable> _damagablesInTornado;
-    private ILocation _mapLocation;
     private TornadoTileObject _tornado;
     private string _expiryKey;
-    private Vector3 pos;
-    
-    #region getters/setters
-    public LocationGridTile gridTileLocation => GetLocationGridTileByXy(Mathf.FloorToInt(pos.x), Mathf.FloorToInt(pos.y));
-    private LocationGridTile destinationTile { get; set; }
-    #endregion    
 
+    #region getters/setters
+    private LocationGridTile destinationTile { get; set; }
+    #endregion
+
+    private void Awake() {
+        collisionTrigger = transform.GetComponentInChildren<TileObjectCollisionTrigger>();
+    }
     public override void Initialize(TileObject tileObject) {
+        base.Initialize(tileObject);
+        transform.localPosition = tileObject.gridTileLocation.centeredLocalLocation;
         selectable = tileObject;
         _tornado = tileObject as TornadoTileObject;
-        transform.localPosition = tileObject.gridTileLocation.centeredLocalLocation;
         _radius = _tornado.radius;
-        _mapLocation = tileObject.gridTileLocation.parentMap.location;
-        // float scale = tornado.radius / 5f;
         for (int i = 0; i < particles.Length; i++) {
             ParticleSystem p = particles[i];
             p.Play();    
         }
         _damagablesInTornado = new List<IDamageable>();
-        collisionTrigger = transform.GetComponentInChildren<TileObjectCollisionTrigger>();
     }
-    public override void UpdateTileObjectVisual(TileObject obj) { }
-    public override void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) { }
     private void GoToRandomTileInRadius() {
         List<LocationGridTile> tilesInRadius = gridTileLocation.GetTilesInRadius(8, 6, false, true);
         LocationGridTile chosen = tilesInRadius[Random.Range(0, tilesInRadius.Count)];
         GoTo(chosen);
     }
-    private LocationGridTile GetLocationGridTileByXy(int x, int y) {
-        return _mapLocation.innerMap.map[x, y];
-        // if (throwOnException) {
-        //     return _mapLocation.innerMap.map[x, y];
-        // } else {
-        //     if (UtilityScripts.Utilities.IsInRange(x, 0, _mapLocation.innerMap.width) &&
-        //         UtilityScripts.Utilities.IsInRange(y, 0, _mapLocation.innerMap.height)) {
-        //         return _mapLocation.innerMap.map[x, y];
-        //     }
-        //     return null;
-        // }
-    }
 
     public override void PlaceObjectAt(LocationGridTile tile) {
-        Vector3 worldPos = tile.centeredWorldLocation;
-        
-        var thisTransform = transform;
-        thisTransform.SetParent(tile.parentMap.objectsParent);
-        thisTransform.position = worldPos;
-        pos = thisTransform.localPosition;
+        base.PlaceObjectAt(tile);
+        // Vector3 worldPos = tile.centeredWorldLocation;
+        // var thisTransform = transform;
+        // thisTransform.SetParent(tile.parentMap.objectsParent);
+        // thisTransform.position = worldPos;
 
         GoToRandomTileInRadius();
         _expiryKey = SchedulingManager.Instance.AddEntry(GameManager.Instance.Today().AddTicks(_tornado.durationInTicks), Expire, this);
@@ -133,7 +118,6 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
         base.Reset();
         isSpawned = false;
         destinationTile = null;
-        _mapLocation = null;
         _journeyLength = 0f;
         _startPosition = Vector3.zero;
         _startTime = 0f;
@@ -148,11 +132,9 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
     }
     #endregion
     
-
     #region Monobehaviours
-    private void Update() {
-        pos = transform.localPosition;
-        
+    protected override void Update() {
+        base.Update();
         if (destinationTile == null) {
             return;
         }
@@ -176,13 +158,6 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
             destinationTile = null;
             GoToRandomTileInRadius();
         }
-
-        // for (int i = 0; i < _damagablesInTornado.Count; i++) {
-        //     IDamageable damageable = _damagablesInTornado[i];
-        //     if (damageable.mapObjectVisual != null && damageable.CanBeDamaged()) {
-        //         iTween.ShakeRotation(damageable.mapObjectVisual.gameObjectVisual, new Vector3(5f, 5f, 5f), 0.5f);
-        //     }
-        // }
     }
     #endregion
 
@@ -273,10 +248,15 @@ public class TornadoVisual : MapObjectVisual<TileObject> {
         return damageable.CanBeDamaged() && (damageable is GenericTileObject) == false 
             && (damageable is Character) == false && damageable.mapObjectVisual.IsTweening() == false;
     }
+
+    #region Abstract Member Implementation
+    public override void UpdateTileObjectVisual(TileObject obj) { }
+    public override void ApplyFurnitureSettings(FurnitureSetting furnitureSetting) { }
     public override bool IsMapObjectMenuVisible() {
         return true;
     }
     public override void UpdateCollidersState(TileObject obj) { }
+    #endregion
 
     #region Listeners
     private void OnTileObjectRemovedFromTile(TileObject tileObject, Character removedBy, LocationGridTile removedFrom) {

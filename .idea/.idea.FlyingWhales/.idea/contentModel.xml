@@ -1444,8 +1444,6 @@
                   <e p="TortureChamber.cs" t="Include" />
                 </e>
                 <e p="LocationStructureSetting.cs" t="Include" />
-                <e p="MeteorFalling.cs" t="Include" />
-                <e p="MeteorVisual.cs" t="Include" />
                 <e p="Structure Template Creator" t="Include">
                   <e p="BuildingSpotData.cs" t="Include" />
                   <e p="BuildingSpotDataMonobehaviour.cs" t="Include" />
@@ -1459,7 +1457,6 @@
                   <e p="TownMapSettings.cs" t="Include" />
                 </e>
                 <e p="TileObjectTileSetting.cs" t="Include" />
-                <e p="TornadoVisual.cs" t="Include" />
               </e>
               <e p="Collision Triggers" t="Include">
                 <e p="BaseCollisionTrigger.cs" t="Include" />
@@ -1482,11 +1479,19 @@
               <e p="LocationGridTile.cs" t="Include" />
               <e p="LocationGridTileGUS.cs" t="Include" />
               <e p="Map Objects" t="Include">
-                <e p="BaseMapObjectVisual.cs" t="Include" />
-                <e p="BedObjectGameObject.cs" t="Include" />
-                <e p="MapObject.cs" t="Include" />
-                <e p="MapObjectVisual.cs" t="Include" />
-                <e p="MapVisualFactory.cs" t="Include" />
+                <e p="Map Object Visuals" t="Include">
+                  <e p="BaseMapObjectVisual.cs" t="Include" />
+                  <e p="BedObjectGameObject.cs" t="Include" />
+                  <e p="MapObject.cs" t="Include" />
+                  <e p="MapObjectVisual.cs" t="Include" />
+                  <e p="MapVisualFactory.cs" t="Include" />
+                  <e p="MeteorFalling.cs" t="Include" />
+                  <e p="MeteorVisual.cs" t="Include" />
+                  <e p="MovingMapObjectVisual.cs" t="Include" />
+                  <e p="PoisonCloudMapObject.cs" t="Include" />
+                  <e p="TileObjectGameObject.cs" t="Include" />
+                  <e p="TornadoVisual.cs" t="Include" />
+                </e>
                 <e p="Tile Objects" t="Include">
                   <e p="Anvil.cs" t="Include" />
                   <e p="ArcheryTarget.cs" t="Include" />
@@ -1520,10 +1525,12 @@
                   <e p="Kindling.cs" t="Include" />
                   <e p="MagicCircle.cs" t="Include" />
                   <e p="MetalPile.cs" t="Include" />
+                  <e p="MovingTileObject.cs" t="Include" />
                   <e p="Mushroom.cs" t="Include" />
                   <e p="Ore.cs" t="Include" />
                   <e p="Plant.cs" t="Include" />
                   <e p="PlinthBook.cs" t="Include" />
+                  <e p="PoisonCloudTileObject.cs" t="Include" />
                   <e p="RackFarmingTools.cs" t="Include" />
                   <e p="RackStaves.cs" t="Include" />
                   <e p="RackTools.cs" t="Include" />
@@ -1569,7 +1576,6 @@
                   <e p="Wheelbarrow.cs" t="Include" />
                   <e p="WoodPile.cs" t="Include" />
                 </e>
-                <e p="TileObjectGameObject.cs" t="Include" />
               </e>
               <e p="Projectile Receivers" t="Include">
                 <e p="DefaultProjectileReceiver.cs" t="Include" />
@@ -1723,6 +1729,7 @@
               <e p="Paralysis.cs" t="Include" />
               <e p="Pestilence.cs" t="Include" />
               <e p="PlayerSpell.cs" t="Include" />
+              <e p="PoisonCloud.cs" t="Include" />
               <e p="Provoke.cs" t="Include" />
               <e p="Psychopathy.cs" t="Include" />
               <e p="RaiseDead.cs" t="Include" />

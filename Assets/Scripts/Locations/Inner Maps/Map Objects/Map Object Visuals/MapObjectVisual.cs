@@ -4,8 +4,6 @@ using UnityEngine;
 
 public abstract class MapObjectVisual<T> : BaseMapObjectVisual where T : IDamageable {
     public BaseCollisionTrigger<T> collisionTrigger { get; protected set; }
-    
-    
 
     public virtual void Initialize(T obj) {
         selectable = obj as ISelectable;
@@ -27,7 +25,7 @@ public abstract class MapObjectVisual<T> : BaseMapObjectVisual where T : IDamage
         this.transform.position = worldPos;
     }
     #endregion
-
+    
     #region Visuals
     public abstract void UpdateTileObjectVisual(T obj);
     protected virtual void UpdateSortingOrders(T obj) {

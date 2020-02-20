@@ -66,6 +66,7 @@ namespace Inner_Maps {
         public IPointOfInterest currentlyHoveredPoi { get; private set; }
         public List<LocationGridTile> currentlyHighlightedTiles { get; private set; }
         private LocationGridTile lastClickedTile;
+        private LocationGridTile lastHoveredTile;
 
         #region Monobehaviours
         private void Awake() {
@@ -81,9 +82,21 @@ namespace Inner_Maps {
                     return;
                 }
                 LocationGridTile hoveredTile = GetTileFromMousePosition();
+                // if (lastHoveredTile != null && hoveredTile != lastHoveredTile) {
+                //     List<LocationGridTile> diamond =
+                //         UtilityScripts.GameUtilities.GetDiamondTilesFromRadius(currentlyShowingMap,
+                //             lastHoveredTile.localPlace, 3);
+                //     UtilityScripts.GameUtilities.HighlightTiles(diamond, Color.white);
+                // }
+                
                 if (hoveredTile != null && hoveredTile.objHere == null) {
                     ShowTileData(hoveredTile);
+                    // List<LocationGridTile> diamond =
+                    //     UtilityScripts.GameUtilities.GetDiamondTilesFromRadius(currentlyShowingMap,
+                    //         hoveredTile.localPlace, 3);
+                    // UtilityScripts.GameUtilities.HighlightTiles(diamond, Color.blue);
                 }
+                lastHoveredTile = hoveredTile;
             }
         }
         private void OnClickMapObject(KeyCode keyCode) {
