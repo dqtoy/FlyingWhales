@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="C:\Users\Ian Chy\.Rider2019.3\system\extResources" t="IncludeRecursive" />
-    <e p="C:\Users\Ian Chy\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_FlyingWhales.1495046791.00" t="ExcludeRecursive" />
-    <e p="C:\Users\Ian Chy\Documents\FlyingWhales" t="IncludeRecursive">
+    <e p="C:\Users\Mykel Abania\.Rider2019.3\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\Mykel Abania\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_FlyingWhales.1985073317.00" t="ExcludeRecursive" />
+    <e p="C:\Users\Mykel Abania\Repositories\FlyingWhales" t="IncludeRecursive">
       <e p="Assembly-CSharp-Editor.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp-firstpass.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
@@ -1486,13 +1486,13 @@
                   <e p="MapObjectVisual.cs" t="Include" />
                   <e p="MapVisualFactory.cs" t="Include" />
                   <e p="MeteorFalling.cs" t="Include" />
-                  <e p="SpiritGameObject.cs" t="Include" />
                   <e p="MeteorVisual.cs" t="Include" />
                   <e p="MovingMapObjectVisual.cs" t="Include" />
                   <e p="PoisonCloudMapObject.cs" t="Include" />
                   <e p="TileObjectGameObject.cs" t="Include" />
                   <e p="TornadoVisual.cs" t="Include" />
                 </e>
+                <e p="SpiritGameObject.cs" t="Include" />
                 <e p="Tile Objects" t="Include">
                   <e p="Anvil.cs" t="Include" />
                   <e p="ArcheryTarget.cs" t="Include" />
