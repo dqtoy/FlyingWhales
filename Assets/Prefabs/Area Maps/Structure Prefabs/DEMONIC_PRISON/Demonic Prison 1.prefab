@@ -8174,10 +8174,12 @@ MonoBehaviour:
   _detailTileMap: {fileID: 5188964861269615487}
   _groundTileMapRenderer: {fileID: 820087690634341909}
   _detailTileMapRenderer: {fileID: 820087691493013109}
+  _blockWallsTilemap: {fileID: 5188964858969396229}
   _size: {x: 14, y: 14}
   _center: {x: 7, y: 7, z: 0}
   _objectsParent: {fileID: 4158736853328043761}
   _furnitureSpotsParent: {fileID: 0}
+  _wallType: 2
   predeterminedOccupiedCoordinates:
   - {x: 1, y: 8, z: 0}
   - {x: 1, y: 9, z: 0}

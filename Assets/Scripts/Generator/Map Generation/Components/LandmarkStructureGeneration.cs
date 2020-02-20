@@ -59,7 +59,9 @@ public class LandmarkStructureGeneration : MapGenerationComponent {
 	private IEnumerator GenerateMonsterLair(HexTile hexTile, LocationStructure structure) {
 		List<LocationGridTile> locationGridTiles = new List<LocationGridTile>(hexTile.locationGridTiles);
 
-		MonsterLairCellAutomata(locationGridTiles, structure, hexTile.region);
+		LocationStructure wilderness = hexTile.region.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
+		
+		MonsterLairCellAutomata(locationGridTiles, structure, hexTile.region, wilderness);
 		
 		for (int j = 0; j < hexTile.ownedBuildSpots.Length; j++) {
 			BuildingSpot spot = hexTile.ownedBuildSpots[j];
@@ -71,7 +73,7 @@ public class LandmarkStructureGeneration : MapGenerationComponent {
 		
 		yield return null;
 	}
-	private void MonsterLairCellAutomata(List<LocationGridTile> locationGridTiles, LocationStructure structure, Region region) {
+	private void MonsterLairCellAutomata(List<LocationGridTile> locationGridTiles, LocationStructure structure, Region region, LocationStructure wilderness) {
 		// List<LocationGridTile> refinedTiles =
 		// 	locationGridTiles.Where(t => t.HasNeighbourNotInList(locationGridTiles) == false && t.IsAtEdgeOfMap() == false).ToList();
 		
@@ -86,42 +88,48 @@ public class LandmarkStructureGeneration : MapGenerationComponent {
 			(locationGridTile) => SetAsGround(locationGridTile, structure));
 		
 		
+		List<LocationGridTile> tilesToRefine = new List<LocationGridTile>(locationGridTiles);
 		//refine further
-		for (int i = 0; i < locationGridTiles.Count; i++) {
-			LocationGridTile tile = locationGridTiles[i];
+		for (int i = 0; i < tilesToRefine.Count; i++) {
+			LocationGridTile tile = tilesToRefine[i];
 			if (tile.HasNeighbourOfType(LocationGridTile.Ground_Type.Flesh) == false) {
 				tile.SetStructureTilemapVisual(null);
 				tile.SetTileType(LocationGridTile.Tile_Type.Empty);
 				tile.SetTileState(LocationGridTile.Tile_State.Empty);
 				tile.RevertToPreviousGroundVisual();
+				tile.SetStructure(wilderness);
+				locationGridTiles.Remove(tile);
 			}
 		}
 		
 		//create path to outside
-		// LocationGridTile centerTile = Utilities.GetCenterTile(locationGridTiles, region.innerMap.map);
 		//get tiles that are at the edge of the given tiles, but are not at the edge of its map.
-		List<LocationGridTile> targetChoices = locationGridTiles.Where(t => t.tileType == LocationGridTile.Tile_Type.Wall  
-		                                                                    && t.IsAtEdgeOfMap() == false).ToList();
+		List<LocationGridTile> targetChoices = locationGridTiles
+			.Where(t => t.tileType == LocationGridTile.Tile_Type.Wall 
+		        && t.IsAtEdgeOfMap() == false).ToList();
 		if (targetChoices.Count > 0) {
 			LocationGridTile target = CollectionUtilities.GetRandomElement(targetChoices);
 			Debug.Log($"Chosen target tile to clear is {target.ToString()} for monster lair at {region.name}");
-			// List<LocationGridTile> path =
-			// 	PathGenerator.Instance.GetPath(centerTile, target, GRID_PATHFINDING_MODE.UNCONSTRAINED, true);
-			// for (int i = 0; i < path.Count; i++) {
-			// LocationGridTile tile = path[i];
 			target.SetStructureTilemapVisual(null);
 			target.SetTileType(LocationGridTile.Tile_Type.Empty);
-			// }	
+			target.SetStructure(wilderness);
 		}
-		
+
+		for (int i = 0; i < locationGridTiles.Count; i++) {
+			LocationGridTile tile = locationGridTiles[i];
+			if (tile.tileType == LocationGridTile.Tile_Type.Wall) {
+				//create wall tile object for all walls
+				BlockWall blockWall = InnerMapManager.Instance.CreateNewTileObject<BlockWall>(TILE_OBJECT_TYPE.BLOCK_WALL);
+				blockWall.SetWallType(WALL_TYPE.Flesh);
+				structure.AddPOI(blockWall, tile);
+			}
+		}
 	}
 	private void SetAsWall(LocationGridTile tile, LocationStructure structure, List<LocationGridTile> tiles) {
-		// if (CellularAutomataGenerator.IsAtEdgeOfMap(tile, tiles) == false) {
-			tile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.monsterLairGroundTile);	
-		// }
+		tile.SetGroundTilemapVisual(InnerMapManager.Instance.assetManager.monsterLairGroundTile);	
 		tile.SetTileType(LocationGridTile.Tile_Type.Wall);
 		tile.SetTileState(LocationGridTile.Tile_State.Occupied);
-		// tile.SetStructure(structure);
+		tile.SetStructure(structure);
 	}
 	private void SetAsGround(LocationGridTile tile, LocationStructure structure) {
 		tile.SetStructure(structure);

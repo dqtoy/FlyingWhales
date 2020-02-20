@@ -2402,10 +2402,12 @@ MonoBehaviour:
   _detailTileMap: {fileID: 8195094282726245286}
   _groundTileMapRenderer: {fileID: 3664157343861086866}
   _detailTileMapRenderer: {fileID: 3664157343068773030}
+  _blockWallsTilemap: {fileID: 8195094279513397296}
   _size: {x: 14, y: 14}
   _center: {x: 7, y: 7, z: 0}
   _objectsParent: {fileID: 4947364616982008}
   _furnitureSpotsParent: {fileID: 0}
+  _wallType: 2
   predeterminedOccupiedCoordinates: []
   wallTileMap: {fileID: 8195094279513397296}
   leftWall: {fileID: 1585498277213060, guid: 2e2e9509b5333aa4bbbeeabbd9cbec70, type: 3}

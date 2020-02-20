@@ -9,9 +9,11 @@ namespace Archetype {
                     , PlayerDB.Corrupt_Action, PlayerDB.Stop_Action, PlayerDB.Return_To_Portal_Action
                     , PlayerDB.Harass_Action, PlayerDB.Raid_Action, PlayerDB.Invade_Action
                     , PlayerDB.End_Harass_Action, PlayerDB.End_Raid_Action, PlayerDB.End_Invade_Action
-                    , PlayerDB.Combat_Mode_Action };
+                    , PlayerDB.Combat_Mode_Action, PlayerDB.Build_Demonic_Structure_Action, PlayerDB.Breed_Monster_Action
+                    , PlayerDB.Learn_Spell_Action, PlayerDB.Activate_Artifact_Action
+            };
             monsters = new List<RaceClass> { new RaceClass(RACE.WOLF, "Ravager"), new RaceClass(RACE.GOLEM, "Golem") };
-            demonicStructures = new List<LANDMARK_TYPE>() { LANDMARK_TYPE.THE_PIT, LANDMARK_TYPE.THE_KENNEL };
+            demonicStructures = new List<LANDMARK_TYPE>() { LANDMARK_TYPE.THE_PIT, LANDMARK_TYPE.THE_KENNEL, LANDMARK_TYPE.DEMONIC_PRISON };
             minionClasses = new List<string>() { "Pride", "Envy", "Greed", "Wrath" };
             afflictions = new List<SPELL_TYPE>() { }; //No intial afflictions
             spells = new List<string>() { PlayerDB.Tornado, PlayerDB.Poison_Cloud, PlayerDB.Meteor, PlayerDB.Lightning

@@ -1,8 +1,11 @@
 ﻿using System.Collections.Generic;
 using Inner_Maps;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class BlockWall : TileObject {
+    
+    public WALL_TYPE wallType { get; private set; }
     
     public BlockWall() {
         advertisedActions = new List<INTERACTION_TYPE>();
@@ -16,13 +19,11 @@ public class BlockWall : TileObject {
         RemoveCommonAdvertisements();
         traitContainer.RemoveTrait(this, "Flammable");
     }
+    public void SetWallType(WALL_TYPE _wallType) {
+        wallType = _wallType;
+    }
 
     #region Overrides
-    public override void OnPlacePOI() {
-        base.OnPlacePOI();
-       
-        // InitializeGUS(Vector2.zero, Vector2.one);
-    }
     protected override void OnRemoveTileObject(Character removedBy, LocationGridTile removedFrom, bool removeTraits = true,
         bool destroyTileSlots = true) {
         removedFrom.parentMap.structureTilemap.SetTile(removedFrom.localPlace, null);
@@ -31,7 +32,7 @@ public class BlockWall : TileObject {
         base.OnRemoveTileObject(removedBy, removedFrom, removeTraits, destroyTileSlots);
     }
     protected override void OnPlaceTileObjectAtTile(LocationGridTile tile) {
-        tile.parentMap.structureTilemap.SetTile(tile.localPlace, InnerMapManager.Instance.assetManager.caveWallTile);
+        tile.parentMap.structureTilemap.SetTile(tile.localPlace, InnerMapManager.Instance.assetManager.GetWallAssetBasedOnWallType(wallType));
         tile.SetTileType(LocationGridTile.Tile_Type.Wall);
         InitializeGUS(Vector2.zero, Vector2.one);
         base.OnPlaceTileObjectAtTile(tile);
