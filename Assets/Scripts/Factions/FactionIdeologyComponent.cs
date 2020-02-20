@@ -46,7 +46,9 @@ public class FactionIdeologyComponent {
         for (int i = 0; i < owner.characters.Count; i++) {
             Character member = owner.characters[i];
             if(member == owner.leader) { continue; }
-            owner.CheckIfCharacterStillFitsIdeology(member);
+            if (owner.CheckIfCharacterStillFitsIdeology(member)) {
+                i--;
+            }
         }
     }
 }

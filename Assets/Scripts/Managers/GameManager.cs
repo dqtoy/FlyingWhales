@@ -460,6 +460,11 @@ public class GameManager : MonoBehaviour {
         go.transform.localPosition = Vector3.zero;
         go.SetActive(true);
     }
+    public void CreateFireEffectAt(LocationGridTile tile) {
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(fireEffectPrefab.name, Vector3.zero, Quaternion.identity, tile.parentMap.objectsParent);
+        go.transform.localPosition = tile.centeredLocalLocation;
+        go.SetActive(true);
+    }
     public void CreateFireEffectAt(IPointOfInterest poi) {
         if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             CreateFireEffectAt(poi as Character);

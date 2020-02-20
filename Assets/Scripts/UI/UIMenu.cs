@@ -141,12 +141,12 @@ public class UIMenu : MonoBehaviour {
         return null;
     }
     private void OnPlayerActionAddedToTarget(PlayerAction playerAction, IPlayerActionTarget actionTarget) {
-        if (_playerActionTarget == actionTarget) {
+        if (_playerActionTarget == actionTarget && isShowing) {
             LoadActions(actionTarget);
         }
     }
     private void OnPlayerActionRemovedFromTarget(PlayerAction playerAction, IPlayerActionTarget actionTarget) {
-        if (_playerActionTarget == actionTarget) {
+        if (_playerActionTarget == actionTarget && isShowing) {
             LoadActions(actionTarget);
         }
     }

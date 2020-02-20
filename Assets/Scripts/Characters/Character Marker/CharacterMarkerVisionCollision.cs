@@ -120,6 +120,10 @@ public class CharacterMarkerVisionCollision : MonoBehaviour {
     #region Different Structure Handling
     public void AddPOIAsInRangeButDifferentStructure(IPointOfInterest poi) {
         poisInRangeButDiffStructure.Add(poi);
+        for (int i = 0; i < poi.traitContainer.onOthersSeeInDiffStructureEvenCannotWitnessTraits.Count; i++) {
+            Trait trait = poi.traitContainer.onOthersSeeInDiffStructureEvenCannotWitnessTraits[i];
+            trait.OnOthersSeeThisInDiffStructureEvenCannotWitness(parentMarker.character, poi);
+        }
     }
     public void RemovePOIAsInRangeButDifferentStructure(IPointOfInterest poi) {
         poisInRangeButDiffStructure.Remove(poi);

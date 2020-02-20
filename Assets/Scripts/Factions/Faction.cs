@@ -302,15 +302,17 @@ public class Faction {
     private void OnCharacterRemoved(Character character) {
         LeaveFaction(character);
     }
-    public void CheckIfCharacterStillFitsIdeology(Character character) {
+    //Returns true if character left the faction, otherwise return false
+    public bool CheckIfCharacterStillFitsIdeology(Character character) {
         if (character.faction == this && !ideologyComponent.DoesCharacterFitCurrentIdeologies(character)) {
-            character.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Faction, character, "left_faction_not_fit");
+            return character.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Faction, character, "left_faction_not_fit");
             //character.ChangeFactionTo(FactionManager.Instance.friendlyNeutralFaction);
             //Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "left_faction_not_fit");
             //log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
             //log.AddToFillers(this, name, LOG_IDENTIFIER.FACTION_1);
             //character.RegisterLogAndShowNotifToThisCharacterOnly(log, onlyClickedCharacter: false);
         }
+        return false;
     }
     public bool IsCharacterBannedFromJoining(Character character) {
         return HasCharacterBeenBanned(character);

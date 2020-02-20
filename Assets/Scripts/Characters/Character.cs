@@ -2159,6 +2159,9 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         for (int i = 0; i < traitContainer.allTraits.Count; i++) {
             traitContainer.allTraits[i].OnSeePOIEvenCannotWitness(target, this);
         }
+        for (int i = 0; i < target.traitContainer.onOthersSeeEvenCannotWitnessTraits.Count; i++) {
+            target.traitContainer.allTraits[i].OnOthersSeeThisEvenCannotWitness(this, target);
+        }
 
         if (!canWitness) {
             return;
@@ -2885,6 +2888,23 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         this._currentHP += amount;
         this._currentHP = Mathf.Clamp(this._currentHP, 0, maxHP);
         Messenger.Broadcast(Signals.ADJUSTED_HP, this);
+        if (marker != null) {
+            if (marker.hpBarGO.activeSelf) {
+                marker.UpdateHP();
+            } else {
+                if (amount <= 0) {
+                    if (_currentHP > 0) {
+                        //only show hp bar if hp was reduced and hp is greater than 0
+                        marker.QuickShowHPBar();
+                    }
+                    Character responsibleCharacter = null;
+                    if (source is Character) {
+                        responsibleCharacter = source as Character;
+                    }
+                    CombatManager.Instance.ApplyElementalDamage(elementalDamageType, this, responsibleCharacter);
+                }
+            }
+        }
         if (triggerDeath && previous != this._currentHP && this._currentHP <= 0) {
             if(source != null) {
                 if (source is Character) {
@@ -2903,23 +2923,6 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         } else if (amount < 0 && IsHealthCriticallyLow()) {
             combatComponent.FlightAll();
             // Messenger.Broadcast(Signals.TRANSFER_ENGAGE_TO_FLEE_LIST, this, "critically low health");
-        }
-        if (marker != null) {
-            if (marker.hpBarGO.activeSelf) {
-                marker.UpdateHP();
-            } else {
-                if (amount <= 0) {
-                    if (_currentHP > 0) {
-                        //only show hp bar if hp was reduced and hp is greater than 0
-                        marker.QuickShowHPBar();
-                    }
-                    Character responsibleCharacter = null;
-                    if (source is Character) {
-                        responsibleCharacter = source as Character;
-                    }
-                    CombatManager.Instance.ApplyElementalDamage(elementalDamageType, this, responsibleCharacter);
-                }
-            }
         }
     }
     public void AdjustAttackMod(int amount) {
