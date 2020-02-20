@@ -838,7 +838,11 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public List<PlayerAction> actions { get; private set; }
     public void ConstructDefaultActions() {
         actions = new List<PlayerAction>();
-        
+
+        if (tileObjectType == TILE_OBJECT_TYPE.RAVENOUS_SPIRIT || tileObjectType == TILE_OBJECT_TYPE.FEEBLE_SPIRIT ||
+            tileObjectType == TILE_OBJECT_TYPE.FORLORN_SPIRIT) {
+            return;
+        }
         PlayerAction destroyAction = new PlayerAction(PlayerDB.Destroy_Action, 
             () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.DESTROY].CanPerformAbilityTowards(this),
             () => PlayerManager.Instance.allSpellsData[SPELL_TYPE.DESTROY].ActivateAbility(this));

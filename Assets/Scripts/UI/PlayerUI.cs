@@ -1144,7 +1144,7 @@ public class PlayerUI : MonoBehaviour {
         customDropdownList.ShowDropdown(PlayerManager.Instance.player.archetype.spells, OnClickSpell, CanChooseItem);
     }
     private bool CanChooseItem(string item) {
-        if (item == PlayerDB.Tornado || item == PlayerDB.Meteor) {
+        if (item == PlayerDB.Tornado || item == PlayerDB.Meteor || item == PlayerDB.Ravenous_Spirit || item == PlayerDB.Feeble_Spirit || item == PlayerDB.Forlorn_Spirit) {
             return true;
         }
         return false;
@@ -1156,7 +1156,11 @@ public class PlayerUI : MonoBehaviour {
         if(PlayerManager.Instance.player.currentActivePlayerSpell != null) {
             return;
         }
-        SPELL_TYPE spell = (SPELL_TYPE) System.Enum.Parse(typeof(SPELL_TYPE), spellName.ToUpper().Replace(' ', '_'));
+        SPELL_TYPE spell = SPELL_TYPE.NONE;
+        string enumSpellName = spellName.ToUpper().Replace(' ', '_');
+        if (!System.Enum.TryParse(enumSpellName, out spell)) {
+            System.Enum.TryParse(enumSpellName + "_SPELL", out spell);
+        }
         SpellData ability = PlayerManager.Instance.GetSpellData(spell);
         PlayerManager.Instance.player.SetCurrentlyActivePlayerSpell(ability);
     }

@@ -10,8 +10,7 @@ namespace Traits {
     public interface ITraitContainer {
 
         List<Trait> allTraits { get; }
-        List<Trait> onOthersSeeEvenCannotWitnessTraits { get; }
-        List<Trait> onOthersSeeInDiffStructureEvenCannotWitnessTraits { get; }
+        List<Trait> onCollideWithTraits { get; }
         Dictionary<string, int> stacks { get; }
         //Dictionary<Trait, int> currentDurations { get; }
         //List<RelationshipTrait> relationshipTraits { get; }
@@ -20,10 +19,8 @@ namespace Traits {
         bool AddTrait(ITraitable addTo, string traitName, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null);
         bool AddTrait(ITraitable addTo, Trait trait, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null);
         bool AddTrait(ITraitable addTo, string traitName, out Trait trait, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null);
-        void AddOnOthersSeeEvenCannotWitnessTrait(Trait trait);
-        bool RemoveOnOthersSeeEvenCannotWitnessTrait(Trait trait);
-        void AddOnOthersSeeInDiffStructureEvenCannotWitnessTrait(Trait trait);
-        bool RemoveOnOthersSeeInDiffStructureEvenCannotWitnessTrait(Trait trait);
+        void AddOnCollideWithTrait(Trait trait);
+        bool RemoveOnCollideWithTrait(Trait trait);
         #endregion
 
         #region Removing

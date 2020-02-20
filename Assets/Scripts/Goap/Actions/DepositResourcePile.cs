@@ -141,6 +141,9 @@ public class DepositResourcePile : GoapAction {
         ResourcePile pile = goapNode.poiTarget as ResourcePile;
         log.AddToFillers(null, UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLetters(pile.providedResource.ToString()), LOG_IDENTIFIER.STRING_1);
     }
+    public override void OnActionStarted(ActualGoapNode node) {
+        node.actor.ShowItemVisualCarryingPOI(node.poiTarget as TileObject);
+    }
     #endregion
 
     #region Preconditions
@@ -166,7 +169,7 @@ public class DepositResourcePile : GoapAction {
     protected override bool AreRequirementsSatisfied(Character actor, IPointOfInterest poiTarget, object[] otherData) { 
         bool satisfied = base.AreRequirementsSatisfied(actor, poiTarget, otherData);
         if (satisfied) {
-            if (actor.ownParty.IsPOICarried(poiTarget)) {
+            if (actor.IsPOICarriedOrInInventory(poiTarget)) {
                 return true;
             }
             if (poiTarget.gridTileLocation == null) {

@@ -24,8 +24,8 @@ namespace Traits {
                 traitable.traitContainer.AddScheduleTicket(trait.name, ticket);
                 //trait.SetExpiryTicket(traitable, ticket);
             }
-            if (trait.hasOnOthersSeeOverride) {
-                traitable.traitContainer.AddOnOthersSeeEvenCannotWitnessTrait(trait);
+            if (trait.hasOnCollideWith) {
+                traitable.traitContainer.AddOnCollideWithTrait(trait);
             }
             Messenger.Broadcast(Signals.TRAITABLE_GAINED_TRAIT, traitable, trait);
         }
@@ -38,8 +38,8 @@ namespace Traits {
             traitable.traitContainer.SwitchOffTrait(trait.name);
             UnapplyPOITraitInteractions(traitable, trait);
             trait.OnRemoveTrait(traitable, removedBy);
-            if (trait.hasOnOthersSeeOverride) {
-                traitable.traitContainer.RemoveOnOthersSeeEvenCannotWitnessTrait(trait);
+            if (trait.hasOnCollideWith) {
+                traitable.traitContainer.RemoveOnCollideWithTrait(trait);
             }
             Messenger.Broadcast(Signals.TRAITABLE_LOST_TRAIT, traitable, trait, removedBy);
         }
