@@ -102,7 +102,7 @@ public class StructureWallObject : MapObject<StructureWallObject>, ITraitable {
     #endregion
 
     #region Settlement Map Object
-    protected override void CreateAreaMapGameObject() {
+    protected override void CreateMapObjectVisual() {
         mapVisual = _visual;
     }
     protected override void OnMapObjectStateChanged() { }

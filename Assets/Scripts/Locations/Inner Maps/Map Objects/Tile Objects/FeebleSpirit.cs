@@ -56,7 +56,7 @@ public class FeebleSpirit : TileObject {
         Messenger.RemoveListener(Signals.TICK_ENDED, OnTickEnded);
         // Messenger.RemoveListener<SpiritGameObject>(Signals.SPIRIT_OBJECT_NO_DESTINATION, OnSpiritObjectNoDestination);
     }
-    protected override void CreateAreaMapGameObject() {
+    protected override void CreateMapObjectVisual() {
         GameObject obj = InnerMapManager.Instance.mapObjectFactory.CreateNewTileObjectAreaMapObject(tileObjectType);
         _spiritGO = obj.GetComponent<SpiritGameObject>();
         mapVisual = _spiritGO;
