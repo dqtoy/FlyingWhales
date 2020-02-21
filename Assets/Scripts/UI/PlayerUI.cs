@@ -1146,7 +1146,8 @@ public class PlayerUI : MonoBehaviour {
     private bool CanChooseItem(string item) {
         if (item == PlayerDB.Tornado || item == PlayerDB.Meteor || item == PlayerDB.Ravenous_Spirit || item == PlayerDB.Feeble_Spirit || item == PlayerDB.Forlorn_Spirit
             || item == PlayerDB.Lightning || item == PlayerDB.Poison_Cloud || item == PlayerDB.Earthquake
-            || item == PlayerDB.Locust_Swarm || item == PlayerDB.Spawn_Boulder || item == PlayerDB.Manifest_Food) {
+            || item == PlayerDB.Locust_Swarm || item == PlayerDB.Spawn_Boulder || item == PlayerDB.Manifest_Food
+            || item == PlayerDB.Brimstones) {
             return true;
         }
         return false;
@@ -1156,7 +1157,7 @@ public class PlayerUI : MonoBehaviour {
     }
     private void OnClickSpell(string spellName) {
         if(PlayerManager.Instance.player.currentActivePlayerSpell != null) {
-            return;
+            PlayerManager.Instance.player.SetCurrentlyActivePlayerSpell(null);
         }
         SPELL_TYPE spell = SPELL_TYPE.NONE;
         string enumSpellName = spellName.ToUpper().Replace(' ', '_');

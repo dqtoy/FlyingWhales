@@ -5,6 +5,7 @@ using Inner_Maps;
 using Packages.Rider.Editor;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using Traits;
 
 public class HexTileSpellsComponent {
     public HexTile owner { get; private set; }
@@ -19,6 +20,10 @@ public class HexTileSpellsComponent {
     private bool _hasOnStartEarthquakeCalled;
     #endregion
     
+    #region Brimstones Variables
+    public bool hasBrimstones { get; private set; }
+    private int _currentBrimstonesDuration;
+    #endregion
     
     public HexTileSpellsComponent(HexTile owner) {
         this.owner = owner;
@@ -238,6 +243,72 @@ public class HexTileSpellsComponent {
         }
         if (_currentEarthquakeDuration >= 3) {
             SetHasEarthquake(false);
+        }
+    }
+    #endregion
+    
+    #region Brimstones
+    public void SetHasBrimstones(bool state) {
+        if (hasBrimstones != state) {
+            hasBrimstones = state;
+            if (hasBrimstones) {
+                StartBrimstones();
+            } else {
+                StopBrimstones();
+            }
+        }
+    }
+    private void StartBrimstones() {
+        _currentBrimstonesDuration = 0;
+        owner.StartCoroutine(CommenceFallingBrimstones());
+        Messenger.AddListener(Signals.TICK_STARTED, PerTickBrimstones);
+    }
+    private void StopBrimstones() {
+        owner.StopCoroutine(CommenceFallingBrimstones());
+        Messenger.RemoveListener(Signals.TICK_STARTED, PerTickBrimstones);
+    }
+    private IEnumerator CommenceFallingBrimstones() {
+        while (hasBrimstones) {
+            while (GameManager.Instance.isPaused) {
+                yield return null;
+            }
+            yield return new WaitForSeconds(UnityEngine.Random.Range(0.1f, 0.7f));
+            LocationGridTile chosenTile = owner.locationGridTiles[UnityEngine.Random.Range(0, owner.locationGridTiles.Count)];
+            List<ITraitable> traitables = chosenTile.GetTraitablesOnTile();
+            BurningSource bs = null;
+            for (int i = 0; i < traitables.Count; i++) {
+                ITraitable traitable = traitables[i];
+                if (traitable is TileObject obj) {
+                    if (obj.tileObjectType != TILE_OBJECT_TYPE.GENERIC_TILE_OBJECT) {
+                        obj.AdjustHP(-obj.currentHP, ELEMENTAL_TYPE.Fire);
+                        if (obj.gridTileLocation == null) {
+                            continue; //object was destroyed, do not add burning trait
+                        }
+                    } else {
+                        obj.AdjustHP(0, ELEMENTAL_TYPE.Fire);
+                    }
+                } else if (traitable is Character character) {
+                    character.AdjustHP(-(int)(character.maxHP * 0.4f), ELEMENTAL_TYPE.Fire, true);
+                    if (UnityEngine.Random.Range(0, 100) < 25) {
+                        character.traitContainer.AddTrait(character, "Injured");
+                    }
+                } else {
+                    traitable.AdjustHP(-traitable.currentHP, ELEMENTAL_TYPE.Fire);
+                }
+                Burning burningTrait = traitable.traitContainer.GetNormalTrait<Burning>("Burning");
+                if(burningTrait != null && burningTrait.sourceOfBurning == null) {
+                    if(bs == null) {
+                        bs = new BurningSource(traitable.gridTileLocation.parentMap.location);
+                    }
+                    burningTrait.SetSourceOfBurning(bs, traitable);
+                }
+            }  
+        }
+    }
+    private void PerTickBrimstones() {
+        _currentBrimstonesDuration++;
+        if (_currentBrimstonesDuration >= 12) {
+            SetHasBrimstones(false);
         }
     }
     #endregion

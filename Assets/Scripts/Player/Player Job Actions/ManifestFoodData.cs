@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Inner_Maps;
-
 public class ManifestFoodData : SpellData {
     public override SPELL_TYPE ability => SPELL_TYPE.MANIFEST_FOOD;
     public override string name { get { return "Manifest Food"; } }
