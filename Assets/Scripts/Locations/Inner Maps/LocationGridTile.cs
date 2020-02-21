@@ -372,9 +372,9 @@ namespace Inner_Maps {
 
         #region Characters
         public void AddCharacterHere(Character character) {
-            if (!charactersHere.Contains(character)) {
+            // if (!charactersHere.Contains(character)) {
                 charactersHere.Add(character);
-            }
+            // }
         }
         public void RemoveCharacterHere(Character character) {
             charactersHere.Remove(character);
@@ -657,12 +657,25 @@ namespace Inner_Maps {
                     traitables.Add(objHere);
                 }
             }
-        
             for (int i = 0; i < charactersHere.Count; i++) {
                 Character character = charactersHere[i];
                 traitables.Add(character);
             }
             return traitables;
+        }
+        public List<IPointOfInterest> GetPOIsOnTile() {
+            List<IPointOfInterest> pois = new List<IPointOfInterest>();
+            pois.Add(genericTileObject);
+            if (objHere != null) {
+                if ((objHere is TileObject && (objHere as TileObject).mapObjectState == MAP_OBJECT_STATE.BUILT)) {
+                    pois.Add(objHere);
+                }
+            }
+            for (int i = 0; i < charactersHere.Count; i++) {
+                Character character = charactersHere[i];
+                pois.Add(character);
+            }
+            return pois;
         }
         public int GetNeighbourOfTypeCount(Ground_Type type, bool useFourNeighbours = false) {
             int count = 0;

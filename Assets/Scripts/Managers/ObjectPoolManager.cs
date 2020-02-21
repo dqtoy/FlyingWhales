@@ -72,7 +72,6 @@ public class ObjectPoolManager : MonoBehaviour {
         pooledObject.SendObjectBackToPool();
         pooledObject.Reset();
         pooledObject.transform.SetParent(pooledObject.ParentPool.transform);
-        
     }
 
     public EZObjectPool CreateNewPool(GameObject template, string poolName, int size, bool autoResize, bool instantiateImmediate, bool shared) {

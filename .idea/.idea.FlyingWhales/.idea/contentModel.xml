@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="C:\Users\Mykel Abania\.Rider2019.3\system\extResources" t="IncludeRecursive" />
-    <e p="C:\Users\Mykel Abania\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_FlyingWhales.1985073317.00" t="ExcludeRecursive" />
-    <e p="C:\Users\Mykel Abania\Repositories\FlyingWhales" t="IncludeRecursive">
+    <e p="C:\Users\12myk\.Rider2019.3\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\12myk\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_FlyingWhales.-362142238.00" t="ExcludeRecursive" />
+    <e p="D:\Repositories\FlyingWhales" t="IncludeRecursive">
       <e p="Assembly-CSharp-Editor.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp-firstpass.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
@@ -1482,16 +1482,15 @@
                 <e p="Map Object Visuals" t="Include">
                   <e p="BaseMapObjectVisual.cs" t="Include" />
                   <e p="BedObjectGameObject.cs" t="Include" />
-                  <e p="LocustSwarmMapObjectVisual.cs" t="Include" />
                   <e p="MapObject.cs" t="Include" />
                   <e p="MapObjectVisual.cs" t="Include" />
                   <e p="MapVisualFactory.cs" t="Include" />
                   <e p="MeteorFalling.cs" t="Include" />
                   <e p="MeteorVisual.cs" t="Include" />
                   <e p="MovingMapObjectVisual.cs" t="Include" />
-                  <e p="PoisonCloudMapObjectVisual.cs" t="Include" />
+                  <e p="PoisonCloudMapObject.cs" t="Include" />
                   <e p="TileObjectGameObject.cs" t="Include" />
-                  <e p="TornadoMapObjectVisual.cs" t="Include" />
+                  <e p="TornadoVisual.cs" t="Include" />
                 </e>
                 <e p="SpiritGameObject.cs" t="Include" />
                 <e p="Tile Objects" t="Include">
@@ -1525,7 +1524,6 @@
                   <e p="HealingPotion.cs" t="Include" />
                   <e p="IronMaiden.cs" t="Include" />
                   <e p="Kindling.cs" t="Include" />
-                  <e p="LocustSwarmTileObject.cs" t="Include" />
                   <e p="MagicCircle.cs" t="Include" />
                   <e p="MetalPile.cs" t="Include" />
                   <e p="MovingTileObject.cs" t="Include" />
@@ -1727,7 +1725,7 @@
               <e p="Ignite.cs" t="Include" />
               <e p="Jolt.cs" t="Include" />
               <e p="Kleptomania.cs" t="Include" />
-              <e p="LocustSwarm.cs" t="Include" />
+              <e p="LightningData.cs" t="Include" />
               <e p="Lullaby.cs" t="Include" />
               <e p="Lure.cs" t="Include" />
               <e p="Lycanthropy.cs" t="Include" />
@@ -1742,7 +1740,6 @@
               <e p="RavenousSpiritData.cs" t="Include" />
               <e p="Release.cs" t="Include" />
               <e p="ShareIntel.cs" t="Include" />
-              <e p="SpawnBoulder.cs" t="Include" />
               <e p="Spoil.cs" t="Include" />
               <e p="Spook.cs" t="Include" />
               <e p="Tornado.cs" t="Include" />

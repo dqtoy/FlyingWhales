@@ -5,6 +5,7 @@ using UnityEngine;
 namespace Traits {
     public class Zapped : Trait {
 
+        private GameObject electricEffectGO;
         public Zapped() {
             name = "Zapped";
             description = "This character cannot move.";
@@ -19,7 +20,7 @@ namespace Traits {
         #region Overrides
         public override void OnAddTrait(ITraitable sourcePOI) {
             if(sourcePOI is IPointOfInterest) {
-                GameManager.Instance.CreateElectricEffectAt(sourcePOI as IPointOfInterest);
+                electricEffectGO = GameManager.Instance.CreateElectricEffectAt(sourcePOI as IPointOfInterest);
             }
             if (sourcePOI is Character) {
                 Character character = sourcePOI as Character;
@@ -32,20 +33,7 @@ namespace Traits {
                 }
                 if (character.stateComponent.currentState != null) {
                     character.stateComponent.ExitCurrentState();
-                    //if (character.stateComponent.currentState != null) {
-                    //    character.stateComponent.currentState.OnExitThisState();
-                    //}
                 }
-                // character.CancelAllJobs("Stopped by the player");
-                //else if(character.currentActionNode.action != null) {
-                //    character.currentActionNode.action.StopAction();
-                //} else if (character.currentParty.icon.isTravelling) {
-                //    if (character.currentParty.icon.travelLine == null) {
-                //        character.marker.StopMovement();
-                //    } else {
-                //        character.currentParty.icon.SetOnArriveAction(() => character.OnArriveAtAreaStopMovement());
-                //    }
-                //}
                 character.combatComponent.ClearHostilesInRange(false);
                 character.combatComponent.ClearAvoidInRange(false);
                 //character.AdjustCanPerform(1);
@@ -53,6 +41,9 @@ namespace Traits {
             base.OnAddTrait(sourcePOI);
         }
         public override void OnRemoveTrait(ITraitable sourcePOI, Character removedBy) {
+            if (electricEffectGO != null) {
+                ObjectPoolManager.Instance.DestroyObject(electricEffectGO);
+            }
             if (sourcePOI is Character) {
                 Character character = sourcePOI as Character;
                 //character.AdjustCanPerform(-1);

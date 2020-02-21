@@ -21,8 +21,11 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
         SetVisual(InnerMapManager.Instance.GetTileObjectAsset(tileObject, 
             tileObject.state, 
             tileObject.structureLocation.location.coreTile.biomeType,
-            isCorrupted));  
+            isCorrupted));
         collisionTrigger = this.transform.GetComponentInChildren<TileObjectCollisionTrigger>();
+        if (collisionTrigger == null) {
+            Debug.LogError("NO COLLISION TRIGGER FOR " + tileObject.nameWithID);
+        }
         _isMenuShowing = () => IsMenuShowing(tileObject);
         UpdateSortingOrders(tileObject);
     }
