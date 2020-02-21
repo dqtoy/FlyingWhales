@@ -446,14 +446,6 @@ namespace Inner_Maps {
             }
             return false;
         }
-        public bool IsAdjacentToWall() {
-            foreach (KeyValuePair<GridNeighbourDirection, LocationGridTile> kvp in neighbours) {
-                if (kvp.Value.tileType == Tile_Type.Wall || (kvp.Value.structure != null && kvp.Value.structure.structureType != STRUCTURE_TYPE.WORK_AREA)) {
-                    return true;
-                }
-            }
-            return false;
-        }
         public override string ToString() {
             return localPlace.ToString();
         }
@@ -599,9 +591,6 @@ namespace Inner_Maps {
         public void HighlightTile() {
             parentMap.groundTilemap.SetColor(localPlace, Color.blue);
         }
-        public void HighlightTile(Color color) {
-            parentMap.groundTilemap.SetColor(localPlace, color);
-        }
         public void UnhighlightTile() {
             parentMap.groundTilemap.SetColor(localPlace, defaultTileColor);
         }
@@ -662,6 +651,20 @@ namespace Inner_Maps {
                 traitables.Add(character);
             }
             return traitables;
+        }
+        public void PerformActionOnTraitables(TraitableCallback callback) {
+            callback.Invoke(genericTileObject);
+            for (int i = 0; i < walls.Count; i++) {
+                StructureWallObject structureWallObject = walls[i];
+                callback.Invoke(structureWallObject);
+            }
+            if (objHere is TileObject tileObject && tileObject.mapObjectState == MAP_OBJECT_STATE.BUILT) {
+                callback.Invoke(objHere);
+            }
+            for (int i = 0; i < charactersHere.Count; i++) {
+                Character character = charactersHere[i];
+                callback.Invoke(character);
+            }
         }
         public List<IPointOfInterest> GetPOIsOnTile() {
             List<IPointOfInterest> pois = new List<IPointOfInterest>();
