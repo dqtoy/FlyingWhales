@@ -63,7 +63,7 @@ public class SchedulingManager : MonoBehaviour {
             }
         }
     }
-    public bool RemoveSpecificEntry(GameDate date, string id) {
+    private bool RemoveSpecificEntry(GameDate date, string id) {
         if (this.schedules.ContainsKey(date)) {
             List<ScheduledAction> acts = this.schedules[date];
             for (int i = 0; i < acts.Count; i++) {

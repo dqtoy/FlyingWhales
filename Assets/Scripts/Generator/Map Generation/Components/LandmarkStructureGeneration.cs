@@ -106,7 +106,8 @@ public class LandmarkStructureGeneration : MapGenerationComponent {
 		//get tiles that are at the edge of the given tiles, but are not at the edge of its map.
 		List<LocationGridTile> targetChoices = locationGridTiles
 			.Where(t => t.tileType == LocationGridTile.Tile_Type.Wall 
-		        && t.IsAtEdgeOfMap() == false).ToList();
+		        && t.IsAtEdgeOfMap() == false && t.GetCountNeighboursOfType(LocationGridTile.Tile_Type.Wall, true) == 2 
+		        && t.GetCountNeighboursOfType(LocationGridTile.Tile_Type.Empty, true) == 2).ToList();	
 		if (targetChoices.Count > 0) {
 			LocationGridTile target = CollectionUtilities.GetRandomElement(targetChoices);
 			Debug.Log($"Chosen target tile to clear is {target.ToString()} for monster lair at {region.name}");

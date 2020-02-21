@@ -50,7 +50,7 @@ public class MeteorVisual : MonoBehaviour {
             Burning burningTrait = traitable.traitContainer.GetNormalTrait<Burning>();
             if(burningTrait != null && burningTrait.sourceOfBurning == null) {
                 if(bs == null) {
-                    bs = new BurningSource(InnerMapManager.Instance.currentlyShowingLocation);
+                    bs = new BurningSource(traitable.gridTileLocation.parentMap.location);
                 }
                 burningTrait.SetSourceOfBurning(bs, traitable);
             }

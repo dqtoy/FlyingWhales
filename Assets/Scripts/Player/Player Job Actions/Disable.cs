@@ -29,13 +29,6 @@ public class Disable : PlayerSpell {
         log.AddLogToInvolvedObjects();
         PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
     }
-
-    protected override bool CanPerformActionTowards(IPointOfInterest targetPOI) {
-        if (!(targetPOI is TileObject) || targetPOI.gridTileLocation == null || targetPOI.isDisabledByPlayer) {
-            return false;
-        }
-        return base.CanPerformActionTowards(targetPOI);
-    }
     public override bool CanTarget(IPointOfInterest targetPOI, ref string hoverText) {
         if (!(targetPOI is TileObject) || targetPOI.gridTileLocation == null || targetPOI.isDisabledByPlayer) {
             return false;

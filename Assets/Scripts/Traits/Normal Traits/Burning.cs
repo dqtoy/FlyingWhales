@@ -57,7 +57,7 @@ namespace Traits {
                     character.AdjustDoNotRecoverHP(-1);
                 }
             } 
-            sourceOfBurning.RemoveObjectOnFire(owner);
+            sourceOfBurning?.RemoveObjectOnFire(owner);
         }
         public override void OnRemoveTraitBySchedule(ITraitable removedFrom) {
             base.OnRemoveTraitBySchedule(removedFrom);
@@ -140,8 +140,7 @@ namespace Traits {
         }
         public void SetSourceOfBurning(BurningSource source, ITraitable obj) {
             sourceOfBurning = source;
-            if (obj is IPointOfInterest) {
-                var poiOnFire = obj as IPointOfInterest;
+            if (obj is IPointOfInterest poiOnFire) {
                 source.AddObjectOnFire(poiOnFire);
             }
         }
@@ -169,8 +168,7 @@ namespace Traits {
                 choices = choices.Where(x => !x.traitContainer.HasTrait("Burning", "Burnt", "Wet", "Fireproof")).ToList();
                 if (choices.Count > 0) {
                     ITraitable chosen = choices[Random.Range(0, choices.Count)];
-                    Trait trait = null;
-                    chosen.traitContainer.AddTrait(chosen, "Burning", out trait);
+                    chosen.traitContainer.AddTrait(chosen, "Burning", out var trait);
                     if(trait != null) {
                         (trait as Burning).SetSourceOfBurning(sourceOfBurning, chosen);
                     }

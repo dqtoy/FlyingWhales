@@ -41,14 +41,6 @@ public class RaiseDead : PlayerSpell {
         }
         return base.CanPerformActionTowards(targetCharacter);
     }
-    protected override bool CanPerformActionTowards(IPointOfInterest targetPOI) {
-        if(targetPOI is Character) {
-            return CanPerformActionTowards(targetPOI as Character);
-        }else if (targetPOI is Tombstone) {
-            return CanPerformActionTowards((targetPOI as Tombstone).character);
-        }
-        return base.CanPerformActionTowards(targetPOI);
-    }
     public override bool CanTarget(IPointOfInterest targetPOI, ref string hoverText) {
         if (!(targetPOI is Character) && !(targetPOI is Tombstone)) {
             return false;

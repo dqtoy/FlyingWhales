@@ -21,7 +21,7 @@ public class Ignite : PlayerSpell {
         base.ActivateAction(targetTile);
         List<LocationGridTile> tiles = GetTargetTiles(targetTile);
         if (tiles.Count > 0) {
-            BurningSource bs = new BurningSource(InnerMapManager.Instance.currentlyShowingLocation);
+            BurningSource bs = new BurningSource(targetTile.parentMap.location);
             for (int i = 0; i < tiles.Count; i++) {
                 LocationGridTile tile = tiles[i];
                 Burning burning = new Burning();
@@ -32,10 +32,10 @@ public class Ignite : PlayerSpell {
             PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
         }
     }
-    public override bool CanTarget(LocationGridTile tile) {
+    public virtual bool CanTarget(LocationGridTile tile) {
         return GetTargetTiles(tile).Count > 0;
     }
-    protected override bool CanPerformActionTowards(LocationGridTile tile) {
+    protected virtual bool CanPerformActionTowards(LocationGridTile tile) {
         return GetTargetTiles(tile).Count > 0;
     }
     public override void ShowRange(LocationGridTile targetTile) {
@@ -75,7 +75,7 @@ public class IgniteData : SpellData {
     #region Overrides
     public override void ActivateAbility(IPointOfInterest targetPOI) {
         // LocationGridTile tile = targetPOI.gridTileLocation;
-        BurningSource bs = new BurningSource(targetPOI.gridTileLocation.structure.location.coreTile.region);
+        BurningSource bs = new BurningSource(targetPOI.gridTileLocation.parentMap.location);
         Burning burning = new Burning();
         burning.SetSourceOfBurning(bs, targetPOI);
         targetPOI.traitContainer.AddTrait(targetPOI, burning);

@@ -1145,7 +1145,8 @@ public class PlayerUI : MonoBehaviour {
     }
     private bool CanChooseItem(string item) {
         if (item == PlayerDB.Tornado || item == PlayerDB.Meteor || item == PlayerDB.Ravenous_Spirit || item == PlayerDB.Feeble_Spirit || item == PlayerDB.Forlorn_Spirit
-            || item == PlayerDB.Lightning || item == PlayerDB.Poison_Cloud || item == PlayerDB.Earthquake) {
+            || item == PlayerDB.Lightning || item == PlayerDB.Poison_Cloud || item == PlayerDB.Earthquake
+            || item == PlayerDB.Locust_Swarm || item == PlayerDB.Spawn_Boulder) {
             return true;
         }
         return false;

@@ -26,7 +26,7 @@ public class CursedObject : PlayerSpell {
             base.ActivateAction(targetPOI);
         }
     }
-    protected override bool CanPerformActionTowards(IPointOfInterest targetPOI) {
+    protected virtual bool CanPerformActionTowards(IPointOfInterest targetPOI) {
         if (targetPOI is TileObject) {
             TileObject to = targetPOI as TileObject;
             if(!to.traitContainer.HasTrait("Cursed")){

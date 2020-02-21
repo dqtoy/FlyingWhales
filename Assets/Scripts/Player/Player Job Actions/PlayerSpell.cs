@@ -117,24 +117,6 @@ public class PlayerSpell {
         }
         return true;
     }
-    /// <summary>
-    /// Can this action be performed this instant? This considers cooldown.
-    /// </summary>
-    /// <param name="character">The character that will perform the action (Minion).</param>
-    /// <param name="obj">The target object.</param>
-    /// <returns>True or False.</returns>
-    public bool CanPerformActionTowards(object obj) {
-        if (obj is Character) {
-            return CanPerformActionTowards(obj as Character);
-        } else if (obj is Settlement) {
-            return CanPerformActionTowards(obj as Settlement);
-        } else if (obj is IPointOfInterest) {
-            return CanPerformActionTowards(obj as IPointOfInterest);
-        } else if (obj is LocationGridTile) {
-            return CanPerformActionTowards(obj as LocationGridTile);
-        }
-        return CanPerformAction();
-    }
     protected virtual bool CanPerformActionTowards(Character targetCharacter) {
         if (targetCharacter.traitContainer.HasTrait("Blessed")) {
             return false;
@@ -143,18 +125,6 @@ public class PlayerSpell {
         if (targetCharacter.race != RACE.HUMANS && targetCharacter.race != RACE.ELVES) {
             return false;
         }
-        return CanPerformAction();
-    }
-    protected virtual bool CanPerformActionTowards(Settlement targetCharacter) {
-        return CanPerformAction();
-    }
-    protected virtual bool CanPerformActionTowards(IPointOfInterest targetPOI) {
-        return CanPerformAction();
-    }
-    protected virtual bool CanPerformActionTowards(LocationGridTile tile) {
-        return CanPerformAction();
-    }
-    public virtual bool CanPerformActionTowards(List<IPointOfInterest> targetPOIs) {
         return CanPerformAction();
     }
     /// <summary>
@@ -177,15 +147,6 @@ public class PlayerSpell {
         }
         hoverText = string.Empty;
         return true;
-    }
-    public virtual bool CanTarget(LocationGridTile tile) {
-        return true;
-    }
-    public virtual bool CanTarget(List<IPointOfInterest> targetPOIs) {
-        return true;
-    }
-    public virtual string GetActionName(Character target) {
-        return name;
     }
     protected virtual void OnLevelUp() { }
     public virtual void SecondPhase() { }

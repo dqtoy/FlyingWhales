@@ -12,11 +12,8 @@ public class PlayerManager : MonoBehaviour {
     public static PlayerManager Instance;
     public Player player;
     
-    [FormerlySerializedAs("allInterventionAbilities")] public SPELL_TYPE[] allSpellTypes;
-    // [FormerlySerializedAs("allInterventionAbilitiesData")] public Dictionary<SPELL_TYPE, SpellData> allSpellsData;
     public Dictionary<SPELL_TYPE, SpellData> allSpellsData;
     public COMBAT_ABILITY[] allCombatAbilities;
-    //public LANDMARK_TYPE[] allLandmarksThatCanBeBuilt;
 
     [Header("Job Action Icons")]
     [FormerlySerializedAs("jobActionIcons")] [SerializeField] private StringSpriteDictionary spellIcons;
@@ -34,6 +31,7 @@ public class PlayerManager : MonoBehaviour {
         Instance = this;
     }
     public void Initialize() {
+        // SPELL_TYPE[] allSpellTypes = UtilityScripts.CollectionUtilities.GetEnumValues<SPELL_TYPE>();
         SPELL_TYPE[] allSpellTypes = { SPELL_TYPE.ZAP, SPELL_TYPE.RAISE_DEAD, SPELL_TYPE.CANNIBALISM
             , SPELL_TYPE.LYCANTHROPY, SPELL_TYPE.VAMPIRISM, SPELL_TYPE.KLEPTOMANIA
             , SPELL_TYPE.UNFAITHFULNESS, SPELL_TYPE.ENRAGE, SPELL_TYPE.PROVOKE, SPELL_TYPE.METEOR
@@ -41,17 +39,20 @@ public class PlayerManager : MonoBehaviour {
             , SPELL_TYPE.LULLABY, SPELL_TYPE.AGORAPHOBIA, SPELL_TYPE.PARALYSIS, SPELL_TYPE.RELEASE, SPELL_TYPE.ZOMBIE_VIRUS
             , SPELL_TYPE.PESTILENCE, SPELL_TYPE.PSYCHOPATHY, SPELL_TYPE.TORNADO, SPELL_TYPE.DESTROY
             , SPELL_TYPE.RAVENOUS_SPIRIT, SPELL_TYPE.FEEBLE_SPIRIT, SPELL_TYPE.FORLORN_SPIRIT
-            , SPELL_TYPE.LIGHTNING, SPELL_TYPE.POISON_CLOUD, SPELL_TYPE.EARTHQUAKE,
+            , SPELL_TYPE.LIGHTNING, SPELL_TYPE.POISON_CLOUD, SPELL_TYPE.EARTHQUAKE
+            , SPELL_TYPE.LOCUST_SWARM, SPELL_TYPE.SPAWN_BOULDER
         };
 
         allSpellsData = new Dictionary<SPELL_TYPE, SpellData>();
         for (int i = 0; i < allSpellTypes.Length; i++) {
-            var typeName =
-                $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(allSpellTypes[i].ToString())}Data";
-            allSpellsData.Add(allSpellTypes[i], System.Activator.CreateInstance(System.Type.GetType(typeName) ?? 
-                        throw new Exception($"Problem with creating spell data for {typeName}")) as SpellData);
+            SPELL_TYPE spellType = allSpellTypes[i];
+            if (spellType != SPELL_TYPE.NONE) {
+                var typeName =
+                    $"{UtilityScripts.Utilities.NormalizeStringUpperCaseFirstLettersNoSpace(spellType.ToString())}Data";
+                allSpellsData.Add(spellType, System.Activator.CreateInstance(System.Type.GetType(typeName) ?? 
+                   throw new Exception($"Problem with creating spell data for {typeName}")) as SpellData);    
+            }
         }
-
         //Unit Selection
         Messenger.AddListener<UIMenu>(Signals.MENU_OPENED, OnMenuOpened);
         Messenger.AddListener<UIMenu>(Signals.MENU_CLOSED, OnMenuClosed);

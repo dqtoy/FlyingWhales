@@ -7,6 +7,7 @@ using UnityEngine;
 /// <typeparam name="T">The type of object that uses this.</typeparam>
 public abstract class MovingMapObjectVisual<T> : MapObjectVisual<T> where T : IDamageable{
     
+    public bool isSpawned { get; protected set; }
     public LocationGridTile gridTileLocation => GetLocationGridTileByXy(Mathf.FloorToInt(_pos.x), Mathf.FloorToInt(_pos.y));
     private Vector3 _pos;
     protected ILocation _mapLocation;

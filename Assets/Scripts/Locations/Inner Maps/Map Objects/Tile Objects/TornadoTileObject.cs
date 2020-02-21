@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using Inner_Maps;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public class TornadoTileObject : MovingTileObject {
 
     public int radius { get; private set; }
     public int durationInTicks { get; private set; }
-    private TornadoVisual _tornadoVisual;
+    private TornadoMapObjectVisual _tornadoMapObjectVisual;
     
     public TornadoTileObject() {
         advertisedActions = new List<INTERACTION_TYPE>(){ INTERACTION_TYPE.SNUFF_TORNADO };
@@ -15,9 +16,9 @@ public class TornadoTileObject : MovingTileObject {
         traitContainer.RemoveTrait(this, "Flammable");
     }
     protected override void CreateMapObjectVisual() {
-        GameObject obj = InnerMapManager.Instance.mapObjectFactory.CreateNewTileObjectAreaMapObject(this.tileObjectType);
-        _tornadoVisual = obj.GetComponent<TornadoVisual>();
-        mapVisual = _tornadoVisual;
+        base.CreateMapObjectVisual();
+        _tornadoMapObjectVisual = mapVisual as TornadoMapObjectVisual;
+        Assert.IsNotNull(_tornadoMapObjectVisual, $"Map Object Visual of {this} is null!");
     }
 
     public void SetRadius(int radius) {
@@ -27,7 +28,7 @@ public class TornadoTileObject : MovingTileObject {
         this.durationInTicks = duration;
     }
     public void ForceExpire() {
-        _tornadoVisual.Expire();
+        _tornadoMapObjectVisual.Expire();
     }
     public void OnExpire() {
         Messenger.Broadcast<TileObject, Character, LocationGridTile>(Signals.TILE_OBJECT_REMOVED, this, null, base.gridTileLocation);
@@ -39,9 +40,9 @@ public class TornadoTileObject : MovingTileObject {
     #region Moving Tile Object
     protected override bool TryGetGridTileLocation(out LocationGridTile tile) {
         if (mapVisual != null) {
-            TornadoVisual tornadoVisual = mapVisual as TornadoVisual;
-            if (tornadoVisual.isSpawned) {
-                tile = tornadoVisual.gridTileLocation;
+            TornadoMapObjectVisual tornadoMapObjectVisual = mapVisual as TornadoMapObjectVisual;
+            if (tornadoMapObjectVisual.isSpawned) {
+                tile = tornadoMapObjectVisual.gridTileLocation;
                 return true;
             }
         }
