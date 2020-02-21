@@ -215,7 +215,7 @@ public class HexTileSpellsComponent {
                 continue;
             }
             poi.AdjustHP(-25, ELEMENTAL_TYPE.Normal);
-            if (poi.gridTileLocation != null) {
+            if (poi.gridTileLocation != null && !poi.traitContainer.HasTrait("Immovable")) {
                 if (!DOTween.IsTweening(poi.mapObjectVisual.transform)) {
                     if (UnityEngine.Random.Range(0, 100) < 30) {
                         List<LocationGridTile> adjacentTiles = poi.gridTileLocation.UnoccupiedNeighboursWithinHex;

@@ -12,12 +12,14 @@ public class BlockWall : TileObject {
         Initialize(TILE_OBJECT_TYPE.BLOCK_WALL);
         RemoveCommonAdvertisements();
         traitContainer.RemoveTrait(this, "Flammable");
+        traitContainer.AddTrait(this, "Immovable");
     }
     public BlockWall(SaveDataTileObject data) {
         advertisedActions = new List<INTERACTION_TYPE>();
         Initialize(data);
         RemoveCommonAdvertisements();
         traitContainer.RemoveTrait(this, "Flammable");
+        traitContainer.AddTrait(this, "Immovable");
     }
     public void SetWallType(WALL_TYPE _wallType) {
         wallType = _wallType;

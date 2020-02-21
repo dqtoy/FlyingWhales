@@ -17,11 +17,16 @@ public class TileObjectGameObject : MapObjectVisual<TileObject> {
         bool isCorrupted = false;
         if (tileObject.gridTileLocation != null) {
             isCorrupted = tileObject.gridTileLocation.isCorrupted;
+            SetVisual(InnerMapManager.Instance.GetTileObjectAsset(tileObject, 
+                tileObject.state, 
+                tileObject.structureLocation.location.coreTile.biomeType,
+                isCorrupted));
+        } else {
+            SetVisual(InnerMapManager.Instance.GetTileObjectAsset(tileObject,
+                tileObject.state,
+                isCorrupted));
         }
-        SetVisual(InnerMapManager.Instance.GetTileObjectAsset(tileObject, 
-            tileObject.state, 
-            tileObject.structureLocation.location.coreTile.biomeType,
-            isCorrupted));
+
         collisionTrigger = this.transform.GetComponentInChildren<TileObjectCollisionTrigger>();
         if (collisionTrigger == null) {
             Debug.LogError("NO COLLISION TRIGGER FOR " + tileObject.nameWithID);

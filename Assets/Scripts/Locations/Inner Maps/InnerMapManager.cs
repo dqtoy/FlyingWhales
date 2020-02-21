@@ -762,6 +762,34 @@ namespace Inner_Maps {
             }
             return null;
         }
+        public Sprite GetTileObjectAsset(TileObject tileObject, POI_STATE state, bool corrupted = false) {
+            if (corrupted) {
+                //TODO: this is only temporary!
+                if (tileObject.tileObjectType == TILE_OBJECT_TYPE.TREE_OBJECT) {
+                    return CollectionUtilities.GetRandomElement(assetManager.corruptedTreeAssets);
+                } else if (tileObject.tileObjectType == TILE_OBJECT_TYPE.BIG_TREE_OBJECT) {
+                    return CollectionUtilities.GetRandomElement(assetManager.corruptedBigTreeAssets);
+                }
+            }
+
+            if (tileObject.tileObjectType == TILE_OBJECT_TYPE.ARTIFACT) {
+                Artifact artifact = tileObject as Artifact;
+                if (ScriptableObjectsManager.Instance.artifactDataDictionary.ContainsKey(artifact.type)) {
+                    return ScriptableObjectsManager.Instance.artifactDataDictionary[artifact.type].sprite;
+                }
+            } else {
+                if (tileObjectTiles.ContainsKey(tileObject.tileObjectType)) {
+                    TileObjectTileSetting setting = tileObjectTiles[tileObject.tileObjectType];
+                    BiomeTileObjectTileSetting biomeSetting = setting.biomeAssets[BIOMES.NONE];
+                    if (state == POI_STATE.ACTIVE) {
+                        return biomeSetting.activeTile;
+                    } else {
+                        return biomeSetting.inactiveTile;
+                    }    
+                }
+            }
+            return null;
+        }
         public WallAsset GetWallAsset(RESOURCE wallResource, string assetName) {
             return wallResourceAssets[wallResource].GetWallAsset(assetName);
         }
