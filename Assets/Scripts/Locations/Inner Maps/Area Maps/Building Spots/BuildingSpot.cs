@@ -28,7 +28,7 @@ public class BuildingSpot {
     /// <summary>
     /// Is this build spot to be considered as part of it's region map ("part" meaning if this spots tiles are valid)
     /// </summary>
-    public bool isPartOfParentRegionMap => hexTileOwner != null;
+    public bool isPartOfParentRegionMap => hexTileOwner;
     public bool canBeBuiltOnByNPC => isPartOfParentRegionMap && hexTileOwner.isCurrentlyBeingCorrupted == false 
                                     && HasCorruptedTile() == false;
     public bool canBeBuiltOnByPlayer => isPartOfParentRegionMap && hexTileOwner.isCurrentlyBeingCorrupted == false;

@@ -48,6 +48,13 @@ public class InnerMapCameraMove : MonoBehaviour {
     [SerializeField] private bool cameraControlEnabled = false;
     [SerializeField] private float xSeeLimit;
 
+    public float shakeTime;
+    public float shakeStrengthX;
+    public float shakeStrengthY;
+    public float shakeStrengthZ;
+    public int shakeVibrato;
+    public float shakeRandomness;
+
     #region getters/setters
     public Transform target {
         get { return _target; }
@@ -430,6 +437,10 @@ public class InnerMapCameraMove : MonoBehaviour {
     }
     public bool CanSee(GameObject go) {
         Vector3 viewPos = innerMapsCamera.WorldToViewportPoint(go.transform.position);
+        return viewPos.x >= 0 && viewPos.x <= xSeeLimit && viewPos.y >= 0 && viewPos.y <= 1 && viewPos.z >= 0;
+    }
+    public bool CanSee(LocationGridTile gridTile) {
+        Vector3 viewPos = innerMapsCamera.WorldToViewportPoint(gridTile.centeredWorldLocation);
         return viewPos.x >= 0 && viewPos.x <= xSeeLimit && viewPos.y >= 0 && viewPos.y <= 1 && viewPos.z >= 0;
     }
     #endregion

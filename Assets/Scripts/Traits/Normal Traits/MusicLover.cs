@@ -33,7 +33,7 @@ namespace Traits {
         //public override void OnAddTrait(ITraitable addedTo) {
         //    base.OnAddTrait(addedTo);
         //    owner = addedTo as Character;
-        //    //if (owner.marker != null) {
+        //    //if (owner.marker) {
         //    //Messenger.AddListener<GoapAction, GoapActionState>(Signals.ACTION_STATE_SET, OnActionStateSet);
         //    //}
         //}

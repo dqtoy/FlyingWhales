@@ -588,7 +588,7 @@ public class Settlement : IJobOwner {
             Character resident = residents[i];
             if((resident.canPerform || !resident.isDead) 
                 && resident.gridTileLocation != null 
-                && resident.gridTileLocation.buildSpotOwner.hexTileOwner != null
+                && resident.gridTileLocation.buildSpotOwner.hexTileOwner
                 && resident.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile == this) {
                 return true;
             }

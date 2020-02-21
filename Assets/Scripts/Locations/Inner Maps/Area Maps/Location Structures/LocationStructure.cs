@@ -299,7 +299,7 @@ namespace Inner_Maps.Location_Structures {
                         return unoccupiedTiles.Where(x => !x.HasOccupiedNeighbour()
                                                           && x.groundType != LocationGridTile.Ground_Type.Cave 
                                                           && x.groundType != LocationGridTile.Ground_Type.Water
-                                                          && x.buildSpotOwner.hexTileOwner != null 
+                                                          && x.buildSpotOwner.hexTileOwner 
                                                           && x.buildSpotOwner.hexTileOwner.elevationType == ELEVATION.PLAIN
                                                           && !x.HasNeighbourOfType(LocationGridTile.Tile_Type.Wall) 
                                                           && !x.HasNeighbourOfType(LocationGridTile.Ground_Type.Cave)

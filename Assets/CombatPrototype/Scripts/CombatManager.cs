@@ -18,6 +18,9 @@ public class CombatManager : MonoBehaviour {
 
     public void ApplyElementalDamage(ELEMENTAL_TYPE elementalType, ITraitable target, Character responsibleCharacter = null) { //, bool shouldSetBurningSource = true
         ElementalDamageData elementalDamage = ScriptableObjectsManager.Instance.GetElementalDamageData(elementalType);
+        if (target is IDamageable) {
+            CreateHitEffectAt(target as IDamageable, elementalType);
+        }
         if (!string.IsNullOrEmpty(elementalDamage.addedTraitName)) {
             //Trait trait = null;
             target.traitContainer.AddTrait(target, elementalDamage.addedTraitName, responsibleCharacter); //, out trait

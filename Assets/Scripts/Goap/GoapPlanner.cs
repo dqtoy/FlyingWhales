@@ -88,7 +88,7 @@ public class GoapPlanner {
         }
     }
     public void ReceivePlanFromGoapThread(GoapThread goapThread) {
-        if (owner.isDead || owner.marker == null) {
+        if (owner.isDead || !owner.marker) {
             status = GOAP_PLANNING_STATUS.NONE;
             return;
         }

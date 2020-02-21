@@ -47,10 +47,10 @@ public abstract class ResourcePile : TileObject {
     #endregion
 
     #region Overrides
-    public override void OnPlacePOI() {
-        base.OnPlacePOI();
-        // Messenger.AddListener<Region>(Signals.REGION_CHANGE_STORAGE, OnRegionChangeStorage);
-    }
+    // public override void OnPlacePOI() {
+    //     base.OnPlacePOI();
+    //     // Messenger.AddListener<Region>(Signals.REGION_CHANGE_STORAGE, OnRegionChangeStorage);
+    // }
     public override void OnDestroyPOI() {
         base.OnDestroyPOI();
         // Messenger.RemoveListener<Region>(Signals.REGION_CHANGE_STORAGE, OnRegionChangeStorage);

@@ -11,7 +11,7 @@ public class RaidBehaviour : CharacterBehaviourComponent {
     }
     public override bool TryDoBehaviour(Character character, ref string log) {
         log += $"\n-{character.name} will raid";
-        if (character.gridTileLocation.buildSpotOwner.hexTileOwner != null && character.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile == character.behaviourComponent.harassInvadeRaidTarget) {
+        if (character.gridTileLocation.buildSpotOwner.hexTileOwner && character.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile == character.behaviourComponent.harassInvadeRaidTarget) {
             log += "\n-Already in the target settlement";
             TileObject targetTileObject = null;
             Settlement settlement = character.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile;

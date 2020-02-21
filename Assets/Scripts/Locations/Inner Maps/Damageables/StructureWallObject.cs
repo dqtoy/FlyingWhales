@@ -42,7 +42,7 @@ public class StructureWallObject : MapObject<StructureWallObject>, ITraitable {
             //if(source != null && source is Character) {
             //    elementalType = (source as Character).combatComponent.elementalDamage.type;
             //}
-            CombatManager.Instance.CreateHitEffectAt(this, elementalDamageType);
+            // CombatManager.Instance.CreateHitEffectAt(this, elementalDamageType);
             Character responsibleCharacter = null;
             if (source != null && source is Character) {
                 responsibleCharacter = source as Character;

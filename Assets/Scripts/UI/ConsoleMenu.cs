@@ -158,7 +158,7 @@ public class ConsoleMenu : UIMenu {
             text += $"\n<b>Target Structure:</b> {character.currentParty.icon.targetStructure}" ?? "None";
         }
 
-        if (character.marker != null) {
+        if (character.marker) {
             text += "\n<b>MARKER DETAILS:</b>";
             text += $"\n<b>Target POI:</b> {character.marker.targetPOI?.name}" ?? "None";
             text += $"\n<b>Destination Tile:</b> {character.marker.destinationTile}" ?? "None";
@@ -315,7 +315,7 @@ public class ConsoleMenu : UIMenu {
     //            //    Debug.LogWarning("There is an alive character with a null current structure! " + currCharacter.name);
     //            //    //UIManager.Instance.Pause();
     //            //}
-    //            if (currCharacter.marker != null) {
+    //            if (currCharacter.marker) {
     //                for (int j = 0; j < currCharacter.combatComponent.hostilesInRange.Count; j++) {
     //                    Character hostileInRange = currCharacter.combatComponent.hostilesInRange[j];
     //                    if (hostileInRange.isDead) {

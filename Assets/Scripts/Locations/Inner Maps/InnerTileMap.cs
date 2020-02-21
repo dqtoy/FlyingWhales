@@ -278,6 +278,14 @@ namespace Inner_Maps {
                         throw new Exception($"{character.name} is going to tile {to} which does not have a structure!");
                     }
                 }
+                if (from.buildSpotOwner.hexTileOwner != to.buildSpotOwner.hexTileOwner) {
+                    if (from.buildSpotOwner.hexTileOwner) {
+                        from.buildSpotOwner.hexTileOwner.OnRemovePOIInHex(character);
+                    }
+                    if (to.buildSpotOwner.hexTileOwner) {
+                        to.buildSpotOwner.hexTileOwner.OnPlacePOIInHex(character);
+                    }
+                }
                 Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.REMOVE_STATUS, character as IPointOfInterest);
                 Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.APPREHEND, character as IPointOfInterest);
                 Messenger.Broadcast(Signals.CHECK_JOB_APPLICABILITY, JOB_TYPE.KNOCKOUT, character as IPointOfInterest);
@@ -698,7 +706,7 @@ namespace Inner_Maps {
                 && UIManager.Instance.characterInfoUI.activeCharacter.currentRegion == location.coreTile.region
                 && !UIManager.Instance.characterInfoUI.activeCharacter.isDead
                 //&& UIManager.Instance.characterInfoUI.activeCharacter.isWaitingForInteraction <= 0
-                && UIManager.Instance.characterInfoUI.activeCharacter.marker != null
+                && UIManager.Instance.characterInfoUI.activeCharacter.marker
                 && UIManager.Instance.characterInfoUI.activeCharacter.marker.pathfindingAI.hasPath
                 && (UIManager.Instance.characterInfoUI.activeCharacter.stateComponent.currentState == null 
                     || (UIManager.Instance.characterInfoUI.activeCharacter.stateComponent.currentState.characterState != CHARACTER_STATE.PATROL 

@@ -273,7 +273,7 @@ public partial class LandmarkManager : MonoBehaviour {
         for (int i = 0; i < CharacterManager.Instance.allCharacters.Count; i++) {
             Character character = CharacterManager.Instance.allCharacters[i];
             if(character.isDead && character.currentRegion.IsSameCoreLocationAs(location) && !(character is Summon)) {
-                if(character.marker != null || character.grave != null) { //Only resurrect characters who are in the tombstone or still has a marker in the settlement
+                if(character.marker || character.grave != null) { //Only resurrect characters who are in the tombstone or still has a marker in the settlement
                     characters.Add(character);
                 }
             }

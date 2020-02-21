@@ -244,7 +244,7 @@ public class CharacterManager : MonoBehaviour {
     public void PlaceInitialCharacters(List<Character> characters, Settlement settlement) {
         for (int i = 0; i < characters.Count; i++) {
             Character character = characters[i];
-            if (character.marker == null) {
+            if (!character.marker) {
                 character.CreateMarker();
             }
             if (character.homeStructure != null && character.homeStructure.settlementLocation == settlement) {

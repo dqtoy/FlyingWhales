@@ -48,6 +48,7 @@ namespace Inner_Maps {
 
         public List<LocationGridTile> ValidTiles { get { return FourNeighbours().Where(o => o.tileType == Tile_Type.Empty).ToList(); } }
         public List<LocationGridTile> UnoccupiedNeighbours { get { return neighbours.Values.Where(o => !o.isOccupied && o.structure == structure).ToList(); } }
+        public List<LocationGridTile> UnoccupiedNeighboursWithinHex { get { return neighbours.Values.Where(o => !o.isOccupied && o.buildSpotOwner.hexTileOwner == buildSpotOwner.hexTileOwner).ToList(); } }
 
         public GenericTileObject genericTileObject { get; private set; }
         public List<StructureWallObject> walls { get; private set; }
@@ -474,7 +475,7 @@ namespace Inner_Maps {
                 n = FourNeighboursDictionary();
             }
             for (int i = 0; i < n.Values.Count; i++) {
-                if (neighbours.Values.ElementAt(i).buildSpotOwner.hexTileOwner != null &&
+                if (neighbours.Values.ElementAt(i).buildSpotOwner.hexTileOwner &&
                     neighbours.Values.ElementAt(i).buildSpotOwner.hexTileOwner.elevationType == elevation) {
                     return true;
                 }

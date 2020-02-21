@@ -47,7 +47,7 @@ namespace Traits {
             if (sourcePOI is Character) {
                 Character character = sourcePOI as Character;
                 //character.AdjustCanPerform(-1);
-                if(character.marker != null) {
+                if(character.marker) {
                     character.combatComponent.ClearHostilesInRange(false);
                     character.combatComponent.ClearAvoidInRange(false);
                 }

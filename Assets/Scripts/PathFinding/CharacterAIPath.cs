@@ -107,7 +107,7 @@ public class CharacterAIPath : AILerp {
         //     IPointOfInterest poi = marker.terrifyingObjects[i];
         //     if (poi is Character) {
         //         Character currCharacter = poi as Character;
-        //         if (!currCharacter.isDead && currCharacter.marker != null) {
+        //         if (!currCharacter.isDead && currCharacter.marker) {
         //             currCharacter.marker.UpdateCenteredWorldPos();
         //         }
         //     }
@@ -115,7 +115,7 @@ public class CharacterAIPath : AILerp {
         // if (marker.character != null && marker.character.currentActionNode != null && marker.character.currentSettlement != null) {//&& marker.character.currentActionNode.willAvoidCharactersWhileMoving
         //     for (int i = 0; i < marker.character.currentRegion.charactersAtLocation.Count; i++) {
         //         Character terrifyingCharacter = marker.character.currentRegion.charactersAtLocation[i];
-        //         if(terrifyingCharacter.marker != null) {
+        //         if(terrifyingCharacter.marker) {
         //             terrifyingCharacter.marker.UpdateCenteredWorldPos();
         //         }
         //     }
@@ -228,7 +228,7 @@ public class CharacterAIPath : AILerp {
         //        IPointOfInterest currPOI = marker.terrifyingObjects.ElementAtOrDefault(i);
         //        if (currPOI is Character) {
         //            Character terrifyingCharacter = currPOI as Character;
-        //            if (terrifyingCharacter.marker == null) {
+        //            if (terrifyingCharacter.!marker) {
         //                continue;
         //            }
         //            if (terrifyingCharacter.currentParty == null || terrifyingCharacter.currentParty.icon == null || (terrifyingCharacter.currentParty.icon.isTravelling && terrifyingCharacter.currentParty.icon.travelLine != null && marker.character.currentStructure != terrifyingCharacter.currentStructure)) {
@@ -272,7 +272,7 @@ public class CharacterAIPath : AILerp {
         //if(marker.character != null && marker.character.currentActionNode != null && marker.character.currentActionNode.action.goapType.WillAvoidCharactersWhileMoving()) {
         //    for (int i = 0; i < marker.character.currentRegion.charactersAtLocation.Count; i++) {
         //        Character terrifyingCharacter = marker.character.currentRegion.charactersAtLocation[i];
-        //        if (terrifyingCharacter.marker == null || terrifyingCharacter == marker.character) {
+        //        if (terrifyingCharacter.!marker || terrifyingCharacter == marker.character) {
         //            continue;
         //        }
         //        if (terrifyingCharacter.currentParty == null || terrifyingCharacter.currentParty.icon == null || (terrifyingCharacter.currentParty.icon.isTravelling && terrifyingCharacter.currentParty.icon.travelLine != null && marker.character.currentStructure != terrifyingCharacter.currentStructure)) {

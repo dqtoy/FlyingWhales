@@ -676,7 +676,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
         _owner.jobQueue.AddJobInQueue(job);
     }
     public void TriggerStopJobs() {
-	    if (_owner.marker != null) {
+	    if (_owner.marker) {
 		    _owner.marker.StopMovement();
 	    }
 	    _owner.CancelAllJobs();

@@ -75,6 +75,9 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     private int _uncorruptibleLandmarkNeighbors = 0; //if 0, can be corrupted, otherwise, cannot be corrupted
     private Dictionary<HEXTILE_DIRECTION, HexTile> _neighbourDirections;
     private List<string> demonicLandmarksThatCanBeBuilt;
+    
+    //Components
+    public HexTileSpellsComponent spellsComponent { get; private set; }
 
     #region getters/setters
     public int id => data.id;
@@ -112,6 +115,7 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     }
     public void Initialize() {
         featureComponent = new TileFeatureComponent();
+        spellsComponent = new HexTileSpellsComponent(this);
         demonicLandmarksThatCanBeBuilt = new List<string>();
         selectableSize = new Vector2Int(12, 12);
         Messenger.AddListener(Signals.GAME_LOADED, OnGameLoaded);
@@ -1210,6 +1214,15 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
     }
     #endregion
     
+    #region POI
+    public void OnPlacePOIInHex(IPointOfInterest poi) {
+        spellsComponent.OnPlacePOIInHex(poi);
+    }
+    public void OnRemovePOIInHex(IPointOfInterest poi) {
+        spellsComponent.OnRemovePOIInHex(poi);
+    }
+    #endregion
+
     #region Characters
     public List<Character> GetAllCharactersInsideHex() {
         List<Character> characters = null;
@@ -1228,6 +1241,14 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
             }
         }
         return characters;
+    }
+    public LocationGridTile GetCenterLocationGridTile() {
+        LocationGridTile lowerLeftCornerTile = ownedBuildSpots[0].tilesInTerritory[0];
+        int xMin = lowerLeftCornerTile.localPlace.x;
+        int yMin = lowerLeftCornerTile.localPlace.y;
+        int xMax = xMin + InnerMapManager.BuildingSpotSize.x;
+        int yMax = yMin + InnerMapManager.BuildingSpotSize.y;
+        return region.innerMap.map[xMax, yMax];
     }
     #endregion
 }

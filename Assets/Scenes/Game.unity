@@ -98947,6 +98947,12 @@ MonoBehaviour:
   cameraShake: {fileID: 1713567862}
   cameraControlEnabled: 0
   xSeeLimit: 0.931
+  shakeTime: 1
+  shakeStrengthX: 0
+  shakeStrengthY: 0
+  shakeStrengthZ: 5
+  shakeVibrato: 25
+  shakeRandomness: 90
 --- !u!114 &1713567860
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -98983,7 +98989,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1713567856}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 92d823863b34e4648afb042b39991109, type: 3}
   m_Name: 

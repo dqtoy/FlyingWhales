@@ -177,6 +177,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
                 OccupyTiles(objData.occupiedSize, gridTileLocation);
             }
         }
+        if (gridTileLocation.buildSpotOwner.hexTileOwner) {
+            gridTileLocation.buildSpotOwner.hexTileOwner.OnPlacePOIInHex(this);
+        }
         SubscribeListeners();
     }
     public virtual void RemoveTileObject(Character removedBy) {
@@ -186,6 +189,9 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         //OnRemoveTileObject(removedBy, previousTile);
         //SetPOIState(POI_STATE.INACTIVE);
         OnDestroyPOI();
+        if (previousTile != null && previousTile.buildSpotOwner.hexTileOwner) {
+            previousTile.buildSpotOwner.hexTileOwner.OnRemovePOIInHex(this);
+        }
     }
     public virtual LocationGridTile GetNearestUnoccupiedTileFromThis() {
         if (gridTileLocation != null) {
@@ -396,7 +402,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             //if (source is Character) {
             //    elementalType = (source as Character).combatComponent.elementalDamage.type;
             //}
-            CombatManager.Instance.CreateHitEffectAt(this, elementalDamageType);
+            // CombatManager.Instance.CreateHitEffectAt(this, elementalDamageType);
             // if(currentHP > 0) {
             Character responsibleCharacter = null;
             if (source is Character) {

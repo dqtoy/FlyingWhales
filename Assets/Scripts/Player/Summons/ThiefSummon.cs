@@ -86,7 +86,7 @@ public class ThiefSummon : Summon {
         return canBeInstructed;
     }
     public override bool IsStillConsideredPartOfAwarenessByCharacter(Character character) {
-        return marker != null;
+        return marker;
     }
     #endregion
 

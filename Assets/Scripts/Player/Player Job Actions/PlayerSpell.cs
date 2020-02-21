@@ -248,10 +248,10 @@ public class SpellData {
         manaCost = PlayerManager.Instance.GetManaCostForSpell(tier);
     }
 
-
     #region Virtuals
     public virtual void ActivateAbility(IPointOfInterest targetPOI) { }
     public virtual void ActivateAbility(LocationGridTile targetTile) { }
+    public virtual void ActivateAbility(HexTile targetHex) { }
     public virtual bool CanPerformAbilityTowards(Character targetCharacter) {
         if((targetCharacter.race != RACE.HUMANS && targetCharacter.race != RACE.ELVES) || targetCharacter.traitContainer.HasTrait("Blessed")) {
             return false;
@@ -260,6 +260,8 @@ public class SpellData {
     }
     public virtual bool CanPerformAbilityTowards(TileObject tileObject) { return true; }
     public virtual bool CanPerformAbilityTowards(LocationGridTile targetTile) { return true; }
+    public virtual bool CanPerformAbilityTowards(HexTile targetHex) { return true; }
+
     // public virtual bool CanPerformAbilityTowards(SpecialToken item) { return true; }
 
     /// <summary>
@@ -311,6 +313,9 @@ public class SpellData {
     }
     public bool CanTarget(LocationGridTile tile) {
         return CanPerformAbilityTowards(tile);
+    }
+    public bool CanTarget(HexTile hex) {
+        return CanPerformAbilityTowards(hex);
     }
     #endregion
 }

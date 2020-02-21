@@ -268,11 +268,12 @@ public class Player : ILeader {
     }
 
     private void TryExecuteCurrentActiveAction() {
-        if (UIManager.Instance.IsMouseOnUI()) {
+        if (UIManager.Instance.IsMouseOnUI() || !InnerMapManager.Instance.isAnInnerMapShowing) {
             return; //clicked on UI;
         }
         for (int i = 0; i < currentActivePlayerSpell.targetTypes.Length; i++) {
             bool activatedAction = false;
+            LocationGridTile hoveredTile = null;
             switch (currentActivePlayerSpell.targetTypes[i]) {
                 case SPELL_TARGET.NONE:
                     break;
@@ -296,10 +297,20 @@ public class Player : ILeader {
                     }
                     break;
                 case SPELL_TARGET.TILE:
-                    LocationGridTile hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
+                    hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
                     if (hoveredTile != null) {
                         if (currentActivePlayerSpell.CanPerformAbilityTowards(hoveredTile)) {
                             currentActivePlayerSpell.ActivateAbility(hoveredTile);
+                            activatedAction = true;
+                        } 
+                        UIManager.Instance.SetTempDisableShowInfoUI(true);
+                    }
+                    break;
+                case SPELL_TARGET.HEX:
+                    hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
+                    if (hoveredTile != null && hoveredTile.buildSpotOwner.hexTileOwner) {
+                        if (currentActivePlayerSpell.CanPerformAbilityTowards(hoveredTile.buildSpotOwner.hexTileOwner)) {
+                            currentActivePlayerSpell.ActivateAbility(hoveredTile.buildSpotOwner.hexTileOwner);
                             activatedAction = true;
                         } 
                         UIManager.Instance.SetTempDisableShowInfoUI(true);
@@ -403,7 +414,7 @@ public class Player : ILeader {
     }
     private bool ShouldShowNotificationFrom(Character character, bool onlyClickedCharacter = false) {
         // if (!onlyClickedCharacter && InnerMapCameraMove.Instance.gameObject.activeSelf) { //&& !character.isDead
-        //     if ((UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == character.id) || (character.marker != null &&  InnerMapCameraMove.Instance.CanSee(character.marker.gameObject))) {
+        //     if ((UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == character.id) || (character.marker &&  InnerMapCameraMove.Instance.CanSee(character.marker.gameObject))) {
         //         return true;
         //     }
         // } else if (onlyClickedCharacter && UIManager.Instance.characterInfoUI.isShowing && UIManager.Instance.characterInfoUI.activeCharacter.id == character.id) {

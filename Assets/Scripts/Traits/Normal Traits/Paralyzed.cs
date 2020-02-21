@@ -62,7 +62,7 @@ namespace Traits {
         //        && !character.marker.hasFleePath && character.stateComponent.currentState == null && character.IsInOwnParty();
         //}
         private void CheckParalyzedTrait() {
-            if(owner.marker == null) {
+            if(!owner.marker) {
                 return;
             }
             if (owner.HasJobTargetingThis(JOB_TYPE.MOVE_CHARACTER)) {
@@ -80,7 +80,7 @@ namespace Traits {
             }
         }
         // private void CheckParalyzedTraitPerHour() {
-        //     if (owner.marker == null) {
+        //     if (owner.!marker) {
         //         return;
         //     }
         //     if (/*owner.CanPerformEndTickJobs()*/

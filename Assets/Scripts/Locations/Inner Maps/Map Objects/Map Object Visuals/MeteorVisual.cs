@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using DG.Tweening;
 using UnityEngine;
 using Traits;
 using Inner_Maps;
@@ -62,8 +63,12 @@ public class MeteorVisual : MonoBehaviour {
             //    }
             //}
         }
-        InnerMapCameraMove.Instance.ShakeCamera();
+        Tweener tween = InnerMapCameraMove.Instance.innerMapsCamera.DOShakeRotation(0.8f, new Vector3(7f, 7f, 7f), 25);
+        tween.OnComplete(OnTweenComplete);
         GameManager.Instance.StartCoroutine(ExpireCoroutine(gameObject));
+    }
+    private void OnTweenComplete() {
+        InnerMapCameraMove.Instance.innerMapsCamera.transform.rotation = Quaternion.Euler(new Vector3(0f,0f,0f));
     }
     private IEnumerator ExpireCoroutine(GameObject go) {
         yield return new WaitForSeconds(2f);

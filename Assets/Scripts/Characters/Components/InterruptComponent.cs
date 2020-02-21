@@ -83,7 +83,7 @@ public class InterruptComponent {
         if(_currentEffectLog == null) {
             _currentEffectLog = interrupt.CreateEffectLog(owner, targetPOI);
         }
-        if (owner.marker != null) {
+        if (owner.marker) {
             owner.marker.UpdateActionIcon();
         }
     }
@@ -100,7 +100,7 @@ public class InterruptComponent {
             currentSimultaneousInterruptDuration++;
             if (currentSimultaneousInterruptDuration > 2) {
                 triggeredSimultaneousInterrupt = null;
-                if (owner.marker != null) {
+                if (owner.marker) {
                     owner.marker.UpdateActionIcon();
                 }
             }
@@ -112,7 +112,7 @@ public class InterruptComponent {
         currentInterrupt = null;
         currentDuration = 0;
         if (willCheckInvision) {
-            if (owner.marker != null) {
+            if (owner.marker) {
                 for (int i = 0; i < owner.marker.inVisionCharacters.Count; i++) {
                     Character inVisionCharacter = owner.marker.inVisionCharacters[i];
                     // owner.CreateJobsOnEnterVisionWith(inVisionCharacter);
@@ -121,7 +121,7 @@ public class InterruptComponent {
             } 
             owner.needsComponent.CheckExtremeNeeds(finishedInterrupt);
         }
-        if (owner.marker != null) {
+        if (owner.marker) {
             owner.marker.UpdateActionIcon();
         }
         Messenger.Broadcast(Signals.INTERRUPT_FINISHED, finishedInterrupt.interrupt, owner);
