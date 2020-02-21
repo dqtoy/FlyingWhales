@@ -439,26 +439,30 @@ public class GameManager : MonoBehaviour {
     //}
 
     #region Particle Effects
-    public void CreateElectricEffectAt(IPointOfInterest poi) {
+    public GameObject CreateElectricEffectAt(IPointOfInterest poi) {
+        GameObject go = null;
         if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
-            CreateElectricEffectAt(poi as Character);
+            go = CreateElectricEffectAt(poi as Character);
         } else {
             if (poi.gridTileLocation == null) {
-                return;
+                return go;
             }
-            GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(electricEffectPrefab.name, Vector3.zero, Quaternion.identity, poi.gridTileLocation.parentMap.objectsParent);
+            go = ObjectPoolManager.Instance.InstantiateObjectFromPool(electricEffectPrefab.name, Vector3.zero, Quaternion.identity, poi.gridTileLocation.parentMap.objectsParent);
             go.transform.localPosition = poi.gridTileLocation.centeredLocalLocation;
             go.SetActive(true);
         }
+        return go;
     }
-    private void CreateElectricEffectAt(Character character) {
+    private GameObject CreateElectricEffectAt(Character character) {
         //StartCoroutine(ElectricEffect(character));
+        GameObject go = null;
         if (character.marker == null) {
-            return;
+            return go;
         }
-        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(electricEffectPrefab.name, Vector3.zero, Quaternion.identity, character.marker.transform);
+        go = ObjectPoolManager.Instance.InstantiateObjectFromPool(electricEffectPrefab.name, Vector3.zero, Quaternion.identity, character.marker.transform);
         go.transform.localPosition = Vector3.zero;
         go.SetActive(true);
+        return go;
     }
     public void CreateFireEffectAt(LocationGridTile tile) {
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(fireEffectPrefab.name, Vector3.zero, Quaternion.identity, tile.parentMap.objectsParent);

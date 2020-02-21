@@ -10,7 +10,7 @@ public class CombatManager : MonoBehaviour {
     public static CombatManager Instance = null;
 
     public const int pursueDuration = 10;
-    private List<ITraitable> traitables;
+    // private List<ITraitable> traitables;
 
     private void Awake() {
         Instance = this;
@@ -43,9 +43,14 @@ public class CombatManager : MonoBehaviour {
         StartCoroutine(PoisonExplosionCoroutine(target, stacks));
     }
     private IEnumerator PoisonExplosionCoroutine(IPointOfInterest target, int stacks) {
+        while (GameManager.Instance.isPaused) {
+            //Pause coroutine while game is paused
+            //Might be performance heavy, needs testing
+            yield return null;
+        }
         yield return new WaitForSeconds(0.2f);
         List<ITraitable> traitables = new List<ITraitable>();
-        List<LocationGridTile> affectedTiles = target.gridTileLocation.GetTilesInRadius(2);
+        List<LocationGridTile> affectedTiles = target.gridTileLocation.GetTilesInRadius(2, includeTilesInDifferentStructure: true);
         float damagePercentage = 0.1f * stacks;
         if (damagePercentage > 1) {
             damagePercentage = 1;
@@ -80,9 +85,14 @@ public class CombatManager : MonoBehaviour {
         
     }
     private IEnumerator FrozenExplosionCoroutine(IPointOfInterest target, int stacks) {
+        while (GameManager.Instance.isPaused) {
+            //Pause coroutine while game is paused
+            //Might be performance heavy, needs testing
+            yield return null;
+        }
         yield return new WaitForSeconds(0.2f);
         List<ITraitable> traitables = new List<ITraitable>();
-        List<LocationGridTile> affectedTiles = target.gridTileLocation.GetTilesInRadius(2);
+        List<LocationGridTile> affectedTiles = target.gridTileLocation.GetTilesInRadius(2, includeTilesInDifferentStructure: true);
         float damagePercentage = 0.2f * stacks;
         if (damagePercentage > 1) {
             damagePercentage = 1;
@@ -92,19 +102,19 @@ public class CombatManager : MonoBehaviour {
             traitables.AddRange(tile.GetTraitablesOnTile());
         }
         // flammables = flammables.Where(x => !x.traitContainer.HasTrait("Burning", "Burnt", "Wet", "Fireproof")).ToList();
-        BurningSource bs = null;
+        // BurningSource bs = null;
         for (int i = 0; i < traitables.Count; i++) {
             ITraitable traitable = traitables[i];
             int damage = Mathf.RoundToInt(traitable.maxHP * damagePercentage);
             GameManager.Instance.CreateFireEffectAt(traitable.gridTileLocation);
             traitable.AdjustHP(-damage, ELEMENTAL_TYPE.Water);
-            Burning burningTrait = traitable.traitContainer.GetNormalTrait<Burning>();
-            if (burningTrait != null && burningTrait.sourceOfBurning == null) {
-                if (bs == null) {
-                    bs = new BurningSource(InnerMapManager.Instance.currentlyShowingLocation);
-                }
-                burningTrait.SetSourceOfBurning(bs, traitable);
-            }
+            // Burning burningTrait = traitable.traitContainer.GetNormalTrait<Burning>();
+            // if (burningTrait != null && burningTrait.sourceOfBurning == null) {
+            //     if (bs == null) {
+            //         bs = new BurningSource(InnerMapManager.Instance.currentlyShowingLocation);
+            //     }
+            //     burningTrait.SetSourceOfBurning(bs, traitable);
+            // }
         }
 
         Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Frozen Explosion", "effect");
@@ -112,10 +122,8 @@ public class CombatManager : MonoBehaviour {
         PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
         log.AddLogToInvolvedObjects();
     }
-    public void ChainElectricEffect(ITraitable traitable) {
-        if (traitables == null) {
-            traitables = new List<ITraitable>();
-        }
+    public void ChainElectricEffect(ITraitable traitable) { 
+        List<ITraitable> traitables = new List<ITraitable>();
         if (traitable.gridTileLocation != null) {
             List<LocationGridTile> tiles = traitable.gridTileLocation.GetTilesInRadius(1, includeTilesInDifferentStructure: true);
             traitables.Clear();
@@ -125,12 +133,17 @@ public class CombatManager : MonoBehaviour {
                 }
             }
             if (traitables.Count > 0) {
-                StartCoroutine(ChainElectricCoroutine());
+                StartCoroutine(ChainElectricCoroutine(traitables));
             }
         }
     }
-    private IEnumerator ChainElectricCoroutine() {
+    private IEnumerator ChainElectricCoroutine(List<ITraitable> traitables) {
         for (int i = 0; i < traitables.Count; i++) {
+            while (GameManager.Instance.isPaused) {
+                //Pause coroutine while game is paused
+                //Might be performance heavy, needs testing
+                yield return null;
+            }
             yield return new WaitForSeconds(0.1f);
             if (!traitables[i].traitContainer.HasTrait("Zapped")) {
                 traitables[i].traitContainer.AddTrait(traitables[i], "Zapped");

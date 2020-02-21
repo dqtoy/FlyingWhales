@@ -1209,4 +1209,25 @@ public class HexTile : MonoBehaviour, IHasNeighbours<HexTile>, IPlayerActionTarg
         //Nothing happens
     }
     #endregion
+    
+    #region Characters
+    public List<Character> GetAllCharactersInsideHex() {
+        List<Character> characters = null;
+        LocationGridTile lowerLeftCornerTile = ownedBuildSpots[0].tilesInTerritory[0];
+        int xMin = lowerLeftCornerTile.localPlace.x;
+        int yMin = lowerLeftCornerTile.localPlace.y;
+        int xMax = xMin + (InnerMapManager.BuildingSpotSize.x * 2);
+        int yMax = yMin + (InnerMapManager.BuildingSpotSize.y * 2);
+
+        for (int i = 0; i < region.charactersAtLocation.Count; i++) {
+            Character character = region.charactersAtLocation[i];
+            if (character.gridTileLocation.localPlace.x >= xMin && character.gridTileLocation.localPlace.x <= xMax
+                && character.gridTileLocation.localPlace.y >= yMin && character.gridTileLocation.localPlace.y <= yMax) {
+                if (characters == null) { characters = new List<Character>(); }
+                characters.Add(character);
+            }
+        }
+        return characters;
+    }
+    #endregion
 }

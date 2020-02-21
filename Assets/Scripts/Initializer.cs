@@ -9,7 +9,7 @@ public class Initializer : MonoBehaviour {
         CharacterManager.Instance.Initialize();
         RaceManager.Instance.Initialize();
         TraitManager.Instance.Initialize();
-        SecretManager.Instance.Initialize();
+        // SecretManager.Instance.Initialize();
         LandmarkManager.Instance.Initialize();
         //CombatManager.Instance.Initialize();
         PlayerManager.Instance.Initialize();

@@ -31,6 +31,7 @@
       <Path>Debug</Path>
       <Path>Library</Path>
       <Path>Logs</Path>
+      <Path>MemoryCaptures</Path>
       <Path>Temp</Path>
       <Path>bin</Path>
       <Path>obj</Path>
