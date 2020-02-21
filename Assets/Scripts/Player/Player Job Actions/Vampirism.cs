@@ -40,7 +40,7 @@ public class Vampirism : PlayerSpell {
             base.ActivateAction(targets[0]);
         }
     }
-    protected override bool CanPerformActionTowards(IPointOfInterest targetPOI) {
+    protected virtual bool CanPerformActionTowards(IPointOfInterest targetPOI) {
         if (targetPOI is TileObject) {
             TileObject to = targetPOI as TileObject;
             if (to.users != null) {

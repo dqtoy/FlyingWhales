@@ -28,7 +28,7 @@ public class Spoil : PlayerSpell {
         }
         return false;
     }
-    protected override bool CanPerformActionTowards(IPointOfInterest targetPOI) {
+    protected virtual bool CanPerformActionTowards(IPointOfInterest targetPOI) {
         if (targetPOI is Table && !(targetPOI.traitContainer.HasTrait("Poisoned", "Robust"))) {
             return true;
         }

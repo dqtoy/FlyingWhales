@@ -30,10 +30,10 @@ public class PoisonCloud : PlayerSpell {
         List<LocationGridTile> tiles = UtilityScripts.GameUtilities.GetDiamondTilesFromRadius(targetTile.parentMap, targetTile.localPlace, 3);
         InnerMapManager.Instance.UnhighlightTiles(tiles);
     }
-    public override bool CanTarget(LocationGridTile tile) {
+    public virtual bool CanTarget(LocationGridTile tile) {
         return tile.structure != null;
     }
-    protected override bool CanPerformActionTowards(LocationGridTile tile) {
+    protected virtual bool CanPerformActionTowards(LocationGridTile tile) {
         return tile.structure != null;
     }
     #endregion

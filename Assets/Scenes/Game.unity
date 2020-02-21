@@ -37984,7 +37984,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7fd8bf412ff0a564296f3c5247aef424, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  allSpellTypes: 
   allCombatAbilities: 
   spellIcons:
     m_keys:
@@ -86684,7 +86683,7 @@ MonoBehaviour:
       - {fileID: 4161023896611396535, guid: 95c22bad701e8ab408dac40a2753949e, type: 3}
   assetManager: {fileID: 1536722386}
   tileObjectTiles:
-    m_keys: 0000000002000000030000000400000005000000060000000700000008000000090000000b0000000c0000000e0000000f000000100000001100000012000000130000001400000015000000160000001700000018000000190000001a0000001b0000001c0000004b0000004600000049000000480000004c0000004d00000052000000530000005400000055000000
+    m_keys: 0000000002000000030000000400000005000000060000000700000008000000090000000b0000000c0000000e0000000f000000100000001100000012000000130000001400000015000000160000001700000018000000190000001a0000001b0000001c0000004b0000004600000049000000480000004c0000004d0000005200000053000000540000005500000056000000
     m_values:
     - biomeAssets:
         m_keys: 06000000
@@ -86795,7 +86794,7 @@ MonoBehaviour:
     - biomeAssets:
         m_keys: 06000000
         m_values:
-        - activeTile: {fileID: 21300000, guid: e85247b9c5ad0ba48b54c98a216a9cff, type: 3}
+        - activeTile: {fileID: 21300000, guid: 15a9d94656e838e4cb562c1a5d09f55d, type: 3}
           inactiveTile: {fileID: 0}
     - biomeAssets:
         m_keys: 06000000
@@ -86892,6 +86891,11 @@ MonoBehaviour:
         m_keys: 06000000
         m_values:
         - activeTile: {fileID: 21300000, guid: 4aae22799ddcf37429e6268d9f13e95b, type: 3}
+          inactiveTile: {fileID: 0}
+    - biomeAssets:
+        m_keys: 06000000
+        m_values:
+        - activeTile: {fileID: 0}
           inactiveTile: {fileID: 0}
     - biomeAssets:
         m_keys: 06000000

@@ -5,7 +5,12 @@ using UnityEngine.Assertions;
 /// Base class for anything in the settlement map that can be damaged and has a physical object to be shown.
 /// </summary>
 public abstract class MapObject<T> where T: IDamageable {
-    public BaseCollisionTrigger<T> collisionTrigger => mapVisual.collisionTrigger;
+    public BaseCollisionTrigger<T> collisionTrigger {
+        get {
+            Assert.IsNotNull(mapVisual, $"{this.ToString()} had a problem getting its collision trigger! MapVisual: {mapVisual?.name ?? "null"}.");
+            return mapVisual.collisionTrigger;            
+        }
+    } 
     public virtual MapObjectVisual<T> mapVisual { get; protected set; } ///this is set in each inheritors implementation of <see cref="CreateMapObjectVisual"/>
     public MAP_OBJECT_STATE mapObjectState { get; private set; }
 
@@ -44,7 +49,6 @@ public abstract class MapObject<T> where T: IDamageable {
     private void InitializeCollisionTrigger(T obj) {
         collisionTrigger.Initialize(obj);
         mapVisual.UpdateCollidersState(obj);
-        
     }
     #endregion
 

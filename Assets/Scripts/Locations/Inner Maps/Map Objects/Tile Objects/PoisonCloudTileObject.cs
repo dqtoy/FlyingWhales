@@ -2,9 +2,9 @@
 using Inner_Maps;
 using UnityEngine;
 
-public class PoisonCloudTileObject : MovingTileObject {
+public sealed class PoisonCloudTileObject : MovingTileObject {
 
-    private PoisonCloudMapObject _poisonCloudVisual;
+    private PoisonCloudMapObjectVisual _poisonCloudVisual;
     
     public PoisonCloudTileObject() {
         advertisedActions = new List<INTERACTION_TYPE>();
@@ -14,9 +14,8 @@ public class PoisonCloudTileObject : MovingTileObject {
     }
     
     protected override void CreateMapObjectVisual() {
-        GameObject obj = InnerMapManager.Instance.mapObjectFactory.CreateNewTileObjectAreaMapObject(this.tileObjectType);
-        _poisonCloudVisual = obj.GetComponent<PoisonCloudMapObject>();
-        mapVisual = _poisonCloudVisual;
+        base.CreateMapObjectVisual();
+        _poisonCloudVisual = mapVisual as PoisonCloudMapObjectVisual;
     }
     protected override bool TryGetGridTileLocation(out LocationGridTile tile) {
         if (_poisonCloudVisual != null) {

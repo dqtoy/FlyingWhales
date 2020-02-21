@@ -5,6 +5,7 @@ using System.Linq;
 using System;
 using Traits;
 using Inner_Maps;
+using UnityEngine.Assertions;
 
 public class CombatManager : MonoBehaviour {
     public static CombatManager Instance = null;
@@ -61,12 +62,13 @@ public class CombatManager : MonoBehaviour {
             int damage = Mathf.RoundToInt(traitable.maxHP * damagePercentage);
             GameManager.Instance.CreateFireEffectAt(traitable.gridTileLocation);
             traitable.AdjustHP(-damage, ELEMENTAL_TYPE.Fire);
-            Burning burningTrait = traitable.traitContainer.GetNormalTrait<Burning>();
+            Burning burningTrait = traitable.traitContainer.GetNormalTrait<Burning>("Burning");
             if (burningTrait != null && burningTrait.sourceOfBurning == null) {
                 if (bs == null) {
-                    bs = new BurningSource(InnerMapManager.Instance.currentlyShowingLocation);
+                    bs = new BurningSource(traitable.gridTileLocation.parentMap.location);
                 }
                 burningTrait.SetSourceOfBurning(bs, traitable);
+                Assert.IsNotNull(burningTrait.sourceOfBurning, $"Burning source of {traitable.ToString()} was set to null");
             }
         }
 
@@ -98,10 +100,10 @@ public class CombatManager : MonoBehaviour {
             int damage = Mathf.RoundToInt(traitable.maxHP * damagePercentage);
             GameManager.Instance.CreateFireEffectAt(traitable.gridTileLocation);
             traitable.AdjustHP(-damage, ELEMENTAL_TYPE.Water);
-            Burning burningTrait = traitable.traitContainer.GetNormalTrait<Burning>();
+            Burning burningTrait = traitable.traitContainer.GetNormalTrait<Burning>("Burning");
             if (burningTrait != null && burningTrait.sourceOfBurning == null) {
                 if (bs == null) {
-                    bs = new BurningSource(InnerMapManager.Instance.currentlyShowingLocation);
+                    bs = new BurningSource(traitable.gridTileLocation.parentMap.location);
                 }
                 burningTrait.SetSourceOfBurning(bs, traitable);
             }

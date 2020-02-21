@@ -726,7 +726,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         PlayAnimation("Sleep Ground");
     }
     public void PlayAnimation(string animation) {
-        if (gameObject.activeSelf == false) {
+        if (gameObject.activeSelf == false || animator.gameObject.activeSelf == false) {
             return;
         }
         currentAnimation = animation;

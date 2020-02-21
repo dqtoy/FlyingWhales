@@ -8,6 +8,7 @@ using Inner_Maps;
 using Inner_Maps.Location_Structures;
 using Pathfinding;
 using Traits;
+using UnityEngine.Assertions;
 using UnityEngine.Experimental.U2D;
 using UtilityScripts;
 using UnityEngine.EventSystems;
@@ -164,6 +165,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         UnsubscribeListeners();
     }
     public virtual void OnPlacePOI() {
+        // Assert.IsNull(gridTileLocation, $"Grid tile location of {this.ToString()} is null, but OnPlacePOI was called!");
         SetPOIState(POI_STATE.ACTIVE);
         if (mapVisual == null) {
             InitializeMapObject(this);
@@ -408,8 +410,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         if (currentHP == 0) {
             //object has been destroyed
             Character removed = null;
-            if (source is Character) {
-                removed = source as Character;
+            if (source is Character character) {
+                removed = character;
             }
             gridTileLocation.structure.RemovePOI(this, removed);
         }

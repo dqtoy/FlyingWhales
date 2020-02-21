@@ -113,7 +113,7 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
     }
     public void TweenTo(Transform _target, float duration, System.Action _onReachTargetAction) {
         var position = _target.position;
-        tween = transform.DOMove(position, duration).SetAutoKill(false).OnComplete(_onReachTargetAction.Invoke);
+        tween = transform.DOMove(position, duration).SetEase(Ease.Linear).SetAutoKill(false).OnComplete(_onReachTargetAction.Invoke);
         tween.OnUpdate (() => tween.ChangeEndValue (_target.position, true));
 
     }

@@ -51,10 +51,10 @@ public class Tornado : PlayerSpell {
         List<LocationGridTile> tiles = targetTile.GetTilesInRadius(radius, 0, true);
         InnerMapManager.Instance.UnhighlightTiles(tiles);
     }
-    public override bool CanTarget(LocationGridTile tile) {
+    public virtual bool CanTarget(LocationGridTile tile) {
         return tile.structure != null;
     }
-    protected override bool CanPerformActionTowards(LocationGridTile tile) {
+    protected virtual bool CanPerformActionTowards(LocationGridTile tile) {
         return tile.structure != null;
     }
     #endregion
