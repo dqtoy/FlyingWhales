@@ -39,7 +39,7 @@ public class CharacterVisuals {
         //}
         UpdateMarkerAnimations(character);
         UpdatePortraitSettings(character);
-        if (character.marker != null) {
+        if (character.marker) {
             character.marker.UpdateMarkerVisuals();
         }
     }

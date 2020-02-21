@@ -456,7 +456,7 @@ public class GameManager : MonoBehaviour {
     private GameObject CreateElectricEffectAt(Character character) {
         //StartCoroutine(ElectricEffect(character));
         GameObject go = null;
-        if (character.marker == null) {
+        if (!character.marker) {
             return go;
         }
         go = ObjectPoolManager.Instance.InstantiateObjectFromPool(electricEffectPrefab.name, Vector3.zero, Quaternion.identity, character.marker.transform);
@@ -482,7 +482,7 @@ public class GameManager : MonoBehaviour {
         }
     }
     private void CreateFireEffectAt(Character character) {
-        if (character.marker == null) {
+        if (!character.marker) {
             return;
         }
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(fireEffectPrefab.name, Vector3.zero, Quaternion.identity, character.marker.transform);
@@ -514,7 +514,7 @@ public class GameManager : MonoBehaviour {
         return go;
     }
     public void CreateExplodeEffectAt(Character character) {
-        if (character.marker == null) {
+        if (!character.marker) {
             return;
         }
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(hitEffectPrefab.name, Vector3.zero, Quaternion.identity, character.marker.transform);

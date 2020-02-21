@@ -242,7 +242,7 @@ public class SaveDataCharacter {
             gridTileLocation = new Vector3Save(0f, 0f, -1f);
         }
 
-        if (character.marker != null) {
+        if (character.marker) {
             lethalHostilesInRangeIDs = new List<int>();
             nonLethalHostilesInRangeIDs = new List<int>();
             avoidInRangeIDs = new List<int>();
@@ -348,7 +348,7 @@ public class SaveDataCharacter {
             Settlement settlement = LandmarkManager.Instance.GetAreaByID(gridTileLocationAreaID);
             LocationGridTile gridTile = settlement.innerMap.map[(int) gridTileLocation.x, (int) gridTileLocation.y];
 
-            if (character.marker == null) {
+            if (!character.marker) {
                 character.CreateMarker();
             }
             character.LoadInitialCharacterPlacement(gridTile);

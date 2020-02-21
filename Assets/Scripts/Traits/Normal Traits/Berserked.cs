@@ -27,7 +27,7 @@ namespace Traits {
             if (addedTo is Character) {
                 Character character = addedTo as Character;
                 _owner = character;
-                if (character.marker != null) {
+                if (character.marker) {
                     character.marker.BerserkedMarker();
                 }
                 character.CancelAllJobs();
@@ -42,7 +42,7 @@ namespace Traits {
             base.OnRemoveTrait(removedFrom, removedBy);
             if (removedFrom is Character) {
                 Character character = removedFrom as Character;
-                if (character.marker != null) {
+                if (character.marker) {
                     character.marker.UnberserkedMarker();
                 }
                 

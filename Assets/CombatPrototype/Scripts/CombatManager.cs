@@ -19,6 +19,9 @@ public class CombatManager : MonoBehaviour {
 
     public void ApplyElementalDamage(ELEMENTAL_TYPE elementalType, ITraitable target, Character responsibleCharacter = null) { //, bool shouldSetBurningSource = true
         ElementalDamageData elementalDamage = ScriptableObjectsManager.Instance.GetElementalDamageData(elementalType);
+        if (target is IDamageable) {
+            CreateHitEffectAt(target as IDamageable, elementalType);
+        }
         if (!string.IsNullOrEmpty(elementalDamage.addedTraitName)) {
             //Trait trait = null;
             target.traitContainer.AddTrait(target, elementalDamage.addedTraitName, responsibleCharacter); //, out trait
@@ -35,7 +38,12 @@ public class CombatManager : MonoBehaviour {
     public void CreateHitEffectAt(IDamageable poi, ELEMENTAL_TYPE elementalType) {
         ElementalDamageData elementalData = ScriptableObjectsManager.Instance.GetElementalDamageData(elementalType);
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(elementalData.hitEffectPrefab.name, Vector3.zero, Quaternion.identity, poi.gridTileLocation.parentMap.objectsParent);
-        go.transform.position = poi.projectileReceiver.transform.position;
+        if (!poi.mapObjectVisual || !poi.projectileReceiver) {
+            go.transform.localPosition = poi.gridTileLocation.centeredLocalLocation;
+        } else {
+            go.transform.position = poi.projectileReceiver.transform.position;
+        }
+        // go.transform.position = poi.gridTileLocation.centeredWorldLocation;
         go.SetActive(true);
 
     }
@@ -65,7 +73,6 @@ public class CombatManager : MonoBehaviour {
         for (int i = 0; i < traitables.Count; i++) {
             ITraitable traitable = traitables[i];
             int damage = Mathf.RoundToInt(traitable.maxHP * damagePercentage);
-            GameManager.Instance.CreateFireEffectAt(traitable.gridTileLocation);
             traitable.AdjustHP(-damage, ELEMENTAL_TYPE.Fire);
             Burning burningTrait = traitable.traitContainer.GetNormalTrait<Burning>("Burning");
             if (burningTrait != null && burningTrait.sourceOfBurning == null) {
@@ -108,7 +115,6 @@ public class CombatManager : MonoBehaviour {
         for (int i = 0; i < traitables.Count; i++) {
             ITraitable traitable = traitables[i];
             int damage = Mathf.RoundToInt(traitable.maxHP * damagePercentage);
-            GameManager.Instance.CreateFireEffectAt(traitable.gridTileLocation);
             traitable.AdjustHP(-damage, ELEMENTAL_TYPE.Water);
             // Burning burningTrait = traitable.traitContainer.GetNormalTrait<Burning>();
             // if (burningTrait != null && burningTrait.sourceOfBurning == null) {

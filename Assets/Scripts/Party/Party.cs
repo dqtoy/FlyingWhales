@@ -170,6 +170,9 @@ public class Party {
             if (tileObject.gridTileLocation != null) {
                 tileObject.gridTileLocation.structure.RemovePOIWithoutDestroying(tileObject);
             }
+            if (tileObject.mapVisual == null) {
+                tileObject.InitializeMapObject(tileObject);
+            }
             //tileObject.SetGridTileLocation(owner.gridTileLocation);
             tileObject.collisionTrigger.SetCollidersState(false);
             tileObject.mapVisual.transform.SetParent(_owner.marker.visualsParent);

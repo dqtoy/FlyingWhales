@@ -50,9 +50,9 @@ public class CursorManager : MonoBehaviour {
     //private void Start() {
     //    cursorPointerEventData = new PointerEventData(EventSystem.current);
     //}
-    private void Update() {
+    private void Update() { 
         if (PlayerManager.Instance != null && PlayerManager.Instance.player != null) {
-            if (PlayerManager.Instance.player.seizeComponent.hasSeizedPOI) {
+            if (PlayerManager.Instance.player.seizeComponent.hasSeizedPOI) { 
                 IPointOfInterest seizedPOI = PlayerManager.Instance.player.seizeComponent.seizedPOI;
                 if (UIManager.Instance.IsMouseOnUI() || !InnerMapManager.Instance.isAnInnerMapShowing) {
                     SetCursorTo(Cursor_Type.Default);
@@ -71,70 +71,53 @@ public class CursorManager : MonoBehaviour {
                         SetCursorTo(Cursor_Type.Cross);
                     }
                 }
-            } else if (PlayerManager.Instance.player.currentActivePlayerSpell != null) {
-                LocationGridTile hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
-                if (previousHoveredTile != null && previousHoveredTile != hoveredTile) {
-                    // PlayerManager.Instance.player.currentActivePlayerJobAction.HideRange(previousHoveredTile);
+            } else if (PlayerManager.Instance.player.currentActivePlayerSpell != null) { 
+                if (UIManager.Instance.IsMouseOnUI() || !InnerMapManager.Instance.isAnInnerMapShowing) {
+                    SetCursorTo(Cursor_Type.Default); 
+                } else { 
+                    LocationGridTile hoveredTile = InnerMapManager.Instance.GetTileFromMousePosition();
+                    bool canTarget = false; 
+                    IPointOfInterest hoveredPOI = InnerMapManager.Instance.currentlyHoveredPoi; 
+                    string hoverText = string.Empty; 
+                    for (int i = 0; i < PlayerManager.Instance.player.currentActivePlayerSpell.targetTypes.Length; i++) { 
+                        switch (PlayerManager.Instance.player.currentActivePlayerSpell.targetTypes[i]) { 
+                            case SPELL_TARGET.CHARACTER: 
+                            case SPELL_TARGET.TILE_OBJECT: 
+                                if (hoveredPOI != null) { 
+                                    canTarget = PlayerManager.Instance.player.currentActivePlayerSpell.CanTarget(hoveredPOI, ref hoverText); 
+                                } 
+                                break; 
+                            case SPELL_TARGET.TILE: 
+                                if (hoveredTile != null) {
+                                    canTarget = PlayerManager.Instance.player.currentActivePlayerSpell.CanTarget(hoveredTile); 
+                                } 
+                                break; 
+                            case SPELL_TARGET.HEX: 
+                                if (hoveredTile != null && hoveredTile.buildSpotOwner.hexTileOwner) { 
+                                    canTarget = PlayerManager.Instance.player.currentActivePlayerSpell.CanTarget(hoveredTile.buildSpotOwner.hexTileOwner); 
+                                } 
+                                break; 
+                            default: 
+                                break; 
+                        } 
+                        if (canTarget) { 
+                            SetCursorTo(Cursor_Type.Check);
+                            // PlayerManager.Instance.player.currentActivePlayerJobAction.ShowRange(hoveredTile);
+                            // break;
+                        } else { 
+                            SetCursorTo(Cursor_Type.Cross); 
+                            // PlayerManager.Instance.player.currentActivePlayerJobAction.HideRange(hoveredTile);
+                        } 
+                    } 
+                    previousHoveredTile = hoveredTile; 
+                    if(hoveredPOI != null) { 
+                        if (hoverText != string.Empty) { 
+                            UIManager.Instance.ShowSmallInfo(hoverText); 
+                        } 
+                    } else { 
+                        UIManager.Instance.HideSmallInfo(); 
+                    } 
                 }
-                bool canTarget = false;
-                IPointOfInterest hoveredPOI = InnerMapManager.Instance.currentlyHoveredPoi;
-                string hoverText = string.Empty;
-                for (int i = 0; i < PlayerManager.Instance.player.currentActivePlayerSpell.targetTypes.Length; i++) {
-                    switch (PlayerManager.Instance.player.currentActivePlayerSpell.targetTypes[i]) {
-                        case SPELL_TARGET.CHARACTER:
-                        case SPELL_TARGET.TILE_OBJECT:
-                            if (hoveredPOI != null) {
-                                canTarget = PlayerManager.Instance.player.currentActivePlayerSpell.CanTarget(hoveredPOI, ref hoverText);
-                            }
-                            break;
-                        case SPELL_TARGET.TILE:
-                            if (hoveredTile != null) {
-                                canTarget = PlayerManager.Instance.player.currentActivePlayerSpell.CanTarget(hoveredTile);
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-                    if (canTarget) {
-                        SetCursorTo(Cursor_Type.Check);
-                        // PlayerManager.Instance.player.currentActivePlayerJobAction.ShowRange(hoveredTile);
-                        break;
-                    } else {
-                        SetCursorTo(Cursor_Type.Cross);
-                        // PlayerManager.Instance.player.currentActivePlayerJobAction.HideRange(hoveredTile);
-                    }
-                }
-                previousHoveredTile = hoveredTile;
-                if(hoveredPOI != null) {
-                    if (hoverText != string.Empty) {
-                        UIManager.Instance.ShowSmallInfo(hoverText);
-                    }
-                } else {
-                    UIManager.Instance.HideSmallInfo();
-                }
-                //IPointOfInterest hoveredPOI = InteriorMapManager.Instance.currentlyHoveredPOI;
-                //if (hoveredPOI != null) {
-                //    if (PlayerManager.Instance.player.currentActivePlayerJobAction.CanTarget(hoveredPOI)) {
-                //        SetCursorTo(Cursor_Type.Check);
-                //    } else {
-                //        SetCursorTo(Cursor_Type.Cross);
-                //    }
-                //}
-                //else if (cursorPointerEventData.pointerEnter != null) {
-                //    LandmarkCharacterItem charItem = cursorPointerEventData.pointerEnter.transform.parent.GetComponent<LandmarkCharacterItem>();
-                //    if (charItem != null) {
-                //        if (PlayerManager.Instance.player.currentActivePlayerJobAction.CanTarget(charItem.character)) {
-                //            SetCursorTo(Cursor_Type.Check);
-                //        } else {
-                //            SetCursorTo(Cursor_Type.Cross);
-                //        }
-                //    } else {
-                //        SetCursorTo(Cursor_Type.Cross);
-                //    }
-                //}
-                //else {
-                //    SetCursorTo(Cursor_Type.Cross);
-                //}
             } else if (PlayerManager.Instance.player.currentActiveCombatAbility != null) {
                 UIManager.Instance.HideSmallInfo();
                 CombatAbility ability = PlayerManager.Instance.player.currentActiveCombatAbility;

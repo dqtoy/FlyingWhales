@@ -163,6 +163,7 @@ public class TraitManager : MonoBehaviour {
             "Feeble",
             "Forlorn",
             "Accident Prone",
+            "Disoriented",
         };
         //TODO: REDO INSTANCED TRAITS, USE SCRIPTABLE OBJECTS for FIXED DATA
         for (int i = 0; i < instancedTraits.Length; i++) {

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ContentModelStore">
-    <e p="C:\Users\12myk\.Rider2019.3\system\extResources" t="IncludeRecursive" />
-    <e p="C:\Users\12myk\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_FlyingWhales.-362142238.00" t="ExcludeRecursive" />
-    <e p="D:\Repositories\FlyingWhales" t="IncludeRecursive">
+    <e p="C:\Users\Ian Chy\.Rider2019.3\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\Ian Chy\.Rider2019.3\system\resharper-host\local\Transient\ReSharperHost\v193\SolutionCaches\_FlyingWhales.1495046791.00" t="ExcludeRecursive" />
+    <e p="C:\Users\Ian Chy\Documents\FlyingWhales" t="IncludeRecursive">
       <e p="Assembly-CSharp-Editor.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp-firstpass.csproj" t="IncludeRecursive" />
       <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
@@ -1412,8 +1412,11 @@
             <e p="Biomes.cs" t="Include" />
             <e p="GridMap.cs" t="Include" />
             <e p="HexTile" t="Include">
+              <e p="Components" t="Include">
+                <e p="HexTileSpellsComponent.cs" t="Include" />
+                <e p="TileFeatureComponent.cs" t="Include" />
+              </e>
               <e p="HexTile.cs" t="Include" />
-              <e p="TileFeatureComponent.cs" t="Include" />
             </e>
             <e p="ILocation.cs" t="Include" />
             <e p="Inner Maps" t="Include">
@@ -1719,6 +1722,7 @@
               <e p="CursedObject.cs" t="Include" />
               <e p="Destroy.cs" t="Include" />
               <e p="Disable.cs" t="Include" />
+              <e p="EarthquakeData.cs" t="Include" />
               <e p="Enrage.cs" t="Include" />
               <e p="FeebleSpiritData.cs" t="Include" />
               <e p="ForlornSpiritData.cs" t="Include" />
@@ -1876,6 +1880,7 @@
               <e p="Diplomatic.cs" t="Include" />
               <e p="Disabled.cs" t="Include" />
               <e p="Disillusioned.cs" t="Include" />
+              <e p="Disoriented.cs" t="Include" />
               <e p="Drunk.cs" t="Include" />
               <e p="Drunkard.cs" t="Include" />
               <e p="Edible.cs" t="Include" />

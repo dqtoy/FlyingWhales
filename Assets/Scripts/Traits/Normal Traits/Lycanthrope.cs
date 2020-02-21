@@ -347,10 +347,10 @@ namespace Traits {
             form.SetIsConversing(false);
             form.SetPOIState(POI_STATE.INACTIVE);
             SchedulingManager.Instance.ClearAllSchedulesBy(this);
-            if (form.marker != null) {
+            if (form.marker) {
                 for (int i = 0; i < form.marker.inVisionCharacters.Count; i++) {
                     Character otherCharacter = form.marker.inVisionCharacters[i];
-                    if(otherCharacter.marker != null) {
+                    if(otherCharacter.marker) {
                         otherCharacter.marker.RemovePOIFromInVisionRange(form);
                     }
                 }
@@ -376,7 +376,7 @@ namespace Traits {
             form.needsComponent.OnCharacterArrivedAtLocation(tileLocation.structure.location.coreTile.region);
             form.SubscribeToSignals();
             form.SetPOIState(POI_STATE.ACTIVE);
-            if (form.marker == null) {
+            if (!form.marker) {
                 form.CreateMarker();
             }
             form.marker.InitialPlaceMarkerAt(tileLocation);

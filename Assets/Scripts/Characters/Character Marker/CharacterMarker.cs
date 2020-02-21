@@ -527,7 +527,7 @@ public class CharacterMarker : MapObjectVisual<Character> {
         switch (targetPOI.poiType) {
             case POINT_OF_INTEREST_TYPE.CHARACTER:
                 Character targetCharacter = targetPOI as Character;
-                if (targetCharacter.marker == null) {
+                if (!targetCharacter.marker) {
                     this.failedToComputePathAction?.Invoke(); //target character is already dead.
                     this.failedToComputePathAction = null;
                     return;

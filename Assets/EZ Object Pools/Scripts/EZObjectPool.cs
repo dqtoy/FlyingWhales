@@ -51,7 +51,7 @@ namespace EZObjectPools
         /// <returns>A reference to the created pool.</returns>
         public static EZObjectPool CreateObjectPool(GameObject template, string name, int size, bool autoResize, bool instantiateImmediate, bool shared)
         {
-            if (Marker == null)
+            if (!Marker)
             {
                 Marker = new GameObject("EZ Object Pools Container");
                 SharedPools.Clear();
@@ -95,7 +95,7 @@ namespace EZObjectPools
 
         void Awake()
         {
-            if (Marker == null)
+            if (!Marker)
             {
                 Marker = new GameObject("EZ Object Pools Container");
                 SharedPools.Clear();
