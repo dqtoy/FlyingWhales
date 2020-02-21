@@ -45,6 +45,11 @@ public class PoisonCloudMapObject : MovingMapObjectVisual<TileObject> {
     }
     public override void Reset() {
         base.Reset();
+        isSpawned = false;
+        _expiryKey = string.Empty;
+        _movement = null;
+        _objsInRange = null;
+        _poisonCloudTileObject = null;
         Messenger.RemoveListener(Signals.TICK_ENDED, PerTick);
         Messenger.RemoveListener<bool>(Signals.PAUSED, OnGamePaused);
     }
@@ -59,7 +64,7 @@ public class PoisonCloudMapObject : MovingMapObjectVisual<TileObject> {
     #region Movement
     private void MoveToRandomDirection() {
         Vector3 direction = (new Vector3(Random.Range(-1.0f, 1.0f), 0.0f, Random.Range(-1.0f, 1.0f))).normalized;
-        _movement = transform.DOMove(direction, 1).SetSpeedBased(true);
+        _movement = transform.DOMove(direction, 0.1f).SetSpeedBased(true);
     }
     private void OnGamePaused(bool isPaused) {
         if (isPaused) {
@@ -72,17 +77,25 @@ public class PoisonCloudMapObject : MovingMapObjectVisual<TileObject> {
 
     #region Effects
     private void PerTick() {
-        if (Random.Range(0, 100) < 15 && _objsInRange.Count > 0) {
+        if (isSpawned == false) {
+            return;
+        }
+        int roll = Random.Range(0, 100);
+        if (roll < 15 && _objsInRange.Count > 0) {
+            string summary = $"{GameManager.Instance.TodayLogString()}Per tick check of poison cloud. Roll is {roll.ToString()}.";
             ITraitable traitable = UtilityScripts.CollectionUtilities.GetRandomElement(_objsInRange);
             traitable.traitContainer.AddTrait(traitable, "Poisoned");
+            summary = $"{summary}\nChance met! Target is {traitable.ToString()}";
+            Debug.Log(summary);
         }
     }
     private void Explode() {
         List<ITraitable> affectedObjects =
             UtilityScripts.GameUtilities.GetTraitableDiamondTilesFromRadius(_mapLocation.innerMap, gridTileLocation.localPlace, 5);
         for (int i = 0; i < affectedObjects.Count; i++) {
-            ITraitable obj = affectedObjects[i];
-            obj.traitContainer.AddTrait(obj, "Poisoned");
+            ITraitable _obj = affectedObjects[i];
+            obj.AdjustHP(-Mathf.FloorToInt(obj.maxHP * 0.75f), ELEMENTAL_TYPE.Poison, true);
+            _obj.traitContainer.AddTrait(_obj, "Poisoned");
         }
         Expire();
     }

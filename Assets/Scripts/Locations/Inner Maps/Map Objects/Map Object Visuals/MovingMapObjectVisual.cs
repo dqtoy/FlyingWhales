@@ -24,7 +24,11 @@ public abstract class MovingMapObjectVisual<T> : MapObjectVisual<T> where T : ID
         _mapLocation = null;
     }
     private LocationGridTile GetLocationGridTileByXy(int x, int y) {
-        return _mapLocation.innerMap.map[x, y];
+        if (UtilityScripts.Utilities.IsInRange(x, 0, _mapLocation.innerMap.width) 
+            && UtilityScripts.Utilities.IsInRange(y, 0, _mapLocation.innerMap.height)) {
+            return _mapLocation.innerMap.map[x, y];    
+        }
+        return null;
     }
     protected virtual void Update() {
         _pos = transform.localPosition;

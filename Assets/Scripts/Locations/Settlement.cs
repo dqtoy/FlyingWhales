@@ -924,7 +924,7 @@ public class Settlement : IJobOwner {
         }
         jobManager.OnAddToAvailableJobs(job);
         if (job is GoapPlanJob goapJob) {
-            Debug.Log($"{GameManager.Instance.TodayLogString()}{goapJob.ToString()} targeting {goapJob.targetPOI?.name} was added to {this.name}'s available jobs");
+            Debug.Log($"{GameManager.Instance.TodayLogString()}{goapJob.ToString()} targeting {goapJob.targetPOI?.ToString()} was added to {this.name}'s available jobs");
         } else {
             Debug.Log($"{GameManager.Instance.TodayLogString()}{job.ToString()} was added to {this.name}'s available jobs");    
         }
