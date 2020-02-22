@@ -25,13 +25,13 @@ public class ObjectPoolManager : MonoBehaviour {
     public void InitializeObjectPools() {
         for (int i = 0; i < UIPrefabs.Length; i++) {
             GameObject currPrefab = UIPrefabs[i];
-            EZObjectPool newUIPool = CreateNewPool(currPrefab, currPrefab.name, 100, true, true, false);
+            EZObjectPool newUIPool = CreateNewPool(currPrefab, currPrefab.name, 1, true, true, false); //100
             newUIPool.transform.SetParent(UIObjectPoolParent.transform, false);
         }
 
         for (int i = 0; i < otherPrefabs.Length; i++) {
             GameObject currPrefab = otherPrefabs[i];
-            CreateNewPool(currPrefab, currPrefab.name, 50, true, true, false);
+            CreateNewPool(currPrefab, currPrefab.name, 1, true, true, false); //50
         }
 
         ConstructGoapNodes();
