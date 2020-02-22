@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7294788032481126431}
   - component: {fileID: 702273633562885068}
   - component: {fileID: 1747634025449806564}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: Fire
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4592,7 +4592,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8796679030601878395}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: BurningEffect2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
