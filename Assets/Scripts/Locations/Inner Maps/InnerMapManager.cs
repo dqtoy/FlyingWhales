@@ -7,6 +7,7 @@ using Inner_Maps.Location_Structures;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
+using UnityEngine.Profiling;
 using UnityEngine.Serialization;
 using UtilityScripts;
 namespace Inner_Maps {
@@ -332,6 +333,7 @@ namespace Inner_Maps {
             if (tile == null) {
                 return;
             }
+            Profiler.BeginSample("Show Tile Data Sample");
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             HexTile hexTile = tile.buildSpotOwner.hexTileOwner;
             string summary = tile.localPlace.ToString();
@@ -422,6 +424,7 @@ namespace Inner_Maps {
             } else {
                 summary = $"{summary}\nStructure: None";
             }
+            Profiler.EndSample();
             UIManager.Instance.ShowSmallInfo(summary);
 #else
          //For build only
