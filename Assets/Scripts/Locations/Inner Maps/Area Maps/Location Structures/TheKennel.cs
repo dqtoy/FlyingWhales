@@ -50,6 +50,10 @@ namespace Inner_Maps.Location_Structures {
                 } else if (raceClass.className == Succubus.ClassName) {
                     return SUMMON_TYPE.Succubus;
                 }
+            } else if (raceClass.race == RACE.ELEMENTAL) {
+                if (raceClass.className == FireElemental.ClassName) {
+                    return SUMMON_TYPE.FireElemental;
+                }
             }
             throw new Exception($"No summon type for monster {raceClass.ToString()}");
         }
@@ -59,6 +63,8 @@ namespace Inner_Maps.Location_Structures {
                     return 1;
                 case SUMMON_TYPE.Wolf:
                     return 2;
+                case SUMMON_TYPE.FireElemental:
+                    return 3;
                 case SUMMON_TYPE.Golem:
                     return 3;
                 case SUMMON_TYPE.Incubus:

@@ -52,6 +52,7 @@ public enum RACE{
     INSECT,
     SPIDER,
     GOLEM,
+    ELEMENTAL
 }
 public enum HEXTILE_DIRECTION {
     NORTH_WEST,
@@ -1380,7 +1381,9 @@ public enum COMBAT_ABILITY {
 }
 
 public enum TILE_TAG { CAVE, DUNGEON, FOREST, FLATLAND, MOUNTAIN, GRASSLAND, JUNGLE, TUNDRA, SNOW, DESERT, PROTECTIVE_BARRIER, HALLOWED_GROUNDS, }
-public enum SUMMON_TYPE { None, Wolf, Skeleton, Golem, Succubus, Incubus, ThiefSummon, }
+public enum SUMMON_TYPE { None, Wolf, Skeleton, Golem, Succubus, Incubus, ThiefSummon,
+    FireElemental
+}
 public enum ARTIFACT_TYPE { None, Grasping_Hands, Snatching_Hands, Abominable_Heart, Dark_Matter, Looking_Glass, Black_Scripture, False_Gem, Naga_Eyes, Tormented_Chalice, Lightning_Rod }
 public enum ABILITY_TAG { NONE, MAGIC, SUPPORT, DEBUFF, CRIME, PHYSICAL, }
 public enum LANDMARK_YIELD_TYPE { SUMMON, ARTIFACT, ABILITY, SKIRMISH, STORY_EVENT, }
