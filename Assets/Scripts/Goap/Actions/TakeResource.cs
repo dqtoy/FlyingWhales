@@ -182,11 +182,11 @@ public class TakeResource : GoapAction {
     private void CarryResourcePile(Character carrier, ResourcePile pile, int amount) {
         if (pile.isBeingCarriedBy == null || pile.isBeingCarriedBy != carrier) {
             ResourcePile newPile = InnerMapManager.Instance.CreateNewTileObject<ResourcePile>(pile.tileObjectType);
-            //newPile.SetResourceInPile(amount);
+            newPile.SetResourceInPile(amount);
             //newPile.SetGridTileLocation(pile.gridTileLocation);
             //newPile.gridTileLocation.structure.location.AddAwareness(newPile);
             //newPile.SetGridTileLocation(null);
-            
+
             //This can be made into a function in the IPointOfInterest interface
             newPile.SetGridTileLocation(pile.gridTileLocation);
             newPile.InitializeMapObject(newPile);
