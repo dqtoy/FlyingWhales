@@ -5,6 +5,7 @@ using System;
 using UnityEngine;
 using System.Linq;
 using Traits;
+using UnityEngine.Serialization;
 using UtilityScripts;
 
 public class TraitManager : MonoBehaviour {
@@ -12,12 +13,13 @@ public class TraitManager : MonoBehaviour {
 
     private Dictionary<string, Trait> _allTraits;
     private string[] instancedTraits { get; set; }
+    [FormerlySerializedAs("traitIconDictionary")] [SerializeField] private StringSpriteDictionary traitPortraitDictionary;
     [SerializeField] private StringSpriteDictionary traitIconDictionary;
-
+    public GameObject traitIconPrefab;
+    
     //Trait Processors
     public static TraitProcessor characterTraitProcessor;
     public static TraitProcessor tileObjectTraitProcessor;
-    public static TraitProcessor specialTokenTraitProcessor;
     public static TraitProcessor defaultTraitProcessor;
     
     //list of traits that a character can gain on their own
@@ -171,14 +173,16 @@ public class TraitManager : MonoBehaviour {
             _allTraits.Add(trait.name, trait);
         }
     }
+    public Sprite GetTraitPortrait(string traitName) {
+        return traitPortraitDictionary.ContainsKey(traitName) ? traitPortraitDictionary[traitName] 
+            : traitPortraitDictionary.Values.First();
+    }
     public Sprite GetTraitIcon(string traitName) {
-        if (traitIconDictionary.ContainsKey(traitName)) {
-            return traitIconDictionary[traitName];
-        }
-        return traitIconDictionary.Values.First();
+        return traitIconDictionary.ContainsKey(traitName) ? traitIconDictionary[traitName] 
+            : traitIconDictionary.Values.First();
     }
     public bool HasTraitIcon(string traitName) {
-        return traitIconDictionary.ContainsKey(traitName);
+        return traitPortraitDictionary.ContainsKey(traitName);
     }
     public bool IsInstancedTrait(string traitName) {
         for (int i = 0; i < instancedTraits.Length; i++) {
@@ -205,24 +209,6 @@ public class TraitManager : MonoBehaviour {
             }
         }
         return traits;
-    }
-    public List<string> GetAllBuffTraits() {
-        List<string> buffTraits = new List<string>();
-        foreach (KeyValuePair<string, Trait> kvp in allTraits) {
-            if (kvp.Value.type == TRAIT_TYPE.BUFF) {
-                buffTraits.Add(kvp.Key);
-            }
-        }
-        return buffTraits;
-    }
-    public List<string> GetAllFlawTraits() {
-        List<string> flawTraits = new List<string>();
-        foreach (KeyValuePair<string, Trait> kvp in allTraits) {
-            if (kvp.Value.type == TRAIT_TYPE.FLAW) {
-                flawTraits.Add(kvp.Key);
-            }
-        }
-        return flawTraits;
     }
     public List<string> GetAllBuffTraitsThatCharacterCanHave(Character character) {
         List<string> allBuffs = new List<string>(buffTraitPool);
@@ -254,7 +240,6 @@ public class TraitManager : MonoBehaviour {
     private void CreateTraitProcessors() {
         characterTraitProcessor = new CharacterTraitProcessor();
         tileObjectTraitProcessor = new TileObjectTraitProcessor();
-        specialTokenTraitProcessor = new SpecialTokenTraitProcessor();
         defaultTraitProcessor = new DefaultTraitProcessor();
     }
     #endregion

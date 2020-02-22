@@ -9,6 +9,7 @@ using TMPro;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.Events;
+using UnityEngine.Profiling;
 using UtilityScripts;
 
 public class UIManager : MonoBehaviour {
@@ -359,8 +360,8 @@ public class UIManager : MonoBehaviour {
     #endregion
 
     #region Tooltips
-    public string smallInfoShownFrom { get; private set; }
     public void ShowSmallInfo(string info, string header = "") {
+        Profiler.BeginSample("Show Small Info Sample");
         string message = string.Empty;
         if (!string.IsNullOrEmpty(header)) {
             message = $"<font=\"Eczar-Medium\"><line-height=100%><size=18>{header}</font>\n";
@@ -376,11 +377,7 @@ public class UIManager : MonoBehaviour {
             //smallInfoEnvelopContent.Execute();
         }
         PositionTooltip(smallInfoGO, smallInfoRT, smallInfoBGRT);
-        System.Diagnostics.StackTrace stackTrace = new System.Diagnostics.StackTrace();
-        // get calling method name
-        smallInfoShownFrom = stackTrace.GetFrame(1).GetMethod().Name;
-        //Debug.Log(smallInfoShownFrom);
-        //Debug.Log("Show small info " + info);
+        Profiler.EndSample();
     }
     public void ShowSmallInfo(string info, UIHoverPosition pos, string header = "") {
         string message = string.Empty;
@@ -398,13 +395,11 @@ public class UIManager : MonoBehaviour {
         PositionTooltip(pos, smallInfoGO, smallInfoRT);
         System.Diagnostics.StackTrace stackTrace = new System.Diagnostics.StackTrace();
         // get calling method name
-        smallInfoShownFrom = stackTrace.GetFrame(1).GetMethod().Name;
         //Debug.Log(smallInfoShownFrom);
         //Debug.Log("Show small info " + info);
     }
     public void HideSmallInfo() {
         if (IsSmallInfoShowing()) {
-            smallInfoShownFrom = string.Empty;
             smallInfoGO.SetActive(false);
         }
     }

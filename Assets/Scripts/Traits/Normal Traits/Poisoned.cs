@@ -5,10 +5,10 @@ using UnityEngine;
 namespace Traits {
     public class Poisoned : Trait {
 
-        public List<Character> awareCharacters { get; private set; } //characters that know about this trait
-
-        public ITraitable traitable { get; private set; } //poi that has the poison
+        public List<Character> awareCharacters { get; } //characters that know about this trait
+        private ITraitable traitable { get; set; } //poi that has the poison
         private Character characterOwner;
+        private StatusIcon _statusIcon;
 
         public Poisoned() {
             name = "Poisoned";
@@ -28,20 +28,38 @@ namespace Traits {
         }
 
         #region Overrides
-        public override void OnAddTrait(ITraitable sourceCharacter) {
-            base.OnAddTrait(sourceCharacter);
-            traitable = sourceCharacter;
-            if(traitable is Character) {
-                characterOwner = traitable as Character;
+        public override void OnAddTrait(ITraitable addedTo) {
+            base.OnAddTrait(addedTo);
+            traitable = addedTo;
+            if(traitable is Character character) {
+                characterOwner = character;
                 characterOwner.AdjustDoNotRecoverHP(1);
-            } else {
+                _statusIcon = character.marker.AddStatusIcon(this.name);
+            } else if (addedTo is TileObject tileObject) {
                 ticksDuration = GameManager.Instance.GetTicksBasedOnHour(24);
+                if (tileObject is GenericTileObject) {
+                    tileObject.gridTileLocation.SetDefaultTileColor(Color.green);
+                    tileObject.gridTileLocation.HighlightTile(Color.green);
+                } else {
+                    //add poison icon above object
+                    _statusIcon = addedTo.mapObjectVisual?.AddStatusIcon(this.name);
+                }
             }
         }
-        public override void OnRemoveTrait(ITraitable sourceCharacter, Character removedBy) {
-            base.OnRemoveTrait(sourceCharacter, removedBy);
+        public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
+            base.OnRemoveTrait(removedFrom, removedBy);
             if (characterOwner != null) {
                 characterOwner.AdjustDoNotRecoverHP(-1);
+                ObjectPoolManager.Instance.DestroyObject(_statusIcon.gameObject);
+            } else if (removedFrom is TileObject tileObject) {
+                if (tileObject is GenericTileObject) {
+                    tileObject.gridTileLocation.SetDefaultTileColor(Color.white);
+                    tileObject.gridTileLocation.UnhighlightTile();
+                } else {
+                    if (_statusIcon != null) {
+                        ObjectPoolManager.Instance.DestroyObject(_statusIcon.gameObject);    
+                    }
+                }
             }
             awareCharacters.Clear();
             responsibleCharacters?.Clear(); //Cleared list, for garbage collection

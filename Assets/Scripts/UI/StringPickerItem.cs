@@ -36,7 +36,7 @@ public class StringPickerItem : ObjectPickerItem<string>, IPointerClickHandler {
         if(identifier != string.Empty) {
             if (identifier == "trait") {
                 if (TraitManager.Instance.HasTraitIcon(str)) {
-                    iconImg.sprite = TraitManager.Instance.GetTraitIcon(str);
+                    iconImg.sprite = TraitManager.Instance.GetTraitPortrait(str);
                     iconImg.gameObject.SetActive(true);
                 } else {
                     iconImg.gameObject.SetActive(false);
