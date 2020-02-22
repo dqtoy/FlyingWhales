@@ -58,6 +58,8 @@ public class LocationStructurePrefabDictionary : SerializableDictionary<STRUCTUR
 public class WallResourceAssetDictionary : SerializableDictionary<RESOURCE, WallResouceAssets> { }
 [System.Serializable]
 public class WallAssetDictionary : SerializableDictionary<string, WallAsset> { }
+[System.Serializable]
+public class ParticleEffectAssetDictionary : SerializableDictionary<PARTICLE_EFFECT, GameObject> { }
 
 //List storage
 [System.Serializable]

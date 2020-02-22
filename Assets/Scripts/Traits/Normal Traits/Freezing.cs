@@ -24,7 +24,7 @@ namespace Traits {
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
             if(addedTo is IPointOfInterest) {
-                _freezingGO = GameManager.Instance.CreateFreezingEffectAt(addedTo as IPointOfInterest);
+                _freezingGO = GameManager.Instance.CreateParticleEffectAt(addedTo as IPointOfInterest, PARTICLE_EFFECT.Freezing);
             }
             if(addedTo is Character) {
                 Character character = addedTo as Character;

@@ -29747,22 +29747,21 @@ MonoBehaviour:
     type: 3}
   travelLinePrefab: {fileID: 1318962103750356, guid: 11eeaabdf21494f43b753c71e75d5783,
     type: 3}
-  electricEffectPrefab: {fileID: 1997544771906246, guid: f8f78640bd2a9f34c8838653cdcb9f8b,
-    type: 3}
-  hitEffectPrefab: {fileID: 1826126969253054, guid: 35a4e5c959a14474086ca1824ea11827,
-    type: 3}
-  fireEffectPrefab: {fileID: 1333321624052784, guid: 091a81aab6347964bb917f7cc6ea13c2,
-    type: 3}
   aoeParticlesPrefab: {fileID: 1513875034276412, guid: 061f2e4dfec38354189b89610d3cabd6,
     type: 3}
   aoeParticlesAutoDestroyPrefab: {fileID: 1567879278629922, guid: dc7f162dba7b8db4a91545a576dc0867,
     type: 3}
-  burningEffectPrefab: {fileID: 1947762124885252, guid: 6c22c7ba9171ba54995acc5cc3820d1e,
-    type: 3}
   bloodPuddleEffectPrefab: {fileID: 9033442248038542139, guid: 46622b224b908ae4ba45c8bfcaf2c617,
     type: 3}
-  freezingEffectPrefab: {fileID: 1979527227019656, guid: 46523c9c550ae58489dc81eb94b1053f,
-    type: 3}
+  particleEffectsDictionary:
+    m_keys: 010000000200000003000000040000000500000006000000
+    m_values:
+    - {fileID: 5106000538713877668, guid: 50d896df8d440474a97233e68f30bf8a, type: 3}
+    - {fileID: 1979527227019656, guid: 46523c9c550ae58489dc81eb94b1053f, type: 3}
+    - {fileID: 1333321624052784, guid: 091a81aab6347964bb917f7cc6ea13c2, type: 3}
+    - {fileID: 5848017052377265425, guid: 225e78200fd9b5947a603119c21462ad, type: 3}
+    - {fileID: 1826126969253054, guid: 35a4e5c959a14474086ca1824ea11827, type: 3}
+    - {fileID: 1997544771906246, guid: f8f78640bd2a9f34c8838653cdcb9f8b, type: 3}
   pauseTickEnded2: 0
   lastProgressionBeforePausing: 
 --- !u!114 &557822220

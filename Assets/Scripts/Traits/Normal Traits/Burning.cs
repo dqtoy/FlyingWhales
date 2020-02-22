@@ -26,8 +26,8 @@ namespace Traits {
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
             owner = addedTo;
-            burningEffect = GameManager.Instance.CreateBurningEffectAt(addedTo);
             if (addedTo is IPointOfInterest poi) {
+                burningEffect = GameManager.Instance.CreateParticleEffectAt(poi, PARTICLE_EFFECT.Burning, false);
                 if (poi is Character character) {
                     character.AdjustDoNotRecoverHP(1);
                     if(character.canMove && character.canWitness && character.canPerform) {
@@ -49,7 +49,9 @@ namespace Traits {
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
             Messenger.RemoveListener(Signals.TICK_ENDED, PerTickEnded);
-            ObjectPoolManager.Instance.DestroyObject(burningEffect);
+            if(burningEffect != null) {
+                ObjectPoolManager.Instance.DestroyObject(burningEffect);
+            }
             if (removedFrom is IPointOfInterest) {
                 if (removedFrom is Character) {
                     Character character = removedFrom as Character;

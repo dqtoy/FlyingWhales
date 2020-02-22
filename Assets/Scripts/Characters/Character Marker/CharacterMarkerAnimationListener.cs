@@ -51,7 +51,7 @@ public class CharacterMarkerAnimationListener : MonoBehaviour {
         currentProjectile = projectileGO;
     }
     private void CreateMagicalHit(IPointOfInterest target, CombatState state) {
-        GameManager.Instance.CreateFireEffectAt(target);
+        GameManager.Instance.CreateParticleEffectAt(target, PARTICLE_EFFECT.Fire);
         state.OnAttackHit(target);
     }
 

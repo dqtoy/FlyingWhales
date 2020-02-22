@@ -1409,6 +1409,7 @@ public enum ACTION_STATUS { NONE, STARTED, PERFORMING, SUCCESS, FAIL }
 public enum ARTIFACT_UNLOCKABLE_TYPE { Structure, Action }
 public enum COMBAT_MODE { Aggressive, Passive, Defend, }
 public enum WALL_TYPE { Stone, Flesh, Demon_Stone }
+public enum PARTICLE_EFFECT { None, Poison, Freezing, Fire, Burning, Explode, Electric, Frozen, Poison_Explosion, Frozen_Explosion }
 
 #region Crime Subcategories
 [System.AttributeUsage(System.AttributeTargets.Field)]
