@@ -5,6 +5,8 @@ using UnityEngine;
 namespace Traits {
     public class Wet : Trait {
 
+        private StatusIcon _statusIcon;
+        
         public Wet() {
             name = "Wet";
             description = "This is soaking wet.";
@@ -22,14 +24,33 @@ namespace Traits {
             base.OnAddTrait(addedTo);
             addedTo.traitContainer.RemoveTrait(addedTo, "Burning");
             addedTo.traitContainer.RemoveTraitAndStacks(addedTo, "Overheating");
-            if (addedTo is Character) {
-                (addedTo as Character).needsComponent.AdjustComfortDecreaseRate(2f);
+            if (addedTo is Character character) {
+                character.needsComponent.AdjustComfortDecreaseRate(2f);
+                _statusIcon = character.marker.AddStatusIcon(this.name);
+            } else if (addedTo is TileObject tileObject) {
+                if (tileObject is GenericTileObject) {
+                    tileObject.gridTileLocation.SetDefaultTileColor(Color.blue);
+                    tileObject.gridTileLocation.HighlightTile(Color.blue);
+                } else {
+                  //add water icon above object
+                  _statusIcon = addedTo.mapObjectVisual?.AddStatusIcon(this.name);
+                }
             }
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
-            if (removedFrom is Character) {
-                (removedFrom as Character).needsComponent.AdjustComfortDecreaseRate(-2f);
+            if (removedFrom is Character character) {
+                character.needsComponent.AdjustComfortDecreaseRate(-2f);
+                ObjectPoolManager.Instance.DestroyObject(_statusIcon.gameObject);
+            } else if (removedFrom is TileObject tileObject) {
+                if (tileObject is GenericTileObject) {
+                    tileObject.gridTileLocation.SetDefaultTileColor(Color.white);
+                    tileObject.gridTileLocation.UnhighlightTile();
+                } else {
+                    if (_statusIcon != null) {
+                        ObjectPoolManager.Instance.DestroyObject(_statusIcon.gameObject);    
+                    }
+                }
             }
         }
         #endregion

@@ -13,6 +13,8 @@ using UnityEngine.EventSystems;
 public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, IPointerExitHandler {
     [SerializeField] protected SpriteRenderer objectVisual;
     [SerializeField] protected SpriteRenderer hoverObject;
+    public Transform statusIconsParent;
+
     private bool isHoverObjectStateLocked;
     protected System.Action onHoverOverAction;
     protected System.Action onHoverExitAction;
@@ -22,9 +24,6 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
     public Sprite usedSprite => objectVisual.sprite;
     public ISelectable selectable { get; protected set; }
     
-    private Tweener tween;
-    private Vector3 targetLastPos;
-
     #region Visuals
     public void SetRotation(float rotation) {
         this.transform.localRotation = Quaternion.Euler(0f, 0f, rotation);
@@ -58,6 +57,13 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
     }
     public void UnlockHoverObject() {
         isHoverObjectStateLocked = false;
+    }
+    public StatusIcon AddStatusIcon(string statusName) {
+        GameObject statusGO = ObjectPoolManager.Instance.InstantiateObjectFromPool(
+            TraitManager.Instance.traitIconPrefab.name, Vector3.zero, Quaternion.identity, statusIconsParent);
+        StatusIcon icon = statusGO.GetComponent<StatusIcon>();
+        icon.SetIcon(TraitManager.Instance.GetTraitIcon(statusName));
+        return icon;
     }
     public abstract void ApplyFurnitureSettings(FurnitureSetting furnitureSetting);
     #endregion
@@ -109,16 +115,16 @@ public abstract class BaseMapObjectVisual : PooledObject, IPointerEnterHandler, 
     
     #region Tweening
     public bool IsTweening() {
-        return tween != null;
+        return DOTween.IsTweening(this.transform);
     }
     public void TweenTo(Transform _target, float duration, System.Action _onReachTargetAction) {
         var position = _target.position;
-        tween = transform.DOMove(position, duration).SetEase(Ease.Linear).SetAutoKill(false).OnComplete(_onReachTargetAction.Invoke);
+        Tweener tween = transform.DOMove(position, duration).SetEase(Ease.Linear).SetAutoKill(false).OnComplete(_onReachTargetAction.Invoke);
         tween.OnUpdate (() => tween.ChangeEndValue (_target.position, true));
 
     }
     public void OnReachTarget() {
-        tween = null;
+        DOTween.Kill(this.transform);
     }
     #endregion
 }

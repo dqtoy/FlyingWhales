@@ -2,9 +2,9 @@
 using Inner_Maps;
 using Traits;
 
-public class WaterBomb : PlayerSpell {
+public class SplashPoison : PlayerSpell {
 
-    public WaterBomb() : base(SPELL_TYPE.WATER_BOMB) {
+    public SplashPoison() : base(SPELL_TYPE.SPLASH_POISON) {
         SetDefaultCooldownTime(24);
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
         tier = 1;
@@ -12,15 +12,15 @@ public class WaterBomb : PlayerSpell {
     
 }
 
-public class WaterBombData : SpellData {
-    public override SPELL_TYPE ability => SPELL_TYPE.WATER_BOMB;
-    public override string name => "Water Bomb";
-    public override string description => "Throw a water bomb.";
+public class SplashPoisonData : SpellData {
+    public override SPELL_TYPE ability => SPELL_TYPE.SPLASH_POISON;
+    public override string name => "Splash Poison";
+    public override string description => "Throw a poison bomb.";
     public override SPELL_CATEGORY category => SPELL_CATEGORY.DEVASTATION;
     public override INTERVENTION_ABILITY_TYPE type => INTERVENTION_ABILITY_TYPE.SPELL;
     public override int abilityRadius => 2;
 
-    public WaterBombData() : base() {
+    public SplashPoisonData() : base() {
         targetTypes = new SPELL_TARGET[] { SPELL_TARGET.TILE };
     }
 
@@ -29,11 +29,11 @@ public class WaterBombData : SpellData {
             UtilityScripts.GameUtilities.GetDiamondTilesFromRadius(targetTile.parentMap, targetTile.localPlace, 2);
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile tile = tiles[i];
-            tile.PerformActionOnTraitables(MakeTraitbleWet);
+            tile.PerformActionOnTraitables(MakeTraitblePoisoned);
         }
     }
-    private void MakeTraitbleWet(ITraitable traitable) {
-        traitable.traitContainer.AddTrait(traitable, "Wet");
+    private void MakeTraitblePoisoned(ITraitable traitable) {
+        traitable.traitContainer.AddTrait(traitable, "Poisoned");
     }
     public override bool CanPerformAbilityTowards(LocationGridTile targetTile) {
         return targetTile.structure != null;

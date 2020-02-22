@@ -247,7 +247,7 @@ namespace UtilityScripts {
             }
                     
             //from center downwards
-            radiusModifier = 0;
+            radiusModifier = 1;
             //-1 because center row tiles were already added above
             for (int y = center.y - 1; y >= lowerBoundY; y--) {
                 int lowerBoundX = (center.x - radius) + radiusModifier;

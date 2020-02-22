@@ -46477,7 +46477,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &867287450
 RectTransform:
   m_ObjectHideFlags: 0
@@ -48632,7 +48632,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3dda202ad60c7d4f9d336e858f0d1a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  traitIconDictionary:
+  traitPortraitDictionary:
     m_keys:
     - Hungry
     - Melee Attack
@@ -48677,6 +48677,15 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 7cfbe25a31be2aa4c909bf1a7c6742a4, type: 3}
     - {fileID: 21300000, guid: d7c17715bebc81d4a9b8828befcde77f, type: 3}
     - {fileID: 21300000, guid: 8f5344dcd2d2212439068edd05e22193, type: 3}
+  traitIconDictionary:
+    m_keys:
+    - Wet
+    - Poisoned
+    m_values:
+    - {fileID: 21300000, guid: b8646e22728d7304c8aa47a2119d3f80, type: 3}
+    - {fileID: 21300000, guid: 430782f9ea5c30a498181c8c5c16d218, type: 3}
+  traitIconPrefab: {fileID: 3337898495377871397, guid: 34762437336d7494e80c588b01eadc6e,
+    type: 3}
 --- !u!1 &906535414
 GameObject:
   m_ObjectHideFlags: 0

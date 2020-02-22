@@ -66,6 +66,7 @@ public static class PlayerDB {
     public const string Spawn_Monster_Lair = "Spawn Monster Lair";
     public const string Spawn_Haunted_Grounds = "Spawn Haunted Grounds";
     public const string Water_Bomb = "Water Bomb";
+    public const string Splash_Poison = "Splash Poison";
     
     
     public static List<string> spells = new List<string>() { 
@@ -74,7 +75,8 @@ public static class PlayerDB {
         Locust_Swarm, Spawn_Boulder, Landmine, Manifest_Food, 
         Brimstones, Acid_Rain, Rain, Heat_Wave, Wild_Growth, 
         Spider_Rain, Blizzard, Earthquake, Fertility, 
-        Spawn_Bandit_Camp, Spawn_Monster_Lair, Spawn_Haunted_Grounds, Water_Bomb 
+        Spawn_Bandit_Camp, Spawn_Monster_Lair, Spawn_Haunted_Grounds, Water_Bomb,
+        Splash_Poison
     };
 
     public static List<SPELL_TYPE> afflictions = new List<SPELL_TYPE>() { 

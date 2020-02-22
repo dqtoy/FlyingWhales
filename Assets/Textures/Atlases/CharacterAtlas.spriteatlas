@@ -43,7 +43,7 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: da1d92a130b3f8f4bb0110cd352dca08, type: 3}
-    totalSpriteSurfaceArea: 12750316
+    totalSpriteSurfaceArea: 12751996
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
@@ -337,6 +337,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: bbd688223d82d2a4e9727e3842aed479, type: 3}
   - {fileID: 21300000, guid: cee4ca2233984f841a8fb617ff8237c5, type: 3}
   - {fileID: 21300000, guid: 06251d22521022641b219f1f9f45fd28, type: 3}
+  - {fileID: 21300000, guid: b8646e22728d7304c8aa47a2119d3f80, type: 3}
   - {fileID: 21300000, guid: 9a6460329532d3e44ac4aed8403b3b39, type: 3}
   - {fileID: 21300000, guid: e4ca4132b8fb3554a86b7ab51a132253, type: 3}
   - {fileID: 21300000, guid: 37fd1932352717d41afb98c0262b4002, type: 3}
@@ -1358,6 +1359,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 130c2ee9a188fa44e808ad70538329d7, type: 3}
   - {fileID: 21300000, guid: e198cee962c69fe4a9f96cd38564ea94, type: 3}
   - {fileID: 21300000, guid: 7978f1f9eb38a0c41b0263f9e76b508f, type: 3}
+  - {fileID: 21300000, guid: 430782f9ea5c30a498181c8c5c16d218, type: 3}
   - {fileID: 21300000, guid: f7dcb2f9b7a1dce40ae9eca1f487ad3a, type: 3}
   - {fileID: 21300000, guid: 914e93f964e1b5d49956bef24a77525b, type: 3}
   - {fileID: 21300000, guid: 61d365f96dc497c4ba48c338edae9f87, type: 3}
@@ -2476,6 +2478,7 @@ SpriteAtlas:
   - walk_4
   - idle_1
   - Slash0005
+  - Water Droplet
   - interact_2
   - factionleader_elf_body
   - interact_4
@@ -3497,6 +3500,7 @@ SpriteAtlas:
   - interact_2
   - idle_2
   - attack_3
+  - Poison_Icon
   - interact_1
   - sleep_1
   - interact_2

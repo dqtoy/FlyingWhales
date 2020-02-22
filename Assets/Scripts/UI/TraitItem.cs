@@ -27,7 +27,7 @@ public class TraitItem : MonoBehaviour {
             //portrait.SetClickButton(UnityEngine.EventSystems.PointerEventData.InputButton.Left);
         } else {
             portrait.gameObject.SetActive(false);
-            Sprite icon = TraitManager.Instance.GetTraitIcon(trait.name);
+            Sprite icon = TraitManager.Instance.GetTraitPortrait(trait.name);
             if (icon != null) {
                 iconImg.sprite = icon;
                 iconImg.gameObject.SetActive(true);
