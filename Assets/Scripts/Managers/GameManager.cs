@@ -50,6 +50,7 @@ public class GameManager : MonoBehaviour {
     [SerializeField] private GameObject aoeParticlesAutoDestroyPrefab;
     [SerializeField] private GameObject burningEffectPrefab;
     [SerializeField] private GameObject bloodPuddleEffectPrefab;
+    [SerializeField] private GameObject freezingEffectPrefab;
 
     private const float X1_SPEED = 0.75f;
     private const float X2_SPEED = 0.5f;
@@ -488,6 +489,37 @@ public class GameManager : MonoBehaviour {
         GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(fireEffectPrefab.name, Vector3.zero, Quaternion.identity, character.marker.transform);
         go.transform.localPosition = Vector3.zero;
         go.SetActive(true);
+        //StartCoroutine(FireEffect(character));
+    }
+    public GameObject CreateFreezingEffectAt(LocationGridTile tile) {
+        GameObject go = ObjectPoolManager.Instance.InstantiateObjectFromPool(freezingEffectPrefab.name, Vector3.zero, Quaternion.identity, tile.parentMap.objectsParent);
+        go.transform.localPosition = tile.centeredLocalLocation;
+        go.SetActive(true);
+        return go;
+    }
+    public GameObject CreateFreezingEffectAt(IPointOfInterest poi) {
+        GameObject go = null;
+        if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
+            go = CreateFreezingEffectAt(poi as Character);
+        } else {
+            if (poi.gridTileLocation == null) {
+                return go;
+            }
+            go = ObjectPoolManager.Instance.InstantiateObjectFromPool(freezingEffectPrefab.name, Vector3.zero, Quaternion.identity, poi.gridTileLocation.parentMap.objectsParent);
+            go.transform.localPosition = poi.gridTileLocation.centeredLocalLocation;
+            go.SetActive(true);
+        }
+        return go;
+    }
+    private GameObject CreateFreezingEffectAt(Character character) {
+        GameObject go = null;
+        if (!character.marker) {
+            return go;
+        }
+        go = ObjectPoolManager.Instance.InstantiateObjectFromPool(freezingEffectPrefab.name, Vector3.zero, Quaternion.identity, character.marker.visualsParent);
+        go.transform.localPosition = Vector3.zero;
+        go.SetActive(true);
+        return go;
         //StartCoroutine(FireEffect(character));
     }
     public AOEParticle CreateAOEEffectAt(LocationGridTile tile, int range, bool autoDestroy = false) {

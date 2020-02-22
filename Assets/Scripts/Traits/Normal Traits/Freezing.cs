@@ -6,6 +6,8 @@ namespace Traits {
     public class Freezing : Trait {
 
         //public ITraitable traitable { get; private set; }
+        private GameObject _freezingGO;
+
         public Freezing() {
             name = "Freezing";
             description = "This is freezing.";
@@ -21,6 +23,9 @@ namespace Traits {
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
+            if(addedTo is IPointOfInterest) {
+                _freezingGO = GameManager.Instance.CreateFreezingEffectAt(addedTo as IPointOfInterest);
+            }
             if(addedTo is Character) {
                 Character character = addedTo as Character;
                 character.needsComponent.AdjustComfortDecreaseRate(1f);
@@ -44,6 +49,9 @@ namespace Traits {
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
+            if (_freezingGO) {
+                ObjectPoolManager.Instance.DestroyObject(_freezingGO);
+            }
             if (removedFrom is Character) {
                 Character character = removedFrom as Character;
                 character.needsComponent.AdjustComfortDecreaseRate(-1f);
