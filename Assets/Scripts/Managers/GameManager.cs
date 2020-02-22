@@ -454,6 +454,11 @@ public class GameManager : MonoBehaviour {
         go = ObjectPoolManager.Instance.InstantiateObjectFromPool(prefab.name, Vector3.zero, Quaternion.identity, tile.parentMap.objectsParent);
         go.transform.localPosition = tile.centeredLocalLocation;
         go.SetActive(true);
+        BaseParticleEffect particleEffectScript = go.GetComponent<BaseParticleEffect>();
+        if (particleEffectScript) {
+            particleEffectScript.SetTargetTile(tile);
+            particleEffectScript.PlayParticleEffect();
+        }
         return go;
     }
     public GameObject CreateParticleEffectAt(IPointOfInterest poi, PARTICLE_EFFECT particle, bool allowRotation = true) {

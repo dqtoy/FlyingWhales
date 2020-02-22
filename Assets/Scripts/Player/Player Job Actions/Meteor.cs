@@ -19,7 +19,8 @@ public class Meteor : PlayerSpell {
     #region Overrides
     public override void ActivateAction(LocationGridTile targetTile) {
         base.ActivateAction(targetTile);
-        CreateMeteorStrikeAt(targetTile);
+        GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Meteor_Strike);
+        //CreateMeteorStrikeAt(targetTile);
     }
     protected override void OnLevelUp() {
         base.OnLevelUp();
@@ -37,12 +38,12 @@ public class Meteor : PlayerSpell {
     }
     #endregion
 
-    private void CreateMeteorStrikeAt(LocationGridTile tile) {
-        GameObject meteorGO = InnerMapManager.Instance.mapObjectFactory.CreateNewMeteorObject();
-        meteorGO.transform.SetParent(tile.parentMap.structureParent);
-        meteorGO.transform.position = tile.centeredWorldLocation;
-        meteorGO.GetComponent<MeteorVisual>().MeteorStrike(tile, abilityRadius);
-    }
+    //private void CreateMeteorStrikeAt(LocationGridTile tile) {
+    //    GameObject meteorGO = InnerMapManager.Instance.mapObjectFactory.CreateNewMeteorObject();
+    //    meteorGO.transform.SetParent(tile.parentMap.structureParent);
+    //    meteorGO.transform.position = tile.centeredWorldLocation;
+    //    meteorGO.GetComponent<MeteorVisual>().MeteorStrike(tile, abilityRadius);
+    //}
 }
 
 public class MeteorData : SpellData {
@@ -58,14 +59,15 @@ public class MeteorData : SpellData {
     }
 
     public override void ActivateAbility(LocationGridTile targetTile) {
-        CreateMeteorStrikeAt(targetTile);
+        //CreateMeteorStrikeAt(targetTile);
+        GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Meteor_Strike);
     }
-    private void CreateMeteorStrikeAt(LocationGridTile tile) {
-        GameObject meteorGO = InnerMapManager.Instance.mapObjectFactory.CreateNewMeteorObject();
-        meteorGO.transform.SetParent(tile.parentMap.structureParent);
-        meteorGO.transform.position = tile.centeredWorldLocation;
-        meteorGO.GetComponent<MeteorVisual>().MeteorStrike(tile, abilityRadius);
-    }
+    //private void CreateMeteorStrikeAt(LocationGridTile tile) {
+    //    GameObject meteorGO = InnerMapManager.Instance.mapObjectFactory.CreateNewMeteorObject();
+    //    meteorGO.transform.SetParent(tile.parentMap.structureParent);
+    //    meteorGO.transform.position = tile.centeredWorldLocation;
+    //    meteorGO.GetComponent<MeteorVisual>().MeteorStrike(tile, abilityRadius);
+    //}
     public override void ShowRange(LocationGridTile targetTile) {
         base.ShowRange(targetTile);
         List<LocationGridTile> tiles = targetTile.GetTilesInRadius(abilityRadius, 0, true);

@@ -58,7 +58,7 @@ public class CombatManager : MonoBehaviour {
             yield return null;
         }
         yield return new WaitForSeconds(0.2f);
-        GameManager.Instance.CreateParticleEffectAt(target, PARTICLE_EFFECT.Poison_Explosion, false);
+        GameManager.Instance.CreateParticleEffectAt(target.gridTileLocation, PARTICLE_EFFECT.Poison_Explosion);
         List<ITraitable> traitables = new List<ITraitable>();
         List<LocationGridTile> affectedTiles = target.gridTileLocation.GetTilesInRadius(2, includeTilesInDifferentStructure: true);
         float damagePercentage = 0.1f * stacks;
@@ -101,7 +101,7 @@ public class CombatManager : MonoBehaviour {
             yield return null;
         }
         yield return new WaitForSeconds(0.2f);
-        GameManager.Instance.CreateParticleEffectAt(target, PARTICLE_EFFECT.Frozen_Explosion, false);
+        GameManager.Instance.CreateParticleEffectAt(target.gridTileLocation, PARTICLE_EFFECT.Frozen_Explosion);
         List<ITraitable> traitables = new List<ITraitable>();
         List<LocationGridTile> affectedTiles = target.gridTileLocation.GetTilesInRadius(2, includeTilesInDifferentStructure: true);
         float damagePercentage = 0.2f * stacks;

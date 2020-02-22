@@ -16,16 +16,10 @@ public class LightningData : SpellData {
     }
 
     public override void ActivateAbility(LocationGridTile targetTile) {
+        GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Lightning_Strike);
         List<IPointOfInterest> pois = targetTile.GetPOIsOnTile();
         for (int i = 0; i < pois.Count; i++) {
             pois[i].AdjustHP(-100, ELEMENTAL_TYPE.Electric);
         }
-    }
-    private void CreateLightningAt(LocationGridTile tile) {
-        //TODO
-        // GameObject meteorGO = InnerMapManager.Instance.mapObjectFactory.CreateNewMeteorObject();
-        // meteorGO.transform.SetParent(tile.parentMap.structureParent);
-        // meteorGO.transform.position = tile.centeredWorldLocation;
-        // meteorGO.GetComponent<MeteorVisual>().MeteorStrike(tile, abilityRadius);
     }
 }

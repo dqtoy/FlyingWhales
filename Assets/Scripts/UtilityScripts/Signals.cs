@@ -523,6 +523,10 @@ public static class Signals {
     public static string INTERRUPT_STARTED = "OnInterruptStarted";
     #endregion
 
+    #region Particle System
+    public static string PARTICLE_EFFECT_DONE = "OnParticleEffectDone";
+    #endregion
+
     public static Dictionary<string, SignalMethod[]> orderedSignalExecution = new Dictionary<string, SignalMethod[]>() {
         { HOUR_STARTED, new SignalMethod[] {
             new SignalMethod() { methodName = "HourlyJobActions", objectType = typeof(Settlement) },

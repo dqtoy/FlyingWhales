@@ -6,23 +6,26 @@ using UnityEngine;
 using Traits;
 using Inner_Maps;
 
-public class MeteorVisual : MonoBehaviour {
-    public ParticleSystem meteorParticle;
+public class MeteorParticleEffect : BaseParticleEffect {
+    //public ParticleSystem meteorParticle;
     public ParticleSystem[] meteorExplosionParticles;
 
-    private LocationGridTile targetTile;
-    private int radius;
-    public void MeteorStrike(LocationGridTile targetTile, int radius) {
-        this.targetTile = targetTile;
-        this.radius = radius;
-        meteorParticle.Play();
+    //private LocationGridTile targetTile;
+    //private int radius;
+    //public void MeteorStrike(LocationGridTile targetTile) { //, int radius
+    //    this.targetTile = targetTile;
+    //    //this.radius = radius;
+    //    meteorParticle.Play();
+    //}
+    protected override void ParticleAfterEffect(ParticleSystem particleSystem) {
+        OnMeteorFell();
     }
     public void OnMeteorFell() {
         for (int i = 0; i < meteorExplosionParticles.Length; i++) {
             meteorExplosionParticles[i].Play();
         }
         List<ITraitable> traitables = new List<ITraitable>();
-        List<LocationGridTile> tiles = targetTile.GetTilesInRadius(radius, 0, true);
+        List<LocationGridTile> tiles = targetTile.GetTilesInRadius(1, 0, true); //radius
         for (int i = 0; i < tiles.Count; i++) {
             LocationGridTile tile = tiles[i];
             traitables.AddRange(tile.GetTraitablesOnTile());
