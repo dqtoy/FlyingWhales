@@ -875,6 +875,62 @@ MonoBehaviour:
           - {fileID: 21300000, guid: a7e3879fdcd659f4aa7498921280b82d, type: 3}
           - {fileID: 21300000, guid: 88b653d5f686c254e9b75b46fadffeb8, type: 3}
           - {fileID: 21300000, guid: 606940151ce4a3843aa4fba2cc8a60b1, type: 3}
+  - raceName: ELEMENTAL
+    race: 19
+    maleAssets:
+      gender: 0
+      characterClassAssets:
+        m_keys:
+        - FireElemental
+        m_values:
+        - defaultSprite: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 6832c1d2fca230c45864393cd7aa91da, type: 3}
+          - {fileID: 21300000, guid: f8b6ae4609d518f4f8e069bd042625fe, type: 3}
+          - {fileID: 21300000, guid: 4e9e937338bdcde44ad3925c5c64439b, type: 3}
+          - {fileID: 21300000, guid: 312ff2310124ff348b0b05241d01f44d, type: 3}
+          - {fileID: 21300000, guid: c6b2eb9e00237824fac70bdc0dbef8ea, type: 3}
+          - {fileID: 21300000, guid: e4f498abb18682a4a9c441c7ea7c8b7e, type: 3}
+          - {fileID: 21300000, guid: 5e7372934139efa4cb5cbc2036bf9e16, type: 3}
+          - {fileID: 21300000, guid: 9a55ba93eece4364faeaeee6a4964364, type: 3}
+          - {fileID: 21300000, guid: c324cfc6f9ff2444ebcca73a5b43728e, type: 3}
+          - {fileID: 21300000, guid: f95cec50f78eee248bc40b11a639af07, type: 3}
+          - {fileID: 21300000, guid: 8326af2322f5a0e46831a1886583c881, type: 3}
+          - {fileID: 21300000, guid: 65d42a1d2b7930745b7935eea055ea5b, type: 3}
+          - {fileID: 21300000, guid: 987b9111391456440ad149d6594dcd40, type: 3}
+          - {fileID: 21300000, guid: 52db1059285c1fc41bac17a48f0667b0, type: 3}
+          - {fileID: 21300000, guid: b860cd89161b974459a6d5ddcda57533, type: 3}
+          - {fileID: 21300000, guid: c66050b61505c5b4dac82fe5e922b46d, type: 3}
+          - {fileID: 21300000, guid: d643425a02e33ec46a27680c79d5d51a, type: 3}
+          - {fileID: 21300000, guid: f6ecda2facdfd6449b7a4bcb437f8c75, type: 3}
+          - {fileID: 21300000, guid: 2c8b02cf41a9857408732c35ee138676, type: 3}
+    femaleAssets:
+      gender: 1
+      characterClassAssets:
+        m_keys:
+        - FireElemental
+        m_values:
+        - defaultSprite: {fileID: 0}
+          animationSprites:
+          - {fileID: 21300000, guid: 9514bdc00a063a048876bec79e4cd6e5, type: 3}
+          - {fileID: 21300000, guid: e776ec7b0df75e341a1241fbf5c1c3c3, type: 3}
+          - {fileID: 21300000, guid: ff5e9b3d144a57c4485509e1dd4bf0b5, type: 3}
+          - {fileID: 21300000, guid: ac227294700c72c49838cbe9428f4697, type: 3}
+          - {fileID: 21300000, guid: ae8be8c5f38a7164fa738cad477f6d8f, type: 3}
+          - {fileID: 21300000, guid: 733858c54d687384281d7fb9792d2e58, type: 3}
+          - {fileID: 21300000, guid: 59adf0d47311c43448ba5a454dae5bdf, type: 3}
+          - {fileID: 21300000, guid: c7fd49dff6381884ebd052c497af6027, type: 3}
+          - {fileID: 21300000, guid: 35ca03a56639dbf46b861abef4a34d0f, type: 3}
+          - {fileID: 21300000, guid: b659c039c1f77c049bd082996a571db6, type: 3}
+          - {fileID: 21300000, guid: f5523a8f834f3d349943bb7eda51b996, type: 3}
+          - {fileID: 21300000, guid: 63544ceb74340b8488314e8196d01385, type: 3}
+          - {fileID: 21300000, guid: a5fd152b89be9004f8b64b1ec6197969, type: 3}
+          - {fileID: 21300000, guid: ea9432e51a5331043b13f8631d6656b1, type: 3}
+          - {fileID: 21300000, guid: 026f711acb3324046a48867f6ba571ab, type: 3}
+          - {fileID: 21300000, guid: bce8d773845556144a40b4983f73a4b4, type: 3}
+          - {fileID: 21300000, guid: 2dc10a964cfd5b5499b4f63737a67e36, type: 3}
+          - {fileID: 21300000, guid: 9a01328d2c68657439047149942be247, type: 3}
+          - {fileID: 21300000, guid: e56bf39422a20dc4ba327747806c07c2, type: 3}
   - raceName: ELVES
     race: 2
     maleAssets:

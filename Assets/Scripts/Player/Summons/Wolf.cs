@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class Wolf : Summon {
 
-	public Wolf() : base(SUMMON_TYPE.Wolf, CharacterRole.BEAST, "Ravager", RACE.WOLF, UtilityScripts.Utilities.GetRandomGender()) { }
+	public Wolf() : base(SUMMON_TYPE.Wolf, CharacterRole.BEAST, "Ravager", RACE.WOLF,
+		UtilityScripts.Utilities.GetRandomGender()) {
+		
+	}
     public Wolf(SaveDataCharacter data) : base(data) { }
 
     #region Overrides

@@ -149,17 +149,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public virtual string name => _firstName;
     public string fullname => $"{_firstName} {_surName}";
     public string nameWithID => name;
-    public string raceClassName {
-        get {
-            // if (Utilities.IsRaceBeast(race)) {
-            //     return Utilities.NormalizeStringUpperCaseFirstLetterOnly(race.ToString()) + " " + role.name;
-            // }
-            //if(role.name == characterClass.className) {
-            return $"{UtilityScripts.GameUtilities.GetNormalizedRaceAdjective(race)} {characterClass.className}";
-            //}
-            //return Utilities.GetNormalizedRaceAdjective(race) + " " + role.name + " " + characterClass.className;
-        }
-    }
+    public virtual string raceClassName => $"{UtilityScripts.GameUtilities.GetNormalizedRaceAdjective(race)} {characterClass.className}";
     public override int id => _id;
     public bool isDead => this._isDead;
     public bool isFactionless { //is the character part of the neutral faction? or no faction?
@@ -467,7 +457,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     }
 
     #region Signals
-    public void SubscribeToSignals() {
+    public virtual void SubscribeToSignals() {
         if (minion != null) {
             logComponent.PrintLogErrorIfActive($"{name} is a minion and has subscribed to the signals!");
         }
