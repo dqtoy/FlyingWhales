@@ -9,6 +9,7 @@ namespace Traits {
         private ITraitable traitable { get; set; } //poi that has the poison
         private Character characterOwner;
         private StatusIcon _statusIcon;
+        private GameObject _poisonedEffect;
 
         public Poisoned() {
             name = "Poisoned";
@@ -31,6 +32,9 @@ namespace Traits {
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
             traitable = addedTo;
+            if(traitable is IPointOfInterest) {
+                _poisonedEffect = GameManager.Instance.CreateParticleEffectAt(traitable as IPointOfInterest, PARTICLE_EFFECT.Poison, false);
+            }
             if(traitable is Character character) {
                 characterOwner = character;
                 characterOwner.AdjustDoNotRecoverHP(1);
@@ -48,6 +52,9 @@ namespace Traits {
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
+            if(_poisonedEffect != null) {
+                ObjectPoolManager.Instance.DestroyObject(_poisonedEffect);
+            }
             if (characterOwner != null) {
                 characterOwner.AdjustDoNotRecoverHP(-1);
                 ObjectPoolManager.Instance.DestroyObject(_statusIcon.gameObject);

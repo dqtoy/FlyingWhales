@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Traits {
     public class Frozen : Trait {
+        private GameObject _frozenEffect;
 
         public Frozen() {
             name = "Frozen";
@@ -23,6 +24,9 @@ namespace Traits {
         #region Overrides
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
+            if(addedTo is IPointOfInterest) {
+                _frozenEffect = GameManager.Instance.CreateParticleEffectAt(addedTo as IPointOfInterest, PARTICLE_EFFECT.Frozen, false);
+            }
             if (addedTo is Character) {
                 Character character = addedTo as Character;
                 character.needsComponent.AdjustDoNotGetBored(1);
@@ -33,6 +37,9 @@ namespace Traits {
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
+            if(_frozenEffect) {
+                ObjectPoolManager.Instance.DestroyObject(_frozenEffect);
+            }
             if (removedFrom is Character) {
                 Character character = removedFrom as Character;
                 character.needsComponent.AdjustDoNotGetBored(-1);

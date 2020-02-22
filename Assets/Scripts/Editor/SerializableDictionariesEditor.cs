@@ -53,6 +53,8 @@ public class LocationStructurePrefabDictionaryPropertyDrawer : SerializableDicti
 public class WallResourceAssetDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 [CustomPropertyDrawer(typeof(WallAssetDictionary))]
 public class WallAssetDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
+[CustomPropertyDrawer(typeof(ParticleEffectAssetDictionary))]
+public class ParticleEffectAssetDictionaryPropertyDrawer : SerializableDictionaryPropertyDrawer { }
 
 //list storage
 [CustomPropertyDrawer(typeof(LandmarkSpriteListStorage))]

@@ -20,7 +20,7 @@ namespace Traits {
         #region Overrides
         public override void OnAddTrait(ITraitable sourcePOI) {
             if(sourcePOI is IPointOfInterest) {
-                electricEffectGO = GameManager.Instance.CreateElectricEffectAt(sourcePOI as IPointOfInterest);
+                electricEffectGO = GameManager.Instance.CreateParticleEffectAt(sourcePOI as IPointOfInterest, PARTICLE_EFFECT.Electric);
             }
             if (sourcePOI is Character) {
                 Character character = sourcePOI as Character;
