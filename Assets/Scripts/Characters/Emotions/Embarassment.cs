@@ -13,7 +13,7 @@ public class Embarassment : Emotion {
         witness.needsComponent.AdjustComfort(-15);
         witness.traitContainer.AddTrait(witness, "Ashamed");
         //Fight or Flight, Flight
-        witness.combatComponent.Flight(target);
+        witness.combatComponent.Flight(target, "saw something embarassing");
         return base.ProcessEmotion(witness, target);
     }
     #endregion

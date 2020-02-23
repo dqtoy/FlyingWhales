@@ -18,7 +18,7 @@ namespace Traits {
 				if (characterThatWillDoJob.stateComponent.currentState is CombatState 
 				    && characterThatWillDoJob.combatComponent.avoidInRange.Count > 0) {
 					if (characterThatWillDoJob.combatComponent.combatMode == COMBAT_MODE.Aggressive) {
-						characterThatWillDoJob.combatComponent.Flight(targetPOI);
+						characterThatWillDoJob.combatComponent.Flight(targetPOI, "saw a tornado");
 					}
 				} else {
 					if(!characterThatWillDoJob.jobQueue.HasJob(JOB_TYPE.SNUFF_TORNADO, targetPOI)) {

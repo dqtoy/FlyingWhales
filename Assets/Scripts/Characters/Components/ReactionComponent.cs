@@ -392,7 +392,7 @@ public class ReactionComponent {
                             owner.jobQueue.AddJobInQueue(job);
                         } else {
                             if (owner.combatComponent.combatMode == COMBAT_MODE.Aggressive) {
-                                owner.combatComponent.Flight(targetTileObject);
+                                owner.combatComponent.Flight(targetTileObject, "saw fire");
                             }
                         }
                         return;
@@ -407,7 +407,7 @@ public class ReactionComponent {
                     if (owner.traitContainer.HasTrait("Berserked")) {
                         owner.combatComponent.FightOrFlight(targetTileObject);
                     } else {
-                        owner.combatComponent.Flight(targetTileObject);
+                        owner.combatComponent.Flight(targetTileObject, "saw a tornado");
                     }
                 }
             }

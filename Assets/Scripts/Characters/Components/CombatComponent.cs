@@ -44,7 +44,7 @@ public class CombatComponent {
                 debugLog += "\n-Character is coward";
                 debugLog += "\n-FLIGHT";
                 owner.logComponent.PrintLogIfActive(debugLog);
-                Flight(target);
+                Flight(target, "character is a coward");
             } else {
                 debugLog += "\n-Character is not coward";
                 if (!owner.traitContainer.HasTrait("Combatant")) {
@@ -98,7 +98,7 @@ public class CombatComponent {
                 debugLog += "\n-Character is coward";
                 debugLog += "\n-FLIGHT";
                 owner.logComponent.PrintLogIfActive(debugLog);
-                Flight(target);
+                Flight(target, "character is a coward");
             } else {
                 debugLog += "\n-Character is not coward";
                 debugLog += "\n-FIGHT";
