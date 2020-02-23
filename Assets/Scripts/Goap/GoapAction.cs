@@ -170,9 +170,9 @@ public class GoapAction : IReactable {
     public virtual LocationGridTile GetOverrideTargetTile(ActualGoapNode goapNode) {
         return null;
     }
-    public virtual string ReactionToActor(Character witness, ActualGoapNode node) { return string.Empty; }
-    public virtual string ReactionToTarget(Character witness, ActualGoapNode node) { return string.Empty; }
-    public virtual string ReactionOfTarget(ActualGoapNode node) { return string.Empty; }
+    public virtual string ReactionToActor(Character witness, ActualGoapNode node, REACTION_STATUS status) { return string.Empty; }
+    public virtual string ReactionToTarget(Character witness, ActualGoapNode node, REACTION_STATUS status) { return string.Empty; }
+    public virtual string ReactionOfTarget(ActualGoapNode node, REACTION_STATUS status) { return string.Empty; }
     public virtual void OnActionStarted(ActualGoapNode node) { }
     #endregion
 

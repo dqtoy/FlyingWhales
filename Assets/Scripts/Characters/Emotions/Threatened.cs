@@ -9,10 +9,10 @@ public class Threatened : Emotion {
     }
 
     #region Overrides
-    public override string ProcessEmotion(Character witness, IPointOfInterest target) {
+    public override string ProcessEmotion(Character witness, IPointOfInterest target, REACTION_STATUS status) {
         //Fight or Flight
         witness.combatComponent.FightOrFlight(target);
-        return base.ProcessEmotion(witness, target);
+        return base.ProcessEmotion(witness, target, status);
     }
     #endregion
 }

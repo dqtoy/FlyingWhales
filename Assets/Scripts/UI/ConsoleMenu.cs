@@ -1042,7 +1042,7 @@ public class ConsoleMenu : UIMenu {
             AddErrorMessage($"Emotion parameter has no data: {emotionParameterString}");
             return;
         }
-        CharacterManager.Instance.TriggerEmotion(emotion.emotionType, character1, character2);
+        CharacterManager.Instance.TriggerEmotion(emotion.emotionType, character1, character2, REACTION_STATUS.INFORMED);
         AddSuccessMessage($"Trigger {emotion.name} Emotion of {character1.name} towards {character2.name}");
     }
     private void ChangeCharacterElementalDamage(string[] parameters) {

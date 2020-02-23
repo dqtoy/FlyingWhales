@@ -47,20 +47,20 @@ public class Spit : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return cost;
     }
-    public override string ReactionToActor(Character witness, ActualGoapNode node) {
-        string response = base.ReactionToActor(witness, node);
+    public override string ReactionToActor(Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionToActor(witness, node, status);
         Character actor = node.actor;
         IPointOfInterest target = node.poiTarget;
         if (target is Tombstone) {
             Character targetCharacter = (target as Tombstone).character;
             string witnessOpinionLabelToDead = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
             if (witnessOpinionLabelToDead == OpinionComponent.Friend || witnessOpinionLabelToDead == OpinionComponent.Close_Friend) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor);
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status);
             } else if (witnessOpinionLabelToDead == OpinionComponent.Rival) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status);
             } else {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status);
             }
         }
         return response;

@@ -37,21 +37,21 @@ public class Cry : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return cost;
     }
-    public override string ReactionToActor(Character witness, ActualGoapNode node) {
-        string response = base.ReactionToActor(witness, node);
+    public override string ReactionToActor(Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionToActor(witness, node, status);
         Character actor = node.actor;
         string opinionLabel = witness.relationshipContainer.GetOpinionLabel(actor);
         if (opinionLabel == OpinionComponent.Enemy || opinionLabel == OpinionComponent.Rival) {
             if (UnityEngine.Random.Range(0, 2) == 0) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, actor);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, actor, status);
             }
         } else if (opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
             if (!witness.traitContainer.HasTrait("Psychopath")) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status);
             }        
         } else if (opinionLabel == OpinionComponent.Acquaintance) {
             if (!witness.traitContainer.HasTrait("Psychopath") && UnityEngine.Random.Range(0, 2) == 0) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, actor, status);
             }        
         } 
         return response;

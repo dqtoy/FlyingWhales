@@ -774,8 +774,8 @@ public class CharacterManager : MonoBehaviour {
             }
         }
     }
-    public string TriggerEmotion(EMOTION emotionType, Character emoter, IPointOfInterest target) {
-        return $" {GetEmotion(emotionType).ProcessEmotion(emoter, target)}";
+    public string TriggerEmotion(EMOTION emotionType, Character emoter, IPointOfInterest target, REACTION_STATUS status) {
+        return $" {GetEmotion(emotionType).ProcessEmotion(emoter, target, status)}";
     }
     public Emotion GetEmotion(string name) {
         for (int i = 0; i < allEmotions.Count; i++) {

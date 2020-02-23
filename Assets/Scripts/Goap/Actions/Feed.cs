@@ -50,8 +50,8 @@ public class Feed : GoapAction {
         }
         return goapActionInvalidity;
     }
-    public override string ReactionToActor(Character witness, ActualGoapNode node) {
-        string response = base.ReactionToActor(witness, node);
+    public override string ReactionToActor(Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionToActor(witness, node, status);
         Character actor = node.actor;
         IPointOfInterest target = node.poiTarget;
         if(target is Character) {
@@ -59,16 +59,16 @@ public class Feed : GoapAction {
             string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
             if (opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
                 if (!witness.traitContainer.HasTrait("Psychopath")) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Gratefulness, witness, actor);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Gratefulness, witness, actor, status);
                 }
             } else if (opinionLabel == OpinionComponent.Rival) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status);
             }
         }
         return response;
     }
-    public override string ReactionOfTarget(ActualGoapNode node) {
-        string response = base.ReactionOfTarget(node);
+    public override string ReactionOfTarget(ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionOfTarget(node, status);
         Character actor = node.actor;
         IPointOfInterest target = node.poiTarget;
         if (target is Character) {
@@ -76,13 +76,13 @@ public class Feed : GoapAction {
             if (!targetCharacter.traitContainer.HasTrait("Psychopath")) {
                 if (targetCharacter.relationshipContainer.IsEnemiesWith(actor)) {
                     if (UnityEngine.Random.Range(0, 100) < 30) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Gratefulness, targetCharacter, actor);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Gratefulness, targetCharacter, actor, status);
                     }
                     if (UnityEngine.Random.Range(0, 100) < 30) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Embarassment, targetCharacter, actor);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Embarassment, targetCharacter, actor, status);
                     }
                 } else {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Gratefulness, targetCharacter, actor);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Gratefulness, targetCharacter, actor, status);
                 }
             }
         }

@@ -1225,7 +1225,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             CreateUndermineJobOnly(targetCharacter, reason);
         }
     }
-    public bool CreateUndermineJobOnly(Character targetCharacter, string reason, SHARE_INTEL_STATUS status = SHARE_INTEL_STATUS.INFORMED) {
+    public bool CreateUndermineJobOnly(Character targetCharacter, string reason, REACTION_STATUS status = REACTION_STATUS.INFORMED) {
         if (jobQueue.HasJob(JOB_TYPE.UNDERMINE, targetCharacter)) {
             return false;
         }
@@ -2180,13 +2180,13 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             targetCharacter = target as Character;
             //React To Interrupt
             if (targetCharacter.interruptComponent.isInterrupted) {
-                reactionComponent.ReactTo(targetCharacter.interruptComponent.currentInterrupt, targetCharacter, targetCharacter.interruptComponent.currentTargetPOI);
+                reactionComponent.ReactTo(targetCharacter.interruptComponent.currentInterrupt, targetCharacter, targetCharacter.interruptComponent.currentTargetPOI, REACTION_STATUS.WITNESSED);
             } else {
                 //targetCharacter.OnSeenBy(this); //trigger that the target character was seen by this character.
                 targetCharacterCurrentActionNode = targetCharacter.currentActionNode;
                 if (targetCharacterCurrentActionNode != null /*&& node.action.shouldAddLogs*/ && targetCharacterCurrentActionNode.actionStatus == ACTION_STATUS.PERFORMING && targetCharacterCurrentActionNode.actor != this) {
                     if (!targetCharacterCurrentActionNode.awareCharacters.Contains(this)) {
-                        reactionComponent.ReactTo(targetCharacterCurrentActionNode, SHARE_INTEL_STATUS.WITNESSED);
+                        reactionComponent.ReactTo(targetCharacterCurrentActionNode, REACTION_STATUS.WITNESSED);
                         targetCharacterCurrentActionNode.AddAwareCharacter(this);
                     }
                 } else if (targetCharacter.isInCombat && targetCharacter.jobQueue.jobsInQueue.Count > 1) {
@@ -2195,7 +2195,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                         if (planJob.assignedPlan != null && planJob.assignedPlan.currentActualNode != null) {
                             targetCharacterCurrentActionNode = planJob.assignedPlan.currentActualNode;
                             if (!targetCharacterCurrentActionNode.awareCharacters.Contains(this)) {
-                                reactionComponent.ReactTo(targetCharacterCurrentActionNode, SHARE_INTEL_STATUS.WITNESSED);
+                                reactionComponent.ReactTo(targetCharacterCurrentActionNode, REACTION_STATUS.WITNESSED);
                                 targetCharacterCurrentActionNode.AddAwareCharacter(this);
                             }
                         }
@@ -2213,7 +2213,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                         && plan.currentActualNode.actionStatus == ACTION_STATUS.PERFORMING
                         && plan.currentActualNode != targetCharacterCurrentActionNode && plan.currentActualNode.actor != this) {
                         if (!plan.currentActualNode.awareCharacters.Contains(this)) {
-                            reactionComponent.ReactTo(plan.currentActualNode, SHARE_INTEL_STATUS.WITNESSED);
+                            reactionComponent.ReactTo(plan.currentActualNode, REACTION_STATUS.WITNESSED);
                             plan.currentActualNode.AddAwareCharacter(this);
                         }
                     }
@@ -3965,7 +3965,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
     public string ShareIntel(Intel intel) {
         // PlayerManager.Instance.player.RemoveIntel(intel);
         if (!intel.node.awareCharacters.Contains(this)) {
-            string reaction = reactionComponent.ReactTo(intel.node, SHARE_INTEL_STATUS.INFORMED);
+            string reaction = reactionComponent.ReactTo(intel.node, REACTION_STATUS.INFORMED);
             intel.node.AddAwareCharacter(this);
             return reaction;
         }

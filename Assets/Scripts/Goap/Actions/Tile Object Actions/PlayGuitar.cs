@@ -82,16 +82,16 @@ public class PlayGuitar : GoapAction {
         }
         return goapActionInvalidity;
     }
-    public override string ReactionToActor(Character witness, ActualGoapNode node) {
-        string response = base.ReactionToActor(witness, node);
+    public override string ReactionToActor(Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionToActor(witness, node, status);
         Character actor = node.actor;
         IPointOfInterest target = node.poiTarget;
         Trait trait = witness.traitContainer.GetNormalTrait<Trait>("Music Hater", "Music Lover");
         if (trait != null) {
             if (trait.name == "Music Hater") {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status);
             } else {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status);
                 SEXUALITY sexuality1 = witness.sexuality;
                 SEXUALITY sexuality2 = actor.sexuality;
                 GENDER gender1 = witness.gender;
@@ -104,7 +104,7 @@ public class PlayGuitar : GoapAction {
                         value = 20;
                     }
                     if(UnityEngine.Random.Range(0, 100) < value) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Arousal, witness, actor);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Arousal, witness, actor, status);
                     }
                 }
             }

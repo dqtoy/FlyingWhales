@@ -36,41 +36,41 @@ public class Strangle : GoapAction {
             return actor.currentRegion.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
         }
     }
-    public override string ReactionToActor(Character witness, ActualGoapNode node) {
-        string response = base.ReactionToActor(witness, node);
+    public override string ReactionToActor(Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionToActor(witness, node, status);
         Character actor = node.actor;
         IPointOfInterest target = node.poiTarget;
         if (target is Character) {
             Character targetCharacter = target as Character;
             if(actor != targetCharacter) {
                 if (witness.traitContainer.HasTrait("Coward")) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor, status);
                 } else {
                     string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
                     if(opinionLabel == OpinionComponent.Rival) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status);
                     } else if (opinionLabel == OpinionComponent.Friend || opinionLabel == OpinionComponent.Close_Friend) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor);
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, actor);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, actor, status);
                     } else {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor);
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status);
                     }
                 }
                 CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.SERIOUS);
             } else {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status);
                 if (witness.traitContainer.HasTrait("Psychopath") || witness.relationshipContainer.IsEnemiesWith(actor)) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, actor);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, actor, status);
                 } else {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status);
                 }
             }
         }
         return response;
     }
-    public override string ReactionToTarget(Character witness, ActualGoapNode node) {
-        string response = base.ReactionToTarget(witness, node);
+    public override string ReactionToTarget(Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionToTarget(witness, node, status);
         Character actor = node.actor;
         IPointOfInterest target = node.poiTarget;
         if (target is Character) {
@@ -78,24 +78,24 @@ public class Strangle : GoapAction {
             if (actor != targetCharacter) {
                 string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
                 if (opinionLabel == OpinionComponent.Rival) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, targetCharacter);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, targetCharacter, status);
                 } else {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, targetCharacter);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, targetCharacter, status);
                 }
             }
         }
         return response;
     }
-    public override string ReactionOfTarget(ActualGoapNode node) {
-        string response = base.ReactionOfTarget(node);
+    public override string ReactionOfTarget(ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionOfTarget(node, status);
         Character actor = node.actor;
         IPointOfInterest target = node.poiTarget;
         if (target is Character) {
             Character targetCharacter = target as Character;
             if (actor != targetCharacter) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, targetCharacter, actor);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, targetCharacter, actor, status);
                 if (targetCharacter.relationshipContainer.IsFriendsWith(actor) && !targetCharacter.traitContainer.HasTrait("Psychopath")) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, targetCharacter, actor);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, targetCharacter, actor, status);
                 }
                 CrimeManager.Instance.ReactToCrime(targetCharacter, actor, node, node.associatedJobType, CRIME_TYPE.SERIOUS);
             }

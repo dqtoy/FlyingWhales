@@ -37,19 +37,19 @@ public class ReactionComponent {
             }
         }
     }
-    public string ReactTo(ActualGoapNode node, SHARE_INTEL_STATUS status) {
+    public string ReactTo(ActualGoapNode node, REACTION_STATUS status) {
         if (owner.minion != null || owner is Summon) {
             //Minions or Summons cannot react to actions
             return string.Empty;
         }
-        if(status == SHARE_INTEL_STATUS.WITNESSED) {
+        if(status == REACTION_STATUS.WITNESSED) {
             ReactToWitnessedAction(node);
         } else {
             return ReactToInformedAction(node);
         }
         return string.Empty;
     }
-    public void ReactTo(Interrupt interrupt, Character actor, IPointOfInterest target) {
+    public void ReactTo(Interrupt interrupt, Character actor, IPointOfInterest target, REACTION_STATUS status) {
         if (owner.minion != null || owner is Summon) {
             //Minions or Summons cannot react to interrupts
             return;
@@ -66,7 +66,7 @@ public class ReactionComponent {
                 witnessLog.AddToFillers(actor.interruptComponent.currentEffectLog.fillers);
                 owner.logComponent.AddHistory(witnessLog);
             }
-            string emotionsToActor = interrupt.ReactionToActor(owner, actor, target, interrupt);
+            string emotionsToActor = interrupt.ReactionToActor(owner, actor, target, interrupt, status);
             if (emotionsToActor != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsToActor)) {
                 string error = "Interrupt Error in Witness Reaction To Actor (Duplicate/Incompatible Emotions Triggered)";
                 error += $"\n-Witness: {owner}";
@@ -75,7 +75,7 @@ public class ReactionComponent {
                 error += $"\n-Target: {target.nameWithID}";
                 owner.logComponent.PrintLogErrorIfActive(error);
             }
-            string emotionsToTarget = interrupt.ReactionToTarget(owner, actor, target, interrupt);
+            string emotionsToTarget = interrupt.ReactionToTarget(owner, actor, target, interrupt, status);
             if (emotionsToTarget != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsToTarget)) {
                 string error = "Interrupt Error in Witness Reaction To Actor (Duplicate/Incompatible Emotions Triggered)";
                 error += $"\n-Witness: {owner}";
@@ -88,7 +88,7 @@ public class ReactionComponent {
                 $"Witness interrupt reaction of {owner.name} to {interrupt.name} of {actor.name} with target {target.name}: {emotionsToActor}{emotionsToTarget}";
             owner.logComponent.PrintLogIfActive(response);
         } else if (target == owner) {
-            string emotionsOfTarget = interrupt.ReactionOfTarget(actor, target, interrupt);
+            string emotionsOfTarget = interrupt.ReactionOfTarget(actor, target, interrupt, status);
             if (emotionsOfTarget != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsOfTarget)) {
                 string error = "Interrupt Error in Witness Reaction To Actor (Duplicate/Incompatible Emotions Triggered)";
                 error += $"\n-Witness: {owner}";
@@ -131,7 +131,7 @@ public class ReactionComponent {
             witnessLog.AddToFillers(node.descriptionLog.fillers);
             owner.logComponent.AddHistory(witnessLog);
 
-            string emotionsToActor = node.action.ReactionToActor(owner, node);
+            string emotionsToActor = node.action.ReactionToActor(owner, node, REACTION_STATUS.WITNESSED);
             if(emotionsToActor != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsToActor)) {
                 string error = "Action Error in Witness Reaction To Actor (Duplicate/Incompatible Emotions Triggered)";
                 error += $"\n-Witness: {owner}";
@@ -140,7 +140,7 @@ public class ReactionComponent {
                 error += $"\n-Target: {node.poiTarget.nameWithID}";
                 owner.logComponent.PrintLogErrorIfActive(error);
             }
-            string emotionsToTarget = node.action.ReactionToTarget(owner, node);
+            string emotionsToTarget = node.action.ReactionToTarget(owner, node, REACTION_STATUS.WITNESSED);
             if (emotionsToTarget != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsToTarget)) {
                 string error = "Action Error in Witness Reaction To Target (Duplicate/Incompatible Emotions Triggered)";
                 error += $"\n-Witness: {owner}";
@@ -154,7 +154,7 @@ public class ReactionComponent {
             owner.logComponent.PrintLogIfActive(response);
         } else if (target == owner) {
             if (!node.isStealth || target.traitContainer.HasTrait("Vigilant")) {
-                string emotionsOfTarget = node.action.ReactionOfTarget(node);
+                string emotionsOfTarget = node.action.ReactionOfTarget(node, REACTION_STATUS.WITNESSED);
                 if (emotionsOfTarget != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsOfTarget)) {
                     string error = "Action Error in Witness Reaction Of Target (Duplicate/Incompatible Emotions Triggered)";
                     error += $"\n-Witness: {owner}";
@@ -187,7 +187,7 @@ public class ReactionComponent {
 
         string response = string.Empty;
         if (node.actor != owner && node.poiTarget != owner) {
-            string emotionsToActor = node.action.ReactionToActor(owner, node);
+            string emotionsToActor = node.action.ReactionToActor(owner, node, REACTION_STATUS.INFORMED);
             if (emotionsToActor != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsToActor)) {
                 string error = "Action Error in Witness Reaction To Actor (Duplicate/Incompatible Emotions Triggered)";
                 error += $"\n-Witness: {owner}";
@@ -196,7 +196,7 @@ public class ReactionComponent {
                 error += $"\n-Target: {node.poiTarget.nameWithID}";
                 owner.logComponent.PrintLogErrorIfActive(error);
             }
-            string emotionsToTarget = node.action.ReactionToTarget(owner, node);
+            string emotionsToTarget = node.action.ReactionToTarget(owner, node, REACTION_STATUS.INFORMED);
             if (emotionsToTarget != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsToTarget)) {
                 string error = "Action Error in Witness Reaction To Target (Duplicate/Incompatible Emotions Triggered)";
                 error += $"\n-Witness: {owner}";
@@ -207,7 +207,7 @@ public class ReactionComponent {
             }
             response += $"{emotionsToActor}/{emotionsToTarget}";
         } else if(node.poiTarget == owner && node.poiTarget is Character) {
-            string emotionsOfTarget = node.action.ReactionOfTarget(node);
+            string emotionsOfTarget = node.action.ReactionOfTarget(node, REACTION_STATUS.INFORMED);
             if (emotionsOfTarget != string.Empty && !CharacterManager.Instance.EmotionsChecker(emotionsOfTarget)) {
                 string error = "Action Error in Witness Reaction Of Target (Duplicate/Incompatible Emotions Triggered)";
                 error += $"\n-Witness: {owner}";

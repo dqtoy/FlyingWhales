@@ -109,12 +109,12 @@ public class MakeLove : GoapAction {
             targetCharacter.SetCurrentActionNode(null, null, null);
         }
     }
-    public override string ReactionToActor(Character witness, ActualGoapNode node) {
-        string response = base.ReactionToActor(witness, node);
+    public override string ReactionToActor(Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionToActor(witness, node, status);
         Character actor = node.actor;
         IPointOfInterest target = node.poiTarget;
-        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Embarassment, witness, actor);
-        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor);
+        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Embarassment, witness, actor, status);
+        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status);
 
         if (target is Character) {
             Character targetCharacter = target as Character;
@@ -129,34 +129,34 @@ public class MakeLove : GoapAction {
                     .GetFirstRelatableIDWithRelationship(RELATIONSHIP_TYPE.LOVER));
                 
                 if (actorLover == witness) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor);
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor);
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor, status);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status);
                 }
                 if (targetLover == witness) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status);
                     if (witness.relationshipContainer.IsFriendsWith(actor) || witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.RELATIVE)) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor, status);
                     } else {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, actor);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, actor, status);
                     }
                 }
             } else {
                 if(witness.relationshipContainer.HasRelationshipWith(targetCharacter, RELATIONSHIP_TYPE.AFFAIR)) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, actor);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, actor, status);
                 }
             }
             
         }
         return response;
     }
-    public override string ReactionToTarget(Character witness, ActualGoapNode node) {
-        string response = base.ReactionToTarget(witness, node);
+    public override string ReactionToTarget(Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionToTarget(witness, node, status);
         Character actor = node.actor;
         IPointOfInterest target = node.poiTarget;
 
-        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Embarassment, witness, target);
-        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, target);
+        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Embarassment, witness, target, status);
+        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, target, status);
 
         if (target is Character) {
             Character targetCharacter = target as Character;
@@ -169,22 +169,22 @@ public class MakeLove : GoapAction {
                 Character targetLover = CharacterManager.Instance.GetCharacterByID(targetCharacter.relationshipContainer
                     .GetFirstRelatableIDWithRelationship(RELATIONSHIP_TYPE.LOVER));
                 if (targetLover == witness) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, targetCharacter);
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, targetCharacter);
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, targetCharacter);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, targetCharacter, status);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, targetCharacter, status);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, targetCharacter, status);
 
                 }
                 if (actorLover == witness) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, targetCharacter);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, targetCharacter, status);
                     if (witness.relationshipContainer.IsFriendsWith(actor) || witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.RELATIVE)) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, targetCharacter);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, targetCharacter, status);
                     } else {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, targetCharacter);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, targetCharacter, status);
                     }
                 }
             } else {
                 if (witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.AFFAIR)) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, targetCharacter);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, targetCharacter, status);
                 }
             }
 

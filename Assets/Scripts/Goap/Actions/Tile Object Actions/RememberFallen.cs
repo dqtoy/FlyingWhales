@@ -67,8 +67,8 @@ public class RememberFallen : GoapAction {
         Character actor = node.actor;
         actor.needsComponent.AdjustDoNotGetBored(-1);
     }
-    public override string ReactionToActor(Character witness, ActualGoapNode node) {
-        string response = base.ReactionToActor(witness, node);
+    public override string ReactionToActor(Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionToActor(witness, node, status);
         Character actor = node.actor;
         IPointOfInterest target = node.poiTarget;
         if (target is Tombstone) {
@@ -76,11 +76,11 @@ public class RememberFallen : GoapAction {
             string witnessOpinionLabelToDead = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
             if ((witnessOpinionLabelToDead == OpinionComponent.Friend || witnessOpinionLabelToDead == OpinionComponent.Close_Friend)
                 && !witness.traitContainer.HasTrait("Psychopath")) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status);
             } else if (witnessOpinionLabelToDead == OpinionComponent.Rival) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, actor);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, actor, status);
                 if (witness.relationshipContainer.IsFriendsWith(actor)) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor, status);
                 }
             }
         }

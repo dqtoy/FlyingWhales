@@ -9,7 +9,7 @@ public class Scorn : Emotion {
     }
 
     #region Overrides
-    public override string ProcessEmotion(Character witness, IPointOfInterest target) {
+    public override string ProcessEmotion(Character witness, IPointOfInterest target, REACTION_STATUS status) {
         if (target is Character) {
             Character targetCharacter = target as Character;
             if (UnityEngine.Random.Range(0, 2) == 0) {
@@ -18,7 +18,7 @@ public class Scorn : Emotion {
                 witness.interruptComponent.TriggerInterrupt(INTERRUPT.Laugh_At, targetCharacter);
             }
         }
-        return base.ProcessEmotion(witness, target);
+        return base.ProcessEmotion(witness, target, status);
     }
     #endregion
 }

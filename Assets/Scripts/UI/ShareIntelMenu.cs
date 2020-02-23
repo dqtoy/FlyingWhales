@@ -134,7 +134,7 @@ public class ShareIntelMenu : MonoBehaviour {
         //StartCoroutine(ShowReactions(reactions));
         string response = targetCharacter.ShareIntel(intel);
         if (string.IsNullOrEmpty(response) || string.IsNullOrWhiteSpace(response)) {
-            response = CharacterManager.Instance.TriggerEmotion(EMOTION.Disinterest, targetCharacter, intel.node.actor);
+            response = CharacterManager.Instance.TriggerEmotion(EMOTION.Disinterest, targetCharacter, intel.node.actor, REACTION_STATUS.INFORMED);
         }
         StartCoroutine(ShowReaction(response, intel));
     }

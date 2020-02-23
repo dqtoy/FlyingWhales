@@ -9,13 +9,15 @@ public class Disapproval : Emotion {
     }
 
     #region Overrides
-    public override string ProcessEmotion(Character witness, IPointOfInterest target) {
+    public override string ProcessEmotion(Character witness, IPointOfInterest target, REACTION_STATUS status) {
         if (target is Character) {
             Character targetCharacter = target as Character;
             witness.relationshipContainer.AdjustOpinion(witness, targetCharacter, "Disapproval", -4);
-            targetCharacter.interruptComponent.TriggerInterrupt(INTERRUPT.Stopped, witness);
+            if(status == REACTION_STATUS.WITNESSED) {
+                targetCharacter.interruptComponent.TriggerInterrupt(INTERRUPT.Stopped, witness);
+            }
         }
-        return base.ProcessEmotion(witness, target);
+        return base.ProcessEmotion(witness, target, status);
     }
     #endregion
 }

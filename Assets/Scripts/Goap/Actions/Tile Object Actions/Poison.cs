@@ -33,8 +33,8 @@ public class Poison : GoapAction {
         actor.logComponent.AppendCostLog(costLog);
         return cost;
     }
-    public override string ReactionToActor(Character witness, ActualGoapNode node) {
-        string response = base.ReactionToActor(witness, node);
+    public override string ReactionToActor(Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionToActor(witness, node, status);
         Character actor = node.actor;
         IPointOfInterest target = node.poiTarget;
         List<Character> targetObjectOwners = null;
@@ -51,15 +51,15 @@ public class Poison : GoapAction {
 
         if (targetObjectOwners != null && targetObjectOwners.Contains(witness)) {
             if (witness.traitContainer.HasTrait("Coward")) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor, status);
             } else {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor);
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, actor);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Threatened, witness, actor, status);
             }
 
             if (witness.relationshipContainer.IsFriendsWith(actor) || witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.RELATIVE)) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor);
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Betrayal, witness, actor, status);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status);
             }
         } else {
             bool isTargetObjectOwnedByFriend = false;
@@ -74,19 +74,19 @@ public class Poison : GoapAction {
             }
             if (isTargetObjectOwnedByFriend) {
                 if (witness.traitContainer.HasTrait("Coward")) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Fear, witness, actor, status);
                 } else {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor);
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status);
                     if (witness.relationshipContainer.IsFriendsWith(actor) || witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.RELATIVE)) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor, status);
                     }
                 }
             } else {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status);
                 if (witness.relationshipContainer.IsFriendsWith(actor) || witness.relationshipContainer.HasRelationshipWith(actor, RELATIONSHIP_TYPE.LOVER, RELATIONSHIP_TYPE.AFFAIR, RELATIONSHIP_TYPE.RELATIVE)) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor);
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor, status);
                 }
             }
         }

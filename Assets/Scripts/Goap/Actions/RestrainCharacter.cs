@@ -41,26 +41,26 @@ public class RestrainCharacter : GoapAction {
         }
         return goapActionInvalidity;
     }
-    public override string ReactionToActor(Character witness, ActualGoapNode node) {
-        string response = base.ReactionToActor(witness, node);
+    public override string ReactionToActor(Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionToActor(witness, node, status);
         Character actor = node.actor;
         IPointOfInterest target = node.poiTarget;
         if(target is Character) {
             Character targetCharacter = target as Character;
             if (targetCharacter.traitContainer.HasTrait("Criminal")) {
                 if (witness.relationshipContainer.IsFriendsWith(targetCharacter)) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Sadness, witness, actor);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Sadness, witness, actor, status);
                 } else {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Approval, witness, actor, status);
                 }
             } else {
                 if (!witness.relationshipContainer.IsEnemiesWith(targetCharacter) && !witness.IsHostileWith(targetCharacter)) {
                     CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.MISDEMEANOR);
                     if (!witness.traitContainer.HasTrait("Psychopath") && witness.relationshipContainer.IsFriendsWith(targetCharacter)) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, actor);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, witness, actor, status);
                         if(UnityEngine.Random.Range(0, 100) < 20) {
                             if (!witness.traitContainer.HasTrait("Diplomatic")) {
-                                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor);
+                                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, witness, actor, status);
                             }
                         }
                     }
@@ -69,43 +69,43 @@ public class RestrainCharacter : GoapAction {
         }
         return response;
     }
-    public override string ReactionToTarget(Character witness, ActualGoapNode node) {
-        string response = base.ReactionToTarget(witness, node);
+    public override string ReactionToTarget(Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionToTarget(witness, node, status);
         Character actor = node.actor;
         IPointOfInterest target = node.poiTarget;
         if (target is Character) {
             Character targetCharacter = target as Character;
             if (targetCharacter.traitContainer.HasTrait("Criminal")) {
                 if (!witness.traitContainer.HasTrait("Psychopath") && witness.relationshipContainer.IsFriendsWith(targetCharacter)) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, targetCharacter);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, targetCharacter, status);
                 } else if (UnityEngine.Random.Range(0, 100) < 30 && !witness.traitContainer.HasTrait("Diplomatic")) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, targetCharacter);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, targetCharacter, status);
                 }
             } else {
                 string opinionLabel = witness.relationshipContainer.GetOpinionLabel(targetCharacter);
                 if(opinionLabel == OpinionComponent.Acquaintance) {
                     if (!witness.traitContainer.HasTrait("Psychopath") && UnityEngine.Random.Range(0, 2) == 0) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, targetCharacter);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Concern, witness, targetCharacter, status);
                     }
                 } else if (opinionLabel == OpinionComponent.Enemy || opinionLabel == OpinionComponent.Rival) {
                     if (!witness.traitContainer.HasTrait("Diplomatic")) {
-                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, targetCharacter);
+                        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Scorn, witness, targetCharacter, status);
                     }
                 }
             }
         }
         return response;
     }
-    public override string ReactionOfTarget(ActualGoapNode node) {
-        string response = base.ReactionOfTarget(node);
+    public override string ReactionOfTarget(ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionOfTarget(node, status);
         Character actor = node.actor;
         IPointOfInterest target = node.poiTarget;
         if (target is Character) {
             Character targetCharacter = target as Character;
             if (!targetCharacter.IsHostileWith(actor)) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, targetCharacter, actor);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Resentment, targetCharacter, actor, status);
                 if (targetCharacter.traitContainer.HasTrait("Hothead") || UnityEngine.Random.Range(0, 100) < 35) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, targetCharacter, actor);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, targetCharacter, actor, status);
                 }
             }
         }

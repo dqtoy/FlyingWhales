@@ -78,29 +78,29 @@ public class Steal : GoapAction {
         GoapActionInvalidity goapActionInvalidity = new GoapActionInvalidity(isInvalid, stateName);
         return goapActionInvalidity;
     }
-    public override string ReactionToActor(Character witness, ActualGoapNode node) {
-        string response = base.ReactionToActor(witness, node);
+    public override string ReactionToActor(Character witness, ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionToActor(witness, node, status);
         Character actor = node.actor;
         IPointOfInterest target = node.poiTarget;
 
-        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor);
+        response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disapproval, witness, actor, status);
         if (witness.relationshipContainer.IsFriendsWith(actor)) {
-            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor);
-            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor);
+            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, witness, actor, status);
+            response += CharacterManager.Instance.TriggerEmotion(EMOTION.Shock, witness, actor, status);
         }
         CrimeManager.Instance.ReactToCrime(witness, actor, node, node.associatedJobType, CRIME_TYPE.MISDEMEANOR);
         return response;
     }
-    public override string ReactionOfTarget(ActualGoapNode node) {
-        string response = base.ReactionOfTarget(node);
+    public override string ReactionOfTarget(ActualGoapNode node, REACTION_STATUS status) {
+        string response = base.ReactionOfTarget(node, status);
         Character actor = node.actor;
         IPointOfInterest target = node.poiTarget;
         if(target is TileObject) {
             Character targetCharacter = (target as TileObject).carriedByCharacter;
             if(targetCharacter != null) {
-                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, targetCharacter, actor);
+                response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, targetCharacter, actor, status);
                 if (targetCharacter.traitContainer.HasTrait("Hothead") || UnityEngine.Random.Range(0, 100) < 35) {
-                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, targetCharacter, actor);
+                    response += CharacterManager.Instance.TriggerEmotion(EMOTION.Anger, targetCharacter, actor, status);
                 }
                 CrimeManager.Instance.ReactToCrime(targetCharacter, actor, node, node.associatedJobType, CRIME_TYPE.MISDEMEANOR);
             }
