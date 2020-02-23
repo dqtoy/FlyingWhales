@@ -84,7 +84,7 @@ public class GenericTileObject : TileObject {
             if (source != null && source is Character) {
                 responsibleCharacter = source as Character;
             }
-            CombatManager.Instance.ApplyElementalDamage(elementalDamageType, this, responsibleCharacter);
+            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter);
         }
         if (currentHP <= 0) {
             //floor has been destroyed

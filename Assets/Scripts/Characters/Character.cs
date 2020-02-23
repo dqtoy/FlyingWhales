@@ -2890,7 +2890,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
                     if (source is Character) {
                         responsibleCharacter = source as Character;
                     }
-                    CombatManager.Instance.ApplyElementalDamage(elementalDamageType, this, responsibleCharacter);
+                    CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter);
                 }
             }
         }

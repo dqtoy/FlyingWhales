@@ -410,7 +410,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             if (source is Character) {
                 responsibleCharacter = source as Character;
             }
-            CombatManager.Instance.ApplyElementalDamage(elementalDamageType, this, responsibleCharacter);
+            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter);
             // }
         }
         if (currentHP == 0) {

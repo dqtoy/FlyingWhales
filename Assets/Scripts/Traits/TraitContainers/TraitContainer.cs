@@ -88,12 +88,13 @@ namespace Traits {
                 shouldAddTrait = ProcessBeforeSuccessfullyAddingElementalTrait(addTo, traitName);
                 if (shouldAddTrait) {
                     Trait trait = null;
-                    if (TraitAddition(addTo, traitName, out trait, characterResponsible, gainedFromDoing)) {
+                    shouldAddTrait = TraitAddition(addTo, traitName, out trait, characterResponsible, gainedFromDoing);
+                    if (shouldAddTrait) {
                         ProcessAfterSuccessfulAddingElementalTrait(addTo, trait);
                     }
                 }
             }
-            return false;
+            return shouldAddTrait;
         }
         private bool TryAddElementalTrait(ITraitable addTo, string traitName, out Trait trait, Character characterResponsible, ActualGoapNode gainedFromDoing) {
             trait = null;
@@ -101,12 +102,13 @@ namespace Traits {
             if (shouldAddTrait) {
                 shouldAddTrait = ProcessBeforeSuccessfullyAddingElementalTrait(addTo, traitName);
                 if (shouldAddTrait) {
-                    if (TraitAddition(addTo, traitName, out trait, characterResponsible, gainedFromDoing)) {
+                    shouldAddTrait = TraitAddition(addTo, traitName, out trait, characterResponsible, gainedFromDoing);
+                    if (shouldAddTrait) {
                         ProcessAfterSuccessfulAddingElementalTrait(addTo, trait);
                     }
                 }
             }
-            return false;
+            return shouldAddTrait;
         }
         //Returns true or false, if trait should be added or not
         private bool ProcessBeforeAddingElementalTrait(ITraitable addTo, string traitName) {
@@ -188,8 +190,6 @@ namespace Traits {
                     RemoveTraitAndStacks(traitable, trait);
                     AddTrait(traitable, "Frozen");
                 }
-            } else if (trait.name == "Zapped") {
-                CombatManager.Instance.ChainElectricEffect(traitable);
             }
         }
         private bool TraitAddition(ITraitable addTo, string traitName, Character characterResponsible, ActualGoapNode gainedFromDoing) {

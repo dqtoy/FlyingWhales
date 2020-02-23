@@ -17,14 +17,20 @@ public class CombatManager : MonoBehaviour {
         Instance = this;
     }
 
-    public void ApplyElementalDamage(ELEMENTAL_TYPE elementalType, ITraitable target, Character responsibleCharacter = null) { //, bool shouldSetBurningSource = true
+    public void ApplyElementalDamage(int damage, ELEMENTAL_TYPE elementalType, ITraitable target, Character responsibleCharacter = null) { //, bool shouldSetBurningSource = true
         ElementalDamageData elementalDamage = ScriptableObjectsManager.Instance.GetElementalDamageData(elementalType);
         if (target is IDamageable) {
             CreateHitEffectAt(target as IDamageable, elementalType);
         }
         if (!string.IsNullOrEmpty(elementalDamage.addedTraitName)) {
             //Trait trait = null;
-            target.traitContainer.AddTrait(target, elementalDamage.addedTraitName, responsibleCharacter); //, out trait
+            bool hasSuccessfullyAdded = target.traitContainer.AddTrait(target, elementalDamage.addedTraitName, responsibleCharacter); //, out trait
+            if (hasSuccessfullyAdded) {
+                if (elementalType == ELEMENTAL_TYPE.Electric) {
+                    ChainElectricDamage(target, damage);
+                }
+            }
+
             //if (shouldSetBurningSource && elementalDamage.addedTraitName == "Burning" && trait != null) {
             //    if(target.gridTileLocation != null) {
             //        Burning burning = trait as Burning;
@@ -132,7 +138,7 @@ public class CombatManager : MonoBehaviour {
         PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
         log.AddLogToInvolvedObjects();
     }
-    public void ChainElectricEffect(ITraitable traitable) { 
+    public void ChainElectricDamage(ITraitable traitable, int damage) {
         List<ITraitable> traitables = new List<ITraitable>();
         if (traitable.gridTileLocation != null) {
             List<LocationGridTile> tiles = traitable.gridTileLocation.GetTilesInRadius(1, includeTilesInDifferentStructure: true);
@@ -143,11 +149,11 @@ public class CombatManager : MonoBehaviour {
                 }
             }
             if (traitables.Count > 0) {
-                StartCoroutine(ChainElectricCoroutine(traitables));
+                StartCoroutine(ChainElectricDamageCoroutine(traitables, damage));
             }
         }
     }
-    private IEnumerator ChainElectricCoroutine(List<ITraitable> traitables) {
+    private IEnumerator ChainElectricDamageCoroutine(List<ITraitable> traitables, int damage) {
         for (int i = 0; i < traitables.Count; i++) {
             while (GameManager.Instance.isPaused) {
                 //Pause coroutine while game is paused
@@ -156,7 +162,7 @@ public class CombatManager : MonoBehaviour {
             }
             yield return new WaitForSeconds(0.1f);
             if (!traitables[i].traitContainer.HasTrait("Zapped")) {
-                traitables[i].traitContainer.AddTrait(traitables[i], "Zapped");
+                traitables[i].AdjustHP(damage, ELEMENTAL_TYPE.Electric, true);
             }
         }
     }

@@ -24,12 +24,12 @@ public class LocustSwarmTileObject : MovingTileObject {
         currentHP += amount;
         currentHP = Mathf.Clamp(currentHP, 0, maxHP);
         if (amount <= 0 && source != null) {
-            CombatManager.Instance.CreateHitEffectAt(this, elementalDamageType);
+            //CombatManager.Instance.CreateHitEffectAt(this, elementalDamageType);
             Character responsibleCharacter = null;
             if (source is Character character) {
                 responsibleCharacter = character;
             }
-            CombatManager.Instance.ApplyElementalDamage(elementalDamageType, this, responsibleCharacter);
+            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter);
             
         }
         if (currentHP == 0) {

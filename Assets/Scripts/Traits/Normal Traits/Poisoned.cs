@@ -94,7 +94,7 @@ namespace Traits {
         public override void OnTickStarted() {
             base.OnTickStarted();
             if(characterOwner != null) {
-                characterOwner.AdjustHP(-Mathf.RoundToInt(characterOwner.maxHP * (0.5f * characterOwner.traitContainer.stacks[name])), ELEMENTAL_TYPE.Normal);
+                characterOwner.AdjustHP(-Mathf.RoundToInt(characterOwner.maxHP * (0.5f * characterOwner.traitContainer.stacks[name])), ELEMENTAL_TYPE.Normal, true);
             }
         }
         #endregion

@@ -22,7 +22,7 @@ public class StructureWallObject : MapObject<StructureWallObject>, ITraitable {
     public StructureWallObject(LocationStructure structure, WallVisual visual) {
         name = $"Wall of {structure}";
         _visual = visual;
-        maxHP = 100;
+        maxHP = 500;
         currentHP = maxHP;
         madeOf = RESOURCE.WOOD;
         CreateTraitContainer();
@@ -47,7 +47,7 @@ public class StructureWallObject : MapObject<StructureWallObject>, ITraitable {
             if (source != null && source is Character) {
                 responsibleCharacter = source as Character;
             }
-            CombatManager.Instance.ApplyElementalDamage(elementalDamageType, this, responsibleCharacter);
+            CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter);
         }
         if (currentHP <= 0) {
             //wall has been destroyed
