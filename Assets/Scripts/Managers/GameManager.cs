@@ -468,12 +468,12 @@ public class GameManager : MonoBehaviour {
             prefab = particleEffectsDictionary[particle];
         } else {
             Debug.LogError("No prefab for particle effect: " + particle.ToString());
-            return prefab;
+            return null;
         }
         if (poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
             Character character = poi as Character;
             if (!character.marker) {
-                return go;
+                return null;
             }
             Transform parent = character.marker.visualsParent.transform;
             if (!allowRotation) {
@@ -484,7 +484,7 @@ public class GameManager : MonoBehaviour {
             go.SetActive(true);
         } else {
             if (poi.gridTileLocation == null) {
-                return go;
+                return null;
             }
             go = ObjectPoolManager.Instance.InstantiateObjectFromPool(prefab.name, Vector3.zero, Quaternion.identity, poi.gridTileLocation.parentMap.objectsParent);
             go.transform.localPosition = poi.gridTileLocation.centeredLocalLocation;

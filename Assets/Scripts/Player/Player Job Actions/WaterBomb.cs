@@ -31,6 +31,7 @@ public class WaterBombData : SpellData {
             LocationGridTile tile = tiles[i];
             tile.PerformActionOnTraitables(MakeTraitbleWet);
         }
+        GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Water_Bomb);
     }
     private void MakeTraitbleWet(ITraitable traitable) {
         traitable.traitContainer.AddTrait(traitable, "Wet");

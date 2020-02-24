@@ -101,7 +101,7 @@ namespace Traits {
         public override bool IsTangible() {
             return true;
         }
-        public override string GetTestingData() {
+        public override string GetTestingData(ITraitable traitable) {
             if (sourceOfBurning != null) {
                 return sourceOfBurning.ToString();
             }

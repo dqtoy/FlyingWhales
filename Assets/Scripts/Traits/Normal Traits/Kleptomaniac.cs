@@ -45,7 +45,7 @@ namespace Traits {
             base.OnReturnToLife(character);
             Messenger.AddListener(Signals.DAY_STARTED, CheckForClearNoItemsList);
         }
-        public override string GetTestingData() {
+        public override string GetTestingData(ITraitable traitable) {
             string testingData = string.Empty;
             testingData += "Known character'S with no items: \n";
             for (int i = 0; i < noItemCharacters.Count; i++) {

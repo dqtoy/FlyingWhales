@@ -131,7 +131,7 @@ public class ElevationStructureGeneration : MapGenerationComponent {
 		Assert.IsNotNull(cellMap, $"There was no cellmap generated for elevation structure {elevationStructure.ToString()}");
 		
 		CellularAutomataGenerator.DrawMap(tileMap, cellMap, null, 
-			InnerMapManager.Instance.assetManager.shoreTle, 
+			InnerMapManager.Instance.assetManager.shoreTile, 
 			null, (locationGridTile) => SetAsWater(locationGridTile, elevationStructure));
 
 		//create water wells

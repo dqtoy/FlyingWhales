@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 
 namespace Inner_Maps {
@@ -39,7 +40,7 @@ namespace Inner_Maps {
 
         [Header("Water Tiles")] 
         public TileBase waterTle;
-        public TileBase shoreTle;
+        public TileBase shoreTile;
 
         [Header("Cave Tiles")] 
         public TileBase caveWallTile;
@@ -62,6 +63,9 @@ namespace Inner_Maps {
         public TileBase woodFloorTile;
         public TileBase stoneFloorTile;
 
+        [Header("Other Tiles")] 
+        public TileBase poisonRuleTile;
+
         public TileBase GetOutsideFloorTile(ILocation location) {
             switch (location.coreTile.biomeType) {
                 case BIOMES.SNOW:
@@ -83,6 +87,36 @@ namespace Inner_Maps {
                     return demonicWallTile;
                 default:
                     return null;
+            }
+        }
+        public TileBase GetFlowerTile(ILocation location) {
+            switch (location.coreTile.biomeType) {
+                case BIOMES.SNOW:
+                case BIOMES.TUNDRA:
+                    return snowFlowerTile;
+                case BIOMES.DESERT:
+                    return desertFlowerTile;
+                default:
+                    return flowerTile;
+            }
+        }
+        public TileBase GetGarbTile(ILocation location) {
+            switch (location.coreTile.biomeType) {
+                case BIOMES.SNOW:
+                case BIOMES.TUNDRA:
+                    return snowGarbTile;
+                case BIOMES.DESERT:
+                    return desertGarbTile;
+                default:
+                    return randomGarbTile;
+            }
+        }
+        public TileBase GetRockTile(ILocation location) {
+            switch (location.coreTile.biomeType) {
+                case BIOMES.DESERT:
+                    return desertRockTile;
+                default:
+                    return rockTile;
             }
         }
     }

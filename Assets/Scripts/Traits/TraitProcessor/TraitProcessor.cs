@@ -58,6 +58,8 @@ namespace Traits {
                 trait.AddCharacterResponsibleForTrait(characterResponsible);
                 trait.OnStackTrait(traitable);
                 return true;
+            } else {
+                trait.OnStackTraitAddedButStackIsAtLimit(traitable);
             }
             return false;
         }

@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using UnityEngine;
 
 namespace Traits {
@@ -26,26 +27,46 @@ namespace Traits {
             addedTo.traitContainer.RemoveTraitAndStacks(addedTo, "Overheating");
             if (addedTo is Character character) {
                 character.needsComponent.AdjustComfortDecreaseRate(2f);
-                _statusIcon = character.marker.AddStatusIcon(this.name);
-            } else if (addedTo is TileObject tileObject) {
-                if (tileObject is GenericTileObject) {
-                    tileObject.gridTileLocation.SetDefaultTileColor(Color.blue);
-                    tileObject.gridTileLocation.HighlightTile(Color.blue);
-                } else {
-                  //add water icon above object
-                  _statusIcon = addedTo.mapObjectVisual?.AddStatusIcon(this.name);
-                }
             }
+            UpdateVisualsOnAdd(addedTo);
+        }
+        public override void OnStackTrait(ITraitable addedTo) {
+            base.OnStackTrait(addedTo);
+            UpdateVisualsOnAdd(addedTo);
+        }
+        public override void OnStackTraitAddedButStackIsAtLimit(ITraitable addedTo) {
+            base.OnStackTraitAddedButStackIsAtLimit(addedTo);
+            UpdateVisualsOnAdd(addedTo);
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
             if (removedFrom is Character character) {
                 character.needsComponent.AdjustComfortDecreaseRate(-2f);
+            }
+            UpdateVisualsOnRemove(removedFrom);
+        }
+        #endregion
+
+        private void UpdateVisualsOnAdd(ITraitable addedTo) {
+            if (addedTo is Character character && _statusIcon == null) {
+                _statusIcon = character.marker.AddStatusIcon(this.name);
+            } else if (addedTo is TileObject tileObject) {
+                if (tileObject is GenericTileObject) {
+                    tileObject.gridTileLocation.parentMap.SetUpperGroundVisual(tileObject.gridTileLocation.localPlace, 
+                        InnerMapManager.Instance.assetManager.shoreTile, 0.5f);
+                } else {
+                    //add water icon above object
+                    _statusIcon = addedTo.mapObjectVisual?.AddStatusIcon(this.name);
+                }
+            }
+        }
+        private void UpdateVisualsOnRemove(ITraitable removedFrom) {
+            if (removedFrom is Character) {
                 ObjectPoolManager.Instance.DestroyObject(_statusIcon.gameObject);
             } else if (removedFrom is TileObject tileObject) {
                 if (tileObject is GenericTileObject) {
-                    tileObject.gridTileLocation.SetDefaultTileColor(Color.white);
-                    tileObject.gridTileLocation.UnhighlightTile();
+                    tileObject.gridTileLocation.parentMap.SetUpperGroundVisual(tileObject.gridTileLocation.localPlace, 
+                        InnerMapManager.Instance.assetManager.shoreTile);
                 } else {
                     if (_statusIcon != null) {
                         ObjectPoolManager.Instance.DestroyObject(_statusIcon.gameObject);    
@@ -53,8 +74,6 @@ namespace Traits {
                 }
             }
         }
-        #endregion
-
 
     }
 }

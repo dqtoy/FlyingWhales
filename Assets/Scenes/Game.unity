@@ -29754,7 +29754,7 @@ MonoBehaviour:
   bloodPuddleEffectPrefab: {fileID: 9033442248038542139, guid: 46622b224b908ae4ba45c8bfcaf2c617,
     type: 3}
   particleEffectsDictionary:
-    m_keys: 0100000002000000030000000400000005000000060000000700000008000000090000000a0000000b0000000c000000
+    m_keys: 0100000002000000030000000400000005000000060000000700000008000000090000000a0000000b0000000d0000000e000000
     m_values:
     - {fileID: 5106000538713877668, guid: 50d896df8d440474a97233e68f30bf8a, type: 3}
     - {fileID: 1979527227019656, guid: 46523c9c550ae58489dc81eb94b1053f, type: 3}
@@ -29767,7 +29767,8 @@ MonoBehaviour:
     - {fileID: 2063014073141233210, guid: 7f78c1dc3b748814ea4ea87b93accaaa, type: 3}
     - {fileID: 2259743240837992021, guid: cb34734c8176ffe458af2dda64dec940, type: 3}
     - {fileID: 8128764208438249840, guid: 724bef14783280c4baf4efa6b3006be0, type: 3}
-    - {fileID: 1000221783270258, guid: 02139aad62306a44382bd2e5d3a95832, type: 3}
+    - {fileID: 5392158377871674795, guid: 0b6340532f77dab468855b0a9c420346, type: 3}
+    - {fileID: 8083695880609710422, guid: 4e70da13f35936047bdfa6de6d2328fc, type: 3}
   pauseTickEnded2: 0
   lastProgressionBeforePausing: 
 --- !u!114 &557822220
@@ -87008,7 +87009,7 @@ MonoBehaviour:
       - {fileID: 11400000, guid: 29e90fbf3a7cfd04689a17fc70f1ba31, type: 2}
       - {fileID: 11400000, guid: 1e1bc1c76704b2e4b954a92e5612236f, type: 2}
   waterTle: {fileID: 11400000, guid: c0b31ac02d9ac8849818798789e80415, type: 2}
-  shoreTle: {fileID: 11400000, guid: e83a6083d3b5e404ab91ccf1bb8a0c5a, type: 2}
+  shoreTile: {fileID: 11400000, guid: e83a6083d3b5e404ab91ccf1bb8a0c5a, type: 2}
   caveWallTile: {fileID: 11400000, guid: 0e76310f7d566d54c98f2d850927ab6d, type: 2}
   caveGroundTile: {fileID: 11400000, guid: 2403de5724c5b4247bc3fa5bfd41f6aa, type: 2}
   monsterLairWallTile: {fileID: 11400000, guid: 2f5c13fc89dfc3947af9fc9012811c89,
@@ -87028,6 +87029,7 @@ MonoBehaviour:
   demonicWallTile: {fileID: 11400000, guid: 6d573d413fddb9645b4619987a76240e, type: 2}
   woodFloorTile: {fileID: 11400000, guid: 4c0a1b3069ff1ab4eba18e4b8362b997, type: 2}
   stoneFloorTile: {fileID: 11400000, guid: 016c45b2f2cc25a4c870fcfb895e0177, type: 2}
+  poisonRuleTile: {fileID: 11400000, guid: df7f2aa1c99588d43a2c8200d6ae6c77, type: 2}
 --- !u!1 &1538653383
 GameObject:
   m_ObjectHideFlags: 0
