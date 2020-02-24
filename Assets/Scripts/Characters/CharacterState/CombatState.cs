@@ -77,7 +77,7 @@ public class CombatState : CharacterState {
         }
     }
     protected override void StartState() {
-        stateComponent.character.DecreaseCanWitness();
+        //stateComponent.character.DecreaseCanWitness();
         stateComponent.character.marker.ShowHPBar();
         stateComponent.character.marker.SetAnimationBool("InCombat", true);
         //Messenger.Broadcast(Signals.CANCEL_CURRENT_ACTION, stateComponent.character, "combat");
@@ -103,7 +103,7 @@ public class CombatState : CharacterState {
         stateComponent.character.marker.pathfindingAI.ClearAllCurrentPathData();
         stateComponent.character.marker.SetHasFleePath(false);
 
-        stateComponent.character.IncreaseCanWitness();
+        //stateComponent.character.IncreaseCanWitness();
         stateComponent.character.marker.StopCoroutine(CheckIfCurrentHostileIsInRange());
 
         stateComponent.character.marker.HideHPBar();

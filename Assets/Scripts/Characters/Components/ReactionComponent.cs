@@ -27,6 +27,9 @@ public class ReactionComponent {
             //Minions or Summons cannot react to its own traits
             return;
         }
+        if (owner.isInCombat) {
+            return;
+        }
         debugLog += "\n-Character will loop through all his/her traits to react to Target";
         for (int i = 0; i < owner.traitContainer.allTraits.Count; i++) {
             debugLog += $"\n - {owner.traitContainer.allTraits[i].name}";
@@ -50,6 +53,9 @@ public class ReactionComponent {
         return string.Empty;
     }
     public void ReactTo(Interrupt interrupt, Character actor, IPointOfInterest target, REACTION_STATUS status) {
+        if (owner.isInCombat) {
+            return;
+        }
         if (owner.minion != null || owner is Summon) {
             //Minions or Summons cannot react to interrupts
             return;
@@ -103,6 +109,9 @@ public class ReactionComponent {
         }
     }
     private void ReactToWitnessedAction(ActualGoapNode node) {
+        if (owner.isInCombat) {
+            return;
+        }
         if (owner.faction != node.actor.faction && owner.faction.IsHostileWith(node.actor.faction)) {
             //Must not react if the faction of the actor of witnessed action is hostile with the faction of the witness
             return;
@@ -249,8 +258,8 @@ public class ReactionComponent {
                 debugLog += "\n-Target is dead";
                 debugLog += "\n-Do nothing";
             }
-        } else {
-            debugLog += "\n-Target is not hostile";
+        } else if (!owner.isInCombat) {
+            debugLog += "\n-Target is not hostile and Character is not in combat";
             if (owner.minion == null && !(owner is Summon) && !IsPOICurrentlyTargetedByAPerformingAction(targetCharacter)) {
                 debugLog += "\n-Character is not minion and not summon and Target is not being targeted by an action, continue reaction";
                 if (!targetCharacter.isDead) {
@@ -376,7 +385,7 @@ public class ReactionComponent {
             return;
         }
         debugLog += $"{owner.name} is reacting to {targetTileObject.nameWithID}";
-        if (!owner.hasSeenFire) {
+        if (!owner.isInCombat && !owner.hasSeenFire) {
             if (targetTileObject.traitContainer.HasTrait("Burning")
                 && targetTileObject.gridTileLocation != null
                 && targetTileObject.gridTileLocation.IsPartOfSettlement(owner.homeSettlement)
