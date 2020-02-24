@@ -66,7 +66,7 @@ namespace Traits {
             } else if (removedFrom is TileObject tileObject) {
                 if (tileObject is GenericTileObject) {
                     tileObject.gridTileLocation.parentMap.SetUpperGroundVisual(tileObject.gridTileLocation.localPlace, 
-                        InnerMapManager.Instance.assetManager.shoreTile);
+                        null);
                 } else {
                     if (_statusIcon != null) {
                         ObjectPoolManager.Instance.DestroyObject(_statusIcon.gameObject);    
