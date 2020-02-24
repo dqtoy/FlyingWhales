@@ -58,7 +58,7 @@ public class CombatComponent {
                     } else {
                         debugLog += "\n-FLIGHT";
                         owner.logComponent.PrintLogIfActive(debugLog);
-                        Flight(target);
+                        Flight(target, "got scared");
                     }
                 } else {
                     debugLog += "\n-Character is combatant";
@@ -87,7 +87,7 @@ public class CombatComponent {
                         } else {
                             debugLog += "\n-FLIGHT";
                             owner.logComponent.PrintLogIfActive(debugLog);
-                            Flight(target);
+                            Flight(target, "got scared");
                         }
                     }
                 }

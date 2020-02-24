@@ -3733,7 +3733,7 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
             }
         }
     }
-    public void PickUpItem(TileObject item, bool changeCharacterOwnership = true) {
+    public void PickUpItem(TileObject item, bool changeCharacterOwnership = false) {
         if (item.isBeingCarriedBy != null) {
             item.isBeingCarriedBy.UnobtainItem(item);
         }

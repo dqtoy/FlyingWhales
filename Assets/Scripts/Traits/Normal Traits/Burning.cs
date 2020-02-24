@@ -12,6 +12,7 @@ namespace Traits {
         private GameObject burningEffect;
 
         public BurningSource sourceOfBurning { get; private set; }
+        private List<ITraitable> _burningSpreadChoices;
 
         public Burning() {
             name = "Burning";
@@ -20,6 +21,7 @@ namespace Traits {
             effect = TRAIT_EFFECT.NEGATIVE;
             ticksDuration = GameManager.Instance.GetTicksBasedOnHour(1);
             moodEffect = -25;
+            _burningSpreadChoices = new List<ITraitable>();
             //effects = new List<TraitEffect>();
         }
 
@@ -158,22 +160,24 @@ namespace Traits {
                 //Temporary fix only, if the burning object has no longer have a tile location (presumably destroyed), spreading of fire should not trigger, and remove listener for per tick
                 return;
             }
-            if (Random.Range(0, 100) < 10) { //5
-                //TODO: CAN BE OPTIMIZED?
-                List<ITraitable> choices = new List<ITraitable>();
-                LocationGridTile origin = owner.gridTileLocation;
-                choices.AddRange(origin.GetTraitablesOnTileWithTrait("Flammable"));
-                List<LocationGridTile> neighbours = origin.FourNeighbours();
-                for (int i = 0; i < neighbours.Count; i++) {
-                    choices.AddRange(neighbours[i].GetTraitablesOnTileWithTrait("Flammable"));
-                }
-                choices = choices.Where(x => !x.traitContainer.HasTrait("Burning", "Burnt", "Wet", "Fireproof")).ToList();
-                if (choices.Count > 0) {
-                    ITraitable chosen = choices[Random.Range(0, choices.Count)];
-                    chosen.traitContainer.AddTrait(chosen, "Burning", out var trait);
-                    if(trait != null) {
-                        (trait as Burning).SetSourceOfBurning(sourceOfBurning, chosen);
-                    }
+            //TODO: CAN BE OPTIMIZED?
+            _burningSpreadChoices.Clear();
+            LocationGridTile origin = owner.gridTileLocation;
+            List<LocationGridTile> affectedTiles = origin.GetTilesInRadius(1, includeCenterTile: true, includeTilesInDifferentStructure: true);
+            for (int i = 0; i < affectedTiles.Count; i++) {
+                _burningSpreadChoices.AddRange(affectedTiles[i].GetTraitablesOnTile());
+            }
+            //choices.AddRange(origin.GetTraitablesOnTileWithTrait("Flammable"));
+            //List<LocationGridTile> neighbours = origin.FourNeighbours();
+            //for (int i = 0; i < neighbours.Count; i++) {
+            //    choices.AddRange(neighbours[i].GetTraitablesOnTileWithTrait("Flammable"));
+            //}
+            //choices = choices.Where(x => !x.traitContainer.HasTrait("Burning", "Burnt", "Wet", "Fireproof")).ToList();
+            if (_burningSpreadChoices.Count > 0) {
+                ITraitable chosen = _burningSpreadChoices[Random.Range(0, _burningSpreadChoices.Count)];
+                chosen.traitContainer.AddTrait(chosen, "Burning", out var trait);
+                if (trait != null) {
+                    (trait as Burning).SetSourceOfBurning(sourceOfBurning, chosen);
                 }
             }
 

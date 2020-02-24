@@ -68,7 +68,7 @@ namespace Traits {
         }
         public override void OnTickStarted() {
             base.OnTickStarted();
-            characterOwner?.AdjustHP(-Mathf.RoundToInt(characterOwner.maxHP * (0.5f * characterOwner.traitContainer.stacks[name])), 
+            characterOwner?.AdjustHP(-Mathf.RoundToInt(characterOwner.maxHP * (0.005f * characterOwner.traitContainer.stacks[name])), 
                 ELEMENTAL_TYPE.Normal, true);
         }
         #endregion
