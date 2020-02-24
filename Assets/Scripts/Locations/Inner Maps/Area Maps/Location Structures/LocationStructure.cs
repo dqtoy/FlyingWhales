@@ -26,6 +26,7 @@ namespace Inner_Maps.Location_Structures {
         public List<LocationGridTile> tiles { get; private set; }
         public LinkedList<LocationGridTile> unoccupiedTiles { get; private set; }
         public bool isInterior { get; private set; }
+        private bool _hasBeenDestroyed;
 
         #region getters
         public virtual bool isDwelling => false;
@@ -145,7 +146,7 @@ namespace Inner_Maps.Location_Structures {
                     }
                 }
                 if (poi.gridTileLocation != null) {
-                    //Debug.Log("Removed " + poi.ToString() + " from " + poi.gridTileLocation.ToString() + " at " + this.ToString());
+                    Debug.Log("Removed " + poi.ToString() + " from " + poi.gridTileLocation.ToString() + " at " + this.ToString());
                     if(poi.poiType == POINT_OF_INTEREST_TYPE.CHARACTER) {
                         //location.areaMap.RemoveCharacter(poi.gridTileLocation, poi as Character);
                     } else {
@@ -481,6 +482,9 @@ namespace Inner_Maps.Location_Structures {
 
         #region Destroy
         protected virtual void DestroyStructure() {
+            if (_hasBeenDestroyed) {
+                return;
+            }
             Debug.Log($"{GameManager.Instance.TodayLogString()}{ToString()} was destroyed!");
         
             if (settlementLocation != null) {
@@ -501,9 +505,7 @@ namespace Inner_Maps.Location_Structures {
                 tile.ClearWallObjects();
 
                 tile.SetStructure(transferTo);
-                if (tile.objHere != null) {
-                    RemovePOI(tile.objHere);
-                }
+                tile.objHere?.AdjustHP(-tile.objHere.maxHP, ELEMENTAL_TYPE.Normal);
                 tile.RevertToPreviousGroundVisual();
                 tile.CreateSeamlessEdgesForTile(location.innerMap);
                 tile.SetPreviousGroundVisual(null); //so that the tile will never revert to the structure tile, unless a new structure is put on it.
@@ -516,6 +518,7 @@ namespace Inner_Maps.Location_Structures {
             settlementLocation.RemoveStructure(this);
             Messenger.Broadcast(Signals.STRUCTURE_OBJECT_REMOVED, this, occupiedBuildSpot.spot);
             SetOccupiedBuildSpot(null);
+            _hasBeenDestroyed = true;
         }
         private bool CheckIfStructureDestroyed() {
             //To check if a structure is destroyed, check if 50% of its walls have been destroyed.

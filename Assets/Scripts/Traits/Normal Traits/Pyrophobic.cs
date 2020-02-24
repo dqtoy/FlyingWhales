@@ -17,8 +17,15 @@ namespace Traits {
 
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
-            if (addedTo is Character) {
-                owner = addedTo as Character;
+            if (addedTo is Character character) {
+                owner = character;
+                Messenger.AddListener<BurningSource>(Signals.BURNING_SOURCE_INACTIVE, OnBurningSourceInactive);
+            }
+        }
+        public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
+            base.OnRemoveTrait(removedFrom, removedBy);
+            if (removedFrom is Character) {
+                Messenger.RemoveListener<BurningSource>(Signals.BURNING_SOURCE_INACTIVE, OnBurningSourceInactive);
             }
         }
         public override bool OnSeePOI(IPointOfInterest targetPOI, Character characterThatWillDoJob) {
@@ -31,20 +38,13 @@ namespace Traits {
         public bool AddKnownBurningSource(BurningSource burningSource, IPointOfInterest burningPOI) {
             if (!seenBurningSources.Contains(burningSource)) {
                 seenBurningSources.Add(burningSource);
-                burningSource.AddOnBurningExtinguishedAction(RemoveKnownBurningSource);
-                burningSource.AddOnBurningObjectAddedAction(OnObjectStartedBurning);
-                burningSource.AddOnBurningObjectRemovedAction(OnObjectStoppedBurning);
                 TriggerReactionToFireOnFirstTimeSeeing(burningPOI);
                 return true;
             }
             return false;
         }
-        public void RemoveKnownBurningSource(BurningSource burningSource) {
-            if (seenBurningSources.Remove(burningSource)) {
-                burningSource.RemoveOnBurningExtinguishedAction(RemoveKnownBurningSource);
-                burningSource.RemoveOnBurningObjectAddedAction(OnObjectStartedBurning);
-                burningSource.RemoveOnBurningObjectRemovedAction(OnObjectStoppedBurning);
-            }
+        private void RemoveKnownBurningSource(BurningSource burningSource) {
+            seenBurningSources.Remove(burningSource);
         }
         private void TriggerReactionToFireOnFirstTimeSeeing(IPointOfInterest burningPOI) {
             string debugLog = $"{owner.name} saw a fire for the first time, reduce Happiness by 20, add Anxious status";
@@ -63,12 +63,12 @@ namespace Traits {
             }
             owner.logComponent.PrintLogIfActive(debugLog);
         }
-        private void OnObjectStartedBurning(ITraitable poi) {
-            //owner.marker.AddTerrifyingObject(poi);
+
+        #region Listeners
+        private void OnBurningSourceInactive(BurningSource burningSource) {
+            RemoveKnownBurningSource(burningSource);
         }
-        private void OnObjectStoppedBurning(ITraitable poi) {
-            //owner.marker.RemoveTerrifyingObject(poi);
-        }
+        #endregion
     }
 }
 

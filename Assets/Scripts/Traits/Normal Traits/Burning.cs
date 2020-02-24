@@ -59,7 +59,6 @@ namespace Traits {
                     character.AdjustDoNotRecoverHP(-1);
                 }
             } 
-            sourceOfBurning?.RemoveObjectOnFire(owner);
         }
         public override void OnRemoveTraitBySchedule(ITraitable removedFrom) {
             base.OnRemoveTraitBySchedule(removedFrom);

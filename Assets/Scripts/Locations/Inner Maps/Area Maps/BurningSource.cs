@@ -4,53 +4,28 @@ using Traits;
 
 public class BurningSource {
 
-    public int id { get; private set; }
-    public List<ITraitable> objectsOnFire { get; private set; }
-    public DelegateTypes.OnAllBurningExtinguished onAllBurningExtinguished { get; private set; }
-    public DelegateTypes.OnBurningObjectAdded onBurningObjectAdded { get; private set; }
-    public DelegateTypes.OnBurningObjectRemoved onBurningObjectRemoved { get; private set; }
-
-    private ILocation location;
-
+    public int id { get; }
+    public List<ITraitable> objectsOnFire { get; }
+    public ILocation location { get; }
+    
     public BurningSource(ILocation location) {
         id = UtilityScripts.Utilities.SetID(this);
-        new List<Character>();
         objectsOnFire = new List<ITraitable>();
         this.location = location;
         location.innerMap.AddActiveBurningSource(this);
+        Messenger.AddListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
     }
     public void AddObjectOnFire(ITraitable poi) {
         objectsOnFire.Add(poi);
-        onBurningObjectAdded?.Invoke(poi);
     }
-    public void RemoveObjectOnFire(ITraitable poi) {
+    private void RemoveObjectOnFire(ITraitable poi) {
         if (objectsOnFire.Remove(poi)) {
-            onBurningObjectRemoved?.Invoke(poi);
             if (objectsOnFire.Count == 0) {
-                onAllBurningExtinguished?.Invoke(this);
                 location.innerMap.RemoveActiveBurningSources(this);
+                SetAsInactive();
             }
         }
     }
-    public void AddOnBurningExtinguishedAction(DelegateTypes.OnAllBurningExtinguished action) {
-        onAllBurningExtinguished += action;
-    }
-    public void RemoveOnBurningExtinguishedAction(DelegateTypes.OnAllBurningExtinguished action) {
-        onAllBurningExtinguished -= action;
-    }
-    public void AddOnBurningObjectAddedAction(DelegateTypes.OnBurningObjectAdded action) {
-        onBurningObjectAdded += action;
-    }
-    public void RemoveOnBurningObjectAddedAction(DelegateTypes.OnBurningObjectAdded action) {
-        onBurningObjectAdded -= action;
-    }
-    public void AddOnBurningObjectRemovedAction(DelegateTypes.OnBurningObjectRemoved action) {
-        onBurningObjectRemoved += action;
-    }
-    public void RemoveOnBurningObjectRemovedAction(DelegateTypes.OnBurningObjectRemoved action) {
-        onBurningObjectRemoved -= action;
-    }
-
     public bool HasFireInSettlement(Settlement settlement) {
         for (int i = 0; i < objectsOnFire.Count; i++) {
             ITraitable traitable = objectsOnFire[i];
@@ -60,6 +35,19 @@ public class BurningSource {
         }
         return false;
     }
+
+    private void SetAsInactive() {
+        Messenger.RemoveListener<ITraitable, Trait, Character>(Signals.TRAITABLE_LOST_TRAIT, OnTraitableLostTrait);
+        Messenger.Broadcast(Signals.BURNING_SOURCE_INACTIVE, this);
+    }
+    
+    #region Listeners
+    private void OnTraitableLostTrait(ITraitable traitable, Trait trait, Character removedBy) {
+        if (trait is Burning) {
+            RemoveObjectOnFire(traitable);
+        }
+    }
+    #endregion
     
     public override string ToString() {
         return $"Burning Source {id.ToString()}. Objects: {objectsOnFire.Count.ToString()}";

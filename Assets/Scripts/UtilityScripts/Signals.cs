@@ -28,6 +28,10 @@ public static class Signals {
     /// Parameters: GameObject (Destroyed Object)
     /// </summary>
     public static string POOLED_OBJECT_DESTROYED = "OnPooledObjectDestroyed";
+    /// <summary>
+    /// Parameters: BurningSource
+    /// </summary>
+    public static string BURNING_SOURCE_INACTIVE = "OnBurningSourceInactive";
 
     #region Tiles
     public static string TILE_LEFT_CLICKED = "OnTileLeftClicked"; //Parameters (HexTile clickedTile)

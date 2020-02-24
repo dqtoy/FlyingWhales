@@ -413,7 +413,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
             CombatManager.Instance.ApplyElementalDamage(amount, elementalDamageType, this, responsibleCharacter);
             // }
         }
-        if (currentHP == 0) {
+        if (currentHP <= 0) {
             //object has been destroyed
             Character removed = null;
             if (source is Character character) {

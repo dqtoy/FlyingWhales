@@ -5,13 +5,13 @@ using Inner_Maps;
 using UnityEngine;
 using Traits;
 using UnityEngine.Assertions;
+using UnityEngine.Profiling;
 using UtilityScripts;
 
 public class DouseFireState : CharacterState {
 
     private ITraitable currentTarget;
-    private BurningSource currentTargetSource;
-    public Dictionary<BurningSource, List<ITraitable>> fires;
+    private readonly List<ITraitable> _fires;
 
     private bool isFetchingWater;
     private bool isDousingFire;
@@ -22,7 +22,7 @@ public class DouseFireState : CharacterState {
         //stateCategory = CHARACTER_STATE_CATEGORY.MAJOR;
         duration = 0;
         actionIconString = GoapActionStateDB.Drink_Icon;
-        fires = new Dictionary<BurningSource, List<ITraitable>>();
+        _fires = new List<ITraitable>();
     }
 
     #region Overrides
@@ -114,41 +114,19 @@ public class DouseFireState : CharacterState {
     #endregion
 
     #region Utilities
-    public void OnTraitableGainedTrait(ITraitable traitable, Trait trait) {
+    private void OnTraitableGainedTrait(ITraitable traitable, Trait trait) {
         if (trait is Burning) {
-            Burning burning = trait as Burning;
-            if (fires.ContainsKey(burning.sourceOfBurning) == false) {
-                fires.Add(burning.sourceOfBurning, new List<ITraitable>());
-            }
-            if (!fires[burning.sourceOfBurning].Contains(burning.owner)) {
-                fires[burning.sourceOfBurning].Add(burning.owner);
-                //if (currentTarget != null) {
-                //    //check the distance of the new fire with the current target, if the current target is still nearer, continue dousing that, if not redetermine action
-                //    float originalDistance = Vector2.Distance(stateComponent.character.gridTileLocation.localLocation, currentTarget.gridTileLocation.localLocation);
-                //    float newDistance = Vector2.Distance(stateComponent.character.gridTileLocation.localLocation, burning.owner.gridTileLocation.localLocation);
-                //    if (newDistance < originalDistance) {
-                //        DetermineAction();
-                //    }
-                //} else {
-                //    DetermineAction();
-                //}
+            if (_fires.Contains(traitable) == false) {
+                _fires.Add(traitable);
             }
         }
     }
     private void OnTraitableLostTrait(ITraitable traitable, Trait trait, Character removedBy) {
         if (trait is Burning) {
-            Burning burning = trait as Burning;
-            if (fires.ContainsKey(burning.sourceOfBurning) && fires[burning.sourceOfBurning].Contains(burning.owner)) {
-                fires[burning.sourceOfBurning].Remove(burning.owner);
-                if (fires[burning.sourceOfBurning].Count == 0) {
-                    fires.Remove(burning.sourceOfBurning);
-                }
-                if (currentTarget == burning.owner && removedBy != stateComponent.character) { 
+            if (_fires.Remove(traitable)) {
+                if (currentTarget == traitable && removedBy != stateComponent.character) { 
                     //only redetermine action if burning was removed by something or someone else
                     // currentTarget = null;
-                    DetermineAction();
-                } else if (currentTargetSource == burning.sourceOfBurning) {
-                    // currentTargetSource = null;
                     DetermineAction();
                 }
             }
@@ -161,7 +139,7 @@ public class DouseFireState : CharacterState {
         return !stateComponent.character.traitContainer.HasTrait("Elemental Master");
     }
     private bool StillHasFire() {
-        return fires.Count > 0;
+        return _fires.Count > 0;
     }
     private bool GetWater() {
         if (isFetchingWater) {
@@ -195,35 +173,27 @@ public class DouseFireState : CharacterState {
         if (isDousingFire) {
             return;
         }
+        Profiler.BeginSample("DouseNearestFire");
         ITraitable nearestFire = currentTarget;
         float nearest = 99999f;
         if (nearestFire != null) {
             nearest = Vector2.Distance(stateComponent.character.worldObject.transform.position, currentTarget.worldObject.transform.position);
         }
-        
-        if (currentTargetSource == null || fires.ContainsKey(currentTargetSource) == false) {
-            currentTargetSource = fires.Keys.First();
-        }
-        
-        Assert.IsNotNull(currentTargetSource,
-            $"{stateComponent.character.name} is trying to douse the nearest fire, but could not get a target source. Fire dictionary is \n{CollectionUtilities.GetDictionaryLog(fires)}");
-        
-        for (int i = 0; i < fires[currentTargetSource].Count; i++) {
-            ITraitable currFire = fires[currentTargetSource][i];
+
+        for (int i = 0; i < _fires.Count; i++) {
+            ITraitable currFire = _fires[i];
             float dist = Vector2.Distance(stateComponent.character.worldObject.transform.position, currFire.worldObject.transform.position);
             if (dist < nearest) {
                 nearestFire = currFire;
                 nearest = dist;
             }
         }
-        if (nearestFire != null) {//&& nearestFire != currentTarget
+        if (nearestFire != null) {
             isDousingFire = true;
             currentTarget = nearestFire;
             stateComponent.character.marker.GoTo(nearestFire, DouseFire);
         } 
-        //else if (nearestFire == null) {
-        //    DetermineAction();
-        //}
+        Profiler.EndSample();
     }
     private void DouseFire() {
         currentTarget.traitContainer.RemoveTrait(currentTarget, "Burning", removedBy: this.stateComponent.character);
@@ -241,11 +211,8 @@ public class DouseFireState : CharacterState {
     private bool AddFire(IPointOfInterest poi) {
         Burning burning = poi.traitContainer.GetNormalTrait<Burning>("Burning");
         if (burning != null) {
-            if (!fires.ContainsKey(burning.sourceOfBurning)) {
-                fires.Add(burning.sourceOfBurning, new List<ITraitable>());
-            }
-            if (!fires[burning.sourceOfBurning].Contains(poi)) {
-                fires[burning.sourceOfBurning].Add(poi);
+            if (_fires.Contains(poi) == false) {
+                _fires.Add(poi);
                 return true;
             }
         }
@@ -263,15 +230,15 @@ public class DouseFireStateSaveDataCharacterState : SaveDataCharacterState {
     public override void Save(CharacterState state) {
         base.Save(state);
         DouseFireState dfState = state as DouseFireState;
-        fires = new POIData[dfState.fires.Sum(x => x.Value.Count)];
-        int count = 0;
-        foreach (KeyValuePair<BurningSource, List<ITraitable>> kvp in dfState.fires) {
-            for (int i = 0; i < kvp.Value.Count; i++) {
-                ITraitable poi = kvp.Value[i];
-                //TODO: fires[count] = new POIData(poi);
-                count++;
-            }
-        }
+        // fires = new POIData[dfState.fires.Sum(x => x.Value.Count)];
+        // int count = 0;
+        // foreach (KeyValuePair<BurningSource, List<ITraitable>> kvp in dfState.fires) {
+        //     for (int i = 0; i < kvp.Value.Count; i++) {
+        //         ITraitable poi = kvp.Value[i];
+        //         //TODO: fires[count] = new POIData(poi);
+        //         count++;
+        //     }
+        // }
     }
 }
 #endregion

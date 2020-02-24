@@ -37,8 +37,8 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		Messenger.AddListener<Settlement, bool>(Signals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, OnSettlementUnderSiegeChanged);
 		Messenger.AddListener<Character, IPointOfInterest>(Signals.CHARACTER_SAW, OnCharacterSaw);
 		Messenger.AddListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJobSuccessfully);
-		Messenger.AddListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
 		Messenger.AddListener<Settlement>(Signals.SETTLEMENT_CHANGE_STORAGE, OnSettlementChangedStorage);
+		Messenger.AddListener<BurningSource>(Signals.BURNING_SOURCE_INACTIVE, OnBurningSourceInactive);
 	}
 	public void UnsubscribeListeners() {
 		Messenger.RemoveListener(Signals.HOUR_STARTED, HourlyJobActions);
@@ -53,8 +53,8 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		Messenger.RemoveListener<Table>(Signals.FOOD_IN_DWELLING_CHANGED, OnFoodInDwellingChanged);
 		Messenger.RemoveListener<Settlement, bool>(Signals.SETTLEMENT_UNDER_SIEGE_STATE_CHANGED, OnSettlementUnderSiegeChanged);
 		Messenger.RemoveListener<Character, GoapPlanJob>(Signals.CHARACTER_FINISHED_JOB_SUCCESSFULLY, OnCharacterFinishedJobSuccessfully);
-		Messenger.RemoveListener<Character, CharacterState>(Signals.CHARACTER_ENDED_STATE, OnCharacterEndedState);
 		Messenger.RemoveListener<Settlement>(Signals.SETTLEMENT_CHANGE_STORAGE, OnSettlementChangedStorage);
+		Messenger.RemoveListener<BurningSource>(Signals.BURNING_SOURCE_INACTIVE, OnBurningSourceInactive);
 	}
 	private void HourlyJobActions() {
 		CreatePatrolJobs();
@@ -157,11 +157,6 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 			}
 		}
 	}
-	private void OnCharacterEndedState(Character character, CharacterState characterState) {
-		if (characterState.characterState == CHARACTER_STATE.DOUSE_FIRE && character.homeSettlement == _owner) {
-			TriggerDouseFire();
-		}
-	}
 	private void OnSettlementChangedStorage(Settlement settlement) {
 		if (settlement == _owner) {
 			List<ResourcePile> resourcePiles = _owner.region.GetTileObjectsOfType<ResourcePile>();
@@ -169,6 +164,11 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 				ResourcePile resourcePile = resourcePiles[i];
 				TryCreateHaulJob(resourcePile);
 			}
+		}
+	}
+	private void OnBurningSourceInactive(BurningSource burningSource) {
+		if (burningSource.location == _owner.region) {
+			CheckDouseFireJobsValidity();
 		}
 	}
 	#endregion
@@ -500,7 +500,9 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 				}	
 			}	
 		}
-		else {
+	}
+	private void CheckDouseFireJobsValidity() {
+		if (_owner.region.innerMap.activeBurningSources.Count(x => x.HasFireInSettlement(_owner)) == 0) {
 			//cancel all douse fire jobs
 			List<JobQueueItem> jobs = _owner.GetJobs(JOB_TYPE.DOUSE_FIRE);
 			for (int i = 0; i < jobs.Count; i++) {

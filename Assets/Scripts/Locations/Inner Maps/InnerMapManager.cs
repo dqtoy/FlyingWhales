@@ -383,7 +383,8 @@ namespace Inner_Maps {
             }
             if (tile.structure != null) {
                 summary =
-                    $"{summary}\nStructure: {tile.structure}, Tiles: {tile.structure.tiles.Count.ToString()}, Has Owner: {tile.structure.IsOccupied().ToString()}, Is Interior: {tile.structure.isInterior.ToString()} ";
+                    $"{summary}\nStructure: {tile.structure}, Occupied Build Spot: {tile.structure?.occupiedBuildSpot} " +
+                    $"Tiles: {tile.structure.tiles.Count.ToString()}, Has Owner: {tile.structure.IsOccupied().ToString()}, Is Interior: {tile.structure.isInterior.ToString()}";
                 summary = $"{summary}\nCharacters at {tile.structure}: ";
                 if (tile.structure.charactersHere.Count > 0) {
                     for (int i = 0; i < tile.structure.charactersHere.Count; i++) {
