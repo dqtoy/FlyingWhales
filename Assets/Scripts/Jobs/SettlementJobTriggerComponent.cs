@@ -481,7 +481,7 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 	}
 	private bool IsKnockOutJobStillApplicable(Character target) {
 		return target.canPerform && target.gridTileLocation != null
-		    && target.gridTileLocation.IsNextToOrPartOfSettlement(_owner) == false;
+		    && target.gridTileLocation.IsNextToOrPartOfSettlement(_owner);
 	}
 	#endregion
 
