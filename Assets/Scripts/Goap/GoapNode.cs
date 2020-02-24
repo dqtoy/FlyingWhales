@@ -552,8 +552,8 @@ public class ActualGoapNode {
         IPointOfInterest target = poiTarget;
         if(poiTarget is TileObject && action.goapType == INTERACTION_TYPE.STEAL) {
             TileObject item = poiTarget as TileObject;
-            if(item.carriedByCharacter != null) {
-                target = item.carriedByCharacter;
+            if(item.isBeingCarriedBy != null) {
+                target = item.isBeingCarriedBy;
             }
         }
 
@@ -624,8 +624,8 @@ public class ActualGoapNode {
         IPointOfInterest target = poiTarget;
         if(poiTarget is TileObject && action.goapType == INTERACTION_TYPE.STEAL) {
             TileObject item = poiTarget as TileObject;
-            if(item.carriedByCharacter != null) {
-                target = item.carriedByCharacter;
+            if(item.isBeingCarriedBy != null) {
+                target = item.isBeingCarriedBy;
             }
         }
 
@@ -661,8 +661,8 @@ public class ActualGoapNode {
         IPointOfInterest target = poiTarget;
         if(poiTarget is TileObject && action.goapType == INTERACTION_TYPE.STEAL) {
             TileObject item = poiTarget as TileObject;
-            if(item.carriedByCharacter != null) {
-                target = item.carriedByCharacter;
+            if(item.isBeingCarriedBy != null) {
+                target = item.isBeingCarriedBy;
             }
         }
         if (!(isStealth && target.traitContainer.HasTrait("Vigilant"))) {

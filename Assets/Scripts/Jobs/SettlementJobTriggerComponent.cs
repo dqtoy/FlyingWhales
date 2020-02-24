@@ -315,8 +315,8 @@ public class SettlementJobTriggerComponent : JobTriggerComponent {
 		}
 	}
 	private bool IsHaulResourcePileStillApplicable(ResourcePile resourcePile) {
-		return resourcePile.gridTileLocation != null
-		       && resourcePile.gridTileLocation.structure != _owner.mainStorage;
+		return resourcePile.isBeingCarriedBy != null || (resourcePile.gridTileLocation != null
+		       && resourcePile.gridTileLocation.structure != _owner.mainStorage);
 	}
 	#endregion
 

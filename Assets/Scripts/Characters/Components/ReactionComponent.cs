@@ -120,8 +120,8 @@ public class ReactionComponent {
         IPointOfInterest target = node.poiTarget;
         if(node.poiTarget is TileObject && node.action.goapType == INTERACTION_TYPE.STEAL) {
             TileObject item = node.poiTarget as TileObject;
-            if(item.carriedByCharacter != null) {
-                target = item.carriedByCharacter;
+            if(item.isBeingCarriedBy != null) {
+                target = item.isBeingCarriedBy;
             }
         }
         if(node.actor != owner && target != owner) {

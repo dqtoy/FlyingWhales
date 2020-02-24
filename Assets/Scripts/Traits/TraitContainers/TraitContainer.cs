@@ -35,40 +35,10 @@ namespace Traits {
         /// </summary>
         /// <returns>If the trait was added or not.</returns>
         public bool AddTrait(ITraitable addTo, Trait trait, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null) {
-            //TODO: Either move or totally remove validation from inside this container
-            if (TraitValidator.CanAddTrait(addTo, trait, this) == false) {
-                //if (trait.IsUnique()) {
-                //    Trait oldTrait = GetNormalTrait<Trait>(trait.name);
-                //    if (oldTrait != null) {
-                //        oldTrait.AddCharacterResponsibleForTrait(characterResponsible);
-                //        oldTrait.AddCharacterResponsibleForTrait(characterResponsible);
-                //        //if (oldTrait.broadcastDuplicates) {
-                //        //    Messenger.Broadcast(Signals.TRAIT_ADDED, this, oldTrait);
-                //        //}
-                //    }
-                //}
-                return false;
+            if (TraitManager.Instance.IsTraitElemental(trait.name)) {
+                return TryAddElementalTrait(addTo, trait, characterResponsible, gainedFromDoing);
             }
-
-            if (trait.isStacking) {
-                if (stacks.ContainsKey(trait.name)) {
-                    stacks[trait.name]++;
-                    if (TraitManager.Instance.IsInstancedTrait(trait.name)) {
-                        Trait existingTrait = GetNormalTrait<Trait>(trait.name);
-                        addTo.traitProcessor.OnTraitStacked(addTo, existingTrait, characterResponsible, gainedFromDoing);
-                    } else {
-                        addTo.traitProcessor.OnTraitStacked(addTo, trait, characterResponsible, gainedFromDoing);
-                    }
-                } else {
-                    stacks.Add(trait.name, 1);
-                    _allTraits.Add(trait);
-                    addTo.traitProcessor.OnTraitAdded(addTo, trait, characterResponsible, gainedFromDoing);
-                }
-            } else {
-                _allTraits.Add(trait);
-                addTo.traitProcessor.OnTraitAdded(addTo, trait, characterResponsible, gainedFromDoing);
-            }
-            return true;
+            return TraitAddition(addTo, trait, characterResponsible, gainedFromDoing);
         }
         public bool AddTrait(ITraitable addTo, string traitName, out Trait trait, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null) {
             if (TraitManager.Instance.IsTraitElemental(traitName)) {
@@ -110,6 +80,19 @@ namespace Traits {
             }
             return shouldAddTrait;
         }
+        private bool TryAddElementalTrait(ITraitable addTo, Trait trait, Character characterResponsible, ActualGoapNode gainedFromDoing) {
+            bool shouldAddTrait = ProcessBeforeAddingElementalTrait(addTo, trait.name);
+            if (shouldAddTrait) {
+                shouldAddTrait = ProcessBeforeSuccessfullyAddingElementalTrait(addTo, trait.name);
+                if (shouldAddTrait) {
+                    shouldAddTrait = TraitAddition(addTo, trait, characterResponsible, gainedFromDoing);
+                    if (shouldAddTrait) {
+                        ProcessAfterSuccessfulAddingElementalTrait(addTo, trait);
+                    }
+                }
+            }
+            return shouldAddTrait;
+        }
         //Returns true or false, if trait should be added or not
         private bool ProcessBeforeAddingElementalTrait(ITraitable addTo, string traitName) {
             bool shouldAddTrait = true;
@@ -126,7 +109,7 @@ namespace Traits {
                     int poisonStacks = stacks["Poisoned"];
                     RemoveTraitAndStacks(addTo, "Poisoned");
                     if (addTo is IPointOfInterest) {
-                        CombatManager.Instance.PoisonExplosion(addTo as IPointOfInterest, poisonStacks);
+                        CombatManager.Instance.PoisonExplosion(addTo as IPointOfInterest, addTo.gridTileLocation, poisonStacks);
                     }
                     shouldAddTrait = false;
                 }
@@ -177,7 +160,7 @@ namespace Traits {
                 if (HasTrait("Frozen")) {
                     RemoveTrait(addTo, "Frozen");
                     if(addTo is IPointOfInterest) {
-                        CombatManager.Instance.FrozenExplosion(addTo as IPointOfInterest, 1);
+                        CombatManager.Instance.FrozenExplosion(addTo as IPointOfInterest, addTo.gridTileLocation, 1);
                     }
                     shouldAddTrait = false;
                 }
@@ -194,19 +177,58 @@ namespace Traits {
         }
         private bool TraitAddition(ITraitable addTo, string traitName, Character characterResponsible, ActualGoapNode gainedFromDoing) {
             if (TraitManager.Instance.IsInstancedTrait(traitName)) {
-                return AddTrait(addTo, TraitManager.Instance.CreateNewInstancedTraitClass(traitName), characterResponsible, gainedFromDoing);
+                return AddTraitRoot(addTo, TraitManager.Instance.CreateNewInstancedTraitClass(traitName), characterResponsible, gainedFromDoing);
             } else {
-                return AddTrait(addTo, TraitManager.Instance.allTraits[traitName], characterResponsible, gainedFromDoing);
+                return AddTraitRoot(addTo, TraitManager.Instance.allTraits[traitName], characterResponsible, gainedFromDoing);
             }
         }
         private bool TraitAddition(ITraitable addTo, string traitName, out Trait trait, Character characterResponsible, ActualGoapNode gainedFromDoing) {
             if (TraitManager.Instance.IsInstancedTrait(traitName)) {
                 trait = TraitManager.Instance.CreateNewInstancedTraitClass(traitName);
-                return AddTrait(addTo, trait, characterResponsible, gainedFromDoing);
+                return AddTraitRoot(addTo, trait, characterResponsible, gainedFromDoing);
             } else {
                 trait = TraitManager.Instance.allTraits[traitName];
-                return AddTrait(addTo, trait, characterResponsible, gainedFromDoing);
+                return AddTraitRoot(addTo, trait, characterResponsible, gainedFromDoing);
             }
+        }
+        private bool TraitAddition(ITraitable addTo, Trait trait, Character characterResponsible, ActualGoapNode gainedFromDoing) {
+            return AddTraitRoot(addTo, trait, characterResponsible, gainedFromDoing);
+        }
+        private bool AddTraitRoot(ITraitable addTo, Trait trait, Character characterResponsible = null, ActualGoapNode gainedFromDoing = null) {
+            //TODO: Either move or totally remove validation from inside this container
+            if (TraitValidator.CanAddTrait(addTo, trait, this) == false) {
+                //if (trait.IsUnique()) {
+                //    Trait oldTrait = GetNormalTrait<Trait>(trait.name);
+                //    if (oldTrait != null) {
+                //        oldTrait.AddCharacterResponsibleForTrait(characterResponsible);
+                //        oldTrait.AddCharacterResponsibleForTrait(characterResponsible);
+                //        //if (oldTrait.broadcastDuplicates) {
+                //        //    Messenger.Broadcast(Signals.TRAIT_ADDED, this, oldTrait);
+                //        //}
+                //    }
+                //}
+                return false;
+            }
+
+            if (trait.isStacking) {
+                if (stacks.ContainsKey(trait.name)) {
+                    stacks[trait.name]++;
+                    if (TraitManager.Instance.IsInstancedTrait(trait.name)) {
+                        Trait existingTrait = GetNormalTrait<Trait>(trait.name);
+                        addTo.traitProcessor.OnTraitStacked(addTo, existingTrait, characterResponsible, gainedFromDoing);
+                    } else {
+                        addTo.traitProcessor.OnTraitStacked(addTo, trait, characterResponsible, gainedFromDoing);
+                    }
+                } else {
+                    stacks.Add(trait.name, 1);
+                    _allTraits.Add(trait);
+                    addTo.traitProcessor.OnTraitAdded(addTo, trait, characterResponsible, gainedFromDoing);
+                }
+            } else {
+                _allTraits.Add(trait);
+                addTo.traitProcessor.OnTraitAdded(addTo, trait, characterResponsible, gainedFromDoing);
+            }
+            return true;
         }
         private int GetElementalTraitChanceToBeAdded(string traitName) {
             int chance = 100;

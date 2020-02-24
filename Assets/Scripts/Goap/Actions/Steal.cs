@@ -53,8 +53,8 @@ public class Steal : GoapAction {
     public override IPointOfInterest GetTargetToGoTo(ActualGoapNode goapNode) {
         if (goapNode.poiTarget is TileObject) {
             TileObject item = goapNode.poiTarget as TileObject;
-            if (item.carriedByCharacter != null) {
-                return item.carriedByCharacter; //make the actor follow the character that is carrying the item instead.
+            if (item.isBeingCarriedBy != null) {
+                return item.isBeingCarriedBy; //make the actor follow the character that is carrying the item instead.
             }
         }
         return base.GetTargetToGoTo(goapNode);
@@ -64,8 +64,8 @@ public class Steal : GoapAction {
         IPointOfInterest poiTarget = node.poiTarget;
         object[] otherData = node.otherData;
         TileObject token = poiTarget as TileObject;
-        if (token.carriedByCharacter != null) {
-            return token.carriedByCharacter.currentStructure;
+        if (token.isBeingCarriedBy != null) {
+            return token.isBeingCarriedBy.currentStructure;
         }
         return base.GetTargetStructure(node);
     }
@@ -96,7 +96,7 @@ public class Steal : GoapAction {
         Character actor = node.actor;
         IPointOfInterest target = node.poiTarget;
         if(target is TileObject) {
-            Character targetCharacter = (target as TileObject).carriedByCharacter;
+            Character targetCharacter = (target as TileObject).isBeingCarriedBy;
             if(targetCharacter != null) {
                 response += CharacterManager.Instance.TriggerEmotion(EMOTION.Disappointment, targetCharacter, actor, status);
                 if (targetCharacter.traitContainer.HasTrait("Hothead") || UnityEngine.Random.Range(0, 100) < 35) {
@@ -117,7 +117,7 @@ public class Steal : GoapAction {
             if (poiTarget.gridTileLocation != null) {
                 return item.characterOwner == null || item.characterOwner != actor;
             } else {
-                return item.carriedByCharacter != null && (item.characterOwner == null || item.characterOwner != actor);
+                return item.isBeingCarriedBy != null && (item.characterOwner == null || item.characterOwner != actor);
             }
         }
         return false;
