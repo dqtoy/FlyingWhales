@@ -16,7 +16,7 @@ public class DepositResourcePile : GoapAction {
 
     #region Overrides
     protected override void ConstructBasePreconditionsAndEffects() {
-        AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), IsCarriedOrInInventory);
+        //AddPrecondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), IsCarriedOrInInventory);
         AddExpectedEffect(new GoapEffect(GOAP_EFFECT_CONDITION.DEPOSIT_RESOURCE, string.Empty, false, GOAP_EFFECT_TARGET.TARGET));
         //AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.HAS_FOOD, GOAP_EFFECT_TARGET.TARGET));
         //AddPossibleExpectedEffectForTypeAndTargetMatching(new GoapEffectConditionTypeAndTargetType(GOAP_EFFECT_CONDITION.HAS_WOOD, GOAP_EFFECT_TARGET.TARGET));
@@ -42,27 +42,11 @@ public class DepositResourcePile : GoapAction {
     //    }
     //    return ee;
     //}
-    //public override List<Precondition> GetPreconditions(IPointOfInterest target, object[] otherData) {
-    //    List<Precondition> p = base.GetPreconditions(target, otherData);
-    //    ResourcePile pile = target as ResourcePile;
-    //    p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.IN_PARTY, string.Empty, false, GOAP_EFFECT_TARGET.TARGET), IsResourcePileCarried));
-
-    //    //switch (pile.providedResource) {
-    //    //    case RESOURCE.FOOD:
-    //    //        p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_FOOD, "0", true, GOAP_EFFECT_TARGET.ACTOR), IsActorFoodEnough));
-    //    //        break;
-    //    //    case RESOURCE.WOOD:
-    //    //        p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_WOOD, "0", true, GOAP_EFFECT_TARGET.ACTOR), IsActorWoodEnough));
-    //    //        break;
-    //    //    case RESOURCE.STONE:
-    //    //        p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_STONE, "0", true, GOAP_EFFECT_TARGET.ACTOR), IsActorWoodEnough));
-    //    //        break;
-    //    //    case RESOURCE.METAL:
-    //    //        p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_METAL, "0", true, GOAP_EFFECT_TARGET.ACTOR), IsActorWoodEnough));
-    //    //        break;
-    //    //}
-    //    return p;
-    //}
+    public override List<Precondition> GetPreconditions(Character actor, IPointOfInterest target, object[] otherData) {
+        List<Precondition> p = new List<Precondition>();
+        p.Add(new Precondition(new GoapEffect(GOAP_EFFECT_CONDITION.HAS_POI, target.name, false, GOAP_EFFECT_TARGET.TARGET), IsCarriedOrInInventory));
+        return p;
+    }
     public override void Perform(ActualGoapNode goapNode) {
         base.Perform(goapNode);
         SetState("Deposit Success", goapNode);

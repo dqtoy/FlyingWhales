@@ -26,7 +26,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public bool isSummonedByPlayer { get; private set; }
     public List<JobQueueItem> allJobsTargetingThis { get; private set; }
     private List<Character> owners { get; set; }
-    public Character carriedByCharacter { get; private set; }
+    public Character isBeingCarriedBy { get; private set; }
     public virtual Character[] users { //array of characters, currently using the tile object
         get {
             return slots?.Where(x => x != null && x.user != null).Select(x => x.user).ToArray() ?? null;
@@ -64,7 +64,7 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
     public Transform worldObject => mapVisual.transform;
     public string nameWithID => ToString();
     public GameObject visualGO => mapVisual.gameObject;
-    public Character isBeingCarriedBy => carriedByCharacter;
+    //public Character isBeingCarriedBy => carriedByCharacter;
     public Faction factionOwner => characterOwner?.faction;
     #endregion
 
@@ -691,8 +691,8 @@ public abstract class TileObject : MapObject<TileObject>, IPointOfInterest, IPla
         this.characterOwner = characterOwner;
     }
     public void SetInventoryOwner(Character character) {
-        Debug.Log($"Set Carried by character of item {this.ToString()} to {(carriedByCharacter?.name ?? "null")}");
-        this.carriedByCharacter = character;
+        Debug.Log($"Set Carried by character of item {this.ToString()} to {(isBeingCarriedBy?.name ?? "null")}");
+        this.isBeingCarriedBy = character;
     }
     public bool CanBePickedUpNormallyUponVisionBy(Character character) {
         if (tileObjectType != TILE_OBJECT_TYPE.HEALING_POTION && tileObjectType != TILE_OBJECT_TYPE.TOOL) {

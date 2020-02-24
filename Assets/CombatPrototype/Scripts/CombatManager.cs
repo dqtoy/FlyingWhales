@@ -54,19 +54,19 @@ public class CombatManager : MonoBehaviour {
 
     }
     #region Explosion
-    public void PoisonExplosion(IPointOfInterest target, int stacks) {
-        StartCoroutine(PoisonExplosionCoroutine(target, stacks));
+    public void PoisonExplosion(IPointOfInterest target, LocationGridTile targetTile, int stacks) {
+        StartCoroutine(PoisonExplosionCoroutine(target, targetTile, stacks));
     }
-    private IEnumerator PoisonExplosionCoroutine(IPointOfInterest target, int stacks) {
+    private IEnumerator PoisonExplosionCoroutine(IPointOfInterest target, LocationGridTile targetTile, int stacks) {
         while (GameManager.Instance.isPaused) {
             //Pause coroutine while game is paused
             //Might be performance heavy, needs testing
             yield return null;
         }
         yield return new WaitForSeconds(0.2f);
-        GameManager.Instance.CreateParticleEffectAt(target.gridTileLocation, PARTICLE_EFFECT.Poison_Explosion);
+        GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Poison_Explosion);
         List<ITraitable> traitables = new List<ITraitable>();
-        List<LocationGridTile> affectedTiles = target.gridTileLocation.GetTilesInRadius(2, includeTilesInDifferentStructure: true);
+        List<LocationGridTile> affectedTiles = targetTile.GetTilesInRadius(1, includeTilesInDifferentStructure: true);
         float damagePercentage = 0.1f * stacks;
         if (damagePercentage > 1) {
             damagePercentage = 1;
@@ -91,25 +91,26 @@ public class CombatManager : MonoBehaviour {
             }
         }
 
-        Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Poison Explosion", "effect");
-        log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
-        log.AddLogToInvolvedObjects();
+        if(!(target is GenericTileObject)) {
+            Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Poison Explosion", "effect");
+            log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+            log.AddLogToInvolvedObjects();
+        }
     }
-    public void FrozenExplosion(IPointOfInterest target, int stacks) {
-        StartCoroutine(FrozenExplosionCoroutine(target, stacks));
-        
+    public void FrozenExplosion(IPointOfInterest target, LocationGridTile targetTile, int stacks) {
+        StartCoroutine(FrozenExplosionCoroutine(target, targetTile, stacks));
     }
-    private IEnumerator FrozenExplosionCoroutine(IPointOfInterest target, int stacks) {
+    private IEnumerator FrozenExplosionCoroutine(IPointOfInterest target, LocationGridTile targetTile, int stacks) {
         while (GameManager.Instance.isPaused) {
             //Pause coroutine while game is paused
             //Might be performance heavy, needs testing
             yield return null;
         }
         yield return new WaitForSeconds(0.2f);
-        GameManager.Instance.CreateParticleEffectAt(target.gridTileLocation, PARTICLE_EFFECT.Frozen_Explosion);
+        GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Frozen_Explosion);
         List<ITraitable> traitables = new List<ITraitable>();
-        List<LocationGridTile> affectedTiles = target.gridTileLocation.GetTilesInRadius(2, includeTilesInDifferentStructure: true);
+        List<LocationGridTile> affectedTiles = targetTile.GetTilesInRadius(2, includeTilesInDifferentStructure: true);
         float damagePercentage = 0.2f * stacks;
         if (damagePercentage > 1) {
             damagePercentage = 1;
@@ -133,10 +134,12 @@ public class CombatManager : MonoBehaviour {
             // }
         }
 
-        Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Frozen Explosion", "effect");
-        log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
-        PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
-        log.AddLogToInvolvedObjects();
+        if (!(target is GenericTileObject)) {
+            Log log = new Log(GameManager.Instance.Today(), "Interrupt", "Frozen Explosion", "effect");
+            log.AddToFillers(target, target.name, LOG_IDENTIFIER.TARGET_CHARACTER);
+            PlayerManager.Instance.player.ShowNotificationFromPlayer(log);
+            log.AddLogToInvolvedObjects();
+        }
     }
     public void ChainElectricDamage(ITraitable traitable, int damage) {
         List<ITraitable> traitables = new List<ITraitable>();

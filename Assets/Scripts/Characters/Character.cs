@@ -3734,13 +3734,14 @@ public class Character : Relatable, ILeader, IPointOfInterest, IJobOwner, IPlaye
         }
     }
     public void PickUpItem(TileObject item, bool changeCharacterOwnership = true) {
-        if (item.carriedByCharacter != null) {
-            item.carriedByCharacter.UnobtainItem(item);
+        if (item.isBeingCarriedBy != null) {
+            item.isBeingCarriedBy.UnobtainItem(item);
         }
         if (ObtainItem(item, changeCharacterOwnership)) {
             if (item.gridTileLocation != null) {
                 item.gridTileLocation.structure.RemovePOI(item);
             }
+            item.SetPOIState(POI_STATE.ACTIVE);
         }
     }
     public void DestroyItem(TileObject item) {
