@@ -686,8 +686,16 @@ public class Region : ILocation {
         }
         return objs;
     }
+    public int GetTileObjectsOfTypeCount(TILE_OBJECT_TYPE type) {
+        int count = 0;
+        foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in structures) {
+            for (int i = 0; i < keyValuePair.Value.Count; i++) {
+                count += keyValuePair.Value[i].GetTileObjectsOfTypeCount(type);
+            }
+        }
+        return count;
+    }
     public bool HasTileObjectOfType(TILE_OBJECT_TYPE type) {
-        List<TileObject> objs = new List<TileObject>();
         foreach (KeyValuePair<STRUCTURE_TYPE, List<LocationStructure>> keyValuePair in structures) {
             for (int i = 0; i < keyValuePair.Value.Count; i++) {
                 LocationStructure structure = keyValuePair.Value[i];

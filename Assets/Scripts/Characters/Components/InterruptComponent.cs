@@ -111,18 +111,22 @@ public class InterruptComponent {
         Interrupt finishedInterrupt = currentInterrupt;
         currentInterrupt = null;
         currentDuration = 0;
-        if (willCheckInvision) {
-            if (owner.marker) {
-                for (int i = 0; i < owner.marker.inVisionCharacters.Count; i++) {
-                    Character inVisionCharacter = owner.marker.inVisionCharacters[i];
-                    // owner.CreateJobsOnEnterVisionWith(inVisionCharacter);
-                    owner.marker.AddUnprocessedPOI(inVisionCharacter);
+        if (owner.isInCombat) {
+            Messenger.Broadcast(Signals.DETERMINE_COMBAT_REACTION, owner);
+        } else {
+            if (willCheckInvision) {
+                if (owner.marker) {
+                    for (int i = 0; i < owner.marker.inVisionCharacters.Count; i++) {
+                        Character inVisionCharacter = owner.marker.inVisionCharacters[i];
+                        // owner.CreateJobsOnEnterVisionWith(inVisionCharacter);
+                        owner.marker.AddUnprocessedPOI(inVisionCharacter);
+                    }
                 }
-            } 
-            owner.needsComponent.CheckExtremeNeeds(finishedInterrupt);
-        }
-        if (owner.marker) {
-            owner.marker.UpdateActionIcon();
+                owner.needsComponent.CheckExtremeNeeds(finishedInterrupt);
+            }
+            if (owner.marker) {
+                owner.marker.UpdateActionIcon();
+            }
         }
         Messenger.Broadcast(Signals.INTERRUPT_FINISHED, finishedInterrupt.interrupt, owner);
     }

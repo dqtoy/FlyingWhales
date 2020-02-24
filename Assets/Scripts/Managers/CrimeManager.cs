@@ -22,7 +22,7 @@ public class CrimeManager : MonoBehaviour {
         Character actor = consideredAction.actor;
         IPointOfInterest target = consideredAction.poiTarget;
         INTERACTION_TYPE actionType = consideredAction.action.goapType;
-        if(actionType == INTERACTION_TYPE.MAKE_LOVE) {
+        if (actionType == INTERACTION_TYPE.MAKE_LOVE) {
             if (target is Character) {
                 Character targetCharacter = target as Character;
                 int loverID = actor.relationshipContainer.GetFirstRelatableIDWithRelationship(RELATIONSHIP_TYPE.LOVER);
@@ -33,12 +33,20 @@ public class CrimeManager : MonoBehaviour {
         } else if (consideredAction.associatedJobType == JOB_TYPE.DESTROY) {
             return CRIME_TYPE.INFRACTION;
         } else if (actionType == INTERACTION_TYPE.STEAL
-            || actionType == INTERACTION_TYPE.POISON
-            || actionType == INTERACTION_TYPE.KNOCKOUT_CHARACTER
-            || (actionType == INTERACTION_TYPE.ASSAULT && consideredAction.associatedJobType != JOB_TYPE.APPREHEND)) {
+            || actionType == INTERACTION_TYPE.POISON) {
             return CRIME_TYPE.MISDEMEANOR;
-        } else if (actionType == INTERACTION_TYPE.STRANGLE
-            || actionType == INTERACTION_TYPE.RITUAL_KILLING) {
+        } else if (actionType == INTERACTION_TYPE.KNOCKOUT_CHARACTER
+            || actionType == INTERACTION_TYPE.ASSAULT) {
+            if(consideredAction.associatedJobType != JOB_TYPE.APPREHEND) {
+                if (target is Character) {
+                    Character targetCharacter = target as Character;
+                    if (!actor.IsHostileWith(targetCharacter)) {
+                        return CRIME_TYPE.MISDEMEANOR;
+                    }
+                }
+            }
+        } else if ((actionType == INTERACTION_TYPE.STRANGLE && actor != target)
+         || actionType == INTERACTION_TYPE.RITUAL_KILLING) {
             return CRIME_TYPE.SERIOUS;
         } else if (actionType == INTERACTION_TYPE.TRANSFORM_TO_WOLF_FORM
             || actionType == INTERACTION_TYPE.REVERT_TO_NORMAL_FORM

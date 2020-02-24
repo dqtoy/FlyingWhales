@@ -53,9 +53,9 @@ namespace Traits {
             int chance = UnityEngine.Random.Range(0, 2);
             if(chance == 0) {
                 debugLog += "\n-Character decided to flee";
-                Log log = new Log(GameManager.Instance.Today(), "Trait", name, "flee");
-                log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
-                owner.logComponent.RegisterLog(log, onlyClickedCharacter: false);
+                //Log log = new Log(GameManager.Instance.Today(), "Trait", name, "flee");
+                //log.AddToFillers(owner, owner.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
+                //owner.logComponent.RegisterLog(log, onlyClickedCharacter: false);
                 owner.combatComponent.Flight(burningPOI, "pyrophobic");
             } else {
                 debugLog += "\n-Character decided to trigger Cowering interrupt";

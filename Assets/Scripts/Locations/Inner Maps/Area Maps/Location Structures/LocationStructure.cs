@@ -18,7 +18,7 @@ namespace Inner_Maps.Location_Structures {
         public Settlement settlementLocation { get; private set; }
         // public List<SpecialToken> itemsInStructure { get; private set; }
         public HashSet<IPointOfInterest> pointsOfInterest { get; private set; }
-        public Dictionary<TILE_OBJECT_TYPE, List<TileObject>> groupedTileObjects { get; private set; }
+        public Dictionary<TILE_OBJECT_TYPE, TileObjectsAndCount> groupedTileObjects { get; private set; }
         public POI_STATE state { get; private set; }
         public LocationStructureObject structureObj {get; private set;}
         public BuildSpotTileObject occupiedBuildSpot { get; private set; }
@@ -42,7 +42,7 @@ namespace Inner_Maps.Location_Structures {
             charactersHere = new List<Character>();
             // itemsInStructure = new List<SpecialToken>();
             pointsOfInterest = new HashSet<IPointOfInterest>();
-            groupedTileObjects = new Dictionary<TILE_OBJECT_TYPE, List<TileObject>>();
+            groupedTileObjects = new Dictionary<TILE_OBJECT_TYPE, TileObjectsAndCount>();
             tiles = new List<LocationGridTile>();
             unoccupiedTiles = new LinkedList<LocationGridTile>();
             SetInteriorState(structureType.IsInterior());
@@ -55,7 +55,7 @@ namespace Inner_Maps.Location_Structures {
             charactersHere = new List<Character>();
             // itemsInStructure = new List<SpecialToken>();
             pointsOfInterest = new HashSet<IPointOfInterest>();
-            groupedTileObjects = new Dictionary<TILE_OBJECT_TYPE, List<TileObject>>();
+            groupedTileObjects = new Dictionary<TILE_OBJECT_TYPE, TileObjectsAndCount>();
             tiles = new List<LocationGridTile>();
             SetInteriorState(structureType.IsInterior());
         }
@@ -122,9 +122,11 @@ namespace Inner_Maps.Location_Structures {
                 if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
                     TileObject tileObject = poi as TileObject;
                     if (groupedTileObjects.ContainsKey(tileObject.tileObjectType)) {
-                        groupedTileObjects[tileObject.tileObjectType].Add(tileObject);
+                        groupedTileObjects[tileObject.tileObjectType].AddTileObject(tileObject);
                     } else {
-                        groupedTileObjects.Add(tileObject.tileObjectType, new List<TileObject>() { tileObject });
+                        TileObjectsAndCount toac = new TileObjectsAndCount();
+                        toac.AddTileObject(tileObject);
+                        groupedTileObjects.Add(tileObject.tileObjectType, toac);
                     }
                     if (tileObject.gridTileLocation != null && tileObject.gridTileLocation.buildSpotOwner.isPartOfParentRegionMap) {
                         // tileObject.SetFactionOwner(tileObject.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile.owner);
@@ -139,7 +141,7 @@ namespace Inner_Maps.Location_Structures {
             if (pointsOfInterest.Remove(poi)) {
                 if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
                     TileObject tileObject = poi as TileObject;
-                    groupedTileObjects[tileObject.tileObjectType].Remove(tileObject);
+                    groupedTileObjects[tileObject.tileObjectType].RemoveTileObject(tileObject);
                     
                     if (poi.gridTileLocation.buildSpotOwner.isPartOfParentRegionMap) {
                         poi.gridTileLocation.buildSpotOwner.hexTileOwner.settlementOnTile?.OnItemRemovedFromLocation(tileObject, this);    
@@ -162,7 +164,7 @@ namespace Inner_Maps.Location_Structures {
             if (pointsOfInterest.Remove(poi)) {
                 if (poi.poiType == POINT_OF_INTEREST_TYPE.TILE_OBJECT) {
                     TileObject tileObject = poi as TileObject;
-                    groupedTileObjects[tileObject.tileObjectType].Remove(tileObject);
+                    groupedTileObjects[tileObject.tileObjectType].RemoveTileObject(tileObject);
                 }
                 if (poi.gridTileLocation != null) {
                     if (poi.poiType != POINT_OF_INTEREST_TYPE.CHARACTER) {
@@ -247,7 +249,7 @@ namespace Inner_Maps.Location_Structures {
     public int GetTileObjectsOfTypeCount(TILE_OBJECT_TYPE type) {
         int count = 0;
         if (groupedTileObjects.ContainsKey(type)) {
-            count = groupedTileObjects[type].Count;
+            count = groupedTileObjects[type].count;
         }
         return count;
     }
@@ -722,5 +724,24 @@ public class SaveDataLocationStructure {
             }
         }
         loadedStructure = null;
+    }
+}
+
+public class TileObjectsAndCount {
+    public int count;
+    public List<TileObject> tileObjects;
+    
+    public TileObjectsAndCount() {
+        tileObjects = new List<TileObject>();
+    }
+
+    public void AddTileObject(TileObject tileObject) {
+        tileObjects.Add(tileObject);
+        count = tileObjects.Count;
+    }
+    public void RemoveTileObject(TileObject tileObject) {
+        if (tileObjects.Remove(tileObject)) {
+            count = tileObjects.Count;
+        }
     }
 }

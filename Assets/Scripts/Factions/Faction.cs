@@ -303,9 +303,13 @@ public class Faction {
         LeaveFaction(character);
     }
     //Returns true if character left the faction, otherwise return false
-    public bool CheckIfCharacterStillFitsIdeology(Character character) {
+    public bool CheckIfCharacterStillFitsIdeology(Character character, bool willLog = true) {
         if (character.faction == this && !ideologyComponent.DoesCharacterFitCurrentIdeologies(character)) {
-            return character.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Faction, character, "left_faction_not_fit");
+            if (willLog) {
+                return character.interruptComponent.TriggerInterrupt(INTERRUPT.Leave_Faction, character, "left_faction_not_fit");
+            } else {
+                return character.ChangeFactionTo(FactionManager.Instance.friendlyNeutralFaction);
+            }
             //character.ChangeFactionTo(FactionManager.Instance.friendlyNeutralFaction);
             //Log log = new Log(GameManager.Instance.Today(), "Character", "NonIntel", "left_faction_not_fit");
             //log.AddToFillers(character, character.name, LOG_IDENTIFIER.ACTIVE_CHARACTER);
@@ -507,7 +511,8 @@ public class Faction {
                 if (willLog) {
                     chosenLeader.interruptComponent.TriggerInterrupt(INTERRUPT.Become_Faction_Leader, chosenLeader);
                 } else {
-                    SetLeader(chosenLeader);
+                    SetLeader(chosenLeader, false);
+                    ideologyComponent.RerollIdeologies(willLog);
                 }
             } else {
                 log += "\nCHOSEN LEADER: NONE";

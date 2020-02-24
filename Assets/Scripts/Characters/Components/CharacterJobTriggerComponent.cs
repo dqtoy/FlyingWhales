@@ -74,7 +74,7 @@ public class CharacterJobTriggerComponent : JobTriggerComponent {
 			if (character.interruptComponent.isInterrupted &&
 			           character.interruptComponent.currentInterrupt.interrupt == INTERRUPT.Narcoleptic_Attack) {
 				//Don't do anything
-			} else if (character.currentActionNode != null && InteractionManager.Instance.IsActionTirednessRecovery(character.currentActionNode.action)) {
+			} else if (character.currentActionNode != null && character.currentActionNode.actionStatus == ACTION_STATUS.PERFORMING && InteractionManager.Instance.IsActionTirednessRecovery(character.currentActionNode.action)) {
 				character.CancelAllJobsExceptForCurrent();
 			} else {
 				character.jobQueue.CancelAllJobs();
