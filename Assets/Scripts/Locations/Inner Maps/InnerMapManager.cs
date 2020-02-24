@@ -77,25 +77,11 @@ namespace Inner_Maps {
         public void LateUpdate() {
             if (GameManager.showAllTilesTooltip) {
                 if (UIManager.Instance.IsMouseOnUI() || currentlyShowingMap == null) {
-                    // if (UIManager.Instance.IsSmallInfoShowing() && UIManager.Instance.smallInfoShownFrom == "ShowTileData") {
-                    //     UIManager.Instance.HideSmallInfo();
-                    // }
                     return;
                 }
                 LocationGridTile hoveredTile = GetTileFromMousePosition();
-                // if (lastHoveredTile != null && hoveredTile != lastHoveredTile) {
-                //     List<LocationGridTile> diamond =
-                //         UtilityScripts.GameUtilities.GetDiamondTilesFromRadius(currentlyShowingMap,
-                //             lastHoveredTile.localPlace, 3);
-                //     UtilityScripts.GameUtilities.HighlightTiles(diamond, Color.white);
-                // }
-                
                 if (hoveredTile != null && hoveredTile.objHere == null) {
                     ShowTileData(hoveredTile);
-                    // List<LocationGridTile> diamond =
-                    //     UtilityScripts.GameUtilities.GetDiamondTilesFromRadius(currentlyShowingMap,
-                    //         hoveredTile.localPlace, 3);
-                    // UtilityScripts.GameUtilities.HighlightTiles(diamond, Color.blue);
                 }
                 lastHoveredTile = hoveredTile;
             }
@@ -108,7 +94,7 @@ namespace Inner_Maps {
                     && PlayerManager.Instance.player.currentActivePlayerSpell == null
                     && PlayerManager.Instance.player.seizeComponent.hasSeizedPOI == false) {
                     LocationGridTile clickedTile = GetTileFromMousePosition();
-                    if (TryGetSelectablesOnTile(clickedTile, out var selectables)) {
+                    if (clickedTile != null && TryGetSelectablesOnTile(clickedTile, out var selectables)) {
                         if (selectables.Count > 0) {
                             if (lastClickedTile != clickedTile) {
                                 //if last tile that was clicked is not the tile that has been clicked, then instead of 
