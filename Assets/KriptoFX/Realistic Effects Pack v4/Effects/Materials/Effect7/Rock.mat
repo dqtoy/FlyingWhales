@@ -23,7 +23,7 @@ Material:
   m_Name: Rock
   m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
   m_ShaderKeywords: _EMISSION _NORMALMAP
-  m_LightmapFlags: 1
+  m_LightmapFlags: 2
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: 2050
@@ -34,7 +34,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BaseMap:
-        m_Texture: {fileID: 2800000, guid: c3cfe7d2684045147a1989894b810ce9, type: 3}
+        m_Texture: {fileID: 2800000, guid: 9ac4bce151b71dd45ae5db86fa7a71bf, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
@@ -58,7 +58,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: c3cfe7d2684045147a1989894b810ce9, type: 3}
+        m_Texture: {fileID: 2800000, guid: 9ac4bce151b71dd45ae5db86fa7a71bf, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -104,7 +104,7 @@ Material:
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
-    - _BaseColor: {r: 0.3162846, g: 0.41873732, b: 0.66176474, a: 1}
+    - _BaseColor: {r: 0.88235295, g: 0, b: 0, a: 1}
     - _Color: {r: 0.3162846, g: 0.41873732, b: 0.66176474, a: 1}
     - _EmissionColor: {r: 1.5, g: 0, b: 0.1026628, a: 1}
     - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
