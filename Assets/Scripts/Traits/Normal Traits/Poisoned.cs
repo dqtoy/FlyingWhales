@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Inner_Maps;
 using UnityEngine;
 
 namespace Traits {
@@ -32,70 +33,43 @@ namespace Traits {
         public override void OnAddTrait(ITraitable addedTo) {
             base.OnAddTrait(addedTo);
             traitable = addedTo;
-            if(traitable is IPointOfInterest) {
-                _poisonedEffect = GameManager.Instance.CreateParticleEffectAt(traitable as IPointOfInterest, PARTICLE_EFFECT.Poison, false);
-            }
+            UpdateVisualsOnAdd(addedTo);
             if(traitable is Character character) {
                 characterOwner = character;
                 characterOwner.AdjustDoNotRecoverHP(1);
-                _statusIcon = character.marker.AddStatusIcon(this.name);
-            } else if (addedTo is TileObject tileObject) {
+            } else if (addedTo is TileObject) {
                 ticksDuration = GameManager.Instance.GetTicksBasedOnHour(24);
-                if (tileObject is GenericTileObject) {
-                    tileObject.gridTileLocation.SetDefaultTileColor(Color.green);
-                    tileObject.gridTileLocation.HighlightTile(Color.green);
-                } else {
-                    //add poison icon above object
-                    _statusIcon = addedTo.mapObjectVisual?.AddStatusIcon(this.name);
-                }
             }
+        }
+        public override void OnStackTrait(ITraitable addedTo) {
+            base.OnStackTrait(addedTo);
+            UpdateVisualsOnAdd(addedTo);
+        }
+        public override void OnStackTraitAddedButStackIsAtLimit(ITraitable traitable) {
+            base.OnStackTraitAddedButStackIsAtLimit(traitable);
+            UpdateVisualsOnAdd(traitable);
         }
         public override void OnRemoveTrait(ITraitable removedFrom, Character removedBy) {
             base.OnRemoveTrait(removedFrom, removedBy);
-            if(_poisonedEffect != null) {
-                ObjectPoolManager.Instance.DestroyObject(_poisonedEffect);
-            }
-            if (characterOwner != null) {
-                characterOwner.AdjustDoNotRecoverHP(-1);
-                ObjectPoolManager.Instance.DestroyObject(_statusIcon.gameObject);
-            } else if (removedFrom is TileObject tileObject) {
-                if (tileObject is GenericTileObject) {
-                    tileObject.gridTileLocation.SetDefaultTileColor(Color.white);
-                    tileObject.gridTileLocation.UnhighlightTile();
-                } else {
-                    if (_statusIcon != null) {
-                        ObjectPoolManager.Instance.DestroyObject(_statusIcon.gameObject);    
-                    }
-                }
-            }
+            UpdateVisualsOnRemove(removedFrom);
+            characterOwner?.AdjustDoNotRecoverHP(-1);
             awareCharacters.Clear();
             responsibleCharacters?.Clear(); //Cleared list, for garbage collection
-                                           //Messenger.Broadcast(Signals.OLD_NEWS_TRIGGER, sourceCharacter, gainedFromDoing);
-        }
-        public override string GetTestingData() {
-            string summary = string.Empty;
-            // WeightedDictionary<string> weights = GetResultWeights();
-            // foreach (KeyValuePair<string, int> kvp in weights.dictionary) {
-            //     summary += "(" + kvp.Key + "-" + kvp.Value.ToString() + ")";
-            // }
-            return summary;
         }
         public override void ExecuteActionAfterEffects(INTERACTION_TYPE action, ActualGoapNode goapNode, ref bool isRemoved) {
             base.ExecuteActionAfterEffects(action, goapNode, ref isRemoved);
             if (goapNode.action.actionCategory == ACTION_CATEGORY.CONSUME) {
-                if(traitable is IPointOfInterest) {
-                    IPointOfInterest poi = traitable as IPointOfInterest;
+                if(traitable is IPointOfInterest poi) {
                     goapNode.actor.interruptComponent.TriggerInterrupt(INTERRUPT.Ingested_Poison, poi);
-                    poi.traitContainer.RemoveTraitAndStacks(traitable, this);
+                    poi.traitContainer.RemoveTraitAndStacks(poi, this);
                     isRemoved = true;
                 }
             }
         }
         public override void OnTickStarted() {
             base.OnTickStarted();
-            if(characterOwner != null) {
-                characterOwner.AdjustHP(-Mathf.RoundToInt(characterOwner.maxHP * (0.5f * characterOwner.traitContainer.stacks[name])), ELEMENTAL_TYPE.Normal, true);
-            }
+            characterOwner?.AdjustHP(-Mathf.RoundToInt(characterOwner.maxHP * (0.5f * characterOwner.traitContainer.stacks[name])), 
+                ELEMENTAL_TYPE.Normal, true);
         }
         #endregion
 
@@ -110,20 +84,28 @@ namespace Traits {
         }
         #endregion
 
-        // public WeightedDictionary<string> GetResultWeights() {
-        //     WeightedDictionary<string> weights = new WeightedDictionary<string>();
-        //     if (level == 1) {
-        //         weights.AddElement("Sick", 80);
-        //         weights.AddElement("Death", 20);
-        //     } else if (level == 2) {
-        //         weights.AddElement("Sick", 50);
-        //         weights.AddElement("Death", 50);
-        //     } else {
-        //         weights.AddElement("Sick", 20);
-        //         weights.AddElement("Death", 80);
-        //     }
-        //     return weights;
-        // }
+        private void UpdateVisualsOnAdd(ITraitable addedTo) {
+            if(addedTo is IPointOfInterest pointOfInterest && _poisonedEffect == null) {
+                _poisonedEffect = GameManager.Instance.CreateParticleEffectAt(pointOfInterest, PARTICLE_EFFECT.Poison, false);
+            }
+            if (addedTo is TileObject tileObject) {
+                if (tileObject is GenericTileObject) {
+                    tileObject.gridTileLocation.parentMap.SetUpperGroundVisual(tileObject.gridTileLocation.localPlace, 
+                        InnerMapManager.Instance.assetManager.poisonRuleTile);
+                }
+            }
+        }
+        private void UpdateVisualsOnRemove(ITraitable removedFrom) {
+            if(_poisonedEffect != null) {
+                ObjectPoolManager.Instance.DestroyObject(_poisonedEffect);
+            }
+            if (removedFrom is TileObject tileObject) {
+                if (tileObject is GenericTileObject) {
+                    tileObject.gridTileLocation.parentMap.SetUpperGroundVisual(tileObject.gridTileLocation.localPlace, 
+                        null);
+                }
+            }
+        }
     }
 
     public class SaveDataPoisoned : SaveDataTrait {

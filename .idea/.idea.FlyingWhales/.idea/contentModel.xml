@@ -1675,6 +1675,7 @@
           <e p="Particle Effects" t="Include">
             <e p="AOEParticle.cs" t="Include" />
             <e p="AutoDestroyParticle.cs" t="Include" />
+            <e p="AutoDestroyParticleOnDisable.cs" t="Include" />
             <e p="BaseParticleEffect.cs" t="Include" />
             <e p="LightningParticleEffect.cs" t="Include" />
             <e p="MeteorParticleEffect.cs" t="Include" />

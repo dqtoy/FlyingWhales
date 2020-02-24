@@ -31,6 +31,7 @@ public class SplashPoisonData : SpellData {
             LocationGridTile tile = tiles[i];
             tile.PerformActionOnTraitables(MakeTraitblePoisoned);
         }
+        GameManager.Instance.CreateParticleEffectAt(targetTile, PARTICLE_EFFECT.Poison_Bomb);
     }
     private void MakeTraitblePoisoned(ITraitable traitable) {
         traitable.traitContainer.AddTrait(traitable, "Poisoned");

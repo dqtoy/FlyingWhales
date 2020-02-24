@@ -91,6 +91,10 @@ namespace Traits {
             }
             SetDateEstablished(GameManager.Instance.Today());
         }
+        /// <summary>
+        /// Called when a stacking trait is added but the max stacks have been reached.
+        /// </summary>
+        public virtual void OnStackTraitAddedButStackIsAtLimit(ITraitable traitable){ }
         public virtual void OnUnstackTrait(ITraitable addedTo) {
             if (addedTo is Character) {
                 Character character = addedTo as Character;
@@ -112,7 +116,12 @@ namespace Traits {
         /// </summary>
         /// <param name="character">The character that returned to life.</param>
         public virtual void OnReturnToLife(Character character) { }
-        public virtual string GetTestingData() { return string.Empty; }
+        public virtual string GetTestingData(ITraitable traitable = null) {
+            if (traitable != null && traitable.traitContainer.stacks.ContainsKey(this.name)) {
+                return $"Stacks: {traitable.traitContainer.stacks[this.name].ToString()}/{stackLimit.ToString()}";
+            }
+            return string.Empty;
+        }
         public virtual bool CreateJobsOnEnterVisionBasedOnTrait(IPointOfInterest traitOwner, Character characterThatWillDoJob) { return false; } //What jobs a character can create based on the target's traits?
         // public virtual bool OnOthersSeeThisEvenCannotWitness(Character characterThatSaw, IPointOfInterest owner) { return false; }
         // public virtual bool OnOthersSeeThisInDiffStructureEvenCannotWitness(Character characterThatSaw, IPointOfInterest owner) { return false; }

@@ -26,7 +26,9 @@ namespace Inner_Maps {
         public TilemapRenderer detailsTilemapRenderer;
         public Tilemap structureTilemap;
         public TilemapCollider2D structureTilemapCollider;
-
+        public Tilemap upperGroundTilemap;
+        public TilemapRenderer upperGroundTilemapRenderer;
+        
         [Header("Seamless Edges")]
         public Tilemap northEdgeTilemap;
         public TilemapRenderer northEdgeTilemapRenderer;
@@ -84,6 +86,8 @@ namespace Inner_Maps {
             southEdgeTilemapRenderer.sortingOrder = InnerMapManager.GroundTilemapSortingOrder + 1;
             westEdgeTilemapRenderer.sortingOrder = InnerMapManager.GroundTilemapSortingOrder + 2;
             eastEdgeTilemapRenderer.sortingOrder = InnerMapManager.GroundTilemapSortingOrder + 2;
+            
+            upperGroundTilemapRenderer.sortingOrder = InnerMapManager.GroundTilemapSortingOrder + 3;
         }
         protected IEnumerator GenerateGrid(int width, int height, MapGenerationComponent mapGenerationComponent) {
             System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
@@ -98,7 +102,7 @@ namespace Inner_Maps {
             LocationStructure wilderness = location.GetRandomStructureOfType(STRUCTURE_TYPE.WILDERNESS);
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
-                    groundTilemap.SetTile(new Vector3Int(x, y, 0), GetOutsideFloorTile(location));
+                    groundTilemap.SetTile(new Vector3Int(x, y, 0), InnerMapManager.Instance.assetManager.GetOutsideFloorTile(location));
                     LocationGridTile tile = new LocationGridTile(x, y, groundTilemap, this);
                     tile.CreateGenericTileObject();
                     tile.SetStructure(wilderness);
@@ -127,45 +131,6 @@ namespace Inner_Maps {
                 _allTilemaps[i].ClearAllTiles();
             }
         }
-        private TileBase GetOutsideFloorTile(ILocation location) {
-            switch (location.coreTile.biomeType) {
-                case BIOMES.SNOW:
-                case BIOMES.TUNDRA:
-                    return InnerMapManager.Instance.assetManager.snowOutsideTile;
-                default:
-                    return InnerMapManager.Instance.assetManager.outsideTile;
-            }
-        }
-        private TileBase GetFlowerTile(ILocation location) {
-            switch (location.coreTile.biomeType) {
-                case BIOMES.SNOW:
-                case BIOMES.TUNDRA:
-                    return InnerMapManager.Instance.assetManager.snowFlowerTile;
-                case BIOMES.DESERT:
-                    return InnerMapManager.Instance.assetManager.desertFlowerTile;
-                default:
-                    return InnerMapManager.Instance.assetManager.flowerTile;
-            }
-        }
-        private TileBase GetGarbTile(ILocation location) {
-            switch (location.coreTile.biomeType) {
-                case BIOMES.SNOW:
-                case BIOMES.TUNDRA:
-                    return InnerMapManager.Instance.assetManager.snowGarbTile;
-                case BIOMES.DESERT:
-                    return InnerMapManager.Instance.assetManager.desertGarbTile;
-                default:
-                    return InnerMapManager.Instance.assetManager.randomGarbTile;
-            }
-        }
-        private TileBase GetRockTile(ILocation location) {
-            switch (location.coreTile.biomeType) {
-                case BIOMES.DESERT:
-                    return InnerMapManager.Instance.assetManager.desertRockTile;
-                default:
-                    return InnerMapManager.Instance.assetManager.rockTile;
-            }
-        }
         public IEnumerator CreateSeamlessEdges() {
             int batchCount = 0;
             for (int i = 0; i < allTiles.Count; i++) {
@@ -179,6 +144,15 @@ namespace Inner_Maps {
                     yield return null;
                 }
             }
+        }
+        public void SetUpperGroundVisual(Vector3Int location, TileBase asset, float alpha = 1f) {
+            upperGroundTilemap.SetTile(location, asset);
+            Color color = upperGroundTilemap.GetColor(location);
+            color.a = alpha;
+            upperGroundTilemap.SetColor(location, color);
+        }
+        public void SetUpperGroundVisual(Vector3Int[] locations, TileBase[] assets) {
+            upperGroundTilemap.SetTiles(locations, assets);
         }
         #endregion
 
@@ -642,7 +616,7 @@ namespace Inner_Maps {
                     
                     if (Random.Range(0, 100) < 3) {
                         currTile.hasDetail = true;
-                        detailsTilemap.SetTile(currTile.localPlace, GetFlowerTile(location));
+                        detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.GetFlowerTile(location));
                         if (currTile.structure != null) {
                             ConvertDetailToTileObject(currTile);
                         } else {
@@ -651,7 +625,7 @@ namespace Inner_Maps {
                         
                     } else if (Random.Range(0, 100) < 4) {
                         currTile.hasDetail = true;
-                        detailsTilemap.SetTile(currTile.localPlace, GetRockTile(location));
+                        detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.GetRockTile(location));
                         if (currTile.structure != null) {
                             ConvertDetailToTileObject(currTile);
                         } else {
@@ -659,7 +633,7 @@ namespace Inner_Maps {
                         }
                     } else if (Random.Range(0, 100) < 3) {
                         currTile.hasDetail = true;
-                        detailsTilemap.SetTile(currTile.localPlace, GetGarbTile(location));
+                        detailsTilemap.SetTile(currTile.localPlace, InnerMapManager.Instance.assetManager.GetGarbTile(location));
                         if (currTile.structure != null) {
                             ConvertDetailToTileObject(currTile);
                         } else {

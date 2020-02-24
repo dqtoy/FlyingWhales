@@ -19,8 +19,7 @@ public class TraitItem : MonoBehaviour {
         this.trait = trait;
         nameText.text = this.trait.name;
 
-        if (this.trait is RelationshipTrait) {
-            RelationshipTrait relTrait = this.trait as RelationshipTrait;
+        if (this.trait is RelationshipTrait relTrait) {
             portrait.GeneratePortrait(relTrait.targetCharacter);
             portrait.gameObject.SetActive(true);
             iconImg.gameObject.SetActive(false);
